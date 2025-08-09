@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import UserPointsBadge from "@/components/UserPointsBadge";
+import ReplyModal from "@/components/ReplyModal";
 
 interface Comment {
   id: string;
@@ -28,6 +29,7 @@ interface CommentItemProps {
   onReply: (parentId: string, content: string) => Promise<void>;
   onLike: (commentId: string) => Promise<void>;
   onDelete: (commentId: string) => Promise<void>;
+  onReloadComments: () => Promise<void>;
 }
 
 // COMPONENTE INDIVIDUAL DE COMENTÁRIO
@@ -39,11 +41,10 @@ function CommentItem({
   onReply,
   onLike,
   onDelete,
+  onReloadComments,
 }: CommentItemProps) {
   const { user, isAdmin } = useAuth();
-  const [showReplyForm, setShowReplyForm] = useState(false);
-  const [replyText, setReplyText] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showReplyModal, setShowReplyModal] = useState(false);
   const [showReplies, setShowReplies] = useState(true);
 
   const isTopicOwner = user?.id === topicAuthorId;
@@ -51,22 +52,9 @@ function CommentItem({
   const canDelete = isAdmin || isTopicOwner || isCommentOwner;
   const canReply = user; // Sem limite de profundidade
 
-  const handleReplySubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!replyText.trim()) return;
-
-    setIsSubmitting(true);
-    try {
-      await onReply(comment.id, replyText);
-      setReplyText("");
-      setShowReplyForm(false);
-      setShowReplies(true);
-      toast.success("Resposta adicionada!");
-    } catch (error) {
-      toast.error("Erro ao responder");
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleReplyAdded = async () => {
+    await onReloadComments();
+    setShowReplies(true);
   };
 
   const handleDelete = async () => {
@@ -82,6 +70,7 @@ function CommentItem({
   // Calcular indentação baseada na profundidade (máximo 8 níveis visuais)
   const indentationClass = depth === 0 ? "" : `ml-${Math.min(depth * 4, 32)}`;
   const hasReplies = comment.replies && comment.replies.length > 0;
+  const actualRepliesCount = comment.replies ? comment.replies.length : (comment.repliesCount || 0);
 
   return (
     <div className={`${indentationClass} ${depth > 0 ? "mt-4" : ""}`}>
@@ -96,10 +85,11 @@ function CommentItem({
               canDelete={canDelete}
               onLike={() => onLike(comment.id)}
               onDelete={handleDelete}
-              onShowReply={() => setShowReplyForm(!showReplyForm)}
+              onShowReply={() => setShowReplyModal(true)}
               hasReplies={hasReplies}
               showReplies={showReplies}
               onToggleReplies={() => setShowReplies(!showReplies)}
+              actualRepliesCount={actualRepliesCount}
             />
           </div>
         </div>
@@ -115,45 +105,23 @@ function CommentItem({
             canDelete={canDelete}
             onLike={() => onLike(comment.id)}
             onDelete={handleDelete}
-            onShowReply={() => setShowReplyForm(!showReplyForm)}
+            onShowReply={() => setShowReplyModal(true)}
             hasReplies={hasReplies}
             showReplies={showReplies}
             onToggleReplies={() => setShowReplies(!showReplies)}
+            actualRepliesCount={actualRepliesCount}
           />
         </div>
       )}
 
-      {/* Formulário de resposta */}
-      {showReplyForm && (
-        <form
-          onSubmit={handleReplySubmit}
-          className={`mt-3 ${depth > 0 ? "ml-6" : ""}`}
-        >
-          <div className="bg-gray-50 rounded-lg p-3 border">
-            <textarea
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-              placeholder={`Responder para ${comment.author}...`}
-              className="w-full p-2 border rounded text-sm resize-none"
-              rows={2}
-              required
-            />
-            <div className="flex gap-2 mt-2">
-              <Button type="submit" size="sm" disabled={isSubmitting}>
-                {isSubmitting ? "Enviando..." : "Responder"}
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => setShowReplyForm(false)}
-              >
-                Cancelar
-              </Button>
-            </div>
-          </div>
-        </form>
-      )}
+      {/* Modal de resposta */}
+      <ReplyModal
+        isOpen={showReplyModal}
+        onClose={() => setShowReplyModal(false)}
+        comment={comment}
+        topicId={topicId}
+        onReplyAdded={handleReplyAdded}
+      />
 
       {/* Respostas aninhadas */}
       {showReplies && hasReplies && (
@@ -168,6 +136,7 @@ function CommentItem({
               onReply={onReply}
               onLike={onLike}
               onDelete={onDelete}
+              onReloadComments={onReloadComments}
             />
           ))}
         </div>
@@ -188,6 +157,7 @@ function CommentContent({
   hasReplies,
   showReplies,
   onToggleReplies,
+  actualRepliesCount,
 }: {
   comment: Comment;
   topicAuthorId: string;
@@ -199,6 +169,7 @@ function CommentContent({
   hasReplies: boolean;
   showReplies: boolean;
   onToggleReplies: () => void;
+  actualRepliesCount: number;
 }) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -266,8 +237,8 @@ function CommentContent({
               onClick={onToggleReplies}
               className="text-xs text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
             >
-              {showReplies ? "Ocultar" : "Ver"} {comment.repliesCount} resposta
-              {comment.repliesCount !== 1 ? "s" : ""}
+              {showReplies ? "Ocultar" : "Ver"} {actualRepliesCount} resposta
+              {actualRepliesCount !== 1 ? "s" : ""}
             </button>
           )}
 
@@ -583,6 +554,7 @@ export default function CommentSystemNew({
               onReply={handleReply}
               onLike={handleLike}
               onDelete={handleDelete}
+              onReloadComments={loadComments}
             />
           ))
         )}
