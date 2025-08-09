@@ -119,9 +119,9 @@ export default function Header({ activeSection }: HeaderProps) {
     <header className="sticky top-0 z-50 w-full glass-minimal border-b border-black/5">
       <div className="container flex h-16 max-w-7xl items-center justify-between px-6 mx-auto">
         <div className="flex items-center">
-          <h1 className="text-2xl font-bold text-black tracking-tight">
+          <Link to="/" className="text-2xl font-bold text-black tracking-tight hover:text-gray-700 transition-colors">
             IA HUB
-          </h1>
+          </Link>
         </div>
 
         {/* Search Bar - Only show in forum */}
