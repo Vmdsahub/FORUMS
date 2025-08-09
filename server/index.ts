@@ -34,5 +34,13 @@ export function createServer() {
   app.get("/api/auth/me", authenticateToken, handleMe);
   app.post("/api/auth/logout", authenticateToken, handleLogout);
 
+  // Forum routes
+  app.get("/api/topics", handleGetTopics);
+  app.get("/api/topics/:topicId", handleGetTopic);
+  app.post("/api/topics", authenticateToken, handleCreateTopic);
+  app.post("/api/topics/:topicId/comments", authenticateToken, handleCreateComment);
+  app.post("/api/topics/:topicId/like", authenticateToken, handleLikeTopic);
+  app.post("/api/comments/:commentId/like", authenticateToken, handleLikeComment);
+
   return app;
 }
