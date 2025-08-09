@@ -47,16 +47,6 @@ export default function Header() {
         </div>
 
         <div className="flex items-center space-x-4">
-          {isAdmin && (
-            <Link to="/admin">
-              <Button variant="outline" size="sm" className="border-orange-200 text-orange-600 hover:bg-orange-50">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="mr-2">
-                  <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
-                </svg>
-                Admin
-              </Button>
-            </Link>
-          )}
           {user ? (
             <Popover>
               <PopoverTrigger asChild>
