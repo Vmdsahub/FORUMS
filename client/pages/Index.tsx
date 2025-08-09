@@ -343,10 +343,25 @@ export default function Index(props: IndexProps) {
           >
             {/* Forum Categories */}
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-              <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+              <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-black">
                   Categorias do Fórum
                 </h2>
+                {isAdmin && (
+                  <button
+                    onClick={() => {
+                      const name = prompt("Nome da nova categoria:");
+                      const description = prompt("Descrição da categoria:");
+                      if (name && description) {
+                        toast.success(`Categoria "${name}" criada! (Demo - não persistente)`);
+                      }
+                    }}
+                    className="bg-gray-800 text-white px-3 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm"
+                    title="Adicionar categoria (Admin)"
+                  >
+                    + Nova Categoria
+                  </button>
+                )}
               </div>
 
               <div className="divide-y divide-gray-100">
