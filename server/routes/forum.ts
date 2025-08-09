@@ -466,7 +466,7 @@ export const handleCreateTopic: RequestHandler = (req, res) => {
     };
 
     topics.set(newTopic.id, newTopic);
-    addPoints(req.user.id, POINTS.CREATE_POST);
+    // addPoints(req.user.id, POINTS.CREATE_POST); // Temporariamente desabilitado
     res.status(201).json(newTopic);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -672,7 +672,7 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
 
   const deletedCount = deleteCommentAndReplies(commentId);
 
-  // Atualizar contador de replies no tópico
+  // Atualizar contador de replies no t��pico
   topic.replies = Math.max(0, topic.replies - deletedCount);
   topic.comments = topic.comments.filter((c) => {
     return !isCommentOrReply(c.id, commentId);
