@@ -250,9 +250,7 @@ export default function TopicView() {
           
           {/* Topic Content */}
           <div className="border-t border-gray-100 pt-4 mb-4">
-            <div className="prose max-w-none text-gray-700 leading-relaxed whitespace-pre-line">
-              {topic.content}
-            </div>
+            <MarkdownRenderer content={topic.content} />
           </div>
 
           {/* Like Button */}
