@@ -59,15 +59,27 @@ function organizeComments(comments: Comment[]): Comment[] {
     commentMap.set(comment.id, { ...comment, replies: [], repliesCount: 0 });
   });
 
-  // Organizar hierárquicamente
-  comments.forEach(comment => {
+  // Organizar hierárquicamente - garantir que os comentários raiz apareçam primeiro
+  const sortedComments = [...comments].sort((a, b) => {
+    // Se um tem parentId e outro não, o sem parentId vem primeiro
+    if (!a.parentId && b.parentId) return -1;
+    if (a.parentId && !b.parentId) return 1;
+    // Ordenar por data de criação
+    return new Date(a.date + ' ' + a.time).getTime() - new Date(b.date + ' ' + b.time).getTime();
+  });
+
+  sortedComments.forEach(comment => {
     const commentWithReplies = commentMap.get(comment.id)!;
 
     if (comment.parentId) {
       const parent = commentMap.get(comment.parentId);
       if (parent) {
-        parent.replies!.push(commentWithReplies);
+        if (!parent.replies) parent.replies = [];
+        parent.replies.push(commentWithReplies);
         parent.repliesCount = (parent.repliesCount || 0) + 1;
+      } else {
+        // Se o pai não existe, tratar como comentário raiz
+        rootComments.push(commentWithReplies);
       }
     } else {
       rootComments.push(commentWithReplies);
