@@ -165,6 +165,7 @@ export const handleRegister: RequestHandler = (req, res) => {
       name,
       email,
       password: hashPassword(password),
+      role: 'user' as const,
     };
 
     users.set(userId, newUser);
@@ -178,6 +179,7 @@ export const handleRegister: RequestHandler = (req, res) => {
         id: newUser.id,
         name: newUser.name,
         email: newUser.email,
+        role: newUser.role,
       },
       token,
     };
