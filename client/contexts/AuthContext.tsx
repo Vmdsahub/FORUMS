@@ -33,9 +33,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (response.ok) {
-        const userData = await response.json();
+        const userData: User = await response.json();
         setUser(userData);
       } else {
         localStorage.removeItem('auth_token');
@@ -59,15 +59,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ email, password, captcha }),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
+        const data: AuthResponse = await response.json();
         localStorage.setItem('auth_token', data.token);
         setUser(data.user);
         toast.success('Login realizado com sucesso!');
         return true;
       } else {
-        toast.error(data.message || 'Erro ao fazer login');
+        const error: ErrorResponse = await response.json();
+        toast.error(error.message || 'Erro ao fazer login');
         return false;
       }
     } catch (error) {
@@ -90,15 +90,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ name, email, password, captcha }),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
+        const data: AuthResponse = await response.json();
         localStorage.setItem('auth_token', data.token);
         setUser(data.user);
         toast.success('Conta criada com sucesso!');
         return true;
       } else {
-        toast.error(data.message || 'Erro ao criar conta');
+        const error: ErrorResponse = await response.json();
+        toast.error(error.message || 'Erro ao criar conta');
         return false;
       }
     } catch (error) {
