@@ -35,12 +35,12 @@ function generateId(): string {
 
 function formatDate(): { date: string; time: string } {
   const now = new Date();
-  const date = now.toLocaleDateString("pt-BR");
   const time = now.toLocaleTimeString("pt-BR", {
     hour: "2-digit",
     minute: "2-digit",
   });
-  return { date, time };
+  // Usar "Hoje" para consistência com o sistema de ordenação
+  return { date: "Hoje", time };
 }
 
 function getUserInitials(name: string): string {
