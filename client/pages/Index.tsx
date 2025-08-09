@@ -118,6 +118,20 @@ export default function Index(props: IndexProps) {
     }
   }, [selectedCategory, activeSection]);
 
+  // Carregar tópicos salvos do localStorage
+  useEffect(() => {
+    if (user) {
+      const saved = localStorage.getItem(`savedTopics_${user.email}`);
+      if (saved) {
+        try {
+          setSavedTopicIds(JSON.parse(saved));
+        } catch (error) {
+          console.error("Error loading saved topics:", error);
+        }
+      }
+    }
+  }, [user]);
+
   const fetchTopics = async (category: string) => {
     setIsLoadingTopics(true);
     try {
