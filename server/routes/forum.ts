@@ -48,6 +48,34 @@ function getUserInitials(name: string): string {
     .toUpperCase();
 }
 
+// Helper para organizar comentários em estrutura hierárquica
+function organizeComments(comments: Comment[]): Comment[] {
+  const commentMap = new Map<string, Comment>();
+  const rootComments: Comment[] = [];
+
+  // Primeiro, criar o mapa de comentários
+  comments.forEach(comment => {
+    commentMap.set(comment.id, { ...comment, replies: [], repliesCount: 0 });
+  });
+
+  // Organizar hierárquicamente
+  comments.forEach(comment => {
+    const commentWithReplies = commentMap.get(comment.id)!;
+
+    if (comment.parentId) {
+      const parent = commentMap.get(comment.parentId);
+      if (parent) {
+        parent.replies!.push(commentWithReplies);
+        parent.repliesCount = (parent.repliesCount || 0) + 1;
+      }
+    } else {
+      rootComments.push(commentWithReplies);
+    }
+  });
+
+  return rootComments;
+}
+
 function isLikedBy(entityId: string, userId: string): boolean {
   return likes.get(entityId)?.has(userId) || false;
 }
@@ -333,6 +361,10 @@ export const handleGetTopic: RequestHandler = (req, res) => {
     }));
   }
 
+  // Organizar comentários em estrutura hierárquica
+  const organizedComments = organizeComments(topic.comments);
+  topic.comments = organizedComments;
+
   res.json(topic);
 };
 
@@ -401,6 +433,14 @@ export const handleCreateComment: RequestHandler = (req, res) => {
     const data = createCommentSchema.parse(req.body);
     const { date, time } = formatDate();
 
+    // Verificar se parentId existe (se for uma resposta)
+    if (data.parentId) {
+      const parentComment = comments.get(data.parentId);
+      if (!parentComment || parentComment.topicId !== topicId) {
+        return res.status(400).json({ message: "Comentário pai não encontrado" });
+      }
+    }
+
     const newComment: Comment = {
       id: generateId(),
       content: data.content,
@@ -412,6 +452,9 @@ export const handleCreateComment: RequestHandler = (req, res) => {
       likes: 0,
       isLiked: false,
       topicId,
+      parentId: data.parentId,
+      replies: [],
+      repliesCount: 0,
     };
 
     comments.set(newComment.id, newComment);
@@ -513,13 +556,6 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
     return res.status(401).json({ message: "Autenticação necessária" });
   }
 
-  // Verificar se é admin
-  if (req.user.role !== "admin") {
-    return res
-      .status(403)
-      .json({ message: "Apenas administradores podem excluir comentários" });
-  }
-
   const { commentId } = req.params;
   const comment = comments.get(commentId);
 
@@ -527,18 +563,60 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
     return res.status(404).json({ message: "Comentário não encontrado" });
   }
 
-  // Remover comentário
-  comments.delete(commentId);
+  const topic = topics.get(comment.topicId);
+  if (!topic) {
+    return res.status(404).json({ message: "Tópico não encontrado" });
+  }
+
+  // Verificar permissões: admin OU dono do post OU dono do comentário
+  const isAdmin = req.user.role === "admin";
+  const isTopicOwner = topic.authorId === req.user.id;
+  const isCommentOwner = comment.authorId === req.user.id;
+
+  if (!isAdmin && !isTopicOwner && !isCommentOwner) {
+    return res.status(403).json({
+      message: "Você só pode excluir seus próprios comentários ou comentários em seus posts"
+    });
+  }
+
+  // Função recursiva para contar e remover comentários e respostas
+  function deleteCommentAndReplies(commentId: string): number {
+    let deletedCount = 0;
+
+    // Encontrar e remover todas as respostas primeiro
+    const replies = Array.from(comments.values()).filter(c => c.parentId === commentId);
+    replies.forEach(reply => {
+      deletedCount += deleteCommentAndReplies(reply.id);
+    });
+
+    // Remover o comentário atual
+    comments.delete(commentId);
+    deletedCount += 1;
+
+    return deletedCount;
+  }
+
+  const deletedCount = deleteCommentAndReplies(commentId);
 
   // Atualizar contador de replies no tópico
-  const topic = topics.get(comment.topicId);
-  if (topic) {
-    topic.replies = Math.max(0, topic.replies - 1);
-    topic.comments = topic.comments.filter((c) => c.id !== commentId);
-  }
+  topic.replies = Math.max(0, topic.replies - deletedCount);
+  topic.comments = topic.comments.filter((c) => {
+    // Remover o comentário e todas suas respostas da lista do tópico
+    return !isCommentOrReply(c.id, commentId);
+  });
 
   res.json({ message: "Comentário excluído com sucesso" });
 };
+
+// Helper para verificar se um comentário é filho de outro (recursivamente)
+function isCommentOrReply(commentId: string, targetId: string): boolean {
+  if (commentId === targetId) return true;
+
+  const comment = comments.get(commentId);
+  if (!comment || !comment.parentId) return false;
+
+  return isCommentOrReply(comment.parentId, targetId);
+}
 
 export const handleGetUserTopics: RequestHandler = (req, res) => {
   if (!req.user) {
