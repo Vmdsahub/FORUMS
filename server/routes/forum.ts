@@ -418,7 +418,6 @@ export const handleGetTopic: RequestHandler = (req, res) => {
 
   // Build comment tree
   const organizedComments = buildCommentTree(topic.comments);
-  console.log('DEBUG - Comentários organizados:', JSON.stringify(organizedComments, null, 2));
   topic.comments = organizedComments;
 
   res.json(topic);
