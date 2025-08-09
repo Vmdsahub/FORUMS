@@ -273,6 +273,7 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [apiStatus, setApiStatus] = useState<'online' | 'offline' | 'unknown'>('unknown');
 
   // Carregar comentários com retry e fallback
   const loadComments = async (retryCount = 0) => {
