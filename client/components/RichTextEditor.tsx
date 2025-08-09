@@ -31,23 +31,24 @@ export default function RichTextEditor({
     if (!editor) return;
 
     const updatePlaceholder = () => {
-      const isEmpty = editor.innerHTML.trim() === '' || editor.innerHTML === '<br>';
+      const isEmpty =
+        editor.innerHTML.trim() === "" || editor.innerHTML === "<br>";
       if (isEmpty && placeholder) {
-        editor.setAttribute('data-empty', 'true');
+        editor.setAttribute("data-empty", "true");
       } else {
-        editor.removeAttribute('data-empty');
+        editor.removeAttribute("data-empty");
       }
     };
 
     updatePlaceholder();
-    editor.addEventListener('input', updatePlaceholder);
-    editor.addEventListener('focus', updatePlaceholder);
-    editor.addEventListener('blur', updatePlaceholder);
+    editor.addEventListener("input", updatePlaceholder);
+    editor.addEventListener("focus", updatePlaceholder);
+    editor.addEventListener("blur", updatePlaceholder);
 
     return () => {
-      editor.removeEventListener('input', updatePlaceholder);
-      editor.removeEventListener('focus', updatePlaceholder);
-      editor.removeEventListener('blur', updatePlaceholder);
+      editor.removeEventListener("input", updatePlaceholder);
+      editor.removeEventListener("focus", updatePlaceholder);
+      editor.removeEventListener("blur", updatePlaceholder);
     };
   }, [placeholder]);
 
@@ -65,36 +66,36 @@ export default function RichTextEditor({
   };
 
   const handleBold = () => {
-    execCommand('bold');
+    execCommand("bold");
   };
 
   const handleItalic = () => {
-    execCommand('italic');
+    execCommand("italic");
   };
 
   const handleUnderline = () => {
-    execCommand('underline');
+    execCommand("underline");
   };
 
   const handleHeading = () => {
-    execCommand('formatBlock', 'H3');
+    execCommand("formatBlock", "H3");
   };
 
   const handleLink = () => {
     const url = prompt("Digite a URL:");
     if (url) {
-      execCommand('createLink', url);
+      execCommand("createLink", url);
     }
   };
 
   const insertImageHtml = (src: string, alt: string) => {
     const img = `<div style="margin: 16px 0;"><img src="${src}" alt="${alt}" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e5e7eb;" /></div>`;
-    execCommand('insertHTML', img);
+    execCommand("insertHTML", img);
   };
 
   const insertVideoHtml = (src: string, name: string) => {
     const video = `<div style="margin: 16px 0;"><video controls style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e5e7eb;"><source src="${src}" type="video/mp4"><source src="${src}" type="video/webm">Seu navegador não suporta vídeo HTML5.</video><p style="font-size: 14px; color: #6b7280; margin-top: 8px;">📹 ${name}</p></div>`;
-    execCommand('insertHTML', video);
+    execCommand("insertHTML", video);
   };
 
   const handleUploadImage = async (file: File) => {
@@ -354,11 +355,10 @@ export default function RichTextEditor({
       {/* Help text */}
       <div className="p-3 border-t border-gray-200 bg-gray-50">
         <p className="text-xs text-gray-500">
-          Use os botões da barra de ferramentas para formatar o texto em tempo real. 
-          Suporte para imagens (até 10MB) e vídeos (até 500MB).
+          Use os botões da barra de ferramentas para formatar o texto em tempo
+          real. Suporte para imagens (até 10MB) e vídeos (até 500MB).
         </p>
       </div>
-
     </div>
   );
 }

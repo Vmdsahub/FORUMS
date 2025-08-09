@@ -78,7 +78,9 @@ export default function CreateTopicModal({
         setIsOpen(false);
         onTopicCreated?.(newTopic);
       } else {
-        const errorData = await response.json().catch(() => ({ message: "Erro desconhecido" }));
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: "Erro desconhecido" }));
         console.error("Erro ao criar tópico:", errorData);
         toast.error(errorData.message || "Erro ao criar tópico");
       }
@@ -123,8 +125,8 @@ export default function CreateTopicModal({
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
             <div className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-200">
-              <strong className="text-gray-900">Categoria:</strong> {currentCategory.name} -{" "}
-              {currentCategory.description}
+              <strong className="text-gray-900">Categoria:</strong>{" "}
+              {currentCategory.name} - {currentCategory.description}
             </div>
           </div>
 

@@ -107,7 +107,7 @@ export default function Index(props: IndexProps) {
   const [newNewsletter, setNewNewsletter] = useState({
     title: "",
     content: "",
-    readTime: ""
+    readTime: "",
   });
 
   // Buscar tópicos reais da API quando uma categoria é selecionada
@@ -116,7 +116,6 @@ export default function Index(props: IndexProps) {
       fetchTopics(selectedCategory);
     }
   }, [selectedCategory, activeSection]);
-
 
   const fetchTopics = async (category: string) => {
     setIsLoadingTopics(true);
@@ -156,7 +155,9 @@ export default function Index(props: IndexProps) {
       return;
     }
 
-    toast.success(`Categoria "${newCategory.name}" criada! (Demo - não persistente)`);
+    toast.success(
+      `Categoria "${newCategory.name}" criada! (Demo - não persistente)`,
+    );
     setNewCategory({ name: "", description: "" });
     setIsCategoryModalOpen(false);
   };
@@ -167,7 +168,9 @@ export default function Index(props: IndexProps) {
       return;
     }
 
-    toast.success(`Artigo "${newNewsletter.title}" criado! (Demo - não persistente)`);
+    toast.success(
+      `Artigo "${newNewsletter.title}" criado! (Demo - não persistente)`,
+    );
     setNewNewsletter({ title: "", content: "", readTime: "" });
     setIsNewsletterModalOpen(false);
   };
@@ -198,7 +201,6 @@ export default function Index(props: IndexProps) {
       toast.error("Erro ao excluir tópico");
     }
   };
-
 
   return (
     <main className="container max-w-7xl mx-auto px-6 py-12">
@@ -375,8 +377,14 @@ export default function Index(props: IndexProps) {
                           <div className="flex gap-2">
                             <button
                               onClick={() => {
-                                if (confirm(`Tem certeza que deseja excluir o artigo "${topic.title}"?`)) {
-                                  toast.success("Artigo excluído! (Demo - não persistente)");
+                                if (
+                                  confirm(
+                                    `Tem certeza que deseja excluir o artigo "${topic.title}"?`,
+                                  )
+                                ) {
+                                  toast.success(
+                                    "Artigo excluído! (Demo - não persistente)",
+                                  );
                                 }
                               }}
                               className="text-red-600 hover:text-red-800 px-3 py-1 rounded text-sm hover:bg-red-50 transition-colors"
@@ -394,7 +402,10 @@ export default function Index(props: IndexProps) {
 
             {isAdmin && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <Dialog open={isNewsletterModalOpen} onOpenChange={setIsNewsletterModalOpen}>
+                <Dialog
+                  open={isNewsletterModalOpen}
+                  onOpenChange={setIsNewsletterModalOpen}
+                >
                   <DialogTrigger asChild>
                     <button className="w-full border-2 border-dashed border-gray-300 rounded-lg p-6 text-gray-600 hover:border-gray-400 hover:text-gray-800 transition-colors">
                       + Adicionar Novo Artigo da Newsletter
@@ -408,37 +419,61 @@ export default function Index(props: IndexProps) {
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
-                        <Label htmlFor="news-title" className="text-gray-900 font-medium">
+                        <Label
+                          htmlFor="news-title"
+                          className="text-gray-900 font-medium"
+                        >
                           Título do Artigo
                         </Label>
                         <Input
                           id="news-title"
                           value={newNewsletter.title}
-                          onChange={(e) => setNewNewsletter({ ...newNewsletter, title: e.target.value })}
+                          onChange={(e) =>
+                            setNewNewsletter({
+                              ...newNewsletter,
+                              title: e.target.value,
+                            })
+                          }
                           placeholder="Ex: GPT-4 vs Claude: Análise Comparativa"
                           className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="news-time" className="text-gray-900 font-medium">
+                        <Label
+                          htmlFor="news-time"
+                          className="text-gray-900 font-medium"
+                        >
                           Tempo de Leitura
                         </Label>
                         <Input
                           id="news-time"
                           value={newNewsletter.readTime}
-                          onChange={(e) => setNewNewsletter({ ...newNewsletter, readTime: e.target.value })}
+                          onChange={(e) =>
+                            setNewNewsletter({
+                              ...newNewsletter,
+                              readTime: e.target.value,
+                            })
+                          }
                           placeholder="Ex: 8 min"
                           className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="news-content" className="text-gray-900 font-medium">
+                        <Label
+                          htmlFor="news-content"
+                          className="text-gray-900 font-medium"
+                        >
                           Conteúdo do Artigo
                         </Label>
                         <Textarea
                           id="news-content"
                           value={newNewsletter.content}
-                          onChange={(e) => setNewNewsletter({ ...newNewsletter, content: e.target.value })}
+                          onChange={(e) =>
+                            setNewNewsletter({
+                              ...newNewsletter,
+                              content: e.target.value,
+                            })
+                          }
                           placeholder="Escreva o conteúdo completo do artigo..."
                           rows={8}
                           className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
@@ -483,7 +518,10 @@ export default function Index(props: IndexProps) {
                   Categorias do Fórum
                 </h2>
                 {isAdmin && (
-                  <Dialog open={isCategoryModalOpen} onOpenChange={setIsCategoryModalOpen}>
+                  <Dialog
+                    open={isCategoryModalOpen}
+                    onOpenChange={setIsCategoryModalOpen}
+                  >
                     <DialogTrigger asChild>
                       <Button
                         className="bg-gray-900 text-white hover:bg-gray-800 text-sm"
@@ -500,25 +538,41 @@ export default function Index(props: IndexProps) {
                       </DialogHeader>
                       <div className="space-y-4 py-4">
                         <div className="space-y-2">
-                          <Label htmlFor="cat-name" className="text-gray-900 font-medium">
+                          <Label
+                            htmlFor="cat-name"
+                            className="text-gray-900 font-medium"
+                          >
                             Nome da Categoria
                           </Label>
                           <Input
                             id="cat-name"
                             value={newCategory.name}
-                            onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+                            onChange={(e) =>
+                              setNewCategory({
+                                ...newCategory,
+                                name: e.target.value,
+                              })
+                            }
                             placeholder="Ex: Inteligência Artificial"
                             className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="cat-desc" className="text-gray-900 font-medium">
+                          <Label
+                            htmlFor="cat-desc"
+                            className="text-gray-900 font-medium"
+                          >
                             Descrição
                           </Label>
                           <Textarea
                             id="cat-desc"
                             value={newCategory.description}
-                            onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
+                            onChange={(e) =>
+                              setNewCategory({
+                                ...newCategory,
+                                description: e.target.value,
+                              })
+                            }
                             placeholder="Descreva o que será discutido nesta categoria"
                             rows={3}
                             className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
@@ -605,14 +659,25 @@ export default function Index(props: IndexProps) {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                if (confirm(`Tem certeza que deseja excluir a categoria "${category.name}"?`)) {
-                                  toast.success(`Categoria "${category.name}" excluída! (Demo - não persistente)`);
+                                if (
+                                  confirm(
+                                    `Tem certeza que deseja excluir a categoria "${category.name}"?`,
+                                  )
+                                ) {
+                                  toast.success(
+                                    `Categoria "${category.name}" excluída! (Demo - não persistente)`,
+                                  );
                                 }
                               }}
                               className="text-red-600 hover:text-red-800 p-2 rounded hover:bg-red-50 transition-colors"
                               title="Excluir categoria (Admin)"
                             >
-                              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                              >
                                 <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
                               </svg>
                             </button>
@@ -701,7 +766,9 @@ export default function Index(props: IndexProps) {
                 ) : realTopics.length === 0 ? (
                   <div className="p-12 text-center text-gray-500">
                     <p>Nenhum tópico encontrado nesta categoria.</p>
-                    <p className="text-sm mt-2">Seja o primeiro a criar um tópico!</p>
+                    <p className="text-sm mt-2">
+                      Seja o primeiro a criar um tópico!
+                    </p>
                   </div>
                 ) : (
                   realTopics.map((topic) => (
@@ -736,29 +803,36 @@ export default function Index(props: IndexProps) {
                                 {topic.description}
                               </p>
                               <div className="flex items-center justify-between mt-2">
-                            <div className="text-xs text-gray-500">
-                              por{" "}
-                              <span className="font-medium">{topic.author}</span>
+                                <div className="text-xs text-gray-500">
+                                  por{" "}
+                                  <span className="font-medium">
+                                    {topic.author}
+                                  </span>
+                                </div>
+                                {isAdmin && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      handleDeleteTopic(topic.id, topic.title);
+                                    }}
+                                    className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50 transition-colors"
+                                    title="Excluir tópico (Admin)"
+                                  >
+                                    <svg
+                                      width="14"
+                                      height="14"
+                                      viewBox="0 0 24 24"
+                                      fill="currentColor"
+                                    >
+                                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                    </svg>
+                                  </button>
+                                )}
+                              </div>
                             </div>
-                            {isAdmin && (
-                              <button
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleDeleteTopic(topic.id, topic.title);
-                                }}
-                                className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50 transition-colors"
-                                title="Excluir tópico (Admin)"
-                              >
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                                </svg>
-                              </button>
-                            )}
                           </div>
                         </div>
-                      </div>
-                    </div>
 
                         <div className="col-span-2 text-center">
                           <div className="font-semibold text-black">

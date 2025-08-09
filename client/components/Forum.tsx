@@ -140,8 +140,8 @@ export default function Forum() {
           prev.map((topic) =>
             topic.id === topicId
               ? { ...topic, likes: data.likes, isLiked: data.isLiked }
-              : topic
-          )
+              : topic,
+          ),
         );
       }
     } catch (error) {
@@ -203,7 +203,9 @@ export default function Forum() {
             {topics.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground">
                 <p>Nenhum tópico encontrado nesta categoria.</p>
-                <p className="text-sm mt-2">Seja o primeiro a criar um tópico!</p>
+                <p className="text-sm mt-2">
+                  Seja o primeiro a criar um tópico!
+                </p>
               </div>
             ) : (
               topics.map((topic) => (
@@ -272,7 +274,8 @@ export default function Forum() {
                         </div>
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        Último post: {topic.lastPost.author} em {topic.lastPost.date} às {topic.lastPost.time}
+                        Último post: {topic.lastPost.author} em{" "}
+                        {topic.lastPost.date} às {topic.lastPost.time}
                       </div>
                     </div>
                   </CardContent>

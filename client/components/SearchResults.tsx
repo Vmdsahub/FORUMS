@@ -6,12 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { Topic } from "@shared/forum";
 import { toast } from "sonner";
-import {
-  Heart,
-  MessageCircle,
-  TrendingUp,
-  Trash2,
-} from "lucide-react";
+import { Heart, MessageCircle, TrendingUp, Trash2 } from "lucide-react";
 
 interface SearchResultsProps {
   query: string;
@@ -19,7 +14,11 @@ interface SearchResultsProps {
   onClose: () => void;
 }
 
-export default function SearchResults({ query, categories, onClose }: SearchResultsProps) {
+export default function SearchResults({
+  query,
+  categories,
+  onClose,
+}: SearchResultsProps) {
   const { user, isAdmin } = useAuth();
   const [results, setResults] = useState<Topic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -83,7 +82,6 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
     }
   };
 
-
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pt-BR", {
       day: "2-digit",
@@ -95,9 +93,9 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
   const getCategoryName = (categoryId: string) => {
     const categoryMap: { [key: string]: string } = {
       "ia-hub": "IA HUB",
-      "imagem": "IMAGEM",
-      "video": "VÍDEO",
-      "seguranca": "SEGURANÇA",
+      imagem: "IMAGEM",
+      video: "VÍDEO",
+      seguranca: "SEGURANÇA",
       "musica-audio": "MÚSICA/ÁUDIO",
       "vibe-coding": "VIBE CODING",
     };
@@ -115,7 +113,9 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
                 Resultados da Busca
               </h2>
               <p className="text-gray-600 mt-1">
-                {isLoading ? "Buscando..." : `${total} resultado(s) para "${query}"`}
+                {isLoading
+                  ? "Buscando..."
+                  : `${total} resultado(s) para "${query}"`}
                 {categories.length > 0 && (
                   <span className="text-sm text-gray-500 ml-2">
                     em {categories.map(getCategoryName).join(", ")}
@@ -127,8 +127,13 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 p-2"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
               </svg>
             </button>
           </div>
@@ -143,17 +148,22 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
           ) : results.length === 0 ? (
             <div className="text-center py-12 text-gray-500">
               <p>Nenhum resultado encontrado.</p>
-              <p className="text-sm mt-2">Tente termos diferentes ou ajuste os filtros.</p>
+              <p className="text-sm mt-2">
+                Tente termos diferentes ou ajuste os filtros.
+              </p>
             </div>
           ) : (
             <div className="space-y-4">
               {results.map((topic) => (
-                <Card key={topic.id} className="hover:shadow-md transition-all duration-200">
+                <Card
+                  key={topic.id}
+                  className="hover:shadow-md transition-all duration-200"
+                >
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <Link 
+                          <Link
                             to={`/topic/${topic.id}`}
                             onClick={onClose}
                             className="hover:text-blue-600"
@@ -162,20 +172,27 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
                               {topic.title}
                             </CardTitle>
                           </Link>
-                          <Badge variant="secondary">{getCategoryName(topic.category)}</Badge>
+                          <Badge variant="secondary">
+                            {getCategoryName(topic.category)}
+                          </Badge>
                           {topic.isPinned && (
                             <Badge variant="default" className="text-xs">
                               Fixado
                             </Badge>
                           )}
                           {topic.isHot && (
-                            <Badge variant="destructive" className="text-xs flex items-center gap-1">
+                            <Badge
+                              variant="destructive"
+                              className="text-xs flex items-center gap-1"
+                            >
                               <TrendingUp className="w-3 h-3" />
                               Hot
                             </Badge>
                           )}
                         </div>
-                        <p className="text-gray-600 mb-3">{topic.description}</p>
+                        <p className="text-gray-600 mb-3">
+                          {topic.description}
+                        </p>
                         <div className="flex items-center gap-4 text-sm text-gray-500">
                           <span>Por {topic.author}</span>
                           <span>{formatDate(topic.createdAt)}</span>
@@ -184,7 +201,9 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
                       </div>
                       {isAdmin && (
                         <button
-                          onClick={() => handleDeleteTopic(topic.id, topic.title)}
+                          onClick={() =>
+                            handleDeleteTopic(topic.id, topic.title)
+                          }
                           className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50 transition-colors ml-4"
                           title="Excluir tópico (Admin)"
                         >
@@ -197,7 +216,9 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2 text-gray-500">
-                          <Heart className={`w-4 h-4 ${topic.isLiked ? "fill-current text-red-500" : ""}`} />
+                          <Heart
+                            className={`w-4 h-4 ${topic.isLiked ? "fill-current text-red-500" : ""}`}
+                          />
                           <span className="font-medium">{topic.likes}</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-500">
@@ -206,7 +227,8 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
                         </div>
                       </div>
                       <div className="text-xs text-gray-500">
-                        Último post: {topic.lastPost.author} em {topic.lastPost.date} às {topic.lastPost.time}
+                        Último post: {topic.lastPost.author} em{" "}
+                        {topic.lastPost.date} às {topic.lastPost.time}
                       </div>
                     </div>
                   </CardContent>

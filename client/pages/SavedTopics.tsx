@@ -44,8 +44,8 @@ export default function SavedTopics() {
             lastPost: {
               author: "Alguém",
               date: "Hoje",
-              time: "14:30"
-            }
+              time: "14:30",
+            },
           }));
           setSavedTopics(mockTopics);
         } catch (error) {
@@ -57,14 +57,17 @@ export default function SavedTopics() {
 
   const handleRemoveTopic = (topicId: string) => {
     if (!user) return;
-    
+
     const saved = localStorage.getItem(`savedTopics_${user.email}`);
     if (saved) {
       try {
         const topicIds = JSON.parse(saved);
         const updatedIds = topicIds.filter((id: string) => id !== topicId);
-        localStorage.setItem(`savedTopics_${user.email}`, JSON.stringify(updatedIds));
-        setSavedTopics(prev => prev.filter(topic => topic.id !== topicId));
+        localStorage.setItem(
+          `savedTopics_${user.email}`,
+          JSON.stringify(updatedIds),
+        );
+        setSavedTopics((prev) => prev.filter((topic) => topic.id !== topicId));
         toast.success("Tópico removido dos salvos");
       } catch (error) {
         console.error("Error removing saved topic:", error);
@@ -92,7 +95,10 @@ export default function SavedTopics() {
           className="flex items-center gap-2 text-gray-600 hover:text-black transition-colors"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-            <path d="M8 0L6.6 1.4 12.2 7H0v2h12.2L6.6 14.6 8 16l8-8-8-8z" transform="rotate(180 8 8)" />
+            <path
+              d="M8 0L6.6 1.4 12.2 7H0v2h12.2L6.6 14.6 8 16l8-8-8-8z"
+              transform="rotate(180 8 8)"
+            />
           </svg>
           Voltar ao Fórum
         </button>
@@ -108,22 +114,37 @@ export default function SavedTopics() {
         ) : savedTopics.length === 0 ? (
           <div className="p-12 text-center">
             <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="text-gray-400">
-                <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="text-gray-400"
+              >
+                <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
               </svg>
             </div>
             <h2 className="text-lg font-semibold text-gray-900 mb-2">
               Nenhum tópico salvo
             </h2>
             <p className="text-gray-600 mb-6">
-              Quando você salvar tópicos no fórum, eles aparecerão aqui para consulta futura.
+              Quando você salvar tópicos no fórum, eles aparecerão aqui para
+              consulta futura.
             </p>
             <Link
               to="/"
               className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M8 0L6.6 1.4 12.2 7H0v2h12.2L6.6 14.6 8 16l8-8-8-8z" transform="rotate(180 8 8)" />
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+              >
+                <path
+                  d="M8 0L6.6 1.4 12.2 7H0v2h12.2L6.6 14.6 8 16l8-8-8-8z"
+                  transform="rotate(180 8 8)"
+                />
               </svg>
               Explorar Fórum
             </Link>
@@ -143,7 +164,10 @@ export default function SavedTopics() {
             {/* Topics List */}
             <div className="divide-y divide-gray-100">
               {savedTopics.map((topic) => (
-                <div key={topic.id} className="p-6 hover:bg-gray-50 transition-colors">
+                <div
+                  key={topic.id}
+                  className="p-6 hover:bg-gray-50 transition-colors"
+                >
                   <div className="grid grid-cols-12 gap-4 items-center">
                     <div className="col-span-6">
                       <div className="flex items-start gap-4">
@@ -183,7 +207,9 @@ export default function SavedTopics() {
                     </div>
 
                     <div className="col-span-2 text-center text-sm">
-                      <span className="font-medium text-black">{topic.author}</span>
+                      <span className="font-medium text-black">
+                        {topic.author}
+                      </span>
                     </div>
 
                     <div className="col-span-2 text-center">
@@ -193,8 +219,13 @@ export default function SavedTopics() {
                           className="text-blue-600 hover:text-blue-800 p-2 rounded hover:bg-blue-50 transition-colors"
                           title="Ver tópico"
                         >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
                           </svg>
                         </Link>
                         <button
@@ -202,8 +233,13 @@ export default function SavedTopics() {
                           className="text-red-600 hover:text-red-800 p-2 rounded hover:bg-red-50 transition-colors"
                           title="Remover dos salvos"
                         >
-                          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
                           </svg>
                         </button>
                       </div>
@@ -228,10 +264,15 @@ export default function SavedTopics() {
             </h3>
             <p className="text-blue-800 text-sm">
               Ao navegar pelos tópicos do fórum, clique no ícone de bookmark (
-              <svg className="inline w-4 h-4 mx-1" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+              <svg
+                className="inline w-4 h-4 mx-1"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
               </svg>
-              ) para salvá-los para consulta futura. Os tópicos salvos ficam sincronizados com sua conta.
+              ) para salvá-los para consulta futura. Os tópicos salvos ficam
+              sincronizados com sua conta.
             </p>
           </div>
         </div>

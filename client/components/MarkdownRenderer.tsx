@@ -7,10 +7,10 @@ interface MarkdownRendererProps {
 export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
   const renderContent = () => {
     // Se o conteúdo já é HTML (contém tags), renderiza diretamente
-    if (content.includes('<') && content.includes('>')) {
+    if (content.includes("<") && content.includes(">")) {
       return content;
     }
-    
+
     // Caso contrário, converte markdown básico para HTML
     let processedContent = content;
 
@@ -58,8 +58,8 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
       className="prose max-w-none text-gray-700 leading-relaxed"
       dangerouslySetInnerHTML={{ __html: renderContent() }}
       style={{
-        wordBreak: 'break-word',
-        overflowWrap: 'break-word',
+        wordBreak: "break-word",
+        overflowWrap: "break-word",
       }}
     />
   );

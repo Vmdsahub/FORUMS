@@ -22,7 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
     // Check if user is logged in on app start
@@ -155,7 +155,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, isAdmin, login, register, logout }}>
+    <AuthContext.Provider
+      value={{ user, isLoading, isAdmin, login, register, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

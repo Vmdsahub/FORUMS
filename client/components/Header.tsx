@@ -36,12 +36,29 @@ export default function Header({ activeSection }: HeaderProps) {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [activeSearchQuery, setActiveSearchQuery] = useState("");
-  const [activeSearchCategories, setActiveSearchCategories] = useState<string[]>([]);
+  const [activeSearchCategories, setActiveSearchCategories] = useState<
+    string[]
+  >([]);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState([
-    { id: "1", message: "Novo comentário no tópico 'GPT-4 vs Claude'", time: "5 min atrás", type: "comment" },
-    { id: "2", message: "Seu tópico recebeu uma curtida", time: "2h atrás", type: "like" },
-    { id: "3", message: "Nova resposta no tópico salvo 'Midjourney vs DALL-E 3'", time: "1 dia atrás", type: "reply" }
+    {
+      id: "1",
+      message: "Novo comentário no tópico 'GPT-4 vs Claude'",
+      time: "5 min atrás",
+      type: "comment",
+    },
+    {
+      id: "2",
+      message: "Seu tópico recebeu uma curtida",
+      time: "2h atrás",
+      type: "like",
+    },
+    {
+      id: "3",
+      message: "Nova resposta no tópico salvo 'Midjourney vs DALL-E 3'",
+      time: "1 dia atrás",
+      type: "reply",
+    },
   ]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
@@ -79,39 +96,45 @@ export default function Header({ activeSection }: HeaderProps) {
   };
 
   const handleAccountClick = () => {
-    navigate('/account');
+    navigate("/account");
   };
 
   const handleSavedTopicsClick = () => {
-    navigate('/saved-topics');
+    navigate("/saved-topics");
   };
 
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setShowAdvancedDropdown(false);
       }
-      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target as Node)
+      ) {
         setShowNotifications(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   const handleDeleteNotification = (notificationId: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+    setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
   };
 
   const toggleCategory = (categoryId: string) => {
-    setSelectedCategories(prev =>
+    setSelectedCategories((prev) =>
       prev.includes(categoryId)
-        ? prev.filter(id => id !== categoryId)
-        : [...prev, categoryId]
+        ? prev.filter((id) => id !== categoryId)
+        : [...prev, categoryId],
     );
   };
 
@@ -119,7 +142,10 @@ export default function Header({ activeSection }: HeaderProps) {
     <header className="sticky top-0 z-50 w-full glass-minimal border-b border-black/5">
       <div className="container flex h-16 max-w-7xl items-center justify-between px-6 mx-auto">
         <div className="flex items-center">
-          <Link to="/" className="text-2xl font-bold text-black tracking-tight hover:text-gray-700 transition-colors">
+          <Link
+            to="/"
+            className="text-2xl font-bold text-black tracking-tight hover:text-gray-700 transition-colors"
+          >
             IA HUB
           </Link>
         </div>
@@ -134,15 +160,20 @@ export default function Header({ activeSection }: HeaderProps) {
                   placeholder="Buscar tópicos..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  onKeyPress={(e) => e.key === "Enter" && handleSearch()}
                   className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 bg-white"
                 />
                 <button
                   onClick={handleSearch}
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
                   </svg>
                 </button>
               </div>
@@ -154,8 +185,13 @@ export default function Header({ activeSection }: HeaderProps) {
                   className="px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
                   title="Busca Avançada"
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z" />
                   </svg>
                 </button>
 
@@ -163,7 +199,9 @@ export default function Header({ activeSection }: HeaderProps) {
                   <div className="absolute top-full left-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                     <div className="p-4 space-y-4">
                       <div className="space-y-2">
-                        <Label className="text-gray-900 font-medium text-sm">Filtrar por categorias:</Label>
+                        <Label className="text-gray-900 font-medium text-sm">
+                          Filtrar por categorias:
+                        </Label>
                         <div className="flex flex-wrap gap-2">
                           {categories.map((category) => (
                             <button
@@ -206,8 +244,13 @@ export default function Header({ activeSection }: HeaderProps) {
                 className="px-3 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors flex items-center"
                 title="Tópicos Salvos"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" />
                 </svg>
               </button>
             </div>
@@ -222,8 +265,14 @@ export default function Header({ activeSection }: HeaderProps) {
                 className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
                 title="Notificações"
               >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-gray-600">
-                  <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="text-gray-600"
+                >
+                  <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
                 </svg>
                 {notifications.length > 0 && (
                   <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
@@ -236,7 +285,9 @@ export default function Header({ activeSection }: HeaderProps) {
                 <div className="absolute top-full right-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
                   <div className="p-4">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="font-semibold text-gray-900">Notificações</h3>
+                      <h3 className="font-semibold text-gray-900">
+                        Notificações
+                      </h3>
                       {notifications.length > 0 && (
                         <button
                           onClick={() => setNotifications([])}
@@ -247,22 +298,38 @@ export default function Header({ activeSection }: HeaderProps) {
                       )}
                     </div>
                     {notifications.length === 0 ? (
-                      <p className="text-gray-500 text-center py-4">Nenhuma notificação</p>
+                      <p className="text-gray-500 text-center py-4">
+                        Nenhuma notificação
+                      </p>
                     ) : (
                       <div className="space-y-2 max-h-64 overflow-y-auto">
                         {notifications.map((notification) => (
-                          <div key={notification.id} className="flex items-start justify-between p-2 border border-gray-100 rounded-lg hover:bg-gray-50">
+                          <div
+                            key={notification.id}
+                            className="flex items-start justify-between p-2 border border-gray-100 rounded-lg hover:bg-gray-50"
+                          >
                             <div className="flex-1">
-                              <p className="text-sm text-gray-800">{notification.message}</p>
-                              <p className="text-xs text-gray-500 mt-1">{notification.time}</p>
+                              <p className="text-sm text-gray-800">
+                                {notification.message}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {notification.time}
+                              </p>
                             </div>
                             <button
-                              onClick={() => handleDeleteNotification(notification.id)}
+                              onClick={() =>
+                                handleDeleteNotification(notification.id)
+                              }
                               className="text-gray-400 hover:text-gray-600 p-1"
                               title="Excluir notificação"
                             >
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                              <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                              >
+                                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
                               </svg>
                             </button>
                           </div>
@@ -397,7 +464,10 @@ export default function Header({ activeSection }: HeaderProps) {
                     className="space-y-4 py-4"
                   >
                     <div className="space-y-2">
-                      <Label htmlFor="email" className="text-gray-900 font-medium">
+                      <Label
+                        htmlFor="email"
+                        className="text-gray-900 font-medium"
+                      >
                         Email
                       </Label>
                       <Input
@@ -411,7 +481,10 @@ export default function Header({ activeSection }: HeaderProps) {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="password" className="text-gray-900 font-medium">
+                      <Label
+                        htmlFor="password"
+                        className="text-gray-900 font-medium"
+                      >
                         Senha
                       </Label>
                       <Input
@@ -495,7 +568,10 @@ export default function Header({ activeSection }: HeaderProps) {
                     className="space-y-4 py-4"
                   >
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-gray-900 font-medium">
+                      <Label
+                        htmlFor="name"
+                        className="text-gray-900 font-medium"
+                      >
                         Nome
                       </Label>
                       <Input
@@ -509,7 +585,10 @@ export default function Header({ activeSection }: HeaderProps) {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="register-email" className="text-gray-900 font-medium">
+                      <Label
+                        htmlFor="register-email"
+                        className="text-gray-900 font-medium"
+                      >
                         Email
                       </Label>
                       <Input
@@ -561,7 +640,6 @@ export default function Header({ activeSection }: HeaderProps) {
           )}
         </div>
       </div>
-
 
       {/* Search Results Modal */}
       {showSearchResults && (

@@ -255,7 +255,7 @@ export const handleGetTopics: RequestHandler = (req, res) => {
   // Filter by search query (title contains the search term)
   if (search) {
     filteredTopics = filteredTopics.filter((topic) =>
-      topic.title.toLowerCase().includes(search.toLowerCase())
+      topic.title.toLowerCase().includes(search.toLowerCase()),
     );
   }
 
@@ -268,10 +268,10 @@ export const handleGetTopics: RequestHandler = (req, res) => {
 
   // Filter by multiple categories (advanced search)
   if (categories) {
-    const categoryList = categories.split(',').filter(Boolean);
+    const categoryList = categories.split(",").filter(Boolean);
     if (categoryList.length > 0) {
-      filteredTopics = filteredTopics.filter(
-        (topic) => categoryList.includes(topic.category),
+      filteredTopics = filteredTopics.filter((topic) =>
+        categoryList.includes(topic.category),
       );
     }
   }
@@ -482,8 +482,10 @@ export const handleDeleteTopic: RequestHandler = (req, res) => {
   }
 
   // Verificar se é admin
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ message: "Apenas administradores podem excluir tópicos" });
+  if (req.user.role !== "admin") {
+    return res
+      .status(403)
+      .json({ message: "Apenas administradores podem excluir tópicos" });
   }
 
   const { topicId } = req.params;
@@ -512,8 +514,10 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
   }
 
   // Verificar se é admin
-  if (req.user.role !== 'admin') {
-    return res.status(403).json({ message: "Apenas administradores podem excluir comentários" });
+  if (req.user.role !== "admin") {
+    return res
+      .status(403)
+      .json({ message: "Apenas administradores podem excluir comentários" });
   }
 
   const { commentId } = req.params;
@@ -530,7 +534,7 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
   const topic = topics.get(comment.topicId);
   if (topic) {
     topic.replies = Math.max(0, topic.replies - 1);
-    topic.comments = topic.comments.filter(c => c.id !== commentId);
+    topic.comments = topic.comments.filter((c) => c.id !== commentId);
   }
 
   res.json({ message: "Comentário excluído com sucesso" });
@@ -546,12 +550,12 @@ export const handleGetUserTopics: RequestHandler = (req, res) => {
 
   // Filter topics by current user
   const userTopics = Array.from(topics.values()).filter(
-    (topic) => topic.authorId === req.user!.id
+    (topic) => topic.authorId === req.user!.id,
   );
 
   // Sort by creation date (newest first)
-  userTopics.sort((a, b) =>
-    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  userTopics.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
 
   const startIndex = (page - 1) * limit;
@@ -562,8 +566,8 @@ export const handleGetUserTopics: RequestHandler = (req, res) => {
   const topicsForList = paginatedTopics.map(
     ({ content, comments, ...topic }) => ({
       ...topic,
-      lastActivity: `${topic.lastPost.date} às ${topic.lastPost.time}`
-    })
+      lastActivity: `${topic.lastPost.date} às ${topic.lastPost.time}`,
+    }),
   );
 
   res.json({

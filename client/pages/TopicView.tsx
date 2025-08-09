@@ -209,7 +209,9 @@ export default function TopicView() {
           if (!prev) return null;
           return {
             ...prev,
-            comments: prev.comments.filter((comment) => comment.id !== commentId),
+            comments: prev.comments.filter(
+              (comment) => comment.id !== commentId,
+            ),
             replies: prev.replies - 1,
           };
         });
@@ -270,7 +272,7 @@ export default function TopicView() {
 
     if (savedIds.includes(topic.id)) {
       // Remove from saved
-      const updatedIds = savedIds.filter(id => id !== topic.id);
+      const updatedIds = savedIds.filter((id) => id !== topic.id);
       localStorage.setItem(storageKey, JSON.stringify(updatedIds));
       setSavedTopicIds(updatedIds);
       toast.success("Tópico removido dos salvos");
@@ -405,10 +407,25 @@ export default function TopicView() {
                       ? "bg-yellow-50 text-yellow-600 hover:bg-yellow-100"
                       : "bg-gray-50 text-gray-600 hover:bg-gray-100"
                   }`}
-                  title={savedTopicIds.includes(topic.id) ? "Remover dos salvos" : "Salvar tópico"}
+                  title={
+                    savedTopicIds.includes(topic.id)
+                      ? "Remover dos salvos"
+                      : "Salvar tópico"
+                  }
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill={savedTopicIds.includes(topic.id) ? "currentColor" : "none"} stroke="currentColor">
-                    <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" strokeWidth="2"/>
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill={
+                      savedTopicIds.includes(topic.id) ? "currentColor" : "none"
+                    }
+                    stroke="currentColor"
+                  >
+                    <path
+                      d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"
+                      strokeWidth="2"
+                    />
                   </svg>
                   {savedTopicIds.includes(topic.id) ? "Salvo" : "Salvar"}
                 </button>
@@ -420,7 +437,12 @@ export default function TopicView() {
                 className="flex items-center gap-2 px-3 py-2 rounded-md text-red-600 hover:bg-red-50 transition-colors"
                 title="Excluir tópico (Admin)"
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
                 </svg>
                 Excluir Tópico
@@ -515,7 +537,11 @@ export default function TopicView() {
                         {isAdmin && (
                           <button
                             onClick={() => {
-                              if (confirm("Tem certeza que deseja excluir este comentário?")) {
+                              if (
+                                confirm(
+                                  "Tem certeza que deseja excluir este comentário?",
+                                )
+                              ) {
                                 handleDeleteComment(comment.id);
                               }
                             }}
