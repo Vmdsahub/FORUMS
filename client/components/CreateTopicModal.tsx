@@ -22,7 +22,7 @@ interface ForumCategory {
 
 interface CreateTopicModalProps {
   currentCategory: ForumCategory;
-  onTopicCreated?: (newTopic: any) => void;
+  onTopicCreated?: (newTopic: Topic) => void;
 }
 
 export default function CreateTopicModal({
