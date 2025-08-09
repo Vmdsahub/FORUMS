@@ -35,7 +35,7 @@ export function createServer() {
   const app = express();
 
   // Inicializar dados demo do sistema de comentários
-  initializeCommentsDemo();
+  initializeDemo();
 
   // Middleware
   app.use(cors());
