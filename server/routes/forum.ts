@@ -88,36 +88,105 @@ function organizeComments(comments: Comment[]): Comment[] {
   const commentMap = new Map<string, Comment>();
   const rootComments: Comment[] = [];
 
-  // Primeiro, criar o mapa de comentários
-  comments.forEach(comment => {
-    commentMap.set(comment.id, { ...comment, replies: [], repliesCount: 0 });
-  });
-
-  // Organizar hierárquicamente - garantir que os comentários raiz apareçam primeiro
-  const sortedComments = [...comments].sort((a, b) => {
-    // Se um tem parentId e outro não, o sem parentId vem primeiro
-    if (!a.parentId && b.parentId) return -1;
-    if (a.parentId && !b.parentId) return 1;
-    // Ordenar por data de criação
-    return new Date(a.date + ' ' + a.time).getTime() - new Date(b.date + ' ' + b.time).getTime();
-  });
-
-  sortedComments.forEach(comment => {
-    const commentWithReplies = commentMap.get(comment.id)!;
-
-    if (comment.parentId) {
-      const parent = commentMap.get(comment.parentId);
-      if (parent) {
-        if (!parent.replies) parent.replies = [];
-        parent.replies.push(commentWithReplies);
-        parent.repliesCount = (parent.repliesCount || 0) + 1;
-      } else {
-        // Se o pai não existe, tratar como comentário raiz
-        rootComments.push(commentWithReplies);
-      }
-    } else {
-      rootComments.push(commentWithReplies);
+  // Função para parsear data/hora e criar timestamp
+  function parseDateTime(date: string, time: string): number {
+    // Se a data for "Hoje", usar data atual
+    if (date === "Hoje") {
+      const today = new Date();
+      const [hours, minutes] = time.split(':');
+      today.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      return today.getTime();
     }
+
+    // Se a data for "Ontem", usar ontem
+    if (date === "Ontem") {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const [hours, minutes] = time.split(':');
+      yesterday.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      return yesterday.getTime();
+    }
+
+    // Para outras datas, tentar fazer parsing
+    try {
+      const dateTime = new Date(date + ' ' + time);
+      if (!isNaN(dateTime.getTime())) {
+        return dateTime.getTime();
+      }
+    } catch (e) {
+      // Se falhar, usar timestamp atual
+    }
+
+    return Date.now();
+  }
+
+  // Primeiro, criar o mapa de comentários com inicialização correta
+  comments.forEach(comment => {
+    commentMap.set(comment.id, {
+      ...comment,
+      replies: [],
+      repliesCount: 0
+    });
+  });
+
+  // Separar comentários raiz dos replies
+  const rootCommentsList: Comment[] = [];
+  const repliesList: Comment[] = [];
+
+  comments.forEach(comment => {
+    if (comment.parentId) {
+      repliesList.push(comment);
+    } else {
+      rootCommentsList.push(comment);
+    }
+  });
+
+  // Ordenar comentários raiz por data (mais antigos primeiro)
+  rootCommentsList.sort((a, b) => {
+    return parseDateTime(a.date, a.time) - parseDateTime(b.date, b.time);
+  });
+
+  // Ordenar replies por data (mais antigos primeiro)
+  repliesList.sort((a, b) => {
+    return parseDateTime(a.date, a.time) - parseDateTime(b.date, b.time);
+  });
+
+  // Adicionar comentários raiz ao resultado
+  rootCommentsList.forEach(comment => {
+    const commentWithReplies = commentMap.get(comment.id)!;
+    rootComments.push(commentWithReplies);
+  });
+
+  // Processar replies e anexar aos pais corretos
+  repliesList.forEach(reply => {
+    const replyWithReplies = commentMap.get(reply.id)!;
+    const parent = commentMap.get(reply.parentId!);
+
+    if (parent) {
+      if (!parent.replies) parent.replies = [];
+      parent.replies.push(replyWithReplies);
+      parent.repliesCount = (parent.repliesCount || 0) + 1;
+    }
+  });
+
+  // Função recursiva para ordenar replies dentro de cada nível
+  function sortRepliesRecursively(comment: Comment) {
+    if (comment.replies && comment.replies.length > 0) {
+      // Ordenar replies por data (mais antigos primeiro)
+      comment.replies.sort((a, b) => {
+        return parseDateTime(a.date, a.time) - parseDateTime(b.date, b.time);
+      });
+
+      // Aplicar recursivamente para sub-replies
+      comment.replies.forEach(reply => {
+        sortRepliesRecursively(reply);
+      });
+    }
+  }
+
+  // Aplicar ordenação recursiva para todos os comentários raiz
+  rootComments.forEach(comment => {
+    sortRepliesRecursively(comment);
   });
 
   return rootComments;
