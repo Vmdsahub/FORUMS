@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { Topic } from "@shared/forum";
+import { toast } from "sonner";
 import CreateTopicModal from "@/components/CreateTopicModal";
 
 interface NewsletterTopic {
