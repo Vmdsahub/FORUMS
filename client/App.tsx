@@ -53,7 +53,8 @@ interface ForumCategory {
   };
 }
 
-const weeklyNewsletters: WeeklyNewsletter[] = [
+// Demo newsletters disabled - use real data only
+const weeklyNewsletters: WeeklyNewsletter[] = [] || [
   {
     week: 3,
     startDate: "15 Jan",
