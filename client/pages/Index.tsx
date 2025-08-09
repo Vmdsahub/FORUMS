@@ -68,6 +68,7 @@ interface IndexProps {
 }
 
 export default function Index(props: IndexProps) {
+  const { user } = useAuth();
   const {
     activeSection,
     setActiveSection,
