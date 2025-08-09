@@ -20,7 +20,7 @@ export const handleGetUserStats: RequestHandler = (req, res) => {
 };
 
 export const handleGetAllBadges: RequestHandler = (req, res) => {
-  res.json({ badges: BADGES });
+  res.json({ badges: [] }); // Temporariamente vazio
 };
 
 // Helper para atualizar pontos (usado pelos outros módulos)
