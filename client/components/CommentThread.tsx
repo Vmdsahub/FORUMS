@@ -31,7 +31,7 @@ interface CommentThreadProps {
   maxDepth?: number;
 }
 
-export default function CommentThreadNew({
+export default function CommentThread({
   comment,
   topicId,
   topicAuthorId,
