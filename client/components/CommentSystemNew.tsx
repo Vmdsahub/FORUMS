@@ -365,23 +365,38 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
     }
   };
 
-  // Responder comentário
+  // Responder comentário com timeout
   const handleReply = async (parentId: string, content: string) => {
     if (!user) throw new Error("Login necessário");
 
-    const response = await fetch(`/api/comments/${topicId}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-      },
-      body: JSON.stringify({ content, parentId }),
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-    if (response.ok) {
-      await loadComments();
-    } else {
-      throw new Error("Erro ao responder");
+    try {
+      const response = await fetch(`/api/comments/${topicId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+        body: JSON.stringify({ content, parentId }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        await loadComments();
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Erro ao responder");
+      }
+    } catch (error) {
+      clearTimeout(timeoutId);
+      if (error.name === 'AbortError') {
+        throw new Error("Timeout - tente novamente");
+      }
+      throw error;
     }
   };
 
