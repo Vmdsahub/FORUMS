@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
+import UserPointsBadge from "@/components/UserPointsBadge";
 
 interface Comment {
   id: string;
@@ -87,10 +88,11 @@ export default function CommentThread({
             {comment.authorAvatar}
           </div>
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
               <span className="font-medium text-black">
                 {comment.author}
               </span>
+              <UserPointsBadge userId={comment.authorId} size="sm" />
               {comment.authorId === topicAuthorId && (
                 <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
                   Autor
