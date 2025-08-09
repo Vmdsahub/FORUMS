@@ -43,7 +43,7 @@ interface Topic {
 export default function TopicView() {
   const { topicId } = useParams<{ topicId: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [topic, setTopic] = useState<Topic | null>(null);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
