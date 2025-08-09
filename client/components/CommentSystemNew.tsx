@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
-import UserPointsBadge from "@/components/UserPointsBadge";
+import CommentUserProfile from "@/components/CommentUserProfile";
 import ReplyModal from "@/components/ReplyModal";
 
 interface Comment {
