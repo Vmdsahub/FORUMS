@@ -334,8 +334,8 @@ function initializeDemoData() {
   });
 }
 
-// Initialize demo data
-initializeDemoData();
+// Initialize demo data - disabled to use real data only
+// initializeDemoData();
 
 // Route handlers
 export const handleGetTopics: RequestHandler = (req, res) => {
