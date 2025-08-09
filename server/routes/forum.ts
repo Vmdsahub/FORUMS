@@ -120,6 +120,80 @@ function initializeDemoData() {
       updatedAt: new Date().toISOString(),
       comments: [],
     },
+    {
+      id: "3",
+      title: "ChatGPT 4o: Primeiras impressões",
+      description: "Review completo da nova versão do ChatGPT",
+      content: "O ChatGPT 4o trouxe várias melhorias interessantes...",
+      author: "AIExplorer",
+      authorId: "user_ai_explorer",
+      authorAvatar: "AE",
+      category: "ia-hub",
+      replies: 34,
+      views: 1256,
+      likes: 67,
+      isLiked: false,
+      lastPost: { author: "TechReviewer", date: "Hoje", time: "14:20" },
+      isHot: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      comments: [],
+    },
+    {
+      id: "4",
+      title: "Runway ML Gen-3: Geração de vídeo revolucionária",
+      description: "Como o Runway está mudando a criação de vídeos",
+      content: "A nova versão do Runway ML é impressionante...",
+      author: "VideoCreator",
+      authorId: "user_video_creator",
+      authorAvatar: "VC",
+      category: "video",
+      replies: 22,
+      views: 892,
+      likes: 38,
+      isLiked: false,
+      lastPost: { author: "FilmMaker", date: "Ontem", time: "16:30" },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      comments: [],
+    },
+    {
+      id: "5",
+      title: "GitHub Copilot vs Cursor: Comparativo de IDEs com IA",
+      description: "Qual ferramenta de coding com IA é melhor?",
+      content: "Testei ambas ferramentas por 2 semanas...",
+      author: "DevMaster",
+      authorId: "user_dev_master",
+      authorAvatar: "DM",
+      category: "vibe-coding",
+      replies: 45,
+      views: 2103,
+      likes: 89,
+      isLiked: false,
+      lastPost: { author: "CodeNinja", date: "Hoje", time: "09:15" },
+      isPinned: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      comments: [],
+    },
+    {
+      id: "6",
+      title: "Suno AI: Criando música com inteligência artificial",
+      description: "Tutorial completo para gerar músicas profissionais",
+      content: "O Suno AI é uma ferramenta incrível para criar música...",
+      author: "MusicProducer",
+      authorId: "user_music_producer",
+      authorAvatar: "MP",
+      category: "musica-audio",
+      replies: 18,
+      views: 756,
+      likes: 32,
+      isLiked: false,
+      lastPost: { author: "AudioEngineer", date: "Hoje", time: "12:45" },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      comments: [],
+    },
   ];
 
   demoTopics.forEach((topic) => {
@@ -173,21 +247,47 @@ export const handleGetTopics: RequestHandler = (req, res) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
   const category = req.query.category as string;
+  const search = req.query.search as string;
+  const categories = req.query.categories as string; // comma-separated category IDs
 
   let filteredTopics = Array.from(topics.values());
 
+  // Filter by search query (title contains the search term)
+  if (search) {
+    filteredTopics = filteredTopics.filter((topic) =>
+      topic.title.toLowerCase().includes(search.toLowerCase()),
+    );
+  }
+
+  // Filter by single category
   if (category) {
     filteredTopics = filteredTopics.filter(
       (topic) => topic.category === category,
     );
   }
 
-  // Sort by pinned first, then by creation date (newest first)
-  filteredTopics.sort((a, b) => {
-    if (a.isPinned && !b.isPinned) return -1;
-    if (!a.isPinned && b.isPinned) return 1;
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-  });
+  // Filter by multiple categories (advanced search)
+  if (categories) {
+    const categoryList = categories.split(",").filter(Boolean);
+    if (categoryList.length > 0) {
+      filteredTopics = filteredTopics.filter((topic) =>
+        categoryList.includes(topic.category),
+      );
+    }
+  }
+
+  // Sort by search relevance or default sorting
+  if (search) {
+    // Sort by likes (descending) when searching
+    filteredTopics.sort((a, b) => b.likes - a.likes);
+  } else {
+    // Sort by pinned first, then by creation date (newest first)
+    filteredTopics.sort((a, b) => {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }
 
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
@@ -203,6 +303,8 @@ export const handleGetTopics: RequestHandler = (req, res) => {
     total: filteredTopics.length,
     page,
     limit,
+    search: search || null,
+    categories: categories || null,
   });
 };
 
@@ -372,4 +474,106 @@ export const handleLikeComment: RequestHandler = (req, res) => {
   comment.isLiked = likeResult.isLiked;
 
   res.json(likeResult);
+};
+
+export const handleDeleteTopic: RequestHandler = (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Autenticação necessária" });
+  }
+
+  // Verificar se é admin
+  if (req.user.role !== "admin") {
+    return res
+      .status(403)
+      .json({ message: "Apenas administradores podem excluir tópicos" });
+  }
+
+  const { topicId } = req.params;
+  const topic = topics.get(topicId);
+
+  if (!topic) {
+    return res.status(404).json({ message: "Tópico não encontrado" });
+  }
+
+  // Remover tópico
+  topics.delete(topicId);
+
+  // Remover comentários associados
+  Array.from(comments.entries()).forEach(([commentId, comment]) => {
+    if (comment.topicId === topicId) {
+      comments.delete(commentId);
+    }
+  });
+
+  res.json({ message: "Tópico excluído com sucesso" });
+};
+
+export const handleDeleteComment: RequestHandler = (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Autenticação necessária" });
+  }
+
+  // Verificar se é admin
+  if (req.user.role !== "admin") {
+    return res
+      .status(403)
+      .json({ message: "Apenas administradores podem excluir comentários" });
+  }
+
+  const { commentId } = req.params;
+  const comment = comments.get(commentId);
+
+  if (!comment) {
+    return res.status(404).json({ message: "Comentário não encontrado" });
+  }
+
+  // Remover comentário
+  comments.delete(commentId);
+
+  // Atualizar contador de replies no tópico
+  const topic = topics.get(comment.topicId);
+  if (topic) {
+    topic.replies = Math.max(0, topic.replies - 1);
+    topic.comments = topic.comments.filter((c) => c.id !== commentId);
+  }
+
+  res.json({ message: "Comentário excluído com sucesso" });
+};
+
+export const handleGetUserTopics: RequestHandler = (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Autenticação necessária" });
+  }
+
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 20;
+
+  // Filter topics by current user
+  const userTopics = Array.from(topics.values()).filter(
+    (topic) => topic.authorId === req.user!.id,
+  );
+
+  // Sort by creation date (newest first)
+  userTopics.sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  );
+
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  const paginatedTopics = userTopics.slice(startIndex, endIndex);
+
+  // Remove content and comments for list view to reduce payload
+  const topicsForList = paginatedTopics.map(
+    ({ content, comments, ...topic }) => ({
+      ...topic,
+      lastActivity: `${topic.lastPost.date} às ${topic.lastPost.time}`,
+    }),
+  );
+
+  res.json({
+    topics: topicsForList,
+    total: userTopics.length,
+    page,
+    limit,
+  });
 };

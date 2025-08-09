@@ -1,6 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { Topic } from "@shared/forum";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import CreateTopicModal from "@/components/CreateTopicModal";
 
 interface NewsletterTopic {
@@ -68,7 +81,7 @@ interface IndexProps {
 }
 
 export default function Index(props: IndexProps) {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const {
     activeSection,
     setActiveSection,
@@ -83,6 +96,111 @@ export default function Index(props: IndexProps) {
     navigateWeek,
     currentNewsletter,
   } = props;
+
+  const [realTopics, setRealTopics] = useState<Topic[]>([]);
+  const [isLoadingTopics, setIsLoadingTopics] = useState(false);
+
+  // Estados para modais admin
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
+  const [newCategory, setNewCategory] = useState({ name: "", description: "" });
+  const [newNewsletter, setNewNewsletter] = useState({
+    title: "",
+    content: "",
+    readTime: "",
+  });
+
+  // Buscar tópicos reais da API quando uma categoria é selecionada
+  useEffect(() => {
+    if (selectedCategory && activeSection === "forum") {
+      fetchTopics(selectedCategory);
+    }
+  }, [selectedCategory, activeSection]);
+
+  const fetchTopics = async (category: string) => {
+    setIsLoadingTopics(true);
+    try {
+      const params = new URLSearchParams();
+      params.append("category", category);
+
+      const response = await fetch(`/api/topics?${params}`);
+      if (response.ok) {
+        const data = await response.json();
+        setRealTopics(data.topics);
+      } else {
+        toast.error("Erro ao carregar tópicos");
+      }
+    } catch (error) {
+      console.error("Error fetching topics:", error);
+      toast.error("Erro ao carregar tópicos");
+    } finally {
+      setIsLoadingTopics(false);
+    }
+  };
+
+  const handleTopicCreated = (newTopic: Topic) => {
+    console.log("Novo tópico criado na Index:", newTopic);
+    // Adicionar o novo tópico ao início da lista
+    setRealTopics((prev) => {
+      const updated = [newTopic, ...prev];
+      console.log("Tópicos atualizados:", updated);
+      return updated;
+    });
+    toast.success("Tópico criado com sucesso!");
+  };
+
+  const handleCreateCategory = () => {
+    if (!newCategory.name.trim() || !newCategory.description.trim()) {
+      toast.error("Preencha todos os campos");
+      return;
+    }
+
+    toast.success(
+      `Categoria "${newCategory.name}" criada! (Demo - não persistente)`,
+    );
+    setNewCategory({ name: "", description: "" });
+    setIsCategoryModalOpen(false);
+  };
+
+  const handleCreateNewsletter = () => {
+    if (!newNewsletter.title.trim() || !newNewsletter.content.trim()) {
+      toast.error("Preencha título e conteúdo");
+      return;
+    }
+
+    toast.success(
+      `Artigo "${newNewsletter.title}" criado! (Demo - não persistente)`,
+    );
+    setNewNewsletter({ title: "", content: "", readTime: "" });
+    setIsNewsletterModalOpen(false);
+  };
+
+  const handleDeleteTopic = async (topicId: string, topicTitle: string) => {
+    if (!isAdmin) return;
+
+    if (!confirm(`Tem certeza que deseja excluir o tópico "${topicTitle}"?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/topics/${topicId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
+
+      if (response.ok) {
+        setRealTopics((prev) => prev.filter((topic) => topic.id !== topicId));
+        toast.success("Tópico excluído com sucesso!");
+      } else {
+        toast.error("Erro ao excluir tópico");
+      }
+    } catch (error) {
+      console.error("Error deleting topic:", error);
+      toast.error("Erro ao excluir tópico");
+    }
+  };
 
   return (
     <main className="container max-w-7xl mx-auto px-6 py-12">
@@ -250,8 +368,30 @@ export default function Index(props: IndexProps) {
                             >
                               <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
                             </svg>
-                            Curtir artigo
+                            0
                           </button>
+                        </div>
+                      )}
+                      {isAdmin && (
+                        <div className="px-6 py-3 border-t border-gray-200 bg-gray-50">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                if (
+                                  confirm(
+                                    `Tem certeza que deseja excluir o artigo "${topic.title}"?`,
+                                  )
+                                ) {
+                                  toast.success(
+                                    "Artigo excluído! (Demo - não persistente)",
+                                  );
+                                }
+                              }}
+                              className="text-red-600 hover:text-red-800 px-3 py-1 rounded text-sm hover:bg-red-50 transition-colors"
+                            >
+                              🗑️ Excluir Artigo
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>
@@ -259,6 +399,107 @@ export default function Index(props: IndexProps) {
                 )}
               </div>
             ))}
+
+            {isAdmin && (
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <Dialog
+                  open={isNewsletterModalOpen}
+                  onOpenChange={setIsNewsletterModalOpen}
+                >
+                  <DialogTrigger asChild>
+                    <button className="w-full border-2 border-dashed border-gray-300 rounded-lg p-6 text-gray-600 hover:border-gray-400 hover:text-gray-800 transition-colors">
+                      + Adicionar Novo Artigo da Newsletter
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-white border border-gray-200 shadow-lg sm:max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle className="text-gray-900 text-xl font-semibold">
+                        Criar Novo Artigo da Newsletter
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="news-title"
+                          className="text-gray-900 font-medium"
+                        >
+                          Título do Artigo
+                        </Label>
+                        <Input
+                          id="news-title"
+                          value={newNewsletter.title}
+                          onChange={(e) =>
+                            setNewNewsletter({
+                              ...newNewsletter,
+                              title: e.target.value,
+                            })
+                          }
+                          placeholder="Ex: GPT-4 vs Claude: Análise Comparativa"
+                          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="news-time"
+                          className="text-gray-900 font-medium"
+                        >
+                          Tempo de Leitura
+                        </Label>
+                        <Input
+                          id="news-time"
+                          value={newNewsletter.readTime}
+                          onChange={(e) =>
+                            setNewNewsletter({
+                              ...newNewsletter,
+                              readTime: e.target.value,
+                            })
+                          }
+                          placeholder="Ex: 8 min"
+                          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="news-content"
+                          className="text-gray-900 font-medium"
+                        >
+                          Conteúdo do Artigo
+                        </Label>
+                        <Textarea
+                          id="news-content"
+                          value={newNewsletter.content}
+                          onChange={(e) =>
+                            setNewNewsletter({
+                              ...newNewsletter,
+                              content: e.target.value,
+                            })
+                          }
+                          placeholder="Escreva o conteúdo completo do artigo..."
+                          rows={8}
+                          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        />
+                      </div>
+                      <div className="flex justify-end gap-3 pt-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setIsNewsletterModalOpen(false)}
+                          className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                        >
+                          Cancelar
+                        </Button>
+                        <Button
+                          onClick={handleCreateNewsletter}
+                          className="bg-gray-900 text-white hover:bg-gray-800"
+                        >
+                          Criar Artigo
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              </div>
+            )}
           </div>
         )}
 
@@ -272,10 +513,91 @@ export default function Index(props: IndexProps) {
           >
             {/* Forum Categories */}
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-              <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+              <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-black">
                   Categorias do Fórum
                 </h2>
+                {isAdmin && (
+                  <Dialog
+                    open={isCategoryModalOpen}
+                    onOpenChange={setIsCategoryModalOpen}
+                  >
+                    <DialogTrigger asChild>
+                      <Button
+                        className="bg-gray-900 text-white hover:bg-gray-800 text-sm"
+                        size="sm"
+                      >
+                        + Nova Categoria
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-white border border-gray-200 shadow-lg sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle className="text-gray-900 text-xl font-semibold">
+                          Criar Nova Categoria
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="cat-name"
+                            className="text-gray-900 font-medium"
+                          >
+                            Nome da Categoria
+                          </Label>
+                          <Input
+                            id="cat-name"
+                            value={newCategory.name}
+                            onChange={(e) =>
+                              setNewCategory({
+                                ...newCategory,
+                                name: e.target.value,
+                              })
+                            }
+                            placeholder="Ex: Inteligência Artificial"
+                            className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="cat-desc"
+                            className="text-gray-900 font-medium"
+                          >
+                            Descrição
+                          </Label>
+                          <Textarea
+                            id="cat-desc"
+                            value={newCategory.description}
+                            onChange={(e) =>
+                              setNewCategory({
+                                ...newCategory,
+                                description: e.target.value,
+                              })
+                            }
+                            placeholder="Descreva o que será discutido nesta categoria"
+                            rows={3}
+                            className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                          />
+                        </div>
+                        <div className="flex justify-end gap-3 pt-4">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setIsCategoryModalOpen(false)}
+                            className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                          >
+                            Cancelar
+                          </Button>
+                          <Button
+                            onClick={handleCreateCategory}
+                            className="bg-gray-900 text-white hover:bg-gray-800"
+                          >
+                            Criar Categoria
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                )}
               </div>
 
               <div className="divide-y divide-gray-100">
@@ -304,32 +626,61 @@ export default function Index(props: IndexProps) {
                           </div>
                         </div>
 
-                        <div className="text-right text-sm text-gray-500 min-w-[200px]">
-                          <div className="mb-1">
-                            <span className="font-medium text-black">
-                              {category.totalTopics}
-                            </span>{" "}
-                            tópicos
-                            <span className="mx-2">•</span>
-                            <span className="font-medium text-black">
-                              {category.totalPosts}
-                            </span>{" "}
-                            posts
-                          </div>
-                          {category.lastPost && (
-                            <div className="text-xs">
-                              Último:{" "}
-                              <span className="font-medium">
-                                {category.lastPost.title}
-                              </span>
-                              <br />
-                              por{" "}
-                              <span className="font-medium">
-                                {category.lastPost.author}
+                        <div className="flex items-center gap-3">
+                          <div className="text-right text-sm text-gray-500 min-w-[200px]">
+                            <div className="mb-1">
+                              <span className="font-medium text-black">
+                                {category.totalTopics}
                               </span>{" "}
-                              • {category.lastPost.date} às{" "}
-                              {category.lastPost.time}
+                              tópicos
+                              <span className="mx-2">•</span>
+                              <span className="font-medium text-black">
+                                {category.totalPosts}
+                              </span>{" "}
+                              posts
                             </div>
+                            {category.lastPost && (
+                              <div className="text-xs">
+                                Último:{" "}
+                                <span className="font-medium">
+                                  {category.lastPost.title}
+                                </span>
+                                <br />
+                                por{" "}
+                                <span className="font-medium">
+                                  {category.lastPost.author}
+                                </span>{" "}
+                                • {category.lastPost.date} às{" "}
+                                {category.lastPost.time}
+                              </div>
+                            )}
+                          </div>
+                          {isAdmin && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (
+                                  confirm(
+                                    `Tem certeza que deseja excluir a categoria "${category.name}"?`,
+                                  )
+                                ) {
+                                  toast.success(
+                                    `Categoria "${category.name}" excluída! (Demo - não persistente)`,
+                                  );
+                                }
+                              }}
+                              className="text-red-600 hover:text-red-800 p-2 rounded hover:bg-red-50 transition-colors"
+                              title="Excluir categoria (Admin)"
+                            >
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                              >
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                              </svg>
+                            </button>
                           )}
                         </div>
                       </div>
@@ -351,7 +702,10 @@ export default function Index(props: IndexProps) {
           >
             {/* Back Button */}
             <button
-              onClick={() => props.setSelectedCategory(null)}
+              onClick={() => {
+                props.setSelectedCategory(null);
+                setRealTopics([]); // Limpar tópicos ao voltar
+              }}
               className="flex items-center gap-2 text-gray-600 hover:text-black transition-all duration-300 ease-in-out hover:translate-x-1"
             >
               <svg
@@ -381,40 +735,12 @@ export default function Index(props: IndexProps) {
                 </div>
                 {user && getSelectedCategoryData() && (
                   <CreateTopicModal
-                    currentCategory={getSelectedCategoryData()!}
-                    onTopicCreated={(newTopic) => {
-                      // Add the new topic to the current category without refresh
-                      const categoryData = getSelectedCategoryData();
-                      if (categoryData) {
-                        // Add to the beginning of the list (newest first)
-                        const newPost = {
-                          id: newTopic.id,
-                          title: newTopic.title,
-                          description: newTopic.description,
-                          author: newTopic.author,
-                          authorAvatar: newTopic.authorAvatar,
-                          replies: newTopic.replies || 0,
-                          views: newTopic.views || 0,
-                          lastPost: newTopic.lastPost,
-                          isPinned: newTopic.isPinned || false,
-                          isHot: newTopic.isHot || false,
-                        };
-
-                        // Insert at the beginning for non-pinned topics, or after pinned topics
-                        const pinnedCount = categoryData.posts.filter(
-                          (p) => p.isPinned,
-                        ).length;
-                        categoryData.posts.splice(pinnedCount, 0, newPost);
-                        categoryData.totalTopics += 1;
-
-                        // Force re-render by updating the state
-                        const updatedCategories = forumCategories.map((cat) =>
-                          cat.id === categoryData.id ? categoryData : cat,
-                        );
-                        // This will trigger a re-render
-                        window.location.reload();
-                      }
+                    currentCategory={{
+                      id: getSelectedCategoryData()!.id,
+                      name: getSelectedCategoryData()!.name,
+                      description: getSelectedCategoryData()!.description,
                     }}
+                    onTopicCreated={handleTopicCreated}
                   />
                 )}
               </div>
@@ -432,71 +758,109 @@ export default function Index(props: IndexProps) {
               </div>
 
               <div className="divide-y divide-gray-100">
-                {getSelectedCategoryData()?.posts.map((post) => (
-                  <Link
-                    key={post.id}
-                    to={`/topic/${post.id}`}
-                    className="block p-6 hover:bg-gray-50 transition-all duration-300 ease-in-out hover:-translate-y-0.5"
-                  >
-                    <div className="grid grid-cols-12 gap-4 items-center">
-                      <div className="col-span-6">
-                        <div className="flex items-start gap-4">
-                          <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
-                            {post.authorAvatar}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              {post.isPinned && (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                  Fixado
-                                </span>
-                              )}
-                              {post.isHot && (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                  🔥 Quente
-                                </span>
-                              )}
+                {isLoadingTopics ? (
+                  <div className="p-12 text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto mb-4"></div>
+                    <p className="text-gray-600">Carregando tópicos...</p>
+                  </div>
+                ) : realTopics.length === 0 ? (
+                  <div className="p-12 text-center text-gray-500">
+                    <p>Nenhum tópico encontrado nesta categoria.</p>
+                    <p className="text-sm mt-2">
+                      Seja o primeiro a criar um tópico!
+                    </p>
+                  </div>
+                ) : (
+                  realTopics.map((topic) => (
+                    <Link
+                      key={topic.id}
+                      to={`/topic/${topic.id}`}
+                      className="block p-6 hover:bg-gray-50 transition-all duration-300 ease-in-out hover:-translate-y-0.5"
+                    >
+                      <div className="grid grid-cols-12 gap-4 items-center">
+                        <div className="col-span-6">
+                          <div className="flex items-start gap-4">
+                            <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
+                              {topic.authorAvatar}
                             </div>
-                            <h3 className="font-semibold text-black hover:text-blue-600 cursor-pointer truncate transition-colors duration-200">
-                              {post.title}
-                            </h3>
-                            <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                              {post.description}
-                            </p>
-                            <div className="text-xs text-gray-500 mt-2">
-                              por{" "}
-                              <span className="font-medium">{post.author}</span>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                {topic.isPinned && (
+                                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    Fixado
+                                  </span>
+                                )}
+                                {topic.isHot && (
+                                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    🔥 Quente
+                                  </span>
+                                )}
+                              </div>
+                              <h3 className="font-semibold text-black hover:text-blue-600 cursor-pointer truncate transition-colors duration-200">
+                                {topic.title}
+                              </h3>
+                              <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                                {topic.description}
+                              </p>
+                              <div className="flex items-center justify-between mt-2">
+                                <div className="text-xs text-gray-500">
+                                  por{" "}
+                                  <span className="font-medium">
+                                    {topic.author}
+                                  </span>
+                                </div>
+                                {isAdmin && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      handleDeleteTopic(topic.id, topic.title);
+                                    }}
+                                    className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50 transition-colors"
+                                    title="Excluir tópico (Admin)"
+                                  >
+                                    <svg
+                                      width="14"
+                                      height="14"
+                                      viewBox="0 0 24 24"
+                                      fill="currentColor"
+                                    >
+                                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                    </svg>
+                                  </button>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="col-span-2 text-center">
-                        <div className="font-semibold text-black">
-                          {post.replies}
+                        <div className="col-span-2 text-center">
+                          <div className="font-semibold text-black">
+                            {topic.replies}
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="col-span-2 text-center">
-                        <div className="font-semibold text-black">
-                          {post.views.toLocaleString()}
+                        <div className="col-span-2 text-center">
+                          <div className="font-semibold text-black">
+                            {topic.views.toLocaleString()}
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="col-span-2 text-center text-sm">
-                        <div className="text-gray-600">
-                          por{" "}
-                          <span className="font-medium text-black">
-                            {post.lastPost.author}
-                          </span>
-                        </div>
-                        <div className="text-gray-500 text-xs">
-                          {post.lastPost.date} às {post.lastPost.time}
+                        <div className="col-span-2 text-center text-sm">
+                          <div className="text-gray-600">
+                            por{" "}
+                            <span className="font-medium text-black">
+                              {topic.lastPost.author}
+                            </span>
+                          </div>
+                          <div className="text-gray-500 text-xs">
+                            {topic.lastPost.date} às {topic.lastPost.time}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ))
+                )}
               </div>
             </div>
 

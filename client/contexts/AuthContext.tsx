@@ -5,6 +5,7 @@ import { User, AuthResponse, ErrorResponse } from "@shared/auth";
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
+  isAdmin: boolean;
   login: (email: string, password: string, captcha: string) => Promise<boolean>;
   register: (
     name: string,
@@ -20,6 +21,8 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const isAdmin = user?.role === "admin";
 
   useEffect(() => {
     // Check if user is logged in on app start
@@ -152,7 +155,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout }}>
+    <AuthContext.Provider
+      value={{ user, isLoading, isAdmin, login, register, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

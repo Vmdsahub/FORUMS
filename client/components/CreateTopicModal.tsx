@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import { Topic } from "@shared/forum";
 import RichTextEditor from "@/components/RichTextEditor";
 
 interface ForumCategory {
@@ -21,7 +22,7 @@ interface ForumCategory {
 
 interface CreateTopicModalProps {
   currentCategory: ForumCategory;
-  onTopicCreated?: (newTopic: any) => void;
+  onTopicCreated?: (newTopic: Topic) => void;
 }
 
 export default function CreateTopicModal({
@@ -71,13 +72,17 @@ export default function CreateTopicModal({
 
       if (response.ok) {
         const newTopic = await response.json();
+        console.log("Tópico criado:", newTopic);
         toast.success("Tópico criado com sucesso!");
         setFormData({ title: "", description: "", content: "" });
         setIsOpen(false);
         onTopicCreated?.(newTopic);
       } else {
-        const error = await response.json();
-        toast.error(error.message || "Erro ao criar tópico");
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: "Erro desconhecido" }));
+        console.error("Erro ao criar tópico:", errorData);
+        toast.error(errorData.message || "Erro ao criar tópico");
       }
     } catch (error) {
       console.error("Error creating topic:", error);
@@ -111,22 +116,22 @@ export default function CreateTopicModal({
           Criar Tópico
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl glass-minimal border border-black/10">
+      <DialogContent className="sm:max-w-2xl bg-white border border-gray-200 shadow-lg">
         <DialogHeader>
-          <DialogTitle className="text-black">
+          <DialogTitle className="text-gray-900 text-xl font-semibold">
             Criar Novo Tópico em {currentCategory.name}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
-            <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
-              <strong>Categoria:</strong> {currentCategory.name} -{" "}
-              {currentCategory.description}
+            <div className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg border border-gray-200">
+              <strong className="text-gray-900">Categoria:</strong>{" "}
+              {currentCategory.name} - {currentCategory.description}
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-black/80">
+            <Label htmlFor="title" className="text-gray-900 font-medium">
               Título
             </Label>
             <Input
@@ -134,7 +139,7 @@ export default function CreateTopicModal({
               placeholder="Digite o título do tópico"
               value={formData.title}
               onChange={(e) => handleInputChange("title", e.target.value)}
-              className="border-black/20 focus:border-black/40"
+              className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
               required
               maxLength={100}
             />
@@ -144,7 +149,7 @@ export default function CreateTopicModal({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-black/80">
+            <Label htmlFor="description" className="text-gray-900 font-medium">
               Descrição
             </Label>
             <Input
@@ -152,7 +157,7 @@ export default function CreateTopicModal({
               placeholder="Breve descrição do tópico"
               value={formData.description}
               onChange={(e) => handleInputChange("description", e.target.value)}
-              className="border-black/20 focus:border-black/40"
+              className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
               required
               maxLength={200}
             />
@@ -162,7 +167,7 @@ export default function CreateTopicModal({
           </div>
 
           <div className="space-y-2">
-            <Label className="text-black/80">Conteúdo</Label>
+            <Label className="text-gray-900 font-medium">Conteúdo</Label>
             <RichTextEditor
               value={formData.content}
               onChange={(value) => handleInputChange("content", value)}
@@ -178,12 +183,13 @@ export default function CreateTopicModal({
               type="button"
               variant="outline"
               onClick={() => setIsOpen(false)}
+              className="border-gray-300 text-gray-700 hover:bg-gray-50"
             >
               Cancelar
             </Button>
             <Button
               type="submit"
-              className="bg-black text-white hover:bg-black/90 font-medium"
+              className="bg-gray-900 text-white hover:bg-gray-800 font-medium"
               disabled={isSubmitting}
             >
               {isSubmitting ? "Criando..." : "Criar Tópico"}

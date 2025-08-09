@@ -18,7 +18,13 @@ function hashPassword(password: string): string {
 // In production, use a proper database
 const users: Map<
   string,
-  { id: string; name: string; email: string; password: string }
+  {
+    id: string;
+    name: string;
+    email: string;
+    password: string;
+    role?: "admin" | "user";
+  }
 > = new Map();
 const tokens: Map<string, string> = new Map(); // token -> userId
 
@@ -29,6 +35,17 @@ users.set(demoUserId, {
   name: "João Silva",
   email: "demo@exemplo.com",
   password: hashPassword("123456"), // password: 123456
+  role: "user",
+});
+
+// Add admin user Vitoca
+const adminUserId = "admin_vitoca_456";
+users.set(adminUserId, {
+  id: adminUserId,
+  name: "Vitoca",
+  email: "vitoca@admin.com",
+  password: hashPassword("admin123"), // password: admin123
+  role: "admin",
 });
 
 // Validation schemas
@@ -77,6 +94,7 @@ export const authenticateToken: RequestHandler = (req, res, next) => {
     id: user.id,
     name: user.name,
     email: user.email,
+    role: user.role || "user",
   };
 
   next();
@@ -107,6 +125,7 @@ export const handleLogin: RequestHandler = (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role || "user",
       },
       token,
     };
@@ -152,6 +171,7 @@ export const handleRegister: RequestHandler = (req, res) => {
       name,
       email,
       password: hashPassword(password),
+      role: "user" as const,
     };
 
     users.set(userId, newUser);
@@ -165,6 +185,7 @@ export const handleRegister: RequestHandler = (req, res) => {
         id: newUser.id,
         name: newUser.name,
         email: newUser.email,
+        role: newUser.role,
       },
       token,
     };

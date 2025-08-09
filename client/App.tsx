@@ -3,6 +3,8 @@ import { useState } from "react";
 import Header from "@/components/Header";
 import TopicView from "@/pages/TopicView";
 import Index from "@/pages/Index";
+import Account from "@/pages/Account";
+import SavedTopics from "@/pages/SavedTopics";
 import NotFound from "@/pages/NotFound";
 
 interface NewsletterTopic {
@@ -89,14 +91,14 @@ const weeklyNewsletters: WeeklyNewsletter[] = [
         id: 4,
         title: "AI Art Revolution: Novas Ferramentas Transformam Criatividade",
         content:
-          "A indústria criativa está passando por uma revolução sem precedentes. Novas ferramentas de IA estão democratizando o acesso à criação artística profissional.\n\nPrincipais avanços:\n• DALL-E 3 com precisão fotorrealística\n• Midjourney v6 com controle de composição\n• Stable Diffusion XL para uso comercial\n• RunwayML para criação de vídeos\n\nImpacto no mercado:\n• Redução de 70% no tempo de produção\n• Democratização de ferramentas profissionais\n• Novos modelos de negócio emergindo\n• Questões éticas sobre autoria\n\nEstes desenvolvimentos estão redefinindo completamente o que significa ser criativo na era digital.",
+          "A indústria criativa está passando por uma revolução sem precedentes. Novas ferramentas de IA estão democratizando o acesso à criação artística profissional.\n\nPrincipais avanços:\n• DALL-E 3 com precisão fotorrealística\n• Midjourney v6 com controle de composição\n• Stable Diffusion XL para uso comercial\n• RunwayML para criação de vídeos\n\nImpacto no mercado:\n• Redução de 70% no tempo de produção\n• Democratização de ferramentas profissionais\n• Novos modelos de neg��cio emergindo\n• Questões éticas sobre autoria\n\nEstes desenvolvimentos estão redefinindo completamente o que significa ser criativo na era digital.",
         readTime: "10 min",
       },
       {
         id: 5,
         title: "Open Source AI: A Nova Fronteira da Inovação",
         content:
-          "O movimento open source em IA está ganhando momentum. Modelos como Llama 2, Mistral e Code Llama estão competindo diretamente com soluções proprietárias.\n\nVantagens do Open Source:\n• Transparência total dos algoritmos\n• Customização para casos específicos\n• Sem dependência de vendors\n• Comunidade ativa de desenvolvedores\n\nDesafios:\n• Recursos computacionais necessários\n• Complexidade de implementação\n• Suporte limitado\n• Questões de responsabilidade\n\nO futuro da IA pode estar na democratização através do código aberto.",
+          "O movimento open source em IA está ganhando momentum. Modelos como Llama 2, Mistral e Code Llama estão competindo diretamente com soluções proprietárias.\n\nVantagens do Open Source:\n• Transparência total dos algoritmos\n• Customização para casos específicos\n��� Sem dependência de vendors\n• Comunidade ativa de desenvolvedores\n\nDesafios:\n• Recursos computacionais necessários\n• Complexidade de implementação\n• Suporte limitado\n• Questões de responsabilidade\n\nO futuro da IA pode estar na democratização através do código aberto.",
         readTime: "7 min",
       },
     ],
@@ -304,7 +306,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
-        <Header />
+        <Header activeSection={activeSection} />
         <Routes>
           <Route
             path="/"
@@ -329,6 +331,8 @@ function App() {
             }
           />
           <Route path="/topic/:topicId" element={<TopicView />} />
+          <Route path="/account" element={<Account />} />
+          <Route path="/saved-topics" element={<SavedTopics />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

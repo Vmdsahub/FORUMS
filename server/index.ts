@@ -17,6 +17,9 @@ import {
   handleCreateComment,
   handleLikeTopic,
   handleLikeComment,
+  handleDeleteTopic,
+  handleDeleteComment,
+  handleGetUserTopics,
 } from "./routes/forum";
 import { uploadMiddleware, handleUpload } from "./routes/upload";
 
@@ -50,6 +53,7 @@ export function createServer() {
 
   // Forum routes
   app.get("/api/topics", handleGetTopics);
+  app.get("/api/topics/user", authenticateToken, handleGetUserTopics);
   app.get("/api/topics/:topicId", handleGetTopic);
   app.post("/api/topics", authenticateToken, handleCreateTopic);
   app.post(
@@ -62,6 +66,14 @@ export function createServer() {
     "/api/comments/:commentId/like",
     authenticateToken,
     handleLikeComment,
+  );
+
+  // Admin routes
+  app.delete("/api/topics/:topicId", authenticateToken, handleDeleteTopic);
+  app.delete(
+    "/api/comments/:commentId",
+    authenticateToken,
+    handleDeleteComment,
   );
 
   // Upload route

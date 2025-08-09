@@ -43,15 +43,30 @@ interface Topic {
 export default function TopicView() {
   const { topicId } = useParams<{ topicId: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [topic, setTopic] = useState<Topic | null>(null);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [savedTopicIds, setSavedTopicIds] = useState<string[]>([]);
 
   useEffect(() => {
     fetchTopic();
   }, [topicId]);
+
+  // Load saved topics
+  useEffect(() => {
+    if (user) {
+      const saved = localStorage.getItem(`savedTopics_${user.email}`);
+      if (saved) {
+        try {
+          setSavedTopicIds(JSON.parse(saved));
+        } catch (error) {
+          console.error("Error loading saved topics:", error);
+        }
+      }
+    }
+  }, [user]);
 
   const fetchTopic = async () => {
     try {
@@ -178,6 +193,98 @@ export default function TopicView() {
     }
   };
 
+  const handleDeleteComment = async (commentId: string) => {
+    if (!isAdmin) return;
+
+    try {
+      const response = await fetch(`/api/comments/${commentId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
+
+      if (response.ok) {
+        setTopic((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            comments: prev.comments.filter(
+              (comment) => comment.id !== commentId,
+            ),
+            replies: prev.replies - 1,
+          };
+        });
+        toast.success("Comentário excluído!");
+      } else {
+        toast.error("Erro ao excluir comentário");
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      toast.error("Erro ao excluir comentário");
+    }
+  };
+
+  const handleDeleteTopic = async () => {
+    if (!isAdmin || !topic) return;
+
+    if (!confirm(`Tem certeza que deseja excluir o tópico "${topic.title}"?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/topics/${topicId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
+
+      if (response.ok) {
+        toast.success("Tópico excluído com sucesso!");
+        navigate("/"); // Volta para a página principal
+      } else {
+        toast.error("Erro ao excluir tópico");
+      }
+    } catch (error) {
+      console.error("Error deleting topic:", error);
+      toast.error("Erro ao excluir tópico");
+    }
+  };
+
+  const handleSaveTopic = () => {
+    if (!user || !topic) {
+      toast.error("Faça login para salvar tópicos");
+      return;
+    }
+
+    const storageKey = `savedTopics_${user.email}`;
+    const saved = localStorage.getItem(storageKey);
+    let savedIds: string[] = [];
+
+    if (saved) {
+      try {
+        savedIds = JSON.parse(saved);
+      } catch (error) {
+        console.error("Error parsing saved topics:", error);
+      }
+    }
+
+    if (savedIds.includes(topic.id)) {
+      // Remove from saved
+      const updatedIds = savedIds.filter((id) => id !== topic.id);
+      localStorage.setItem(storageKey, JSON.stringify(updatedIds));
+      setSavedTopicIds(updatedIds);
+      toast.success("Tópico removido dos salvos");
+    } else {
+      // Add to saved
+      const updatedIds = [...savedIds, topic.id];
+      localStorage.setItem(storageKey, JSON.stringify(updatedIds));
+      setSavedTopicIds(updatedIds);
+      toast.success(`"${topic.title}" salvo com sucesso!`);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -271,26 +378,76 @@ export default function TopicView() {
             <MarkdownRenderer content={topic.content} />
           </div>
 
-          {/* Like Button */}
-          <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
-            <button
-              onClick={handleLikeTopic}
-              className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
-                topic.isLiked
-                  ? "bg-red-50 text-red-600 hover:bg-red-100"
-                  : "bg-gray-50 text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 16 16"
-                fill="currentColor"
+          {/* Actions */}
+          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleLikeTopic}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                  topic.isLiked
+                    ? "bg-red-50 text-red-600 hover:bg-red-100"
+                    : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                }`}
               >
-                <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
-              </svg>
-              {topic.likes} {topic.likes === 1 ? "curtida" : "curtidas"}
-            </button>
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                >
+                  <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
+                </svg>
+                {topic.likes}
+              </button>
+              {user && (
+                <button
+                  onClick={handleSaveTopic}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                    savedTopicIds.includes(topic.id)
+                      ? "bg-yellow-50 text-yellow-600 hover:bg-yellow-100"
+                      : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                  }`}
+                  title={
+                    savedTopicIds.includes(topic.id)
+                      ? "Remover dos salvos"
+                      : "Salvar tópico"
+                  }
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill={
+                      savedTopicIds.includes(topic.id) ? "currentColor" : "none"
+                    }
+                    stroke="currentColor"
+                  >
+                    <path
+                      d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"
+                      strokeWidth="2"
+                    />
+                  </svg>
+                  {savedTopicIds.includes(topic.id) ? "Salvo" : "Salvar"}
+                </button>
+              )}
+            </div>
+            {isAdmin && (
+              <button
+                onClick={handleDeleteTopic}
+                className="flex items-center gap-2 px-3 py-2 rounded-md text-red-600 hover:bg-red-50 transition-colors"
+                title="Excluir tópico (Admin)"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                </svg>
+                Excluir Tópico
+              </button>
+            )}
           </div>
         </div>
 
@@ -358,24 +515,50 @@ export default function TopicView() {
                       <div className="text-gray-700 mb-3 leading-relaxed">
                         <MarkdownRenderer content={comment.content} />
                       </div>
-                      <button
-                        onClick={() => handleLikeComment(comment.id)}
-                        className={`flex items-center gap-1 text-sm px-2 py-1 rounded transition-colors ${
-                          comment.isLiked
-                            ? "text-red-600 bg-red-50 hover:bg-red-100"
-                            : "text-gray-500 hover:text-red-600 hover:bg-red-50"
-                        }`}
-                      >
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 16 16"
-                          fill="currentColor"
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleLikeComment(comment.id)}
+                          className={`flex items-center gap-1 text-sm px-2 py-1 rounded transition-colors ${
+                            comment.isLiked
+                              ? "text-red-600 bg-red-50 hover:bg-red-100"
+                              : "text-gray-500 hover:text-red-600 hover:bg-red-50"
+                          }`}
                         >
-                          <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
-                        </svg>
-                        {comment.likes}
-                      </button>
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                          >
+                            <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
+                          </svg>
+                          {comment.likes}
+                        </button>
+                        {isAdmin && (
+                          <button
+                            onClick={() => {
+                              if (
+                                confirm(
+                                  "Tem certeza que deseja excluir este comentário?",
+                                )
+                              ) {
+                                handleDeleteComment(comment.id);
+                              }
+                            }}
+                            className="flex items-center gap-1 text-sm px-2 py-1 rounded transition-colors text-red-600 hover:bg-red-50"
+                            title="Excluir comentário (Admin)"
+                          >
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                            >
+                              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
