@@ -35,7 +35,7 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
           icon: "https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100",
           requiredPoints: 5,
           color: "purple",
-        }
+        },
       ],
       nextBadge: {
         id: "participante",
@@ -78,8 +78,8 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
           icon: "💎",
           requiredPoints: 200,
           color: "cyan",
-        }
-      ]
+        },
+      ],
     };
 
     setTimeout(() => {
@@ -106,7 +106,7 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
 
   const getBadgeColorClasses = (color: string, earned: boolean) => {
     const baseClasses = earned ? "" : "opacity-30 grayscale";
-    
+
     switch (color) {
       case "purple":
         return `bg-purple-100 border-purple-200 ${baseClasses}`;
@@ -133,15 +133,16 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
             <div>
               <h4 className="font-semibold text-black">Próximo Objetivo</h4>
               <p className="text-sm text-gray-600">
-                Faltam {userStats.pointsToNext} pontos para conquistar "{userStats.nextBadge.name}"
+                Faltam {userStats.pointsToNext} pontos para conquistar "
+                {userStats.nextBadge.name}"
               </p>
             </div>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
+            <div
               className="bg-blue-500 h-2 rounded-full transition-all duration-300"
               style={{
-                width: `${Math.max(0, Math.min(100, ((userStats.nextBadge.requiredPoints - userStats.pointsToNext) / userStats.nextBadge.requiredPoints) * 100))}%`
+                width: `${Math.max(0, Math.min(100, ((userStats.nextBadge.requiredPoints - userStats.pointsToNext) / userStats.nextBadge.requiredPoints) * 100))}%`,
               }}
             ></div>
           </div>
@@ -151,8 +152,8 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
       {/* Grid de badges */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {userStats.allBadges.map((badge) => {
-          const isEarned = userStats.badges.some(b => b.id === badge.id);
-          
+          const isEarned = userStats.badges.some((b) => b.id === badge.id);
+
           return (
             <div
               key={badge.id}
@@ -160,14 +161,22 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
             >
               {isEarned && (
                 <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  <svg
+                    className="w-4 h-4 text-white"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </div>
               )}
-              
+
               <div className="mb-2">
-                {badge.icon.startsWith('http') ? (
+                {badge.icon.startsWith("http") ? (
                   <img
                     src={badge.icon}
                     alt={badge.name}
@@ -177,13 +186,15 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
                   <div className="text-3xl">{badge.icon}</div>
                 )}
               </div>
-              
-              <h5 className="font-semibold text-sm text-black mb-1">{badge.name}</h5>
+
+              <h5 className="font-semibold text-sm text-black mb-1">
+                {badge.name}
+              </h5>
               <p className="text-xs text-gray-600 mb-2">{badge.description}</p>
               <div className="text-xs text-gray-500">
                 {badge.requiredPoints} pontos
               </div>
-              
+
               {!isEarned && userStats.points < badge.requiredPoints && (
                 <div className="text-xs text-red-500 mt-1">
                   Faltam {badge.requiredPoints - userStats.points} pts
@@ -199,22 +210,32 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
         <h4 className="font-semibold text-black mb-3">Suas Estatísticas</h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
           <div>
-            <div className="text-2xl font-bold text-blue-600">{userStats.points}</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {userStats.points}
+            </div>
             <div className="text-sm text-gray-600">Pontos Totais</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-purple-600">{userStats.badges.length}</div>
+            <div className="text-2xl font-bold text-purple-600">
+              {userStats.badges.length}
+            </div>
             <div className="text-sm text-gray-600">Badges Conquistados</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-green-600">
-              {Math.round((userStats.badges.length / userStats.allBadges.length) * 100)}%
+              {Math.round(
+                (userStats.badges.length / userStats.allBadges.length) * 100,
+              )}
+              %
             </div>
             <div className="text-sm text-gray-600">Progresso</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-orange-600">
-              #{userStats.allBadges.findIndex(b => userStats.points < b.requiredPoints) + 1}
+              #
+              {userStats.allBadges.findIndex(
+                (b) => userStats.points < b.requiredPoints,
+              ) + 1}
             </div>
             <div className="text-sm text-gray-600">Ranking</div>
           </div>

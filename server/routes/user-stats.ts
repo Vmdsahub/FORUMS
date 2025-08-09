@@ -28,14 +28,14 @@ export function updateUserPoints(userId: string, points: number) {
   if (!userStats.has(userId)) {
     userStats.set(userId, { points: 0, badges: [] });
   }
-  
+
   const stats = userStats.get(userId)!;
   stats.points += points;
-  
+
   // Atualizar badges
   const currentBadges = calculateUserBadges(stats.points);
-  stats.badges = currentBadges.map(b => b.id);
-  
+  stats.badges = currentBadges.map((b) => b.id);
+
   return stats;
 }
 

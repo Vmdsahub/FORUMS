@@ -16,11 +16,11 @@ interface UserPointsBadgeProps {
   size?: "sm" | "md" | "lg";
 }
 
-export default function UserPointsBadge({ 
-  userId, 
-  showPoints = true, 
+export default function UserPointsBadge({
+  userId,
+  showPoints = true,
   showBadges = true,
-  size = "sm"
+  size = "sm",
 }: UserPointsBadgeProps) {
   const [userStats, setUserStats] = useState<{
     points: number;
@@ -41,10 +41,10 @@ export default function UserPointsBadge({
           icon: "https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100",
           requiredPoints: 5,
           color: "purple",
-        }
-      ]
+        },
+      ],
     };
-    
+
     setTimeout(() => {
       setUserStats(mockStats);
       setIsLoading(false);
@@ -78,36 +78,42 @@ export default function UserPointsBadge({
   return (
     <div className={`flex items-center ${classes.gap}`}>
       {showPoints && (
-        <span className={`${classes.text} text-amber-600 font-medium bg-amber-50 px-2 py-0.5 rounded-full`}>
+        <span
+          className={`${classes.text} text-amber-600 font-medium bg-amber-50 px-2 py-0.5 rounded-full`}
+        >
           {userStats.points} pts
         </span>
       )}
-      
+
       {showBadges && userStats.badges.length > 0 && (
         <div className={`flex items-center ${classes.gap}`}>
-          {userStats.badges.slice(0, 2).map((badge) => ( // Mostrar no máximo 2 badges
-            <div
-              key={badge.id}
-              className="relative group"
-              title={`${badge.name}: ${badge.description}`}
-            >
-              {badge.icon.startsWith('http') ? (
-                <img
-                  src={badge.icon}
-                  alt={badge.name}
-                  className={`${classes.badge} object-contain`}
-                />
-              ) : (
-                <span className={`${classes.text}`}>{badge.icon}</span>
-              )}
-              
-              {/* Tooltip */}
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                {badge.name}
+          {userStats.badges.slice(0, 2).map(
+            (
+              badge, // Mostrar no máximo 2 badges
+            ) => (
+              <div
+                key={badge.id}
+                className="relative group"
+                title={`${badge.name}: ${badge.description}`}
+              >
+                {badge.icon.startsWith("http") ? (
+                  <img
+                    src={badge.icon}
+                    alt={badge.name}
+                    className={`${classes.badge} object-contain`}
+                  />
+                ) : (
+                  <span className={`${classes.text}`}>{badge.icon}</span>
+                )}
+
+                {/* Tooltip */}
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                  {badge.name}
+                </div>
               </div>
-            </div>
-          ))}
-          
+            ),
+          )}
+
           {userStats.badges.length > 2 && (
             <span className={`${classes.text} text-gray-500`}>
               +{userStats.badges.length - 2}

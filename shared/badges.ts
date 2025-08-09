@@ -67,11 +67,11 @@ export const POINTS = {
 } as const;
 
 export function calculateUserBadges(points: number): Badge[] {
-  return BADGES.filter(badge => points >= badge.requiredPoints);
+  return BADGES.filter((badge) => points >= badge.requiredPoints);
 }
 
 export function getNextBadge(points: number): Badge | null {
-  const nextBadge = BADGES.find(badge => points < badge.requiredPoints);
+  const nextBadge = BADGES.find((badge) => points < badge.requiredPoints);
   return nextBadge || null;
 }
 

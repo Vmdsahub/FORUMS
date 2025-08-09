@@ -31,7 +31,15 @@ interface CommentItemProps {
 }
 
 // COMPONENTE INDIVIDUAL DE COMENTÁRIO
-function CommentItem({ comment, depth, topicId, topicAuthorId, onReply, onLike, onDelete }: CommentItemProps) {
+function CommentItem({
+  comment,
+  depth,
+  topicId,
+  topicAuthorId,
+  onReply,
+  onLike,
+  onDelete,
+}: CommentItemProps) {
   const { user, isAdmin } = useAuth();
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyText, setReplyText] = useState("");
@@ -76,12 +84,12 @@ function CommentItem({ comment, depth, topicId, topicAuthorId, onReply, onLike, 
   const hasReplies = comment.replies && comment.replies.length > 0;
 
   return (
-    <div className={`${indentationClass} ${depth > 0 ? 'mt-4' : ''}`}>
+    <div className={`${indentationClass} ${depth > 0 ? "mt-4" : ""}`}>
       {/* Linha vertical para mostrar hierarquia */}
       {depth > 0 && (
         <div className="border-l-2 border-gray-200 pl-4">
           <div className="bg-white rounded-lg border border-gray-100 p-4 shadow-sm">
-            <CommentContent 
+            <CommentContent
               comment={comment}
               topicAuthorId={topicAuthorId}
               canReply={canReply}
@@ -96,11 +104,11 @@ function CommentItem({ comment, depth, topicId, topicAuthorId, onReply, onLike, 
           </div>
         </div>
       )}
-      
+
       {/* Comentário raiz (sem indentação) */}
       {depth === 0 && (
         <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-          <CommentContent 
+          <CommentContent
             comment={comment}
             topicAuthorId={topicAuthorId}
             canReply={canReply}
@@ -117,7 +125,10 @@ function CommentItem({ comment, depth, topicId, topicAuthorId, onReply, onLike, 
 
       {/* Formulário de resposta */}
       {showReplyForm && (
-        <form onSubmit={handleReplySubmit} className={`mt-3 ${depth > 0 ? 'ml-6' : ''}`}>
+        <form
+          onSubmit={handleReplySubmit}
+          className={`mt-3 ${depth > 0 ? "ml-6" : ""}`}
+        >
           <div className="bg-gray-50 rounded-lg p-3 border">
             <textarea
               value={replyText}
@@ -131,7 +142,12 @@ function CommentItem({ comment, depth, topicId, topicAuthorId, onReply, onLike, 
               <Button type="submit" size="sm" disabled={isSubmitting}>
                 {isSubmitting ? "Enviando..." : "Responder"}
               </Button>
-              <Button type="button" size="sm" variant="outline" onClick={() => setShowReplyForm(false)}>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => setShowReplyForm(false)}
+              >
                 Cancelar
               </Button>
             </div>
@@ -161,17 +177,17 @@ function CommentItem({ comment, depth, topicId, topicAuthorId, onReply, onLike, 
 }
 
 // COMPONENTE DO CONTEÚDO DO COMENTÁRIO (reutilizável)
-function CommentContent({ 
-  comment, 
-  topicAuthorId, 
-  canReply, 
-  canDelete, 
-  onLike, 
-  onDelete, 
+function CommentContent({
+  comment,
+  topicAuthorId,
+  canReply,
+  canDelete,
+  onLike,
+  onDelete,
   onShowReply,
   hasReplies,
   showReplies,
-  onToggleReplies
+  onToggleReplies,
 }: {
   comment: Comment;
   topicAuthorId: string;
@@ -186,10 +202,14 @@ function CommentContent({
 }) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("pt-BR") + " às " + date.toLocaleTimeString("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
+    return (
+      date.toLocaleDateString("pt-BR") +
+      " às " +
+      date.toLocaleTimeString("pt-BR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    );
   };
 
   return (
@@ -199,20 +219,24 @@ function CommentContent({
       </div>
       <div className="flex-1">
         <div className="flex items-center gap-2 mb-2 flex-wrap">
-          <span className="font-medium text-black text-sm">{comment.author}</span>
+          <span className="font-medium text-black text-sm">
+            {comment.author}
+          </span>
           <UserPointsBadge userId={comment.authorId} size="sm" />
           {comment.authorId === topicAuthorId && (
             <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
               Autor
             </span>
           )}
-          <span className="text-xs text-gray-500">{formatDate(comment.createdAt)}</span>
+          <span className="text-xs text-gray-500">
+            {formatDate(comment.createdAt)}
+          </span>
         </div>
-        
+
         <div className="text-gray-700 mb-3 text-sm leading-relaxed">
           <MarkdownRenderer content={comment.content} />
         </div>
-        
+
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={onLike}
@@ -227,7 +251,7 @@ function CommentContent({
             </svg>
             {comment.likes}
           </button>
-          
+
           {canReply && (
             <button
               onClick={onShowReply}
@@ -242,7 +266,8 @@ function CommentContent({
               onClick={onToggleReplies}
               className="text-xs text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
             >
-              {showReplies ? 'Ocultar' : 'Ver'} {comment.repliesCount} resposta{comment.repliesCount !== 1 ? 's' : ''}
+              {showReplies ? "Ocultar" : "Ver"} {comment.repliesCount} resposta
+              {comment.repliesCount !== 1 ? "s" : ""}
             </button>
           )}
 
@@ -267,26 +292,35 @@ interface CommentSystemProps {
   topicAuthorId: string;
 }
 
-export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSystemProps) {
+export default function CommentSystemNew({
+  topicId,
+  topicAuthorId,
+}: CommentSystemProps) {
   const { user } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [apiStatus, setApiStatus] = useState<'online' | 'offline' | 'unknown'>('unknown');
+  const [apiStatus, setApiStatus] = useState<"online" | "offline" | "unknown">(
+    "unknown",
+  );
 
   // Carregar comentários com retry e fallback
   const loadComments = async (retryCount = 0) => {
     setIsLoading(true);
     try {
-      console.log(`[COMMENTS] Tentativa ${retryCount + 1} - Carregando comentários para tópico: ${topicId}`);
+      console.log(
+        `[COMMENTS] Tentativa ${retryCount + 1} - Carregando comentários para tópico: ${topicId}`,
+      );
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
       const response = await fetch(`/api/comments/${topicId}`, {
-        headers: user ? { Authorization: `Bearer ${localStorage.getItem("auth_token")}` } : {},
-        signal: controller.signal
+        headers: user
+          ? { Authorization: `Bearer ${localStorage.getItem("auth_token")}` }
+          : {},
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
@@ -294,8 +328,10 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
       if (response.ok) {
         const data = await response.json();
         setComments(data.comments || []);
-        setApiStatus('online');
-        console.log(`[COMMENTS] Carregados ${data.comments?.length || 0} comentários`);
+        setApiStatus("online");
+        console.log(
+          `[COMMENTS] Carregados ${data.comments?.length || 0} comentários`,
+        );
       } else {
         console.error(`Erro na requisição: ${response.status}`);
         if (retryCount < 2) {
@@ -308,7 +344,7 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
     } catch (error) {
       console.error("Erro ao carregar comentários:", error);
 
-      if (retryCount < 2 && error.name !== 'AbortError') {
+      if (retryCount < 2 && error.name !== "AbortError") {
         console.log(`[COMMENTS] Tentando novamente em 2s...`);
         setTimeout(() => loadComments(retryCount + 1), 2000);
       } else {
@@ -316,7 +352,8 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
         const fallbackComments = [
           {
             id: "fallback1",
-            content: "Sistema de comentários temporariamente indisponível. Este é um comentário de exemplo.",
+            content:
+              "Sistema de comentários temporariamente indisponível. Este é um comentário de exemplo.",
             author: "Sistema",
             authorId: "system",
             authorAvatar: "SI",
@@ -327,10 +364,10 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
             isLiked: false,
             replies: [],
             repliesCount: 0,
-          }
+          },
         ];
         setComments(fallbackComments);
-        setApiStatus('offline');
+        setApiStatus("offline");
         console.warn("[COMMENTS] Usando fallback - comentários demo");
         toast.info("Comentários carregados em modo offline");
       }
@@ -360,7 +397,7 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
         body: JSON.stringify({ content: newComment, parentId: null }),
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
@@ -375,7 +412,7 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
       }
     } catch (error) {
       console.error("Erro ao adicionar comentário:", error);
-      if (error.name === 'AbortError') {
+      if (error.name === "AbortError") {
         toast.error("Timeout - tente novamente");
       } else {
         toast.error("Erro de conexão - tente novamente");
@@ -400,7 +437,7 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
         body: JSON.stringify({ content, parentId }),
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
@@ -413,7 +450,7 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
       }
     } catch (error) {
       clearTimeout(timeoutId);
-      if (error.name === 'AbortError') {
+      if (error.name === "AbortError") {
         throw new Error("Timeout - tente novamente");
       }
       throw error;
@@ -430,7 +467,9 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
     try {
       const response = await fetch(`/api/comments/${commentId}/like`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
       });
 
       if (response.ok) {
@@ -446,7 +485,9 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
     try {
       const response = await fetch(`/api/comments/${commentId}`, {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
       });
 
       if (response.ok) {
@@ -477,20 +518,31 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
           Comentários ({comments.length})
         </h3>
         <div className="flex items-center gap-2">
-          <div className={`w-2 h-2 rounded-full ${
-            apiStatus === 'online' ? 'bg-green-500' :
-            apiStatus === 'offline' ? 'bg-red-500' : 'bg-yellow-500'
-          }`}></div>
+          <div
+            className={`w-2 h-2 rounded-full ${
+              apiStatus === "online"
+                ? "bg-green-500"
+                : apiStatus === "offline"
+                  ? "bg-red-500"
+                  : "bg-yellow-500"
+            }`}
+          ></div>
           <span className="text-xs text-gray-500">
-            {apiStatus === 'online' ? 'Online' :
-             apiStatus === 'offline' ? 'Offline' : 'Conectando...'}
+            {apiStatus === "online"
+              ? "Online"
+              : apiStatus === "offline"
+                ? "Offline"
+                : "Conectando..."}
           </span>
         </div>
       </div>
 
       {/* Formulário para novo comentário */}
       {user && (
-        <form onSubmit={handleAddComment} className="mb-6 p-4 bg-gray-50 rounded-lg">
+        <form
+          onSubmit={handleAddComment}
+          className="mb-6 p-4 bg-gray-50 rounded-lg"
+        >
           <div className="space-y-3">
             <label className="text-black/80 text-sm font-medium">
               Adicionar comentário

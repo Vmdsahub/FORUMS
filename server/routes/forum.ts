@@ -62,16 +62,18 @@ function getUserStats(userId: string) {
 function addPoints(userId: string, points: number) {
   const stats = getUserStats(userId);
   stats.points += points;
-  
+
   // Verificar novos badges
   const currentBadges = calculateUserBadges(stats.points);
-  const newBadgeIds = currentBadges.map(b => b.id);
-  
+  const newBadgeIds = currentBadges.map((b) => b.id);
+
   // Atualizar badges se mudaram
-  if (JSON.stringify(stats.badges.sort()) !== JSON.stringify(newBadgeIds.sort())) {
+  if (
+    JSON.stringify(stats.badges.sort()) !== JSON.stringify(newBadgeIds.sort())
+  ) {
     stats.badges = newBadgeIds;
   }
-  
+
   return stats;
 }
 
@@ -85,11 +87,11 @@ function buildCommentTree(allComments: Comment[]): Comment[] {
   const commentMap = new Map<string, Comment>();
 
   // 2. Inicializar todos os comentários com arrays vazios de replies
-  allComments.forEach(comment => {
+  allComments.forEach((comment) => {
     commentMap.set(comment.id, {
       ...comment,
       replies: [],
-      repliesCount: 0
+      repliesCount: 0,
     });
   });
 
@@ -97,10 +99,10 @@ function buildCommentTree(allComments: Comment[]): Comment[] {
   const rootComments: Comment[] = [];
 
   // 4. Processar cada comentário
-  allComments.forEach(comment => {
+  allComments.forEach((comment) => {
     const currentComment = commentMap.get(comment.id)!;
 
-    if (!comment.parentId || comment.parentId === '') {
+    if (!comment.parentId || comment.parentId === "") {
       // É comentário raiz
       rootComments.push(currentComment);
     } else {
@@ -119,10 +121,10 @@ function buildCommentTree(allComments: Comment[]): Comment[] {
   // 5. Ordenar por data/hora (função simples)
   function parseDateTime(date: string, time: string): number {
     try {
-      if (date.includes('/')) {
+      if (date.includes("/")) {
         // Formato DD/MM/YYYY
-        const [day, month, year] = date.split('/').map(num => parseInt(num));
-        const [hours, minutes] = time.split(':').map(num => parseInt(num));
+        const [day, month, year] = date.split("/").map((num) => parseInt(num));
+        const [hours, minutes] = time.split(":").map((num) => parseInt(num));
         return new Date(year, month - 1, day, hours, minutes).getTime();
       } else {
         // Formato ISO ou outro
@@ -144,11 +146,11 @@ function buildCommentTree(allComments: Comment[]): Comment[] {
   function sortRepliesInComment(comment: Comment) {
     if (comment.replies && comment.replies.length > 0) {
       comment.replies.sort(sortComments);
-      comment.replies.forEach(reply => sortRepliesInComment(reply));
+      comment.replies.forEach((reply) => sortRepliesInComment(reply));
     }
   }
 
-  rootComments.forEach(comment => sortRepliesInComment(comment));
+  rootComments.forEach((comment) => sortRepliesInComment(comment));
 
   return rootComments;
 }
@@ -184,10 +186,10 @@ function toggleLike(entityId: string, userId: string): LikeResponse {
 // Helper para verificar se um comentário é filho de outro (recursivamente)
 function isCommentOrReply(commentId: string, targetId: string): boolean {
   if (commentId === targetId) return true;
-  
+
   const comment = comments.get(commentId);
   if (!comment || !comment.parentId) return false;
-  
+
   return isCommentOrReply(comment.parentId, targetId);
 }
 
@@ -245,7 +247,8 @@ function initializeDemoData() {
   const demoComments = [
     {
       id: "c1",
-      content: "Excelente comparativo! Eu uso mais o Midjourney para conceitos artísticos.",
+      content:
+        "Excelente comparativo! Eu uso mais o Midjourney para conceitos artísticos.",
       author: "CreativeAI",
       authorId: "user_creative_ai",
       authorAvatar: "CA",
@@ -257,8 +260,9 @@ function initializeDemoData() {
     },
     {
       id: "c2",
-      content: "Concordo completamente! O Midjourney tem uma vantagem clara em arte conceitual.",
-      author: "DigitalArtist", 
+      content:
+        "Concordo completamente! O Midjourney tem uma vantagem clara em arte conceitual.",
+      author: "DigitalArtist",
       authorId: "user_digital_artist",
       authorAvatar: "DA",
       date: "09/08/2025",
@@ -272,7 +276,7 @@ function initializeDemoData() {
       id: "c3",
       content: "Mas o DALL-E 3 é melhor para textos em imagens, não acham?",
       author: "TextMaster",
-      authorId: "user_text_master", 
+      authorId: "user_text_master",
       authorAvatar: "TM",
       date: "09/08/2025",
       time: "11:00",
@@ -283,7 +287,8 @@ function initializeDemoData() {
     },
     {
       id: "c4",
-      content: "Concordo! O SDXL é um salto gigante. A qualidade das imagens é impressionante.",
+      content:
+        "Concordo! O SDXL é um salto gigante. A qualidade das imagens é impressionante.",
       author: "AIArtist",
       authorId: "user_ai_artist",
       authorAvatar: "AA",
@@ -417,15 +422,34 @@ export const handleGetTopic: RequestHandler = (req, res) => {
   }
 
   // Build comment tree
-  console.log('DEBUG - Comentários antes da organização:', topic.comments.map(c => ({ id: c.id, author: c.author, parentId: c.parentId })));
+  console.log(
+    "DEBUG - Comentários antes da organização:",
+    topic.comments.map((c) => ({
+      id: c.id,
+      author: c.author,
+      parentId: c.parentId,
+    })),
+  );
   const organizedComments = buildCommentTree(topic.comments);
-  console.log('DEBUG - Comentários após organização:', JSON.stringify(organizedComments.map(c => ({
-    id: c.id,
-    author: c.author,
-    parentId: c.parentId,
-    repliesCount: c.replies?.length || 0,
-    replies: c.replies?.map(r => ({ id: r.id, author: r.author, parentId: r.parentId })) || []
-  })), null, 2));
+  console.log(
+    "DEBUG - Comentários após organização:",
+    JSON.stringify(
+      organizedComments.map((c) => ({
+        id: c.id,
+        author: c.author,
+        parentId: c.parentId,
+        repliesCount: c.replies?.length || 0,
+        replies:
+          c.replies?.map((r) => ({
+            id: r.id,
+            author: r.author,
+            parentId: r.parentId,
+          })) || [],
+      })),
+      null,
+      2,
+    ),
+  );
   topic.comments = organizedComments;
 
   res.json(topic);
@@ -500,7 +524,9 @@ export const handleCreateComment: RequestHandler = (req, res) => {
     if (data.parentId) {
       const parentComment = comments.get(data.parentId);
       if (!parentComment || parentComment.topicId !== topicId) {
-        return res.status(400).json({ message: "Comentário pai não encontrado" });
+        return res
+          .status(400)
+          .json({ message: "Comentário pai não encontrado" });
       }
     }
 
@@ -520,7 +546,11 @@ export const handleCreateComment: RequestHandler = (req, res) => {
       repliesCount: 0,
     };
 
-    console.log('DEBUG - Criando comentário:', { id: newComment.id, author: newComment.author, parentId: newComment.parentId });
+    console.log("DEBUG - Criando comentário:", {
+      id: newComment.id,
+      author: newComment.author,
+      parentId: newComment.parentId,
+    });
 
     comments.set(newComment.id, newComment);
     topic.comments.push(newComment);
@@ -531,7 +561,7 @@ export const handleCreateComment: RequestHandler = (req, res) => {
       time,
     };
     topic.updatedAt = new Date().toISOString();
-    
+
     // Adicionar pontos por comentar
     // addPoints(req.user.id, POINTS.CREATE_COMMENT); // Temporariamente desabilitado
 
@@ -564,8 +594,12 @@ export const handleLikeTopic: RequestHandler = (req, res) => {
   const likeResult = toggleLike(topicId, req.user.id);
   topic.likes = likeResult.likes;
   topic.isLiked = likeResult.isLiked;
-  
-  if (likeResult.isLiked && topic.authorId !== req.user.id && likeResult.likes % 5 === 0) {
+
+  if (
+    likeResult.isLiked &&
+    topic.authorId !== req.user.id &&
+    likeResult.likes % 5 === 0
+  ) {
     // addPoints(topic.authorId, POINTS.RECEIVE_POST_LIKE); // Temporariamente desabilitado
   }
 
@@ -587,7 +621,7 @@ export const handleLikeComment: RequestHandler = (req, res) => {
   const likeResult = toggleLike(commentId, req.user.id);
   comment.likes = likeResult.likes;
   comment.isLiked = likeResult.isLiked;
-  
+
   // Adicionar pontos ao autor do comentário quando recebe like
   if (likeResult.isLiked && comment.authorId !== req.user.id) {
     // addPoints(comment.authorId, POINTS.RECEIVE_COMMENT_LIKE); // Temporariamente desabilitado
@@ -648,25 +682,28 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
   const isCommentOwner = comment.authorId === req.user.id;
 
   if (!isAdmin && !isTopicOwner && !isCommentOwner) {
-    return res.status(403).json({ 
-      message: "Você só pode excluir seus próprios comentários ou comentários em seus posts" 
+    return res.status(403).json({
+      message:
+        "Você só pode excluir seus próprios comentários ou comentários em seus posts",
     });
   }
 
   // Função para deletar comentário e todas suas respostas
   function deleteCommentAndReplies(commentId: string): number {
     let deletedCount = 0;
-    
+
     // Encontrar e remover todas as respostas primeiro
-    const replies = Array.from(comments.values()).filter(c => c.parentId === commentId);
-    replies.forEach(reply => {
+    const replies = Array.from(comments.values()).filter(
+      (c) => c.parentId === commentId,
+    );
+    replies.forEach((reply) => {
       deletedCount += deleteCommentAndReplies(reply.id);
     });
-    
+
     // Remover o comentário atual
     comments.delete(commentId);
     deletedCount += 1;
-    
+
     return deletedCount;
   }
 

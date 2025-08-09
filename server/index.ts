@@ -28,7 +28,7 @@ import {
   createComment,
   likeComment,
   deleteComment,
-  initializeDemo
+  initializeDemo,
 } from "./routes/simple-comments";
 
 export function createServer() {

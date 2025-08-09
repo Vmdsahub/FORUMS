@@ -103,7 +103,12 @@ export default function Account() {
             <h2 className="text-xl font-semibold text-black">{user.name}</h2>
             <p className="text-gray-600 mb-2">{user.email}</p>
             <div className="flex items-center gap-3">
-              <UserPointsBadge userId={user.id} size="md" showPoints showBadges />
+              <UserPointsBadge
+                userId={user.id}
+                size="md"
+                showPoints
+                showBadges
+              />
               {user.role === "admin" && (
                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                   Administrador
