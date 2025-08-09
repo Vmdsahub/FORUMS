@@ -16,6 +16,37 @@ export default function Account() {
   const [userTopics, setUserTopics] = useState([]);
   const [isLoadingTopics, setIsLoadingTopics] = useState(false);
 
+  // Fetch user's topics
+  useEffect(() => {
+    if (user) {
+      fetchUserTopics();
+    }
+  }, [user]);
+
+  const fetchUserTopics = async () => {
+    setIsLoadingTopics(true);
+    try {
+      const response = await fetch("/api/topics/user", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUserTopics(data.topics || []);
+      } else {
+        console.error("Failed to fetch user topics");
+        setUserTopics([]);
+      }
+    } catch (error) {
+      console.error("Error fetching user topics:", error);
+      setUserTopics([]);
+    } finally {
+      setIsLoadingTopics(false);
+    }
+  };
+
   if (!user) {
     navigate("/");
     return null;
