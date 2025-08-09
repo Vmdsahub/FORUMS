@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import CommentThread from "@/components/CommentThread";
+import UserPointsBadge from "@/components/UserPointsBadge";
 
 interface Comment {
   id: string;
@@ -365,17 +366,20 @@ export default function TopicView() {
                 {topic.title}
               </h1>
               <p className="text-gray-600 mb-4">{topic.description}</p>
-              <div className="flex items-center gap-4 text-sm text-gray-500">
+              <div className="flex items-center gap-4 text-sm text-gray-500 flex-wrap">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold">
                     {topic.authorAvatar}
                   </div>
-                  <span>
-                    por{" "}
-                    <span className="font-medium text-black">
-                      {topic.author}
+                  <div className="flex flex-col gap-1">
+                    <span>
+                      por{" "}
+                      <span className="font-medium text-black">
+                        {topic.author}
+                      </span>
                     </span>
-                  </span>
+                    <UserPointsBadge userId={topic.authorId} size="sm" />
+                  </div>
                 </div>
                 <span>•</span>
                 <span>{topic.views.toLocaleString()} visualizações</span>
