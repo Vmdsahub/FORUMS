@@ -32,13 +32,11 @@ export default function Header({ activeSection }: HeaderProps) {
 
   // Search states
   const [searchQuery, setSearchQuery] = useState("");
-  const [showAdvancedModal, setShowAdvancedModal] = useState(false);
+  const [showAdvancedDropdown, setShowAdvancedDropdown] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [activeSearchQuery, setActiveSearchQuery] = useState("");
   const [activeSearchCategories, setActiveSearchCategories] = useState<string[]>([]);
-  const [showSavedTopics, setShowSavedTopics] = useState(false);
-  const [savedTopics, setSavedTopics] = useState<string[]>([]);
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState("");
@@ -69,11 +67,15 @@ export default function Header({ activeSection }: HeaderProps) {
     setActiveSearchQuery(searchQuery);
     setActiveSearchCategories([...selectedCategories]);
     setShowSearchResults(true);
-    setShowAdvancedModal(false);
+    setShowAdvancedDropdown(false);
   };
 
   const handleAccountClick = () => {
     navigate('/account');
+  };
+
+  const handleSavedTopicsClick = () => {
+    navigate('/saved-topics');
   };
 
   const toggleCategory = (categoryId: string) => {
@@ -116,95 +118,70 @@ export default function Header({ activeSection }: HeaderProps) {
                 </button>
               </div>
 
-              {/* Advanced Search Modal */}
-              <Dialog open={showAdvancedModal} onOpenChange={setShowAdvancedModal}>
-                <DialogTrigger asChild>
-                  <button
-                    className="px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
-                    title="Busca Avançada"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/>
-                    </svg>
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="bg-white border border-gray-200 shadow-lg sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle className="text-gray-900 text-lg font-semibold">
-                      Busca Avançada
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <Label className="text-gray-900 font-medium">Filtrar por categorias:</Label>
-                      <div className="flex flex-wrap gap-2">
-                        {categories.map((category) => (
-                          <button
-                            key={category.id}
-                            onClick={() => toggleCategory(category.id)}
-                            className={`px-3 py-1 rounded-full text-sm border transition-colors ${
-                              selectedCategories.includes(category.id)
-                                ? "bg-gray-800 text-white border-gray-800"
-                                : "bg-white text-gray-600 border-gray-300 hover:border-gray-400"
-                            }`}
-                          >
-                            {category.name}
-                          </button>
-                        ))}
+              {/* Advanced Search Dropdown */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowAdvancedDropdown(!showAdvancedDropdown)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                  title="Busca Avançada"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/>
+                  </svg>
+                </button>
+
+                {showAdvancedDropdown && (
+                  <div className="absolute top-full left-0 mt-2 w-80 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+                    <div className="p-4 space-y-4">
+                      <div className="space-y-2">
+                        <Label className="text-gray-900 font-medium text-sm">Filtrar por categorias:</Label>
+                        <div className="flex flex-wrap gap-2">
+                          {categories.map((category) => (
+                            <button
+                              key={category.id}
+                              onClick={() => toggleCategory(category.id)}
+                              className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                                selectedCategories.includes(category.id)
+                                  ? "bg-gray-800 text-white border-gray-800"
+                                  : "bg-white text-gray-600 border-gray-300 hover:border-gray-400"
+                              }`}
+                            >
+                              {category.name}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex justify-between pt-2 border-t border-gray-100">
+                        <button
+                          onClick={() => setSelectedCategories([])}
+                          className="text-sm text-gray-500 hover:text-gray-700"
+                        >
+                          Limpar filtros
+                        </button>
+                        <Button
+                          onClick={handleSearch}
+                          size="sm"
+                          className="bg-gray-800 text-white hover:bg-gray-700"
+                        >
+                          Buscar
+                        </Button>
                       </div>
                     </div>
-                    <div className="flex justify-between pt-4">
-                      <button
-                        onClick={() => setSelectedCategories([])}
-                        className="text-sm text-gray-500 hover:text-gray-700"
-                      >
-                        Limpar filtros
-                      </button>
-                      <Button
-                        onClick={handleSearch}
-                        className="bg-gray-800 text-white hover:bg-gray-700"
-                      >
-                        Buscar
-                      </Button>
-                    </div>
                   </div>
-                </DialogContent>
-              </Dialog>
+                )}
+              </div>
 
               {/* Saved Topics Button */}
-              <Dialog open={showSavedTopics} onOpenChange={setShowSavedTopics}>
-                <DialogTrigger asChild>
-                  <button
-                    className="px-3 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors flex items-center gap-2"
-                    title="Tópicos Salvos"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
-                    </svg>
-                    <span className="text-sm font-medium">Salvos</span>
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="bg-white border border-gray-200 shadow-lg sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle className="text-gray-900 text-lg font-semibold">
-                      Tópicos Salvos
-                    </DialogTitle>
-                  </DialogHeader>
-                  <div className="py-4">
-                    {savedTopics.length === 0 ? (
-                      <p className="text-gray-500 text-center py-8">Nenhum tópico salvo ainda.</p>
-                    ) : (
-                      <div className="space-y-2">
-                        {savedTopics.map((topicId) => (
-                          <div key={topicId} className="p-3 border border-gray-200 rounded-lg">
-                            <p className="text-sm text-gray-600">Tópico salvo #{topicId}</p>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </DialogContent>
-              </Dialog>
+              <button
+                onClick={handleSavedTopicsClick}
+                className="px-3 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors flex items-center gap-2"
+                title="Tópicos Salvos"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                </svg>
+                <span className="text-sm font-medium">Salvos</span>
+              </button>
             </div>
           </div>
         )}
@@ -468,7 +445,7 @@ export default function Header({ activeSection }: HeaderProps) {
                       <Input
                         id="register-password"
                         type="password"
-                        placeholder="••••••••"
+                        placeholder="•��••••••"
                         value={registerPassword}
                         onChange={(e) => setRegisterPassword(e.target.value)}
                         className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
