@@ -1,11 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'sonner';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-}
+import { User, AuthResponse, ErrorResponse } from '@shared/auth';
 
 interface AuthContextType {
   user: User | null;
