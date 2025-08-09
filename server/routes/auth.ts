@@ -18,7 +18,7 @@ function hashPassword(password: string): string {
 // In production, use a proper database
 const users: Map<
   string,
-  { id: string; name: string; email: string; password: string }
+  { id: string; name: string; email: string; password: string; role?: 'admin' | 'user' }
 > = new Map();
 const tokens: Map<string, string> = new Map(); // token -> userId
 
@@ -29,6 +29,17 @@ users.set(demoUserId, {
   name: "João Silva",
   email: "demo@exemplo.com",
   password: hashPassword("123456"), // password: 123456
+  role: 'user'
+});
+
+// Add admin user Vitoca
+const adminUserId = "admin_vitoca_456";
+users.set(adminUserId, {
+  id: adminUserId,
+  name: "Vitoca",
+  email: "vitoca@admin.com",
+  password: hashPassword("admin123"), // password: admin123
+  role: 'admin'
 });
 
 // Validation schemas
