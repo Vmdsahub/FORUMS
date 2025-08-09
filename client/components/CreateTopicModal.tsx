@@ -24,7 +24,7 @@ interface CreateTopicModalProps {
   onTopicCreated?: (newTopic: any) => void;
 }
 
-export default function CreateTopicModal({ categories, onTopicCreated }: CreateTopicModalProps) {
+export default function CreateTopicModal({ currentCategory, onTopicCreated }: CreateTopicModalProps) {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,7 +32,6 @@ export default function CreateTopicModal({ categories, onTopicCreated }: CreateT
     title: "",
     description: "",
     content: "",
-    category: "",
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
