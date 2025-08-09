@@ -184,7 +184,12 @@ export default function Account() {
         {/* User's Topics */}
         <div className="mt-8 pt-8 border-t border-gray-200">
           <h3 className="text-lg font-semibold text-black mb-4">Meus Tópicos</h3>
-          {userTopics.length === 0 ? (
+          {isLoadingTopics ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto mb-4"></div>
+              <p className="text-gray-600">Carregando seus tópicos...</p>
+            </div>
+          ) : userTopics.length === 0 ? (
             <div className="text-center py-8 bg-gray-50 rounded-lg">
               <p className="text-gray-500 mb-4">Você ainda não criou nenhum tópico.</p>
               <Link
