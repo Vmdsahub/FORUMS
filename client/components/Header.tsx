@@ -134,7 +134,7 @@ export default function Header({ activeSection }: HeaderProps) {
               </div>
 
               {/* Advanced Search Dropdown */}
-              <div className="relative">
+              <div ref={dropdownRef} className="relative">
                 <button
                   onClick={() => setShowAdvancedDropdown(!showAdvancedDropdown)}
                   className="px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
