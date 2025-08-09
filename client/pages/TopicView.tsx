@@ -208,6 +208,33 @@ export default function TopicView() {
     }
   };
 
+  const handleDeleteTopic = async () => {
+    if (!isAdmin || !topic) return;
+
+    if (!confirm(`Tem certeza que deseja excluir o tópico "${topic.title}"?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/topics/${topicId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
+
+      if (response.ok) {
+        toast.success("Tópico excluído com sucesso!");
+        navigate("/"); // Volta para a página principal
+      } else {
+        toast.error("Erro ao excluir tópico");
+      }
+    } catch (error) {
+      console.error("Error deleting topic:", error);
+      toast.error("Erro ao excluir tópico");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
