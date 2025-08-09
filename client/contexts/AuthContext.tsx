@@ -5,6 +5,7 @@ import { User, AuthResponse, ErrorResponse } from "@shared/auth";
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
+  isAdmin: boolean;
   login: (email: string, password: string, captcha: string) => Promise<boolean>;
   register: (
     name: string,
