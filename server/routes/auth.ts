@@ -88,6 +88,7 @@ export const authenticateToken: RequestHandler = (req, res, next) => {
     id: user.id,
     name: user.name,
     email: user.email,
+    role: user.role || 'user',
   };
 
   next();
@@ -118,6 +119,7 @@ export const handleLogin: RequestHandler = (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role || 'user',
       },
       token,
     };
