@@ -86,6 +86,43 @@ export default function Index(props: IndexProps) {
     currentNewsletter,
   } = props;
 
+  const [realTopics, setRealTopics] = useState<Topic[]>([]);
+  const [isLoadingTopics, setIsLoadingTopics] = useState(false);
+
+  // Buscar tópicos reais da API quando uma categoria é selecionada
+  useEffect(() => {
+    if (selectedCategory && activeSection === "forum") {
+      fetchTopics(selectedCategory);
+    }
+  }, [selectedCategory, activeSection]);
+
+  const fetchTopics = async (category: string) => {
+    setIsLoadingTopics(true);
+    try {
+      const params = new URLSearchParams();
+      params.append("category", category);
+
+      const response = await fetch(`/api/topics?${params}`);
+      if (response.ok) {
+        const data = await response.json();
+        setRealTopics(data.topics);
+      } else {
+        toast.error("Erro ao carregar tópicos");
+      }
+    } catch (error) {
+      console.error("Error fetching topics:", error);
+      toast.error("Erro ao carregar tópicos");
+    } finally {
+      setIsLoadingTopics(false);
+    }
+  };
+
+  const handleTopicCreated = (newTopic: Topic) => {
+    // Adicionar o novo tópico ao início da lista
+    setRealTopics((prev) => [newTopic, ...prev]);
+    toast.success("Tópico criado com sucesso!");
+  };
+
   return (
     <main className="container max-w-7xl mx-auto px-6 py-12">
       {/* Hero Section */}
