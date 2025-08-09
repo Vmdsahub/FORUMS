@@ -173,21 +173,47 @@ export const handleGetTopics: RequestHandler = (req, res) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 10;
   const category = req.query.category as string;
+  const search = req.query.search as string;
+  const categories = req.query.categories as string; // comma-separated category IDs
 
   let filteredTopics = Array.from(topics.values());
 
+  // Filter by search query (title contains the search term)
+  if (search) {
+    filteredTopics = filteredTopics.filter((topic) =>
+      topic.title.toLowerCase().includes(search.toLowerCase())
+    );
+  }
+
+  // Filter by single category
   if (category) {
     filteredTopics = filteredTopics.filter(
       (topic) => topic.category === category,
     );
   }
 
-  // Sort by pinned first, then by creation date (newest first)
-  filteredTopics.sort((a, b) => {
-    if (a.isPinned && !b.isPinned) return -1;
-    if (!a.isPinned && b.isPinned) return 1;
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-  });
+  // Filter by multiple categories (advanced search)
+  if (categories) {
+    const categoryList = categories.split(',').filter(Boolean);
+    if (categoryList.length > 0) {
+      filteredTopics = filteredTopics.filter(
+        (topic) => categoryList.includes(topic.category),
+      );
+    }
+  }
+
+  // Sort by search relevance or default sorting
+  if (search) {
+    // Sort by likes (descending) when searching
+    filteredTopics.sort((a, b) => b.likes - a.likes);
+  } else {
+    // Sort by pinned first, then by creation date (newest first)
+    filteredTopics.sort((a, b) => {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }
 
   const startIndex = (page - 1) * limit;
   const endIndex = startIndex + limit;
@@ -203,6 +229,8 @@ export const handleGetTopics: RequestHandler = (req, res) => {
     total: filteredTopics.length,
     page,
     limit,
+    search: search || null,
+    categories: categories || null,
   });
 };
 
