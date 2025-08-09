@@ -309,9 +309,6 @@ function App() {
             <h1 className="text-5xl md:text-6xl font-bold text-black mb-4 tracking-tight">
               IA HUB
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              A maior comunidade brasileira de inteligência artificial
-            </p>
           </div>
 
           {/* Toggle Buttons */}
