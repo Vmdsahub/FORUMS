@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
-import CommentThread from "@/components/CommentThread";
+import CommentThreadNew from "@/components/CommentThreadNew";
 import UserPointsBadge from "@/components/UserPointsBadge";
 
 interface Comment {
@@ -511,7 +511,7 @@ export default function TopicView() {
               </p>
             ) : (
               topic.comments.map((comment) => (
-                <CommentThread
+                <CommentThreadNew
                   key={comment.id}
                   comment={comment}
                   topicId={topic.id}
@@ -519,6 +519,8 @@ export default function TopicView() {
                   onLike={handleLikeComment}
                   onDelete={handleDeleteComment}
                   onReply={handleReplyToComment}
+                  depth={0}
+                  maxDepth={5}
                 />
               ))
             )}
