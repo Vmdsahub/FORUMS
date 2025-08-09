@@ -390,7 +390,10 @@ export default function Index(props: IndexProps) {
           >
             {/* Back Button */}
             <button
-              onClick={() => props.setSelectedCategory(null)}
+              onClick={() => {
+                props.setSelectedCategory(null);
+                setRealTopics([]); // Limpar tópicos ao voltar
+              }}
               className="flex items-center gap-2 text-gray-600 hover:text-black transition-all duration-300 ease-in-out hover:translate-x-1"
             >
               <svg
