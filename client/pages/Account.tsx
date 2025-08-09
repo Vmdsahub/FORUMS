@@ -268,13 +268,11 @@ export default function Account() {
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="flex justify-center">
                 <div className="relative group cursor-pointer">
-                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center border-2 border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-                    <img
-                      src="https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100"
-                      alt="Iniciante"
-                      className="w-12 h-12 object-contain"
-                    />
-                  </div>
+                  <img
+                    src="https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100"
+                    alt="Iniciante"
+                    className="w-16 h-16 object-contain hover:scale-110 transition-transform duration-300"
+                  />
                   
                   {/* Tooltip no hover */}
                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-black text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
