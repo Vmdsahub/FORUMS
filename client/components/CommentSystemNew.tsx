@@ -472,9 +472,21 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-black mb-4">
-        Comentários ({comments.length})
-      </h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-black">
+          Comentários ({comments.length})
+        </h3>
+        <div className="flex items-center gap-2">
+          <div className={`w-2 h-2 rounded-full ${
+            apiStatus === 'online' ? 'bg-green-500' :
+            apiStatus === 'offline' ? 'bg-red-500' : 'bg-yellow-500'
+          }`}></div>
+          <span className="text-xs text-gray-500">
+            {apiStatus === 'online' ? 'Online' :
+             apiStatus === 'offline' ? 'Offline' : 'Conectando...'}
+          </span>
+        </div>
+      </div>
 
       {/* Formulário para novo comentário */}
       {user && (
