@@ -25,6 +25,32 @@ export default function RichTextEditor({
     }
   }, [value]);
 
+  // Gerenciar placeholder manualmente
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor) return;
+
+    const updatePlaceholder = () => {
+      const isEmpty = editor.innerHTML.trim() === '' || editor.innerHTML === '<br>';
+      if (isEmpty && placeholder) {
+        editor.setAttribute('data-empty', 'true');
+      } else {
+        editor.removeAttribute('data-empty');
+      }
+    };
+
+    updatePlaceholder();
+    editor.addEventListener('input', updatePlaceholder);
+    editor.addEventListener('focus', updatePlaceholder);
+    editor.addEventListener('blur', updatePlaceholder);
+
+    return () => {
+      editor.removeEventListener('input', updatePlaceholder);
+      editor.removeEventListener('focus', updatePlaceholder);
+      editor.removeEventListener('blur', updatePlaceholder);
+    };
+  }, [placeholder]);
+
   const handleInput = () => {
     if (editorRef.current) {
       const content = editorRef.current.innerHTML;
