@@ -6,6 +6,12 @@ interface MarkdownRendererProps {
 
 export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
   const renderContent = () => {
+    // Se o conteúdo já é HTML (contém tags), renderiza diretamente
+    if (content.includes('<') && content.includes('>')) {
+      return content;
+    }
+    
+    // Caso contrário, converte markdown básico para HTML
     let processedContent = content;
 
     // Convert **bold** to <strong>
@@ -20,37 +26,25 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
     // Convert image markdown ![alt](url) to img tags
     processedContent = processedContent.replace(
       /!\[(.*?)\]\((.*?)\)/g,
-      '<div class="my-4"><img src="$2" alt="$1" class="max-w-full h-auto rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow" loading="lazy" /><p class="text-sm text-gray-600 mt-2 text-center">$1</p></div>',
+      '<div style="margin: 16px 0;"><img src="$2" alt="$1" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e5e7eb;" loading="lazy" /><p style="font-size: 14px; color: #6b7280; margin-top: 8px; text-align: center;">$1</p></div>',
     );
 
     // Convert video links [Video: name](url) to video tags
     processedContent = processedContent.replace(
       /\[Vídeo: (.*?)\]\((.*?)\)/g,
-      '<div class="my-4"><div class="relative rounded-lg overflow-hidden border border-gray-200 shadow-sm"><video controls class="w-full h-auto" preload="metadata"><source src="$2" type="video/mp4"><source src="$2" type="video/webm"><source src="$2" type="video/mov">Seu navegador não suporta vídeo HTML5.</video></div><p class="text-sm text-gray-600 mt-2 flex items-center gap-1"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" class="text-blue-600"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>$1</p></div>',
+      '<div style="margin: 16px 0;"><div style="position: relative; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;"><video controls style="width: 100%; height: auto;" preload="metadata"><source src="$2" type="video/mp4"><source src="$2" type="video/webm"><source src="$2" type="video/mov">Seu navegador não suporta vídeo HTML5.</video></div><p style="font-size: 14px; color: #6b7280; margin-top: 8px; display: flex; align-items: center; gap: 4px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color: #2563eb;"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>$1</p></div>',
     );
 
     // Convert code blocks ```code``` to styled blocks
     processedContent = processedContent.replace(
       /```([\s\S]*?)```/g,
-      '<div class="my-4 p-4 bg-gray-100 rounded-lg border border-gray-200"><code class="text-sm font-mono text-gray-800 whitespace-pre-wrap">$1</code></div>',
+      '<div style="margin: 16px 0; padding: 16px; background-color: #f3f4f6; border-radius: 8px; border: 1px solid #e5e7eb;"><code style="font-size: 14px; font-family: monospace; color: #374151; white-space: pre-wrap;">$1</code></div>',
     );
 
     // Convert inline code `code` to styled spans
     processedContent = processedContent.replace(
       /`([^`]+)`/g,
-      '<code class="px-1.5 py-0.5 bg-gray-100 text-gray-800 rounded text-sm font-mono">$1</code>',
-    );
-
-    // Convert lists
-    processedContent = processedContent.replace(
-      /^[-*+] (.+)$/gm,
-      '<li class="ml-4 mb-1">• $1</li>',
-    );
-
-    // Convert numbered lists
-    processedContent = processedContent.replace(
-      /^\d+\. (.+)$/gm,
-      '<li class="ml-4 mb-1 list-decimal">$1</li>',
+      '<code style="padding: 2px 6px; background-color: #f3f4f6; color: #374151; border-radius: 4px; font-size: 14px; font-family: monospace;">$1</code>',
     );
 
     // Convert line breaks to <br>
