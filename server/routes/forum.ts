@@ -590,7 +590,7 @@ export const handleLikeComment: RequestHandler = (req, res) => {
   
   // Adicionar pontos ao autor do comentário quando recebe like
   if (likeResult.isLiked && comment.authorId !== req.user.id) {
-    addPoints(comment.authorId, POINTS.RECEIVE_COMMENT_LIKE);
+    // addPoints(comment.authorId, POINTS.RECEIVE_COMMENT_LIKE); // Temporariamente desabilitado
   }
 
   res.json(likeResult);
