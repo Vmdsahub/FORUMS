@@ -330,6 +330,7 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
           }
         ];
         setComments(fallbackComments);
+        setApiStatus('offline');
         console.warn("[COMMENTS] Usando fallback - comentários demo");
         toast.info("Comentários carregados em modo offline");
       }
