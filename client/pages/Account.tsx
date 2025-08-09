@@ -35,10 +35,12 @@ export default function Account() {
   const [isLoadingTopics, setIsLoadingTopics] = useState(false);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Collapsible sections state
   const [sectionsExpanded, setSectionsExpanded] = useState({
+    account: false,
     badges: false,
     topics: false,
   });
@@ -111,8 +113,8 @@ export default function Account() {
 
       if (response.ok) {
         const result = await response.json();
+        setAvatarUrl(result.url);
         toast.success("Foto do perfil atualizada!");
-        // TODO: Update user avatar in context/state
       } else {
         toast.error("Erro ao carregar foto");
       }
@@ -126,7 +128,7 @@ export default function Account() {
     }
   };
 
-  const toggleSection = (section: 'badges' | 'topics') => {
+  const toggleSection = (section: 'account' | 'badges' | 'topics') => {
     setSectionsExpanded(prev => ({
       ...prev,
       [section]: !prev[section]
@@ -149,6 +151,22 @@ export default function Account() {
       email: user.email,
     });
     setIsEditing(false);
+  };
+
+  const getAvatarContent = () => {
+    if (avatarUrl) {
+      return (
+        <img
+          src={avatarUrl}
+          alt={user.name}
+          className="w-full h-full object-cover rounded-full"
+        />
+      );
+    }
+    return user.name
+      .split(" ")
+      .map((n) => n[0])
+      .join("");
   };
 
   return (
@@ -179,16 +197,13 @@ export default function Account() {
           <div className="relative">
             <button
               onClick={handleAvatarClick}
-              className="w-20 h-20 rounded-full bg-black text-white flex items-center justify-center text-2xl font-bold hover:bg-gray-800 transition-colors relative group"
+              className="w-20 h-20 rounded-full bg-black text-white flex items-center justify-center text-2xl font-bold hover:bg-gray-800 transition-colors relative group overflow-hidden"
               disabled={isUploadingAvatar}
             >
               {isUploadingAvatar ? (
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
               ) : (
-                user.name
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")
+                getAvatarContent()
               )}
               
               {/* Upload overlay */}
@@ -251,107 +266,132 @@ export default function Account() {
           
           {sectionsExpanded.badges && (
             <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <div className="text-center">
-                <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
-                  <img
-                    src="https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100"
-                    alt="Iniciante"
-                    className="w-12 h-12 object-contain"
-                  />
-                </div>
-                <h3 className="font-semibold text-black mb-2">Iniciante</h3>
-                <p className="text-sm text-gray-600">Primeiros passos no fórum</p>
-                <div className="mt-4 text-xs text-gray-500">
-                  Você conquistou 1 emblema
+              <div className="flex justify-center">
+                <div className="relative group cursor-pointer">
+                  <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center border-2 border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                    <img
+                      src="https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100"
+                      alt="Iniciante"
+                      className="w-12 h-12 object-contain"
+                    />
+                  </div>
+                  
+                  {/* Tooltip no hover */}
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-black text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
+                    <div className="font-semibold mb-1">Iniciante</div>
+                    <div className="text-xs text-gray-300 mb-1">Primeiros passos no fórum</div>
+                    <div className="text-xs text-gray-400">Obtido em: {new Date().toLocaleDateString('pt-BR')}</div>
+                    
+                    {/* Seta do tooltip */}
+                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+                  </div>
                 </div>
               </div>
             </div>
           )}
         </div>
 
-        {/* Account Information */}
-        <div className="space-y-6 mb-8">
-          <h3 className="text-lg font-semibold text-black border-b border-gray-200 pb-2">
-            Informações da Conta
-          </h3>
+        {/* Collapsible Account Information */}
+        <div className="mb-8">
+          <button
+            onClick={() => toggleSection('account')}
+            className="w-full flex items-center justify-between text-lg font-semibold text-black border-b border-gray-200 pb-2 mb-4 hover:text-gray-700 transition-colors"
+          >
+            <span>Informações da Conta</span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className={`transform transition-transform ${
+                sectionsExpanded.account ? 'rotate-180' : ''
+              }`}
+            >
+              <path d="M4 6l4 4 4-4H4z" />
+            </svg>
+          </button>
 
-          {!isEditing ? (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <Label className="text-gray-900 font-medium">Nome</Label>
-                  <div className="mt-1 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    {user.name}
+          {sectionsExpanded.account && (
+            <div className="space-y-6">
+              {!isEditing ? (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <Label className="text-gray-900 font-medium">Nome</Label>
+                      <div className="mt-1 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        {user.name}
+                      </div>
+                    </div>
+                    <div>
+                      <Label className="text-gray-900 font-medium">Email</Label>
+                      <div className="mt-1 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        {user.email}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={() => setIsEditing(true)}
+                      className="bg-gray-900 text-white hover:bg-gray-800"
+                    >
+                      Editar Informações
+                    </Button>
                   </div>
                 </div>
-                <div>
-                  <Label className="text-gray-900 font-medium">Email</Label>
-                  <div className="mt-1 p-3 bg-gray-50 rounded-lg border border-gray-200">
-                    {user.email}
+              ) : (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="edit-name"
+                        className="text-gray-900 font-medium"
+                      >
+                        Nome
+                      </Label>
+                      <Input
+                        id="edit-name"
+                        value={editForm.name}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, name: e.target.value })
+                        }
+                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="edit-email"
+                        className="text-gray-900 font-medium"
+                      >
+                        Email
+                      </Label>
+                      <Input
+                        id="edit-email"
+                        type="email"
+                        value={editForm.email}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, email: e.target.value })
+                        }
+                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end gap-3">
+                    <Button
+                      onClick={handleCancel}
+                      variant="outline"
+                      className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      onClick={handleSave}
+                      className="bg-gray-900 text-white hover:bg-gray-800"
+                    >
+                      Salvar Alterações
+                    </Button>
                   </div>
                 </div>
-              </div>
-              <div className="flex justify-end">
-                <Button
-                  onClick={() => setIsEditing(true)}
-                  className="bg-gray-900 text-white hover:bg-gray-800"
-                >
-                  Editar Informações
-                </Button>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="edit-name"
-                    className="text-gray-900 font-medium"
-                  >
-                    Nome
-                  </Label>
-                  <Input
-                    id="edit-name"
-                    value={editForm.name}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, name: e.target.value })
-                    }
-                    className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label
-                    htmlFor="edit-email"
-                    className="text-gray-900 font-medium"
-                  >
-                    Email
-                  </Label>
-                  <Input
-                    id="edit-email"
-                    type="email"
-                    value={editForm.email}
-                    onChange={(e) =>
-                      setEditForm({ ...editForm, email: e.target.value })
-                    }
-                    className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
-                  />
-                </div>
-              </div>
-              <div className="flex justify-end gap-3">
-                <Button
-                  onClick={handleCancel}
-                  variant="outline"
-                  className="border-gray-300 text-gray-700 hover:bg-gray-50"
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  onClick={handleSave}
-                  className="bg-gray-900 text-white hover:bg-gray-800"
-                >
-                  Salvar Alterações
-                </Button>
-              </div>
+              )}
             </div>
           )}
         </div>
