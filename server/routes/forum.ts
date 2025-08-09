@@ -417,7 +417,15 @@ export const handleGetTopic: RequestHandler = (req, res) => {
   }
 
   // Build comment tree
+  console.log('DEBUG - Comentários antes da organização:', topic.comments.map(c => ({ id: c.id, author: c.author, parentId: c.parentId })));
   const organizedComments = buildCommentTree(topic.comments);
+  console.log('DEBUG - Comentários após organização:', JSON.stringify(organizedComments.map(c => ({
+    id: c.id,
+    author: c.author,
+    parentId: c.parentId,
+    repliesCount: c.replies?.length || 0,
+    replies: c.replies?.map(r => ({ id: r.id, author: r.author, parentId: r.parentId })) || []
+  })), null, 2));
   topic.comments = organizedComments;
 
   res.json(topic);
