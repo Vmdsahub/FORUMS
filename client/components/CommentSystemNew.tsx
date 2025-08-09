@@ -310,9 +310,26 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
         console.log(`[COMMENTS] Tentando novamente em 2s...`);
         setTimeout(() => loadComments(retryCount + 1), 2000);
       } else {
-        // Fallback: mostrar comentários vazios em vez de erro
-        setComments([]);
-        console.warn("[COMMENTS] Usando fallback - comentários vazios");
+        // Fallback: mostrar comentários demo quando API falha
+        const fallbackComments = [
+          {
+            id: "fallback1",
+            content: "Sistema de comentários temporariamente indisponível. Este é um comentário de exemplo.",
+            author: "Sistema",
+            authorId: "system",
+            authorAvatar: "SI",
+            topicId: topicId,
+            parentId: null,
+            createdAt: new Date().toISOString(),
+            likes: 0,
+            isLiked: false,
+            replies: [],
+            repliesCount: 0,
+          }
+        ];
+        setComments(fallbackComments);
+        console.warn("[COMMENTS] Usando fallback - comentários demo");
+        toast.info("Comentários carregados em modo offline");
       }
     } finally {
       setIsLoading(false);
