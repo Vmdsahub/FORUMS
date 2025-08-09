@@ -162,11 +162,11 @@ export const handleGetTopics: RequestHandler = (req, res) => {
     filteredTopics = filteredTopics.filter(topic => topic.category === category);
   }
 
-  // Sort by pinned first, then by date
+  // Sort by pinned first, then by creation date (newest first)
   filteredTopics.sort((a, b) => {
     if (a.isPinned && !b.isPinned) return -1;
     if (!a.isPinned && b.isPinned) return 1;
-    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
   });
 
   const startIndex = (page - 1) * limit;
