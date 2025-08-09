@@ -243,7 +243,26 @@ export default function Header() {
                       Criar Conta
                     </DialogTitle>
                   </DialogHeader>
-                  <div className="space-y-4 py-4">
+                  <form
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      if (!registerCaptchaValid) {
+                        toast.error('Por favor, complete a verificação de segurança');
+                        return;
+                      }
+
+                      const success = await register(registerName, registerEmail, registerPassword, registerCaptcha);
+                      if (success) {
+                        setIsRegisterOpen(false);
+                        setRegisterName('');
+                        setRegisterEmail('');
+                        setRegisterPassword('');
+                        setRegisterCaptcha('');
+                        setRegisterCaptchaValid(false);
+                      }
+                    }}
+                    className="space-y-4 py-4"
+                  >
                     <div className="space-y-2">
                       <Label htmlFor="name" className="text-black/80">
                         Nome
@@ -251,7 +270,11 @@ export default function Header() {
                       <Input
                         id="name"
                         placeholder="Seu nome"
+                        value={registerName}
+                        onChange={(e) => setRegisterName(e.target.value)}
                         className="border-black/20 focus:border-black/40"
+                        required
+                        minLength={2}
                       />
                     </div>
                     <div className="space-y-2">
@@ -262,7 +285,10 @@ export default function Header() {
                         id="register-email"
                         type="email"
                         placeholder="seu@email.com"
+                        value={registerEmail}
+                        onChange={(e) => setRegisterEmail(e.target.value)}
                         className="border-black/20 focus:border-black/40"
+                        required
                       />
                     </div>
                     <div className="space-y-2">
@@ -276,13 +302,26 @@ export default function Header() {
                         id="register-password"
                         type="password"
                         placeholder="••••••••"
+                        value={registerPassword}
+                        onChange={(e) => setRegisterPassword(e.target.value)}
                         className="border-black/20 focus:border-black/40"
+                        required
+                        minLength={6}
                       />
+                      <p className="text-xs text-gray-500">Mínimo de 6 caracteres</p>
                     </div>
-                    <Button className="w-full bg-black text-white hover:bg-black/90 font-medium">
-                      Criar Conta
+                    <Captcha
+                      onCaptchaChange={setRegisterCaptcha}
+                      onValidationChange={setRegisterCaptchaValid}
+                    />
+                    <Button
+                      type="submit"
+                      className="w-full bg-black text-white hover:bg-black/90 font-medium"
+                      disabled={isLoading || !registerCaptchaValid}
+                    >
+                      {isLoading ? 'Criando conta...' : 'Criar Conta'}
                     </Button>
-                  </div>
+                  </form>
                 </DialogContent>
               </Dialog>
             </>
