@@ -77,10 +77,13 @@ function addPoints(userId: string, points: number) {
 
 // SISTEMA DE COMENTÁRIOS SIMPLES E ROBUSTO
 function buildCommentTree(allComments: Comment[]): Comment[] {
+  if (allComments.length === 0) return [];
+
   // Criar map de comentários indexados por ID
   const commentMap = new Map<string, Comment>();
-  
-  // Primeiro passo: copiar todos os comentários e inicializar replies
+  const rootComments: Comment[] = [];
+
+  // Primeiro passo: criar mapa com todos os comentários limpos
   allComments.forEach(comment => {
     commentMap.set(comment.id, {
       ...comment,
@@ -89,36 +92,69 @@ function buildCommentTree(allComments: Comment[]): Comment[] {
     });
   });
 
-  // Segundo passo: construir árvore hierárquica
-  const rootComments: Comment[] = [];
-  
-  // Processar comentários em ordem de criação
-  const sortedComments = [...allComments].sort((a, b) => {
+  // Segundo passo: separar roots e filhos
+  const rootIds: string[] = [];
+  const childComments: Comment[] = [];
+
+  allComments.forEach(comment => {
+    if (!comment.parentId) {
+      rootIds.push(comment.id);
+    } else {
+      childComments.push(comment);
+    }
+  });
+
+  // Terceiro passo: ordenar roots por data (mais antigos primeiro)
+  const sortedRoots = rootIds
+    .map(id => commentMap.get(id)!)
+    .sort((a, b) => {
+      const timeA = new Date(a.date + ' ' + a.time).getTime();
+      const timeB = new Date(b.date + ' ' + b.time).getTime();
+      return timeA - timeB;
+    });
+
+  // Quarto passo: processar filhos em ordem de criação
+  const sortedChildren = childComments.sort((a, b) => {
     const timeA = new Date(a.date + ' ' + a.time).getTime();
     const timeB = new Date(b.date + ' ' + b.time).getTime();
     return timeA - timeB;
   });
 
-  sortedComments.forEach(comment => {
-    const commentNode = commentMap.get(comment.id)!;
-    
-    if (comment.parentId) {
-      // É uma resposta - anexar ao pai
-      const parent = commentMap.get(comment.parentId);
-      if (parent) {
-        parent.replies!.push(commentNode);
-        parent.repliesCount = parent.replies!.length;
-      } else {
-        // Pai não encontrado, tratar como comentário raiz
-        rootComments.push(commentNode);
-      }
+  // Quinto passo: anexar filhos aos pais
+  sortedChildren.forEach(child => {
+    const childNode = commentMap.get(child.id)!;
+    const parent = commentMap.get(child.parentId!);
+
+    if (parent) {
+      parent.replies!.push(childNode);
+      parent.repliesCount = parent.replies!.length;
     } else {
-      // É comentário raiz
-      rootComments.push(commentNode);
+      // Se pai não existe, tratar como root
+      sortedRoots.push(childNode);
     }
   });
 
-  return rootComments;
+  // Sexto passo: ordenar replies recursivamente
+  function sortRepliesRecursively(comment: Comment) {
+    if (comment.replies && comment.replies.length > 0) {
+      comment.replies.sort((a, b) => {
+        const timeA = new Date(a.date + ' ' + a.time).getTime();
+        const timeB = new Date(b.date + ' ' + b.time).getTime();
+        return timeA - timeB;
+      });
+
+      comment.replies.forEach(reply => {
+        sortRepliesRecursively(reply);
+      });
+    }
+  }
+
+  // Aplicar ordenação recursiva
+  sortedRoots.forEach(comment => {
+    sortRepliesRecursively(comment);
+  });
+
+  return sortedRoots;
 }
 
 function isLikedBy(entityId: string, userId: string): boolean {
