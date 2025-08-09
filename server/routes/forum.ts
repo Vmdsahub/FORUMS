@@ -305,6 +305,19 @@ function initializeDemoData() {
       isLiked: false,
       topicId: "2",
     },
+    {
+      id: "c6",
+      content: "Verdade! E agora com o modelo de refino fica ainda melhor.",
+      author: "DevPro",
+      authorId: "user_dev_pro",
+      authorAvatar: "DP",
+      date: "09/08/2025",
+      time: "12:30",
+      likes: 1,
+      isLiked: false,
+      topicId: "1",
+      parentId: "c2",
+    },
   ];
 
   demoComments.forEach((comment) => {
