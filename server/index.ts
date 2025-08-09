@@ -96,10 +96,10 @@ export function createServer() {
   app.get("/api/badges", handleGetAllBadges);
 
   // Novo sistema de comentários - ANTES das rotas antigas para evitar conflito
-  app.get("/api/comments/:topicId", handleGetComments);
-  app.post("/api/comments/:topicId", authenticateToken, handleCreateCommentNew);
-  app.post("/api/comments/:commentId/like", authenticateToken, handleLikeCommentNew);
-  app.delete("/api/comments/:commentId", authenticateToken, handleDeleteCommentNew);
+  app.get("/api/comments/:topicId", getComments);
+  app.post("/api/comments/:topicId", authenticateToken, createComment);
+  app.post("/api/comments/:commentId/like", authenticateToken, likeComment);
+  app.delete("/api/comments/:commentId", authenticateToken, deleteComment);
 
   return app;
 }
