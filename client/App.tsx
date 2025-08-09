@@ -304,7 +304,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
-        <Header />
+        <Header activeSection={activeSection} />
         <Routes>
           <Route
             path="/"
