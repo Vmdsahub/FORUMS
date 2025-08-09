@@ -53,7 +53,7 @@ export interface LikeResponse {
 }
 
 export interface TopicListResponse {
-  topics: Omit<Topic, 'comments' | 'content'>[];
+  topics: Omit<Topic, "comments" | "content">[];
   total: number;
   page: number;
   limit: number;

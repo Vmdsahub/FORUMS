@@ -306,10 +306,10 @@ function App() {
       <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
         <Header />
         <Routes>
-          <Route 
-            path="/" 
+          <Route
+            path="/"
             element={
-              <Index 
+              <Index
                 activeSection={activeSection}
                 setActiveSection={setActiveSection}
                 expandedNewsletter={expandedNewsletter}
@@ -326,7 +326,7 @@ function App() {
                 navigateWeek={navigateWeek}
                 currentNewsletter={currentNewsletter}
               />
-            } 
+            }
           />
           <Route path="/topic/:topicId" element={<TopicView />} />
           <Route path="*" element={<NotFound />} />

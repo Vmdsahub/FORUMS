@@ -1,29 +1,32 @@
-import { useState, useEffect, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState, useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface CaptchaProps {
   onCaptchaChange: (value: string) => void;
   onValidationChange: (isValid: boolean) => void;
 }
 
-export default function Captcha({ onCaptchaChange, onValidationChange }: CaptchaProps) {
-  const [captchaQuestion, setCaptchaQuestion] = useState('');
+export default function Captcha({
+  onCaptchaChange,
+  onValidationChange,
+}: CaptchaProps) {
+  const [captchaQuestion, setCaptchaQuestion] = useState("");
   const [captchaAnswer, setCaptchaAnswer] = useState<number>(0);
-  const [userAnswer, setUserAnswer] = useState('');
+  const [userAnswer, setUserAnswer] = useState("");
   const [isValid, setIsValid] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const generateMathCaptcha = () => {
     const num1 = Math.floor(Math.random() * 10) + 1;
     const num2 = Math.floor(Math.random() * 10) + 1;
-    const operation = Math.random() > 0.5 ? '+' : '-';
-    
+    const operation = Math.random() > 0.5 ? "+" : "-";
+
     let question: string;
     let answer: number;
-    
-    if (operation === '+') {
+
+    if (operation === "+") {
       question = `${num1} + ${num2}`;
       answer = num1 + num2;
     } else {
@@ -33,10 +36,10 @@ export default function Captcha({ onCaptchaChange, onValidationChange }: Captcha
       question = `${larger} - ${smaller}`;
       answer = larger - smaller;
     }
-    
+
     setCaptchaQuestion(question);
     setCaptchaAnswer(answer);
-    setUserAnswer('');
+    setUserAnswer("");
     setIsValid(false);
     onValidationChange(false);
     drawCaptcha(question);
@@ -46,18 +49,18 @@ export default function Captcha({ onCaptchaChange, onValidationChange }: Captcha
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Set background
-    ctx.fillStyle = '#f8f9fa';
+    ctx.fillStyle = "#f8f9fa";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Add noise lines
-    ctx.strokeStyle = '#e9ecef';
+    ctx.strokeStyle = "#e9ecef";
     ctx.lineWidth = 1;
     for (let i = 0; i < 5; i++) {
       ctx.beginPath();
@@ -67,15 +70,15 @@ export default function Captcha({ onCaptchaChange, onValidationChange }: Captcha
     }
 
     // Draw text
-    ctx.font = 'bold 24px Arial';
-    ctx.fillStyle = '#343a40';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    
+    ctx.font = "bold 24px Arial";
+    ctx.fillStyle = "#343a40";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
     // Add slight rotation and position variation
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
-    
+
     ctx.save();
     ctx.translate(centerX, centerY);
     ctx.rotate((Math.random() - 0.5) * 0.2); // Small rotation
@@ -83,13 +86,13 @@ export default function Captcha({ onCaptchaChange, onValidationChange }: Captcha
     ctx.restore();
 
     // Add some noise dots
-    ctx.fillStyle = '#adb5bd';
+    ctx.fillStyle = "#adb5bd";
     for (let i = 0; i < 50; i++) {
       ctx.fillRect(
         Math.random() * canvas.width,
         Math.random() * canvas.height,
         1,
-        1
+        1,
       );
     }
   };
@@ -147,7 +150,8 @@ export default function Captcha({ onCaptchaChange, onValidationChange }: Captcha
       </div>
       <div className="space-y-2">
         <Label htmlFor="captcha-input" className="text-sm text-gray-600">
-          Qual o resultado de: <span className="font-semibold">{captchaQuestion} = ?</span>
+          Qual o resultado de:{" "}
+          <span className="font-semibold">{captchaQuestion} = ?</span>
         </Label>
         <Input
           id="captcha-input"
@@ -156,12 +160,14 @@ export default function Captcha({ onCaptchaChange, onValidationChange }: Captcha
           value={userAnswer}
           onChange={(e) => handleAnswerChange(e.target.value)}
           className={`border-black/20 focus:border-black/40 ${
-            userAnswer && (isValid ? 'border-green-500' : 'border-red-500')
+            userAnswer && (isValid ? "border-green-500" : "border-red-500")
           }`}
         />
         {userAnswer && (
-          <p className={`text-xs ${isValid ? 'text-green-600' : 'text-red-600'}`}>
-            {isValid ? '✓ Verificação válida' : '✗ Resposta incorreta'}
+          <p
+            className={`text-xs ${isValid ? "text-green-600" : "text-red-600"}`}
+          >
+            {isValid ? "✓ Verificação válida" : "✗ Resposta incorreta"}
           </p>
         )}
       </div>

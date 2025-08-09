@@ -4,7 +4,7 @@ import path from "path";
 import fs from "fs";
 
 // Create uploads directory if it doesn't exist
-const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+const uploadsDir = path.join(process.cwd(), "public", "uploads");
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
@@ -15,10 +15,10 @@ const storage = multer.diskStorage({
     cb(null, uploadsDir);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-  }
+    cb(null, file.fieldname + "-" + uniqueSuffix + ext);
+  },
 });
 
 const upload = multer({
@@ -28,18 +28,20 @@ const upload = multer({
   },
   fileFilter: (req, file, cb) => {
     const allowedTypes = /jpeg|jpg|png|gif|webp|mp4|mov|avi|webm|mkv/;
-    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const extname = allowedTypes.test(
+      path.extname(file.originalname).toLowerCase(),
+    );
     const mimetype = allowedTypes.test(file.mimetype);
 
     if (extname && mimetype) {
       return cb(null, true);
     } else {
-      cb(new Error('Tipo de arquivo não suportado'));
+      cb(new Error("Tipo de arquivo não suportado"));
     }
-  }
+  },
 });
 
-export const uploadMiddleware = upload.single('file');
+export const uploadMiddleware = upload.single("file");
 
 export const handleUpload: RequestHandler = (req, res) => {
   if (!req.user) {
@@ -51,12 +53,12 @@ export const handleUpload: RequestHandler = (req, res) => {
   }
 
   const fileUrl = `/uploads/${req.file.filename}`;
-  
+
   res.json({
     url: fileUrl,
     filename: req.file.filename,
     originalName: req.file.originalname,
     size: req.file.size,
-    type: req.body.type
+    type: req.body.type,
   });
 };

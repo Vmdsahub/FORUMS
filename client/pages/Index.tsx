@@ -159,8 +159,7 @@ export default function Index(props: IndexProps) {
                   </h2>
                   <p className="text-lg text-gray-600 mt-2">
                     Semana {currentNewsletter.week} •{" "}
-                    {currentNewsletter.startDate} -{" "}
-                    {currentNewsletter.endDate}
+                    {currentNewsletter.startDate} - {currentNewsletter.endDate}
                   </p>
                 </div>
 
@@ -236,11 +235,19 @@ export default function Index(props: IndexProps) {
                           <button
                             onClick={() => {
                               // Handle newsletter like - you can implement this later
-                              console.log('Newsletter like clicked for topic', topic.id);
+                              console.log(
+                                "Newsletter like clicked for topic",
+                                topic.id,
+                              );
                             }}
                             className="flex items-center gap-2 px-3 py-2 rounded-md bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
                           >
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 16 16"
+                              fill="currentColor"
+                            >
                               <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
                             </svg>
                             Curtir artigo
@@ -390,17 +397,19 @@ export default function Index(props: IndexProps) {
                           views: newTopic.views || 0,
                           lastPost: newTopic.lastPost,
                           isPinned: newTopic.isPinned || false,
-                          isHot: newTopic.isHot || false
+                          isHot: newTopic.isHot || false,
                         };
 
                         // Insert at the beginning for non-pinned topics, or after pinned topics
-                        const pinnedCount = categoryData.posts.filter(p => p.isPinned).length;
+                        const pinnedCount = categoryData.posts.filter(
+                          (p) => p.isPinned,
+                        ).length;
                         categoryData.posts.splice(pinnedCount, 0, newPost);
                         categoryData.totalTopics += 1;
 
                         // Force re-render by updating the state
-                        const updatedCategories = forumCategories.map(cat =>
-                          cat.id === categoryData.id ? categoryData : cat
+                        const updatedCategories = forumCategories.map((cat) =>
+                          cat.id === categoryData.id ? categoryData : cat,
                         );
                         // This will trigger a re-render
                         window.location.reload();
@@ -417,12 +426,8 @@ export default function Index(props: IndexProps) {
                 <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-600">
                   <div className="col-span-6">Tópico</div>
                   <div className="col-span-2 text-center">Respostas</div>
-                  <div className="col-span-2 text-center">
-                    Visualizações
-                  </div>
-                  <div className="col-span-2 text-center">
-                    Última mensagem
-                  </div>
+                  <div className="col-span-2 text-center">Visualizações</div>
+                  <div className="col-span-2 text-center">Última mensagem</div>
                 </div>
               </div>
 
@@ -460,9 +465,7 @@ export default function Index(props: IndexProps) {
                             </p>
                             <div className="text-xs text-gray-500 mt-2">
                               por{" "}
-                              <span className="font-medium">
-                                {post.author}
-                              </span>
+                              <span className="font-medium">{post.author}</span>
                             </div>
                           </div>
                         </div>

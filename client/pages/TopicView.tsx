@@ -81,13 +81,15 @@ export default function TopicView() {
       const response = await fetch(`/api/topics/${topicId}/like`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
       });
 
       if (response.ok) {
         const data = await response.json();
-        setTopic(prev => prev ? { ...prev, likes: data.likes, isLiked: data.isLiked } : null);
+        setTopic((prev) =>
+          prev ? { ...prev, likes: data.likes, isLiked: data.isLiked } : null,
+        );
       }
     } catch (error) {
       console.error("Error liking topic:", error);
@@ -105,21 +107,21 @@ export default function TopicView() {
       const response = await fetch(`/api/comments/${commentId}/like`, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
       });
 
       if (response.ok) {
         const data = await response.json();
-        setTopic(prev => {
+        setTopic((prev) => {
           if (!prev) return null;
           return {
             ...prev,
-            comments: prev.comments.map(comment =>
+            comments: prev.comments.map((comment) =>
               comment.id === commentId
                 ? { ...comment, likes: data.likes, isLiked: data.isLiked }
-                : comment
-            )
+                : comment,
+            ),
           };
         });
       }
@@ -147,18 +149,22 @@ export default function TopicView() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
         body: JSON.stringify({ content: newComment }),
       });
 
       if (response.ok) {
         const newCommentData = await response.json();
-        setTopic(prev => prev ? {
-          ...prev,
-          comments: [...prev.comments, newCommentData],
-          replies: prev.replies + 1
-        } : null);
+        setTopic((prev) =>
+          prev
+            ? {
+                ...prev,
+                comments: [...prev.comments, newCommentData],
+                replies: prev.replies + 1,
+              }
+            : null,
+        );
         setNewComment("");
         toast.success("Comentário adicionado!");
       } else {
@@ -187,7 +193,9 @@ export default function TopicView() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-black mb-4">Tópico não encontrado</h2>
+          <h2 className="text-2xl font-bold text-black mb-4">
+            Tópico não encontrado
+          </h2>
           <Button onClick={() => navigate("/")} variant="outline">
             Voltar ao início
           </Button>
@@ -206,7 +214,10 @@ export default function TopicView() {
             className="flex items-center gap-2 text-gray-600 hover:text-black transition-colors"
           >
             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 0L6.6 1.4 12.2 7H0v2h12.2L6.6 14.6 8 16l8-8-8-8z" transform="rotate(180 8 8)" />
+              <path
+                d="M8 0L6.6 1.4 12.2 7H0v2h12.2L6.6 14.6 8 16l8-8-8-8z"
+                transform="rotate(180 8 8)"
+              />
             </svg>
             Voltar ao fórum
           </button>
@@ -231,14 +242,21 @@ export default function TopicView() {
                   {topic.category}
                 </span>
               </div>
-              <h1 className="text-2xl font-bold text-black mb-2">{topic.title}</h1>
+              <h1 className="text-2xl font-bold text-black mb-2">
+                {topic.title}
+              </h1>
               <p className="text-gray-600 mb-4">{topic.description}</p>
               <div className="flex items-center gap-4 text-sm text-gray-500">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold">
                     {topic.authorAvatar}
                   </div>
-                  <span>por <span className="font-medium text-black">{topic.author}</span></span>
+                  <span>
+                    por{" "}
+                    <span className="font-medium text-black">
+                      {topic.author}
+                    </span>
+                  </span>
                 </div>
                 <span>•</span>
                 <span>{topic.views.toLocaleString()} visualizações</span>
@@ -247,7 +265,7 @@ export default function TopicView() {
               </div>
             </div>
           </div>
-          
+
           {/* Topic Content */}
           <div className="border-t border-gray-100 pt-4 mb-4">
             <MarkdownRenderer content={topic.content} />
@@ -263,10 +281,15 @@ export default function TopicView() {
                   : "bg-gray-50 text-gray-600 hover:bg-gray-100"
               }`}
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+              >
                 <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
               </svg>
-              {topic.likes} {topic.likes === 1 ? 'curtida' : 'curtidas'}
+              {topic.likes} {topic.likes === 1 ? "curtida" : "curtidas"}
             </button>
           </div>
         </div>
@@ -279,7 +302,10 @@ export default function TopicView() {
 
           {/* Add Comment Form - Only for logged users */}
           {user && (
-            <form onSubmit={handleSubmitComment} className="mb-6 p-4 bg-gray-50 rounded-lg">
+            <form
+              onSubmit={handleSubmitComment}
+              className="mb-6 p-4 bg-gray-50 rounded-lg"
+            >
               <div className="space-y-3">
                 <Label htmlFor="comment" className="text-black/80">
                   Adicionar comentário
@@ -293,12 +319,12 @@ export default function TopicView() {
                   rows={3}
                   required
                 />
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isSubmitting || !newComment.trim()}
                   className="bg-black text-white hover:bg-black/90"
                 >
-                  {isSubmitting ? 'Enviando...' : 'Comentar'}
+                  {isSubmitting ? "Enviando..." : "Comentar"}
                 </Button>
               </div>
             </form>
@@ -312,14 +338,19 @@ export default function TopicView() {
               </p>
             ) : (
               topic.comments.map((comment) => (
-                <div key={comment.id} className="border-b border-gray-100 pb-4 last:border-0">
+                <div
+                  key={comment.id}
+                  className="border-b border-gray-100 pb-4 last:border-0"
+                >
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
                       {comment.authorAvatar}
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="font-medium text-black">{comment.author}</span>
+                        <span className="font-medium text-black">
+                          {comment.author}
+                        </span>
                         <span className="text-xs text-gray-500">
                           {comment.date} às {comment.time}
                         </span>
@@ -335,7 +366,12 @@ export default function TopicView() {
                             : "text-gray-500 hover:text-red-600 hover:bg-red-50"
                         }`}
                       >
-                        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                        >
                           <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
                         </svg>
                         {comment.likes}

@@ -24,7 +24,10 @@ interface CreateTopicModalProps {
   onTopicCreated?: (newTopic: any) => void;
 }
 
-export default function CreateTopicModal({ currentCategory, onTopicCreated }: CreateTopicModalProps) {
+export default function CreateTopicModal({
+  currentCategory,
+  onTopicCreated,
+}: CreateTopicModalProps) {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,7 +44,11 @@ export default function CreateTopicModal({ currentCategory, onTopicCreated }: Cr
       return;
     }
 
-    if (!formData.title.trim() || !formData.description.trim() || !formData.content.trim()) {
+    if (
+      !formData.title.trim() ||
+      !formData.description.trim() ||
+      !formData.content.trim()
+    ) {
       toast.error("Preencha todos os campos");
       return;
     }
@@ -50,14 +57,14 @@ export default function CreateTopicModal({ currentCategory, onTopicCreated }: Cr
     try {
       const topicData = {
         ...formData,
-        category: currentCategory.id
+        category: currentCategory.id,
       };
 
       const response = await fetch("/api/topics", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
         body: JSON.stringify(topicData),
       });
@@ -81,7 +88,7 @@ export default function CreateTopicModal({ currentCategory, onTopicCreated }: Cr
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   if (!user) {
@@ -113,7 +120,8 @@ export default function CreateTopicModal({ currentCategory, onTopicCreated }: Cr
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
             <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
-              <strong>Categoria:</strong> {currentCategory.name} - {currentCategory.description}
+              <strong>Categoria:</strong> {currentCategory.name} -{" "}
+              {currentCategory.description}
             </div>
           </div>
 
@@ -154,9 +162,7 @@ export default function CreateTopicModal({ currentCategory, onTopicCreated }: Cr
           </div>
 
           <div className="space-y-2">
-            <Label className="text-black/80">
-              Conteúdo
-            </Label>
+            <Label className="text-black/80">Conteúdo</Label>
             <RichTextEditor
               value={formData.content}
               onChange={(value) => handleInputChange("content", value)}

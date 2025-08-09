@@ -8,7 +8,11 @@ interface RichTextEditorProps {
   placeholder?: string;
 }
 
-export default function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
+export default function RichTextEditor({
+  value,
+  onChange,
+  placeholder,
+}: RichTextEditorProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
@@ -21,8 +25,13 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const selectedText = value.substring(start, end);
-    
-    const newText = value.substring(0, start) + before + selectedText + after + value.substring(end);
+
+    const newText =
+      value.substring(0, start) +
+      before +
+      selectedText +
+      after +
+      value.substring(end);
     onChange(newText);
 
     // Restore cursor position
@@ -41,12 +50,13 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
   };
 
   const handleUploadImage = async (file: File) => {
-    if (!file.type.startsWith('image/')) {
+    if (!file.type.startsWith("image/")) {
       toast.error("Por favor, selecione apenas arquivos de imagem");
       return;
     }
 
-    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+    if (file.size > 10 * 1024 * 1024) {
+      // 10MB limit
       toast.error("Imagem muito grande. Máximo 10MB");
       return;
     }
@@ -54,13 +64,13 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     setIsUploading(true);
     try {
       const formData = new FormData();
-      formData.append('file', file);
-      formData.append('type', 'image');
+      formData.append("file", file);
+      formData.append("type", "image");
 
-      const response = await fetch('/api/upload', {
-        method: 'POST',
+      const response = await fetch("/api/upload", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
         body: formData,
       });
@@ -74,7 +84,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
         toast.error("Erro ao carregar imagem");
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error("Upload error:", error);
       toast.error("Erro ao carregar imagem");
     } finally {
       setIsUploading(false);
@@ -82,12 +92,13 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
   };
 
   const handleUploadVideo = async (file: File) => {
-    if (!file.type.startsWith('video/')) {
+    if (!file.type.startsWith("video/")) {
       toast.error("Por favor, selecione apenas arquivos de vídeo");
       return;
     }
 
-    if (file.size > 500 * 1024 * 1024) { // 500MB limit for 4K videos
+    if (file.size > 500 * 1024 * 1024) {
+      // 500MB limit for 4K videos
       toast.error("Vídeo muito grande. Máximo 500MB");
       return;
     }
@@ -95,13 +106,13 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     setIsUploading(true);
     try {
       const formData = new FormData();
-      formData.append('file', file);
-      formData.append('type', 'video');
+      formData.append("file", file);
+      formData.append("type", "video");
 
-      const response = await fetch('/api/upload', {
-        method: 'POST',
+      const response = await fetch("/api/upload", {
+        method: "POST",
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('auth_token')}`,
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
         body: formData,
       });
@@ -115,7 +126,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
         toast.error("Erro ao carregar vídeo");
       }
     } catch (error) {
-      console.error('Upload error:', error);
+      console.error("Upload error:", error);
       toast.error("Erro ao carregar vídeo");
     } finally {
       setIsUploading(false);
@@ -134,7 +145,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     const file = event.target.files?.[0];
     if (file) {
       handleUploadImage(file);
-      event.target.value = ''; // Reset input
+      event.target.value = ""; // Reset input
     }
   };
 
@@ -142,7 +153,7 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
     const file = event.target.files?.[0];
     if (file) {
       handleUploadVideo(file);
-      event.target.value = ''; // Reset input
+      event.target.value = ""; // Reset input
     }
   };
 
@@ -243,8 +254,8 @@ export default function RichTextEditor({ value, onChange, placeholder }: RichTex
       {/* Help text */}
       <div className="p-3 border-t border-gray-200 bg-gray-50">
         <p className="text-xs text-gray-500">
-          Dica: Use **texto** para negrito, *texto* para itálico. 
-          Suporte para imagens (até 10MB) e vídeos 4K (até 500MB).
+          Dica: Use **texto** para negrito, *texto* para itálico. Suporte para
+          imagens (até 10MB) e vídeos 4K (até 500MB).
         </p>
       </div>
     </div>

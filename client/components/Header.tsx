@@ -168,16 +168,22 @@ export default function Header() {
                     onSubmit={async (e) => {
                       e.preventDefault();
                       if (!loginCaptchaValid) {
-                        toast.error('Por favor, complete a verificação de segurança');
+                        toast.error(
+                          "Por favor, complete a verificação de segurança",
+                        );
                         return;
                       }
 
-                      const success = await login(loginEmail, loginPassword, loginCaptcha);
+                      const success = await login(
+                        loginEmail,
+                        loginPassword,
+                        loginCaptcha,
+                      );
                       if (success) {
                         setIsLoginOpen(false);
-                        setLoginEmail('');
-                        setLoginPassword('');
-                        setLoginCaptcha('');
+                        setLoginEmail("");
+                        setLoginPassword("");
+                        setLoginCaptcha("");
                         setLoginCaptchaValid(false);
                       }
                     }}
@@ -221,7 +227,7 @@ export default function Header() {
                       className="w-full bg-black text-white hover:bg-black/90 font-medium"
                       disabled={isLoading || !loginCaptchaValid}
                     >
-                      {isLoading ? 'Entrando...' : 'Entrar'}
+                      {isLoading ? "Entrando..." : "Entrar"}
                     </Button>
                   </form>
                 </DialogContent>
@@ -247,22 +253,35 @@ export default function Header() {
                     onSubmit={async (e) => {
                       e.preventDefault();
                       if (isLoading) {
-                        console.log('Already loading, preventing duplicate submission');
+                        console.log(
+                          "Already loading, preventing duplicate submission",
+                        );
                         return;
                       }
                       if (!registerCaptchaValid) {
-                        toast.error('Por favor, complete a verificação de segurança');
+                        toast.error(
+                          "Por favor, complete a verificação de segurança",
+                        );
                         return;
                       }
 
-                      console.log('Submitting registration form...', { registerName, registerEmail, registerCaptcha });
-                      const success = await register(registerName, registerEmail, registerPassword, registerCaptcha);
+                      console.log("Submitting registration form...", {
+                        registerName,
+                        registerEmail,
+                        registerCaptcha,
+                      });
+                      const success = await register(
+                        registerName,
+                        registerEmail,
+                        registerPassword,
+                        registerCaptcha,
+                      );
                       if (success) {
                         setIsRegisterOpen(false);
-                        setRegisterName('');
-                        setRegisterEmail('');
-                        setRegisterPassword('');
-                        setRegisterCaptcha('');
+                        setRegisterName("");
+                        setRegisterEmail("");
+                        setRegisterPassword("");
+                        setRegisterCaptcha("");
                         setRegisterCaptchaValid(false);
                       }
                     }}
@@ -313,7 +332,9 @@ export default function Header() {
                         required
                         minLength={6}
                       />
-                      <p className="text-xs text-gray-500">Mínimo de 6 caracteres</p>
+                      <p className="text-xs text-gray-500">
+                        Mínimo de 6 caracteres
+                      </p>
                     </div>
                     <Captcha
                       onCaptchaChange={setRegisterCaptcha}
@@ -324,7 +345,7 @@ export default function Header() {
                       className="w-full bg-black text-white hover:bg-black/90 font-medium"
                       disabled={isLoading || !registerCaptchaValid}
                     >
-                      {isLoading ? 'Criando conta...' : 'Criar Conta'}
+                      {isLoading ? "Criando conta..." : "Criar Conta"}
                     </Button>
                   </form>
                 </DialogContent>
