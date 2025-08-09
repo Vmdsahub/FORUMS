@@ -7,11 +7,13 @@ import {
   CreateCommentRequest,
   LikeResponse,
 } from "@shared/forum";
+import { POINTS, calculateUserBadges, BADGES } from "@shared/badges";
 
 // Simple in-memory storage for demo purposes
 const topics: Map<string, Topic> = new Map();
 const comments: Map<string, Comment> = new Map();
 const likes: Map<string, Set<string>> = new Map(); // entityId -> Set of userIds
+const userStats: Map<string, { points: number; badges: string[] }> = new Map(); // userId -> stats
 
 // Validation schemas
 const createTopicSchema = z.object({
@@ -47,6 +49,38 @@ function getUserInitials(name: string): string {
     .map((n) => n[0])
     .join("")
     .toUpperCase();
+}
+
+// Funções para gerenciar pontos e badges
+function getUserStats(userId: string) {
+  if (!userStats.has(userId)) {
+    userStats.set(userId, { points: 0, badges: [] });
+  }
+  return userStats.get(userId)!;
+}
+
+function addPoints(userId: string, points: number) {
+  const stats = getUserStats(userId);
+  stats.points += points;
+
+  // Verificar novos badges
+  const currentBadges = calculateUserBadges(stats.points);
+  const newBadgeIds = currentBadges.map(b => b.id);
+
+  // Atualizar badges se mudaram
+  if (JSON.stringify(stats.badges.sort()) !== JSON.stringify(newBadgeIds.sort())) {
+    stats.badges = newBadgeIds;
+  }
+
+  return stats;
+}
+
+function getUserPoints(userId: string): number {
+  return getUserStats(userId).points;
+}
+
+function getUserBadges(userId: string): string[] {
+  return getUserStats(userId).badges;
 }
 
 // Helper para organizar comentários em estrutura hierárquica
