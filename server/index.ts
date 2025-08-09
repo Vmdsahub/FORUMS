@@ -53,6 +53,7 @@ export function createServer() {
 
   // Forum routes
   app.get("/api/topics", handleGetTopics);
+  app.get("/api/topics/user", authenticateToken, handleGetUserTopics);
   app.get("/api/topics/:topicId", handleGetTopic);
   app.post("/api/topics", authenticateToken, handleCreateTopic);
   app.post(
