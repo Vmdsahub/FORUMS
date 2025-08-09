@@ -99,6 +99,7 @@ export default function Index(props: IndexProps) {
 
   const [realTopics, setRealTopics] = useState<Topic[]>([]);
   const [isLoadingTopics, setIsLoadingTopics] = useState(false);
+  const [savedTopicIds, setSavedTopicIds] = useState<string[]>([]);
 
   // Estados para modais admin
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
