@@ -82,13 +82,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const register = async (name: string, email: string, password: string, captcha: string): Promise<boolean> => {
     setIsLoading(true);
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ name, email, password, captcha }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data: AuthResponse = await response.json();
@@ -101,9 +107,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.error(error.message || 'Erro ao criar conta');
         return false;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Register error:', error);
-      toast.error('Erro de conexão. Tente novamente.');
+      if (error.name === 'AbortError') {
+        toast.error('Requisição expirou. Tente novamente.');
+      } else {
+        toast.error('Erro de conexão. Tente novamente.');
+      }
       return false;
     } finally {
       setIsLoading(false);
