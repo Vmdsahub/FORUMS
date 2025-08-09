@@ -109,7 +109,12 @@ export default function Forum() {
   };
 
   const handleTopicCreated = (newTopic: Topic) => {
+    console.log("Topic created callback:", newTopic);
     setTopics((prev) => [newTopic, ...prev]);
+    // Recarregar tópicos para garantir que está atualizado
+    if (selectedCategory) {
+      fetchTopics(selectedCategory);
+    }
   };
 
   const toggleLike = async (topicId: string) => {
