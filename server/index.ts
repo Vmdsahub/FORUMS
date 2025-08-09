@@ -47,5 +47,8 @@ export function createServer() {
   app.post("/api/topics/:topicId/like", authenticateToken, handleLikeTopic);
   app.post("/api/comments/:commentId/like", authenticateToken, handleLikeComment);
 
+  // Upload route
+  app.post("/api/upload", authenticateToken, uploadMiddleware, handleUpload);
+
   return app;
 }
