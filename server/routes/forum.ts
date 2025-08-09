@@ -344,7 +344,7 @@ function initializeDemoData() {
     topics.set(topic.id, topic as Topic);
   });
 
-  // Add some demo comments
+  // Add some demo comments with proper chronological order
   const demoComments = [
     {
       id: "c1",
@@ -354,7 +354,7 @@ function initializeDemoData() {
       authorId: "user_creative_ai",
       authorAvatar: "CA",
       date: "Hoje",
-      time: "11:45",
+      time: "09:30",
       likes: 8,
       isLiked: false,
       topicId: "1",
@@ -362,13 +362,39 @@ function initializeDemoData() {
     {
       id: "c2",
       content:
+        "Concordo completamente! Testei os dois e o Midjourney tem uma vantagem clara em arte conceitual.",
+      author: "DigitalArtist",
+      authorId: "user_digital_artist",
+      authorAvatar: "DA",
+      date: "Hoje",
+      time: "10:15",
+      likes: 3,
+      isLiked: false,
+      topicId: "1",
+    },
+    {
+      id: "c3",
+      content:
         "Concordo! O SDXL é um salto gigante. A qualidade das imagens é impressionante, especialmente com o modelo de refino.",
       author: "AIArtist",
       authorId: "user_ai_artist",
       authorAvatar: "AA",
       date: "Hoje",
-      time: "10:30",
+      time: "08:30",
       likes: 5,
+      isLiked: false,
+      topicId: "2",
+    },
+    {
+      id: "c4",
+      content:
+        "Sim! E a diferença na resolução é notável. Finalmente podemos gerar imagens de alta qualidade sem precisar fazer upscale.",
+      author: "TechEnthusiast",
+      authorId: "user_tech_enthusiast",
+      authorAvatar: "TE",
+      date: "Hoje",
+      time: "09:45",
+      likes: 2,
       isLiked: false,
       topicId: "2",
     },
