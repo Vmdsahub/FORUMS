@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import TopicView from "@/pages/TopicView";
 import Index from "@/pages/Index";
 import Account from "@/pages/Account";
+import SavedTopics from "@/pages/SavedTopics";
 import NotFound from "@/pages/NotFound";
 
 interface NewsletterTopic {
@@ -331,6 +332,7 @@ function App() {
           />
           <Route path="/topic/:topicId" element={<TopicView />} />
           <Route path="/account" element={<Account />} />
+          <Route path="/saved-topics" element={<SavedTopics />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
