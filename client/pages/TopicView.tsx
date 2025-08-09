@@ -6,16 +6,22 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
+import CommentSystemNew from "@/components/CommentSystemNew";
+import UserPointsBadge from "@/components/UserPointsBadge";
 
 interface Comment {
   id: string;
   content: string;
   author: string;
+  authorId: string;
   authorAvatar: string;
   date: string;
   time: string;
   likes: number;
   isLiked: boolean;
+  parentId?: string;
+  replies?: Comment[];
+  repliesCount?: number;
 }
 
 interface Topic {
@@ -23,6 +29,7 @@ interface Topic {
   title: string;
   description: string;
   author: string;
+  authorId: string;
   authorAvatar: string;
   replies: number;
   views: number;
@@ -170,16 +177,8 @@ export default function TopicView() {
       });
 
       if (response.ok) {
-        const newCommentData = await response.json();
-        setTopic((prev) =>
-          prev
-            ? {
-                ...prev,
-                comments: [...prev.comments, newCommentData],
-                replies: prev.replies + 1,
-              }
-            : null,
-        );
+        // Recarregar o tópico para obter a estrutura organizada
+        await fetchTopic();
         setNewComment("");
         toast.success("Comentário adicionado!");
       } else {
@@ -193,9 +192,30 @@ export default function TopicView() {
     }
   };
 
-  const handleDeleteComment = async (commentId: string) => {
-    if (!isAdmin) return;
+  const handleReplyToComment = async (parentId: string, content: string) => {
+    if (!user) {
+      toast.error("Faça login para responder");
+      return;
+    }
 
+    const response = await fetch(`/api/topics/${topicId}/comments`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+      },
+      body: JSON.stringify({ content, parentId }),
+    });
+
+    if (response.ok) {
+      // Recarregar o tópico para obter a estrutura organizada
+      await fetchTopic();
+    } else {
+      throw new Error("Erro ao adicionar resposta");
+    }
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
     try {
       const response = await fetch(`/api/comments/${commentId}`, {
         method: "DELETE",
@@ -205,19 +225,12 @@ export default function TopicView() {
       });
 
       if (response.ok) {
-        setTopic((prev) => {
-          if (!prev) return null;
-          return {
-            ...prev,
-            comments: prev.comments.filter(
-              (comment) => comment.id !== commentId,
-            ),
-            replies: prev.replies - 1,
-          };
-        });
+        // Recarregar o tópico para obter a estrutura atualizada
+        await fetchTopic();
         toast.success("Comentário excluído!");
       } else {
-        toast.error("Erro ao excluir comentário");
+        const errorData = await response.json();
+        toast.error(errorData.message || "Erro ao excluir comentário");
       }
     } catch (error) {
       console.error("Error deleting comment:", error);
@@ -353,17 +366,20 @@ export default function TopicView() {
                 {topic.title}
               </h1>
               <p className="text-gray-600 mb-4">{topic.description}</p>
-              <div className="flex items-center gap-4 text-sm text-gray-500">
+              <div className="flex items-center gap-4 text-sm text-gray-500 flex-wrap">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold">
                     {topic.authorAvatar}
                   </div>
-                  <span>
-                    por{" "}
-                    <span className="font-medium text-black">
-                      {topic.author}
+                  <div className="flex flex-col gap-1">
+                    <span>
+                      por{" "}
+                      <span className="font-medium text-black">
+                        {topic.author}
+                      </span>
                     </span>
-                  </span>
+                    <UserPointsBadge userId={topic.authorId} size="sm" />
+                  </div>
                 </div>
                 <span>•</span>
                 <span>{topic.views.toLocaleString()} visualizações</span>
@@ -451,121 +467,8 @@ export default function TopicView() {
           </div>
         </div>
 
-        {/* Comments Section */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-black mb-4">
-            Comentários ({topic.comments.length})
-          </h3>
-
-          {/* Add Comment Form - Only for logged users */}
-          {user && (
-            <form
-              onSubmit={handleSubmitComment}
-              className="mb-6 p-4 bg-gray-50 rounded-lg"
-            >
-              <div className="space-y-3">
-                <Label htmlFor="comment" className="text-black/80">
-                  Adicionar comentário
-                </Label>
-                <textarea
-                  id="comment"
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Escreva seu comentário..."
-                  className="w-full p-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-black/20 focus:border-black/40 resize-none"
-                  rows={3}
-                  required
-                />
-                <Button
-                  type="submit"
-                  disabled={isSubmitting || !newComment.trim()}
-                  className="bg-black text-white hover:bg-black/90"
-                >
-                  {isSubmitting ? "Enviando..." : "Comentar"}
-                </Button>
-              </div>
-            </form>
-          )}
-
-          {/* Comments List */}
-          <div className="space-y-4">
-            {topic.comments.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">
-                Seja o primeiro a comentar neste tópico!
-              </p>
-            ) : (
-              topic.comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="border-b border-gray-100 pb-4 last:border-0"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
-                      {comment.authorAvatar}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className="font-medium text-black">
-                          {comment.author}
-                        </span>
-                        <span className="text-xs text-gray-500">
-                          {comment.date} às {comment.time}
-                        </span>
-                      </div>
-                      <div className="text-gray-700 mb-3 leading-relaxed">
-                        <MarkdownRenderer content={comment.content} />
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => handleLikeComment(comment.id)}
-                          className={`flex items-center gap-1 text-sm px-2 py-1 rounded transition-colors ${
-                            comment.isLiked
-                              ? "text-red-600 bg-red-50 hover:bg-red-100"
-                              : "text-gray-500 hover:text-red-600 hover:bg-red-50"
-                          }`}
-                        >
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 16 16"
-                            fill="currentColor"
-                          >
-                            <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
-                          </svg>
-                          {comment.likes}
-                        </button>
-                        {isAdmin && (
-                          <button
-                            onClick={() => {
-                              if (
-                                confirm(
-                                  "Tem certeza que deseja excluir este comentário?",
-                                )
-                              ) {
-                                handleDeleteComment(comment.id);
-                              }
-                            }}
-                            className="flex items-center gap-1 text-sm px-2 py-1 rounded transition-colors text-red-600 hover:bg-red-50"
-                            title="Excluir comentário (Admin)"
-                          >
-                            <svg
-                              width="14"
-                              height="14"
-                              viewBox="0 0 24 24"
-                              fill="currentColor"
-                            >
-                              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                            </svg>
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
+        {/* Novo Sistema de Comentários */}
+        <CommentSystemNew topicId={topic.id} topicAuthorId={topic.authorId} />
       </div>
     </div>
   );

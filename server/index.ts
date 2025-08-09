@@ -22,9 +22,20 @@ import {
   handleGetUserTopics,
 } from "./routes/forum";
 import { uploadMiddleware, handleUpload } from "./routes/upload";
+import { handleGetUserStats, handleGetAllBadges } from "./routes/user-stats";
+import {
+  getComments,
+  createComment,
+  likeComment,
+  deleteComment,
+  initializeDemo,
+} from "./routes/simple-comments";
 
 export function createServer() {
   const app = express();
+
+  // Inicializar dados demo do sistema de comentários
+  initializeDemo();
 
   // Middleware
   app.use(cors());
@@ -56,28 +67,39 @@ export function createServer() {
   app.get("/api/topics/user", authenticateToken, handleGetUserTopics);
   app.get("/api/topics/:topicId", handleGetTopic);
   app.post("/api/topics", authenticateToken, handleCreateTopic);
-  app.post(
-    "/api/topics/:topicId/comments",
-    authenticateToken,
-    handleCreateComment,
-  );
+  // ROTAS ANTIGAS DE COMENTÁRIOS - TEMPORARIAMENTE DESABILITADAS
+  // app.post(
+  //   "/api/topics/:topicId/comments",
+  //   authenticateToken,
+  //   handleCreateComment,
+  // );
   app.post("/api/topics/:topicId/like", authenticateToken, handleLikeTopic);
-  app.post(
-    "/api/comments/:commentId/like",
-    authenticateToken,
-    handleLikeComment,
-  );
+  // app.post(
+  //   "/api/comments/:commentId/like",
+  //   authenticateToken,
+  //   handleLikeComment,
+  // );
 
   // Admin routes
   app.delete("/api/topics/:topicId", authenticateToken, handleDeleteTopic);
-  app.delete(
-    "/api/comments/:commentId",
-    authenticateToken,
-    handleDeleteComment,
-  );
+  // app.delete(
+  //   "/api/comments/:commentId",
+  //   authenticateToken,
+  //   handleDeleteComment,
+  // );
 
   // Upload route
   app.post("/api/upload", authenticateToken, uploadMiddleware, handleUpload);
+
+  // User stats routes
+  app.get("/api/user/stats", authenticateToken, handleGetUserStats);
+  app.get("/api/badges", handleGetAllBadges);
+
+  // Novo sistema de comentários - ANTES das rotas antigas para evitar conflito
+  app.get("/api/comments/:topicId", getComments);
+  app.post("/api/comments/:topicId", authenticateToken, createComment);
+  app.post("/api/comments/:commentId/like", authenticateToken, likeComment);
+  app.delete("/api/comments/:commentId", authenticateToken, deleteComment);
 
   return app;
 }

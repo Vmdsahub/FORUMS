@@ -7,7 +7,7 @@ import {
   CreateCommentRequest,
   LikeResponse,
 } from "@shared/forum";
-// import { POINTS, calculateUserBadges, BADGES } from "@shared/badges"; // Temporariamente removido
+import { POINTS, calculateUserBadges, BADGES } from "@shared/badges";
 
 // Simple in-memory storage for demo purposes
 const topics: Map<string, Topic> = new Map();
@@ -39,8 +39,8 @@ function formatDate(): { date: string; time: string } {
     hour: "2-digit",
     minute: "2-digit",
   });
-  const date = now.toLocaleDateString("pt-BR");
-  return { date, time };
+  // Usar "Hoje" para consistência com o sistema de ordenação
+  return { date: "Hoje", time };
 }
 
 function getUserInitials(name: string): string {
@@ -65,92 +65,129 @@ function addPoints(userId: string, points: number) {
 
   // Verificar novos badges
   const currentBadges = calculateUserBadges(stats.points);
-  const newBadgeIds = currentBadges.map((b) => b.id);
+  const newBadgeIds = currentBadges.map(b => b.id);
 
   // Atualizar badges se mudaram
-  if (
-    JSON.stringify(stats.badges.sort()) !== JSON.stringify(newBadgeIds.sort())
-  ) {
+  if (JSON.stringify(stats.badges.sort()) !== JSON.stringify(newBadgeIds.sort())) {
     stats.badges = newBadgeIds;
   }
 
   return stats;
 }
 
-// SISTEMA DE COMENTÁRIOS SIMPLES E ROBUSTO
-function buildCommentTree(allComments: Comment[]): Comment[] {
-  if (!allComments || allComments.length === 0) return [];
+function getUserPoints(userId: string): number {
+  return getUserStats(userId).points;
+}
 
-  // MÉTODO MAIS SIMPLES E DIRETO
+function getUserBadges(userId: string): string[] {
+  return getUserStats(userId).badges;
+}
 
-  // 1. Criar um map para acesso rápido por ID
+// Helper para organizar comentários em estrutura hierárquica
+function organizeComments(comments: Comment[]): Comment[] {
   const commentMap = new Map<string, Comment>();
+  const rootComments: Comment[] = [];
 
-  // 2. Inicializar todos os comentários com arrays vazios de replies
-  allComments.forEach((comment) => {
+  // Função para parsear data/hora e criar timestamp
+  function parseDateTime(date: string, time: string): number {
+    // Se a data for "Hoje", usar data atual
+    if (date === "Hoje") {
+      const today = new Date();
+      const [hours, minutes] = time.split(':');
+      today.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      return today.getTime();
+    }
+
+    // Se a data for "Ontem", usar ontem
+    if (date === "Ontem") {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const [hours, minutes] = time.split(':');
+      yesterday.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      return yesterday.getTime();
+    }
+
+    // Para outras datas, tentar fazer parsing
+    try {
+      const dateTime = new Date(date + ' ' + time);
+      if (!isNaN(dateTime.getTime())) {
+        return dateTime.getTime();
+      }
+    } catch (e) {
+      // Se falhar, usar timestamp atual
+    }
+
+    return Date.now();
+  }
+
+  // Primeiro, criar o mapa de comentários com inicialização correta
+  comments.forEach(comment => {
     commentMap.set(comment.id, {
       ...comment,
       replies: [],
-      repliesCount: 0,
+      repliesCount: 0
     });
   });
 
-  // 3. Array para comentários raiz (sem parentId)
-  const rootComments: Comment[] = [];
+  // Separar comentários raiz dos replies
+  const rootCommentsList: Comment[] = [];
+  const repliesList: Comment[] = [];
 
-  // 4. Processar cada comentário
-  allComments.forEach((comment) => {
-    const currentComment = commentMap.get(comment.id)!;
-
-    if (!comment.parentId || comment.parentId === "") {
-      // É comentário raiz
-      rootComments.push(currentComment);
+  comments.forEach(comment => {
+    if (comment.parentId) {
+      repliesList.push(comment);
     } else {
-      // É uma resposta - encontrar o pai
-      const parent = commentMap.get(comment.parentId);
-      if (parent && parent.replies) {
-        parent.replies.push(currentComment);
-        parent.repliesCount = parent.replies.length;
-      } else {
-        // Pai não encontrado - tratar como raiz
-        rootComments.push(currentComment);
-      }
+      rootCommentsList.push(comment);
     }
   });
 
-  // 5. Ordenar por data/hora (função simples)
-  function parseDateTime(date: string, time: string): number {
-    try {
-      if (date.includes("/")) {
-        // Formato DD/MM/YYYY
-        const [day, month, year] = date.split("/").map((num) => parseInt(num));
-        const [hours, minutes] = time.split(":").map((num) => parseInt(num));
-        return new Date(year, month - 1, day, hours, minutes).getTime();
-      } else {
-        // Formato ISO ou outro
-        return new Date(`${date} ${time}`).getTime();
-      }
-    } catch {
-      return Date.now();
-    }
-  }
-
-  const sortComments = (a: Comment, b: Comment) => {
+  // Ordenar comentários raiz por data (mais antigos primeiro)
+  rootCommentsList.sort((a, b) => {
     return parseDateTime(a.date, a.time) - parseDateTime(b.date, b.time);
-  };
+  });
 
-  // 6. Ordenar comentários raiz
-  rootComments.sort(sortComments);
+  // Ordenar replies por data (mais antigos primeiro)
+  repliesList.sort((a, b) => {
+    return parseDateTime(a.date, a.time) - parseDateTime(b.date, b.time);
+  });
 
-  // 7. Ordenar replies recursivamente
-  function sortRepliesInComment(comment: Comment) {
+  // Adicionar comentários raiz ao resultado
+  rootCommentsList.forEach(comment => {
+    const commentWithReplies = commentMap.get(comment.id)!;
+    rootComments.push(commentWithReplies);
+  });
+
+  // Processar replies e anexar aos pais corretos
+  repliesList.forEach(reply => {
+    const replyWithReplies = commentMap.get(reply.id)!;
+    const parent = commentMap.get(reply.parentId!);
+
+    if (parent) {
+      if (!parent.replies) parent.replies = [];
+      parent.replies.push(replyWithReplies);
+      parent.repliesCount = (parent.repliesCount || 0) + 1;
+    }
+  });
+
+  // Função recursiva para ordenar replies dentro de cada nível
+  function sortRepliesRecursively(comment: Comment) {
     if (comment.replies && comment.replies.length > 0) {
-      comment.replies.sort(sortComments);
-      comment.replies.forEach((reply) => sortRepliesInComment(reply));
+      // Ordenar replies por data (mais antigos primeiro)
+      comment.replies.sort((a, b) => {
+        return parseDateTime(a.date, a.time) - parseDateTime(b.date, b.time);
+      });
+
+      // Aplicar recursivamente para sub-replies
+      comment.replies.forEach(reply => {
+        sortRepliesRecursively(reply);
+      });
     }
   }
 
-  rootComments.forEach((comment) => sortRepliesInComment(comment));
+  // Aplicar ordenação recursiva para todos os comentários raiz
+  rootComments.forEach(comment => {
+    sortRepliesRecursively(comment);
+  });
 
   return rootComments;
 }
@@ -183,16 +220,6 @@ function toggleLike(entityId: string, userId: string): LikeResponse {
   };
 }
 
-// Helper para verificar se um comentário é filho de outro (recursivamente)
-function isCommentOrReply(commentId: string, targetId: string): boolean {
-  if (commentId === targetId) return true;
-
-  const comment = comments.get(commentId);
-  if (!comment || !comment.parentId) return false;
-
-  return isCommentOrReply(comment.parentId, targetId);
-}
-
 // Create some demo topics
 function initializeDemoData() {
   const demoTopics = [
@@ -207,7 +234,7 @@ function initializeDemoData() {
       authorId: "user_visual_ai",
       authorAvatar: "VA",
       category: "imagem",
-      replies: 4,
+      replies: 56,
       views: 1823,
       likes: 42,
       isLiked: false,
@@ -227,12 +254,86 @@ function initializeDemoData() {
       authorId: "user_image_gen",
       authorAvatar: "IG",
       category: "imagem",
-      replies: 2,
+      replies: 28,
       views: 945,
       likes: 23,
       isLiked: false,
       lastPost: { author: "AIArtist", date: "Hoje", time: "10:30" },
       isPinned: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      comments: [],
+    },
+    {
+      id: "3",
+      title: "ChatGPT 4o: Primeiras impressões",
+      description: "Review completo da nova versão do ChatGPT",
+      content: "O ChatGPT 4o trouxe várias melhorias interessantes...",
+      author: "AIExplorer",
+      authorId: "user_ai_explorer",
+      authorAvatar: "AE",
+      category: "ia-hub",
+      replies: 34,
+      views: 1256,
+      likes: 67,
+      isLiked: false,
+      lastPost: { author: "TechReviewer", date: "Hoje", time: "14:20" },
+      isHot: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      comments: [],
+    },
+    {
+      id: "4",
+      title: "Runway ML Gen-3: Geração de vídeo revolucionária",
+      description: "Como o Runway está mudando a criação de vídeos",
+      content: "A nova versão do Runway ML é impressionante...",
+      author: "VideoCreator",
+      authorId: "user_video_creator",
+      authorAvatar: "VC",
+      category: "video",
+      replies: 22,
+      views: 892,
+      likes: 38,
+      isLiked: false,
+      lastPost: { author: "FilmMaker", date: "Ontem", time: "16:30" },
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      comments: [],
+    },
+    {
+      id: "5",
+      title: "GitHub Copilot vs Cursor: Comparativo de IDEs com IA",
+      description: "Qual ferramenta de coding com IA é melhor?",
+      content: "Testei ambas ferramentas por 2 semanas...",
+      author: "DevMaster",
+      authorId: "user_dev_master",
+      authorAvatar: "DM",
+      category: "vibe-coding",
+      replies: 45,
+      views: 2103,
+      likes: 89,
+      isLiked: false,
+      lastPost: { author: "CodeNinja", date: "Hoje", time: "09:15" },
+      isPinned: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      comments: [],
+    },
+    {
+      id: "6",
+      title: "Suno AI: Criando música com inteligência artificial",
+      description: "Tutorial completo para gerar músicas profissionais",
+      content: "O Suno AI é uma ferramenta incrível para criar música...",
+      author: "MusicProducer",
+      authorId: "user_music_producer",
+      authorAvatar: "MP",
+      category: "musica-audio",
+      replies: 18,
+      views: 756,
+      likes: 32,
+      isLiked: false,
+      lastPost: { author: "AudioEngineer", date: "Hoje", time: "12:45" },
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       comments: [],
@@ -243,16 +344,16 @@ function initializeDemoData() {
     topics.set(topic.id, topic as Topic);
   });
 
-  // Add some demo comments with clear hierarchy
+  // Add some demo comments with proper chronological order
   const demoComments = [
     {
       id: "c1",
       content:
-        "Excelente comparativo! Eu uso mais o Midjourney para conceitos artísticos.",
+        "Excelente comparativo! Eu uso mais o Midjourney para conceitos artísticos, mas o DALL-E 3 é realmente superior para prompts descritivos.",
       author: "CreativeAI",
       authorId: "user_creative_ai",
       authorAvatar: "CA",
-      date: "09/08/2025",
+      date: "Hoje",
       time: "09:30",
       likes: 8,
       isLiked: false,
@@ -261,67 +362,41 @@ function initializeDemoData() {
     {
       id: "c2",
       content:
-        "Concordo completamente! O Midjourney tem uma vantagem clara em arte conceitual.",
+        "Concordo completamente! Testei os dois e o Midjourney tem uma vantagem clara em arte conceitual.",
       author: "DigitalArtist",
       authorId: "user_digital_artist",
       authorAvatar: "DA",
-      date: "09/08/2025",
+      date: "Hoje",
       time: "10:15",
       likes: 3,
       isLiked: false,
       topicId: "1",
-      parentId: "c1",
     },
     {
       id: "c3",
-      content: "Mas o DALL-E 3 é melhor para textos em imagens, não acham?",
-      author: "TextMaster",
-      authorId: "user_text_master",
-      authorAvatar: "TM",
-      date: "09/08/2025",
-      time: "11:00",
-      likes: 5,
-      isLiked: false,
-      topicId: "1",
-      parentId: "c1",
-    },
-    {
-      id: "c4",
       content:
-        "Concordo! O SDXL é um salto gigante. A qualidade das imagens é impressionante.",
+        "Concordo! O SDXL é um salto gigante. A qualidade das imagens é impressionante, especialmente com o modelo de refino.",
       author: "AIArtist",
       authorId: "user_ai_artist",
       authorAvatar: "AA",
-      date: "09/08/2025",
+      date: "Hoje",
       time: "08:30",
       likes: 5,
       isLiked: false,
       topicId: "2",
     },
     {
-      id: "c5",
-      content: "E a diferença na resolução �� not��vel!",
+      id: "c4",
+      content:
+        "Sim! E a diferença na resolução é notável. Finalmente podemos gerar imagens de alta qualidade sem precisar fazer upscale.",
       author: "TechEnthusiast",
       authorId: "user_tech_enthusiast",
       authorAvatar: "TE",
-      date: "09/08/2025",
+      date: "Hoje",
       time: "09:45",
       likes: 2,
       isLiked: false,
       topicId: "2",
-    },
-    {
-      id: "c6",
-      content: "Verdade! E agora com o modelo de refino fica ainda melhor.",
-      author: "DevPro",
-      authorId: "user_dev_pro",
-      authorAvatar: "DP",
-      date: "09/08/2025",
-      time: "12:30",
-      likes: 1,
-      isLiked: false,
-      topicId: "1",
-      parentId: "c2",
     },
   ];
 
@@ -343,22 +418,25 @@ export const handleGetTopics: RequestHandler = (req, res) => {
   const limit = parseInt(req.query.limit as string) || 10;
   const category = req.query.category as string;
   const search = req.query.search as string;
-  const categories = req.query.categories as string;
+  const categories = req.query.categories as string; // comma-separated category IDs
 
   let filteredTopics = Array.from(topics.values());
 
+  // Filter by search query (title contains the search term)
   if (search) {
     filteredTopics = filteredTopics.filter((topic) =>
       topic.title.toLowerCase().includes(search.toLowerCase()),
     );
   }
 
+  // Filter by single category
   if (category) {
     filteredTopics = filteredTopics.filter(
       (topic) => topic.category === category,
     );
   }
 
+  // Filter by multiple categories (advanced search)
   if (categories) {
     const categoryList = categories.split(",").filter(Boolean);
     if (categoryList.length > 0) {
@@ -368,9 +446,12 @@ export const handleGetTopics: RequestHandler = (req, res) => {
     }
   }
 
+  // Sort by search relevance or default sorting
   if (search) {
+    // Sort by likes (descending) when searching
     filteredTopics.sort((a, b) => b.likes - a.likes);
   } else {
+    // Sort by pinned first, then by creation date (newest first)
     filteredTopics.sort((a, b) => {
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
@@ -382,6 +463,7 @@ export const handleGetTopics: RequestHandler = (req, res) => {
   const endIndex = startIndex + limit;
   const paginatedTopics = filteredTopics.slice(startIndex, endIndex);
 
+  // Remove content and comments for list view
   const topicsForList = paginatedTopics.map(
     ({ content, comments, ...topic }) => topic,
   );
@@ -421,35 +503,8 @@ export const handleGetTopic: RequestHandler = (req, res) => {
     }));
   }
 
-  // Build comment tree
-  console.log(
-    "DEBUG - Comentários antes da organização:",
-    topic.comments.map((c) => ({
-      id: c.id,
-      author: c.author,
-      parentId: c.parentId,
-    })),
-  );
-  const organizedComments = buildCommentTree(topic.comments);
-  console.log(
-    "DEBUG - Comentários após organização:",
-    JSON.stringify(
-      organizedComments.map((c) => ({
-        id: c.id,
-        author: c.author,
-        parentId: c.parentId,
-        repliesCount: c.replies?.length || 0,
-        replies:
-          c.replies?.map((r) => ({
-            id: r.id,
-            author: r.author,
-            parentId: r.parentId,
-          })) || [],
-      })),
-      null,
-      2,
-    ),
-  );
+  // Organizar comentários em estrutura hierárquica
+  const organizedComments = organizeComments(topic.comments);
   topic.comments = organizedComments;
 
   res.json(topic);
@@ -490,7 +545,10 @@ export const handleCreateTopic: RequestHandler = (req, res) => {
     };
 
     topics.set(newTopic.id, newTopic);
-    // addPoints(req.user.id, POINTS.CREATE_POST); // Temporariamente desabilitado
+
+    // Adicionar pontos por criar post
+    addPoints(req.user.id, POINTS.CREATE_POST);
+
     res.status(201).json(newTopic);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -499,6 +557,7 @@ export const handleCreateTopic: RequestHandler = (req, res) => {
         errors: error.errors.map((e) => e.message),
       });
     }
+
     console.error("Create topic error:", error);
     res.status(500).json({ message: "Erro interno do servidor" });
   }
@@ -524,9 +583,7 @@ export const handleCreateComment: RequestHandler = (req, res) => {
     if (data.parentId) {
       const parentComment = comments.get(data.parentId);
       if (!parentComment || parentComment.topicId !== topicId) {
-        return res
-          .status(400)
-          .json({ message: "Comentário pai não encontrado" });
+        return res.status(400).json({ message: "Comentário pai não encontrado" });
       }
     }
 
@@ -546,12 +603,6 @@ export const handleCreateComment: RequestHandler = (req, res) => {
       repliesCount: 0,
     };
 
-    console.log("DEBUG - Criando comentário:", {
-      id: newComment.id,
-      author: newComment.author,
-      parentId: newComment.parentId,
-    });
-
     comments.set(newComment.id, newComment);
     topic.comments.push(newComment);
     topic.replies += 1;
@@ -563,7 +614,7 @@ export const handleCreateComment: RequestHandler = (req, res) => {
     topic.updatedAt = new Date().toISOString();
 
     // Adicionar pontos por comentar
-    // addPoints(req.user.id, POINTS.CREATE_COMMENT); // Temporariamente desabilitado
+    addPoints(req.user.id, POINTS.CREATE_COMMENT);
 
     res.status(201).json(newComment);
   } catch (error) {
@@ -595,12 +646,9 @@ export const handleLikeTopic: RequestHandler = (req, res) => {
   topic.likes = likeResult.likes;
   topic.isLiked = likeResult.isLiked;
 
-  if (
-    likeResult.isLiked &&
-    topic.authorId !== req.user.id &&
-    likeResult.likes % 5 === 0
-  ) {
-    // addPoints(topic.authorId, POINTS.RECEIVE_POST_LIKE); // Temporariamente desabilitado
+  // Adicionar pontos ao autor do tópico a cada 5 likes
+  if (likeResult.isLiked && topic.authorId !== req.user.id && likeResult.likes % 5 === 0) {
+    addPoints(topic.authorId, POINTS.RECEIVE_POST_LIKE);
   }
 
   res.json(likeResult);
@@ -624,7 +672,7 @@ export const handleLikeComment: RequestHandler = (req, res) => {
 
   // Adicionar pontos ao autor do comentário quando recebe like
   if (likeResult.isLiked && comment.authorId !== req.user.id) {
-    // addPoints(comment.authorId, POINTS.RECEIVE_COMMENT_LIKE); // Temporariamente desabilitado
+    addPoints(comment.authorId, POINTS.RECEIVE_COMMENT_LIKE);
   }
 
   res.json(likeResult);
@@ -635,6 +683,7 @@ export const handleDeleteTopic: RequestHandler = (req, res) => {
     return res.status(401).json({ message: "Autenticação necessária" });
   }
 
+  // Verificar se é admin
   if (req.user.role !== "admin") {
     return res
       .status(403)
@@ -648,8 +697,10 @@ export const handleDeleteTopic: RequestHandler = (req, res) => {
     return res.status(404).json({ message: "Tópico não encontrado" });
   }
 
+  // Remover tópico
   topics.delete(topicId);
 
+  // Remover comentários associados
   Array.from(comments.entries()).forEach(([commentId, comment]) => {
     if (comment.topicId === topicId) {
       comments.delete(commentId);
@@ -683,20 +734,17 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
 
   if (!isAdmin && !isTopicOwner && !isCommentOwner) {
     return res.status(403).json({
-      message:
-        "Você só pode excluir seus próprios comentários ou comentários em seus posts",
+      message: "Você só pode excluir seus próprios comentários ou comentários em seus posts"
     });
   }
 
-  // Função para deletar comentário e todas suas respostas
+  // Função recursiva para contar e remover comentários e respostas
   function deleteCommentAndReplies(commentId: string): number {
     let deletedCount = 0;
 
     // Encontrar e remover todas as respostas primeiro
-    const replies = Array.from(comments.values()).filter(
-      (c) => c.parentId === commentId,
-    );
-    replies.forEach((reply) => {
+    const replies = Array.from(comments.values()).filter(c => c.parentId === commentId);
+    replies.forEach(reply => {
       deletedCount += deleteCommentAndReplies(reply.id);
     });
 
@@ -709,14 +757,25 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
 
   const deletedCount = deleteCommentAndReplies(commentId);
 
-  // Atualizar contador de replies no t��pico
+  // Atualizar contador de replies no tópico
   topic.replies = Math.max(0, topic.replies - deletedCount);
   topic.comments = topic.comments.filter((c) => {
+    // Remover o comentário e todas suas respostas da lista do tópico
     return !isCommentOrReply(c.id, commentId);
   });
 
   res.json({ message: "Comentário excluído com sucesso" });
 };
+
+// Helper para verificar se um comentário é filho de outro (recursivamente)
+function isCommentOrReply(commentId: string, targetId: string): boolean {
+  if (commentId === targetId) return true;
+
+  const comment = comments.get(commentId);
+  if (!comment || !comment.parentId) return false;
+
+  return isCommentOrReply(comment.parentId, targetId);
+}
 
 export const handleGetUserTopics: RequestHandler = (req, res) => {
   if (!req.user) {
@@ -726,10 +785,12 @@ export const handleGetUserTopics: RequestHandler = (req, res) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 20;
 
+  // Filter topics by current user
   const userTopics = Array.from(topics.values()).filter(
     (topic) => topic.authorId === req.user!.id,
   );
 
+  // Sort by creation date (newest first)
   userTopics.sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
@@ -738,6 +799,7 @@ export const handleGetUserTopics: RequestHandler = (req, res) => {
   const endIndex = startIndex + limit;
   const paginatedTopics = userTopics.slice(startIndex, endIndex);
 
+  // Remove content and comments for list view to reduce payload
   const topicsForList = paginatedTopics.map(
     ({ content, comments, ...topic }) => ({
       ...topic,

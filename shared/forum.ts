@@ -9,6 +9,9 @@ export interface Comment {
   likes: number;
   isLiked: boolean;
   topicId: string;
+  parentId?: string; // Para respostas a comentários
+  replies?: Comment[]; // Respostas aninhadas
+  repliesCount?: number; // Contador de respostas
 }
 
 export interface Topic {
@@ -45,6 +48,7 @@ export interface CreateTopicRequest {
 
 export interface CreateCommentRequest {
   content: string;
+  parentId?: string; // Para responder a um comentário específico
 }
 
 export interface LikeResponse {

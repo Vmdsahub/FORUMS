@@ -3,6 +3,8 @@ export interface User {
   name: string;
   email: string;
   role?: "admin" | "user";
+  points?: number;
+  badges?: string[]; // IDs dos badges conquistados
 }
 
 export interface LoginRequest {
