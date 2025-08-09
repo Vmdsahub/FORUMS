@@ -388,24 +388,46 @@ export default function TopicView() {
                       <div className="text-gray-700 mb-3 leading-relaxed">
                         <MarkdownRenderer content={comment.content} />
                       </div>
-                      <button
-                        onClick={() => handleLikeComment(comment.id)}
-                        className={`flex items-center gap-1 text-sm px-2 py-1 rounded transition-colors ${
-                          comment.isLiked
-                            ? "text-red-600 bg-red-50 hover:bg-red-100"
-                            : "text-gray-500 hover:text-red-600 hover:bg-red-50"
-                        }`}
-                      >
-                        <svg
-                          width="14"
-                          height="14"
-                          viewBox="0 0 16 16"
-                          fill="currentColor"
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleLikeComment(comment.id)}
+                          className={`flex items-center gap-1 text-sm px-2 py-1 rounded transition-colors ${
+                            comment.isLiked
+                              ? "text-red-600 bg-red-50 hover:bg-red-100"
+                              : "text-gray-500 hover:text-red-600 hover:bg-red-50"
+                          }`}
                         >
-                          <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
-                        </svg>
-                        {comment.likes}
-                      </button>
+                          <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 16 16"
+                            fill="currentColor"
+                          >
+                            <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
+                          </svg>
+                          {comment.likes}
+                        </button>
+                        {isAdmin && (
+                          <button
+                            onClick={() => {
+                              if (confirm("Tem certeza que deseja excluir este comentário?")) {
+                                handleDeleteComment(comment.id);
+                              }
+                            }}
+                            className="flex items-center gap-1 text-sm px-2 py-1 rounded transition-colors text-red-600 hover:bg-red-50"
+                            title="Excluir comentário (Admin)"
+                          >
+                            <svg
+                              width="14"
+                              height="14"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                            >
+                              <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
