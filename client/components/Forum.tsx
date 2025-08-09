@@ -92,12 +92,15 @@ export default function Forum() {
     try {
       const params = new URLSearchParams();
       if (category) params.append("category", category);
-      
+
+      console.log("Fetching topics for category:", category);
       const response = await fetch(`/api/topics?${params}`);
       if (response.ok) {
         const data = await response.json();
+        console.log("Topics fetched:", data);
         setTopics(data.topics);
       } else {
+        console.error("Failed to fetch topics:", response.status);
         toast.error("Erro ao carregar tópicos");
       }
     } catch (error) {
