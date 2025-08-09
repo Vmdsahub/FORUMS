@@ -282,24 +282,78 @@ export default function Account() {
           
           {sectionsExpanded.badges && (
             <div className="bg-white border border-gray-200 rounded-lg p-6">
-              <div className="flex justify-center">
-                <div className="relative group cursor-pointer">
-                  <img
-                    src="https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100"
-                    alt="Iniciante"
-                    className="w-16 h-16 object-contain hover:scale-110 transition-transform duration-300"
-                  />
-                  
-                  {/* Tooltip no hover */}
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 p-3 bg-black text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
-                    <div className="font-semibold mb-1">Iniciante</div>
-                    <div className="text-xs text-gray-300 mb-1">Primeiros passos no fórum</div>
-                    <div className="text-xs text-gray-400">Obtido em: {new Date().toLocaleDateString('pt-BR')}</div>
-                    
-                    {/* Seta do tooltip */}
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
-                  </div>
-                </div>
+              <div className="mb-4">
+                <h4 className="font-semibold text-black mb-2">Selecione até 6 emblemas para exibir nos comentários:</h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Estes emblemas aparecerão abaixo do seu avatar quando você comentar
+                </p>
+              </div>
+
+              <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-6">
+                {availableBadges.map((badge) => {
+                  const isSelected = selectedBadges.includes(badge.id);
+                  const canSelect = selectedBadges.length < 6 || isSelected;
+
+                  return (
+                    <div
+                      key={badge.id}
+                      className={`relative group cursor-pointer p-2 rounded-lg border-2 transition-all ${
+                        isSelected
+                          ? "border-blue-500 bg-blue-50"
+                          : canSelect
+                            ? "border-gray-200 hover:border-gray-300"
+                            : "border-gray-100 opacity-50 cursor-not-allowed"
+                      }`}
+                      onClick={() => {
+                        if (!canSelect && !isSelected) return;
+
+                        if (isSelected) {
+                          setSelectedBadges(prev => prev.filter(id => id !== badge.id));
+                        } else {
+                          setSelectedBadges(prev => [...prev, badge.id]);
+                        }
+                      }}
+                    >
+                      <div className="text-center">
+                        <img
+                          src={badge.icon}
+                          alt={badge.name}
+                          className="w-12 h-12 object-contain mx-auto hover:scale-110 transition-transform duration-300"
+                        />
+                        <div className="text-xs font-medium mt-1">{badge.name}</div>
+
+                        {isSelected && (
+                          <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                            <svg width="10" height="10" viewBox="0 0 16 16" fill="white">
+                              <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Tooltip no hover */}
+                      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 p-2 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
+                        <div className="font-semibold">{badge.name}</div>
+                        <div className="text-gray-300">{badge.description}</div>
+                        <div className="text-gray-400 mt-1">Obtido em: {new Date(memberSince).toLocaleDateString('pt-BR')}</div>
+
+                        {/* Seta do tooltip */}
+                        <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="text-center">
+                <p className="text-sm text-gray-600">
+                  {selectedBadges.length}/6 emblemas selecionados
+                </p>
+                {selectedBadges.length === 0 && (
+                  <p className="text-xs text-amber-600 mt-1">
+                    Selecione pelo menos um emblema para exibir nos comentários
+                  </p>
+                )}
               </div>
             </div>
           )}
