@@ -206,7 +206,7 @@ export default function CommentThread({
         {showReplies && comment.replies && comment.replies.length > 0 && (
           <div className="mt-3 space-y-3">
             {comment.replies.map((reply) => (
-              <CommentThreadNew
+              <CommentThread
                 key={reply.id}
                 comment={reply}
                 topicId={topicId}
