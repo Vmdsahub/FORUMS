@@ -23,6 +23,13 @@ import {
 } from "./routes/forum";
 import { uploadMiddleware, handleUpload } from "./routes/upload";
 import { handleGetUserStats, handleGetAllBadges } from "./routes/user-stats";
+import {
+  handleGetComments,
+  handleCreateComment as handleCreateCommentNew,
+  handleLikeComment as handleLikeCommentNew,
+  handleDeleteComment as handleDeleteCommentNew,
+  initializeCommentsDemo
+} from "./routes/comments-system";
 
 export function createServer() {
   const app = express();
