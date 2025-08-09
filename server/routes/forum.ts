@@ -23,6 +23,7 @@ const createTopicSchema = z.object({
 
 const createCommentSchema = z.object({
   content: z.string().min(1).max(1000),
+  parentId: z.string().optional(),
 });
 
 // Helper functions
