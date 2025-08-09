@@ -190,7 +190,7 @@ function App() {
     setExpandedNewsletter(null);
   };
 
-  const currentNewsletter = weeklyNewsletters[currentWeek];
+  const currentNewsletter = weeklyNewsletters[currentWeek] || null;
 
   return (
     <BrowserRouter>
