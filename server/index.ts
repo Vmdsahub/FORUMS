@@ -66,6 +66,10 @@ export function createServer() {
     handleLikeComment,
   );
 
+  // Admin routes
+  app.delete("/api/topics/:topicId", authenticateToken, handleDeleteTopic);
+  app.delete("/api/comments/:commentId", authenticateToken, handleDeleteComment);
+
   // Upload route
   app.post("/api/upload", authenticateToken, uploadMiddleware, handleUpload);
 
