@@ -79,11 +79,30 @@ function addPoints(userId: string, points: number) {
 function buildCommentTree(allComments: Comment[]): Comment[] {
   if (allComments.length === 0) return [];
 
-  // Criar map de comentários indexados por ID
-  const commentMap = new Map<string, Comment>();
-  const rootComments: Comment[] = [];
+  // Função helper para parsing de timestamp mais robusto
+  function parseTimestamp(date: string, time: string): number {
+    try {
+      // Tentar formato brasileiro DD/MM/YYYY HH:MM
+      if (date.includes('/')) {
+        const [day, month, year] = date.split('/');
+        const [hours, minutes] = time.split(':');
+        const parsedDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hours), parseInt(minutes));
+        if (!isNaN(parsedDate.getTime())) {
+          return parsedDate.getTime();
+        }
+      }
 
-  // Primeiro passo: criar mapa com todos os comentários limpos
+      // Fallback para parsing direto
+      const fullDateTime = `${date} ${time}`;
+      const parsedDate = new Date(fullDateTime);
+      return isNaN(parsedDate.getTime()) ? Date.now() : parsedDate.getTime();
+    } catch (e) {
+      return Date.now();
+    }
+  }
+
+  // Criar mapa com inicialização limpa
+  const commentMap = new Map<string, Comment>();
   allComments.forEach(comment => {
     commentMap.set(comment.id, {
       ...comment,
@@ -92,69 +111,59 @@ function buildCommentTree(allComments: Comment[]): Comment[] {
     });
   });
 
-  // Segundo passo: separar roots e filhos
-  const rootIds: string[] = [];
-  const childComments: Comment[] = [];
+  // Separar comentários raiz dos replies
+  const rootComments: Comment[] = [];
+  const replyComments: Comment[] = [];
 
   allComments.forEach(comment => {
     if (!comment.parentId) {
-      rootIds.push(comment.id);
+      rootComments.push(comment);
     } else {
-      childComments.push(comment);
+      replyComments.push(comment);
     }
   });
 
-  // Terceiro passo: ordenar roots por data (mais antigos primeiro)
-  const sortedRoots = rootIds
-    .map(id => commentMap.get(id)!)
-    .sort((a, b) => {
-      const timeA = new Date(a.date + ' ' + a.time).getTime();
-      const timeB = new Date(b.date + ' ' + b.time).getTime();
-      return timeA - timeB;
-    });
+  // Ordenar por timestamp
+  const sortByTime = (a: Comment, b: Comment) => {
+    return parseTimestamp(a.date, a.time) - parseTimestamp(b.date, b.time);
+  };
 
-  // Quarto passo: processar filhos em ordem de criação
-  const sortedChildren = childComments.sort((a, b) => {
-    const timeA = new Date(a.date + ' ' + a.time).getTime();
-    const timeB = new Date(b.date + ' ' + b.time).getTime();
-    return timeA - timeB;
+  rootComments.sort(sortByTime);
+  replyComments.sort(sortByTime);
+
+  // Construir lista resultado com comentários raiz
+  const result: Comment[] = [];
+  rootComments.forEach(comment => {
+    const node = commentMap.get(comment.id)!;
+    result.push(node);
   });
 
-  // Quinto passo: anexar filhos aos pais
-  sortedChildren.forEach(child => {
-    const childNode = commentMap.get(child.id)!;
-    const parent = commentMap.get(child.parentId!);
+  // Anexar replies aos pais
+  replyComments.forEach(reply => {
+    const replyNode = commentMap.get(reply.id)!;
+    const parent = commentMap.get(reply.parentId!);
 
     if (parent) {
-      parent.replies!.push(childNode);
+      parent.replies!.push(replyNode);
       parent.repliesCount = parent.replies!.length;
-    } else {
-      // Se pai não existe, tratar como root
-      sortedRoots.push(childNode);
     }
   });
 
-  // Sexto passo: ordenar replies recursivamente
+  // Ordenar replies recursivamente
   function sortRepliesRecursively(comment: Comment) {
     if (comment.replies && comment.replies.length > 0) {
-      comment.replies.sort((a, b) => {
-        const timeA = new Date(a.date + ' ' + a.time).getTime();
-        const timeB = new Date(b.date + ' ' + b.time).getTime();
-        return timeA - timeB;
-      });
-
+      comment.replies.sort(sortByTime);
       comment.replies.forEach(reply => {
         sortRepliesRecursively(reply);
       });
     }
   }
 
-  // Aplicar ordenação recursiva
-  sortedRoots.forEach(comment => {
+  result.forEach(comment => {
     sortRepliesRecursively(comment);
   });
 
-  return sortedRoots;
+  return result;
 }
 
 function isLikedBy(entityId: string, userId: string): boolean {
