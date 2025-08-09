@@ -520,13 +520,30 @@ export default function Index(props: IndexProps) {
                               <p className="text-sm text-gray-600 mt-1 line-clamp-2">
                                 {topic.description}
                               </p>
-                              <div className="text-xs text-gray-500 mt-2">
-                                por{" "}
-                                <span className="font-medium">{topic.author}</span>
-                              </div>
+                              <div className="flex items-center justify-between mt-2">
+                            <div className="text-xs text-gray-500">
+                              por{" "}
+                              <span className="font-medium">{topic.author}</span>
                             </div>
+                            {isAdmin && (
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleDeleteTopic(topic.id, topic.title);
+                                }}
+                                className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50 transition-colors"
+                                title="Excluir tópico (Admin)"
+                              >
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                </svg>
+                              </button>
+                            )}
                           </div>
                         </div>
+                      </div>
+                    </div>
 
                         <div className="col-span-2 text-center">
                           <div className="font-semibold text-black">
