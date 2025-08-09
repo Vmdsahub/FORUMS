@@ -3,6 +3,14 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { handleLogin, handleRegister, handleMe, handleLogout, authenticateToken } from "./routes/auth";
+import {
+  handleGetTopics,
+  handleGetTopic,
+  handleCreateTopic,
+  handleCreateComment,
+  handleLikeTopic,
+  handleLikeComment
+} from "./routes/forum";
 
 export function createServer() {
   const app = express();
