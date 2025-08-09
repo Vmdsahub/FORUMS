@@ -148,24 +148,6 @@ export default function Account() {
           )}
         </div>
 
-        {/* Account Stats */}
-        <div className="mt-8 pt-8 border-t border-gray-200">
-          <h3 className="text-lg font-semibold text-black mb-4">Estatísticas</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center p-4 bg-gray-50 rounded-lg">
-              <div className="text-2xl font-bold text-black">0</div>
-              <div className="text-sm text-gray-600">Tópicos criados</div>
-            </div>
-            <div className="text-center p-4 bg-gray-50 rounded-lg">
-              <div className="text-2xl font-bold text-black">0</div>
-              <div className="text-sm text-gray-600">Comentários</div>
-            </div>
-            <div className="text-center p-4 bg-gray-50 rounded-lg">
-              <div className="text-2xl font-bold text-black">0</div>
-              <div className="text-sm text-gray-600">Tópicos salvos</div>
-            </div>
-          </div>
-        </div>
 
         {/* Danger Zone */}
         <div className="mt-8 pt-8 border-t border-gray-200">
