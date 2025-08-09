@@ -9,15 +9,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import RichTextEditor from "@/components/RichTextEditor";
 
 interface ForumCategory {
   id: string;
@@ -26,8 +20,8 @@ interface ForumCategory {
 }
 
 interface CreateTopicModalProps {
-  categories: ForumCategory[];
-  onTopicCreated?: () => void;
+  currentCategory: ForumCategory;
+  onTopicCreated?: (newTopic: any) => void;
 }
 
 export default function CreateTopicModal({ categories, onTopicCreated }: CreateTopicModalProps) {
