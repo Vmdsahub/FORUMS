@@ -439,71 +439,83 @@ export default function Index(props: IndexProps) {
               </div>
 
               <div className="divide-y divide-gray-100">
-                {getSelectedCategoryData()?.posts.map((post) => (
-                  <Link
-                    key={post.id}
-                    to={`/topic/${post.id}`}
-                    className="block p-6 hover:bg-gray-50 transition-all duration-300 ease-in-out hover:-translate-y-0.5"
-                  >
-                    <div className="grid grid-cols-12 gap-4 items-center">
-                      <div className="col-span-6">
-                        <div className="flex items-start gap-4">
-                          <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
-                            {post.authorAvatar}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              {post.isPinned && (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                  Fixado
-                                </span>
-                              )}
-                              {post.isHot && (
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                  🔥 Quente
-                                </span>
-                              )}
+                {isLoadingTopics ? (
+                  <div className="p-12 text-center">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto mb-4"></div>
+                    <p className="text-gray-600">Carregando tópicos...</p>
+                  </div>
+                ) : realTopics.length === 0 ? (
+                  <div className="p-12 text-center text-gray-500">
+                    <p>Nenhum tópico encontrado nesta categoria.</p>
+                    <p className="text-sm mt-2">Seja o primeiro a criar um tópico!</p>
+                  </div>
+                ) : (
+                  realTopics.map((topic) => (
+                    <Link
+                      key={topic.id}
+                      to={`/topic/${topic.id}`}
+                      className="block p-6 hover:bg-gray-50 transition-all duration-300 ease-in-out hover:-translate-y-0.5"
+                    >
+                      <div className="grid grid-cols-12 gap-4 items-center">
+                        <div className="col-span-6">
+                          <div className="flex items-start gap-4">
+                            <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
+                              {topic.authorAvatar}
                             </div>
-                            <h3 className="font-semibold text-black hover:text-blue-600 cursor-pointer truncate transition-colors duration-200">
-                              {post.title}
-                            </h3>
-                            <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                              {post.description}
-                            </p>
-                            <div className="text-xs text-gray-500 mt-2">
-                              por{" "}
-                              <span className="font-medium">{post.author}</span>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                {topic.isPinned && (
+                                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                    Fixado
+                                  </span>
+                                )}
+                                {topic.isHot && (
+                                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                    🔥 Quente
+                                  </span>
+                                )}
+                              </div>
+                              <h3 className="font-semibold text-black hover:text-blue-600 cursor-pointer truncate transition-colors duration-200">
+                                {topic.title}
+                              </h3>
+                              <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                                {topic.description}
+                              </p>
+                              <div className="text-xs text-gray-500 mt-2">
+                                por{" "}
+                                <span className="font-medium">{topic.author}</span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="col-span-2 text-center">
-                        <div className="font-semibold text-black">
-                          {post.replies}
+                        <div className="col-span-2 text-center">
+                          <div className="font-semibold text-black">
+                            {topic.replies}
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="col-span-2 text-center">
-                        <div className="font-semibold text-black">
-                          {post.views.toLocaleString()}
+                        <div className="col-span-2 text-center">
+                          <div className="font-semibold text-black">
+                            {topic.views.toLocaleString()}
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="col-span-2 text-center text-sm">
-                        <div className="text-gray-600">
-                          por{" "}
-                          <span className="font-medium text-black">
-                            {post.lastPost.author}
-                          </span>
-                        </div>
-                        <div className="text-gray-500 text-xs">
-                          {post.lastPost.date} às {post.lastPost.time}
+                        <div className="col-span-2 text-center text-sm">
+                          <div className="text-gray-600">
+                            por{" "}
+                            <span className="font-medium text-black">
+                              {topic.lastPost.author}
+                            </span>
+                          </div>
+                          <div className="text-gray-500 text-xs">
+                            {topic.lastPost.date} às {topic.lastPost.time}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ))
+                )}
               </div>
             </div>
 
