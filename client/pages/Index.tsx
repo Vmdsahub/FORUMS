@@ -392,19 +392,75 @@ export default function Index(props: IndexProps) {
 
             {isAdmin && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
-                <button
-                  onClick={() => {
-                    const title = prompt("Título do novo artigo:");
-                    const content = prompt("Conteúdo do artigo:");
-                    const readTime = prompt("Tempo de leitura (ex: 10 min):");
-                    if (title && content && readTime) {
-                      toast.success(`Artigo "${title}" criado! (Demo - não persistente)`);
-                    }
-                  }}
-                  className="w-full border-2 border-dashed border-gray-300 rounded-lg p-6 text-gray-600 hover:border-gray-400 hover:text-gray-800 transition-colors"
-                >
-                  + Adicionar Novo Artigo da Newsletter
-                </button>
+                <Dialog open={isNewsletterModalOpen} onOpenChange={setIsNewsletterModalOpen}>
+                  <DialogTrigger asChild>
+                    <button className="w-full border-2 border-dashed border-gray-300 rounded-lg p-6 text-gray-600 hover:border-gray-400 hover:text-gray-800 transition-colors">
+                      + Adicionar Novo Artigo da Newsletter
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-white border border-gray-200 shadow-lg sm:max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle className="text-gray-900 text-xl font-semibold">
+                        Criar Novo Artigo da Newsletter
+                      </DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="news-title" className="text-gray-900 font-medium">
+                          Título do Artigo
+                        </Label>
+                        <Input
+                          id="news-title"
+                          value={newNewsletter.title}
+                          onChange={(e) => setNewNewsletter({ ...newNewsletter, title: e.target.value })}
+                          placeholder="Ex: GPT-4 vs Claude: Análise Comparativa"
+                          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="news-time" className="text-gray-900 font-medium">
+                          Tempo de Leitura
+                        </Label>
+                        <Input
+                          id="news-time"
+                          value={newNewsletter.readTime}
+                          onChange={(e) => setNewNewsletter({ ...newNewsletter, readTime: e.target.value })}
+                          placeholder="Ex: 8 min"
+                          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="news-content" className="text-gray-900 font-medium">
+                          Conteúdo do Artigo
+                        </Label>
+                        <Textarea
+                          id="news-content"
+                          value={newNewsletter.content}
+                          onChange={(e) => setNewNewsletter({ ...newNewsletter, content: e.target.value })}
+                          placeholder="Escreva o conteúdo completo do artigo..."
+                          rows={8}
+                          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        />
+                      </div>
+                      <div className="flex justify-end gap-3 pt-4">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => setIsNewsletterModalOpen(false)}
+                          className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                        >
+                          Cancelar
+                        </Button>
+                        <Button
+                          onClick={handleCreateNewsletter}
+                          className="bg-gray-900 text-white hover:bg-gray-800"
+                        >
+                          Criar Artigo
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             )}
           </div>
