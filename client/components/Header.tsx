@@ -79,6 +79,20 @@ export default function Header({ activeSection }: HeaderProps) {
     navigate('/saved-topics');
   };
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowAdvancedDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const toggleCategory = (categoryId: string) => {
     setSelectedCategories(prev =>
       prev.includes(categoryId)
