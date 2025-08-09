@@ -19,7 +19,7 @@ import Captcha from "@/components/Captcha";
 import { toast } from "sonner";
 
 export default function Header() {
-  const { user, isLoading, login, register, logout } = useAuth();
+  const { user, isLoading, isAdmin, login, register, logout } = useAuth();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
