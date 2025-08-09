@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import SearchResults from "@/components/SearchResults";
 import {
@@ -19,18 +20,25 @@ import { useAuth } from "@/contexts/AuthContext";
 import Captcha from "@/components/Captcha";
 import { toast } from "sonner";
 
-export default function Header() {
+interface HeaderProps {
+  activeSection?: "newsletter" | "forum";
+}
+
+export default function Header({ activeSection }: HeaderProps) {
   const { user, isLoading, isAdmin, login, register, logout } = useAuth();
+  const navigate = useNavigate();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
   // Search states
   const [searchQuery, setSearchQuery] = useState("");
-  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+  const [showAdvancedModal, setShowAdvancedModal] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [activeSearchQuery, setActiveSearchQuery] = useState("");
   const [activeSearchCategories, setActiveSearchCategories] = useState<string[]>([]);
+  const [showSavedTopics, setShowSavedTopics] = useState(false);
+  const [savedTopics, setSavedTopics] = useState<string[]>([]);
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState("");
@@ -61,7 +69,11 @@ export default function Header() {
     setActiveSearchQuery(searchQuery);
     setActiveSearchCategories([...selectedCategories]);
     setShowSearchResults(true);
-    setShowAdvancedSearch(false);
+    setShowAdvancedModal(false);
+  };
+
+  const handleAccountClick = () => {
+    navigate('/account');
   };
 
   const toggleCategory = (categoryId: string) => {
@@ -81,38 +93,121 @@ export default function Header() {
           </h1>
         </div>
 
-        {/* Search Bar */}
-        <div className="flex-1 max-w-2xl mx-8">
-          <div className="relative flex items-center">
-            <div className="relative flex-1">
-              <input
-                type="text"
-                placeholder="Buscar tópicos..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 bg-white"
-              />
-              <button
-                onClick={handleSearch}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-                </svg>
-              </button>
+        {/* Search Bar - Only show in forum */}
+        {activeSection === "forum" && (
+          <div className="flex-1 max-w-2xl mx-8">
+            <div className="relative flex items-center gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  placeholder="Buscar tópicos..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                  className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-gray-500 bg-white"
+                />
+                <button
+                  onClick={handleSearch}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 0 0 1.48-5.34c-.47-2.78-2.79-5-5.59-5.34a6.505 6.505 0 0 0-7.27 7.27c.34 2.8 2.56 5.12 5.34 5.59a6.5 6.5 0 0 0 5.34-1.48l.27.28v.79l4.25 4.25c.41.41 1.08.41 1.49 0 .41-.41.41-1.08 0-1.49L15.5 14zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                  </svg>
+                </button>
+              </div>
+
+              {/* Advanced Search Modal */}
+              <Dialog open={showAdvancedModal} onOpenChange={setShowAdvancedModal}>
+                <DialogTrigger asChild>
+                  <button
+                    className="px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                    title="Busca Avançada"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/>
+                    </svg>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="bg-white border border-gray-200 shadow-lg sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="text-gray-900 text-lg font-semibold">
+                      Busca Avançada
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-2">
+                      <Label className="text-gray-900 font-medium">Filtrar por categorias:</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {categories.map((category) => (
+                          <button
+                            key={category.id}
+                            onClick={() => toggleCategory(category.id)}
+                            className={`px-3 py-1 rounded-full text-sm border transition-colors ${
+                              selectedCategories.includes(category.id)
+                                ? "bg-gray-800 text-white border-gray-800"
+                                : "bg-white text-gray-600 border-gray-300 hover:border-gray-400"
+                            }`}
+                          >
+                            {category.name}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex justify-between pt-4">
+                      <button
+                        onClick={() => setSelectedCategories([])}
+                        className="text-sm text-gray-500 hover:text-gray-700"
+                      >
+                        Limpar filtros
+                      </button>
+                      <Button
+                        onClick={handleSearch}
+                        className="bg-gray-800 text-white hover:bg-gray-700"
+                      >
+                        Buscar
+                      </Button>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* Saved Topics Button */}
+              <Dialog open={showSavedTopics} onOpenChange={setShowSavedTopics}>
+                <DialogTrigger asChild>
+                  <button
+                    className="px-3 py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors flex items-center gap-2"
+                    title="Tópicos Salvos"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                    </svg>
+                    <span className="text-sm font-medium">Salvos</span>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="bg-white border border-gray-200 shadow-lg sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="text-gray-900 text-lg font-semibold">
+                      Tópicos Salvos
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="py-4">
+                    {savedTopics.length === 0 ? (
+                      <p className="text-gray-500 text-center py-8">Nenhum tópico salvo ainda.</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {savedTopics.map((topicId) => (
+                          <div key={topicId} className="p-3 border border-gray-200 rounded-lg">
+                            <p className="text-sm text-gray-600">Tópico salvo #{topicId}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
-            <button
-              onClick={() => setShowAdvancedSearch(!showAdvancedSearch)}
-              className="px-3 py-2 border border-l-0 border-gray-300 rounded-r-lg bg-gray-50 hover:bg-gray-100 transition-colors"
-              title="Busca Avançada"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/>
-              </svg>
-            </button>
           </div>
-        </div>
+        )}
 
         <div className="flex items-center space-x-4">
           {user ? (
@@ -158,7 +253,10 @@ export default function Header() {
                     </div>
                   </div>
                   <div className="p-2">
-                    <button className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors text-left">
+                    <button
+                      onClick={handleAccountClick}
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors text-left"
+                    >
                       <svg
                         width="16"
                         height="16"
@@ -168,31 +266,7 @@ export default function Header() {
                       >
                         <path d="M8 7c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 1c-1.5 0-4 .8-4 2.5V12h8v-1.5c0-1.7-2.5-2.5-4-2.5z" />
                       </svg>
-                      <span className="text-gray-700">Meu Perfil</span>
-                    </button>
-                    <button className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors text-left">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="currentColor"
-                        className="text-gray-600"
-                      >
-                        <path d="M8 0C5.8 0 4 1.8 4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm5.7 7.5L12 11.8c-.4-.4-1-.4-1.4 0s-.4 1 0 1.4l1.7 1.7c.2.2.4.3.7.3s.5-.1.7-.3c.4-.4.4-1 0-1.4z" />
-                      </svg>
-                      <span className="text-gray-700">Configurações</span>
-                    </button>
-                    <button className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-gray-50 transition-colors text-left">
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                        fill="currentColor"
-                        className="text-gray-600"
-                      >
-                        <path d="M12 9V7l-3-3-3 3v2L2 9l6-6 6 6-2 0zM6 11h4v2H6v-2z" />
-                      </svg>
-                      <span className="text-gray-700">Minhas Postagens</span>
+                      <span className="text-gray-700">Minha Conta</span>
                     </button>
                     <hr className="my-2" />
                     <button
@@ -424,47 +498,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Advanced Search Panel */}
-      {showAdvancedSearch && (
-        <div className="border-t border-gray-200 bg-gray-50">
-          <div className="container max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-medium text-gray-700">Filtrar por categorias:</span>
-                <div className="flex flex-wrap gap-2">
-                  {categories.map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => toggleCategory(category.id)}
-                      className={`px-3 py-1 rounded-full text-sm border transition-colors ${
-                        selectedCategories.includes(category.id)
-                          ? "bg-gray-800 text-white border-gray-800"
-                          : "bg-white text-gray-600 border-gray-300 hover:border-gray-400"
-                      }`}
-                    >
-                      {category.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setSelectedCategories([])}
-                  className="text-sm text-gray-500 hover:text-gray-700"
-                >
-                  Limpar filtros
-                </button>
-                <button
-                  onClick={handleSearch}
-                  className="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm"
-                >
-                  Buscar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Search Results Modal */}
       {showSearchResults && (
