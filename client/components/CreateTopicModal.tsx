@@ -71,13 +71,15 @@ export default function CreateTopicModal({
 
       if (response.ok) {
         const newTopic = await response.json();
+        console.log("Tópico criado:", newTopic);
         toast.success("Tópico criado com sucesso!");
         setFormData({ title: "", description: "", content: "" });
         setIsOpen(false);
         onTopicCreated?.(newTopic);
       } else {
-        const error = await response.json();
-        toast.error(error.message || "Erro ao criar tópico");
+        const errorData = await response.json().catch(() => ({ message: "Erro desconhecido" }));
+        console.error("Erro ao criar tópico:", errorData);
+        toast.error(errorData.message || "Erro ao criar tópico");
       }
     } catch (error) {
       console.error("Error creating topic:", error);
