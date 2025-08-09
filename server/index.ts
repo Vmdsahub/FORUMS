@@ -67,17 +67,18 @@ export function createServer() {
   app.get("/api/topics/user", authenticateToken, handleGetUserTopics);
   app.get("/api/topics/:topicId", handleGetTopic);
   app.post("/api/topics", authenticateToken, handleCreateTopic);
-  app.post(
-    "/api/topics/:topicId/comments",
-    authenticateToken,
-    handleCreateComment,
-  );
+  // ROTAS ANTIGAS DE COMENTÁRIOS - TEMPORARIAMENTE DESABILITADAS
+  // app.post(
+  //   "/api/topics/:topicId/comments",
+  //   authenticateToken,
+  //   handleCreateComment,
+  // );
   app.post("/api/topics/:topicId/like", authenticateToken, handleLikeTopic);
-  app.post(
-    "/api/comments/:commentId/like",
-    authenticateToken,
-    handleLikeComment,
-  );
+  // app.post(
+  //   "/api/comments/:commentId/like",
+  //   authenticateToken,
+  //   handleLikeComment,
+  // );
 
   // Admin routes
   app.delete("/api/topics/:topicId", authenticateToken, handleDeleteTopic);
