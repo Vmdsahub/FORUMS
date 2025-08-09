@@ -4,6 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import UserPointsBadge from "@/components/UserPointsBadge";
+import BadgesSection from "@/components/BadgesSection";
 
 export default function Account() {
   const { user, logout } = useAuth();
@@ -89,7 +91,7 @@ export default function Account() {
           </button>
         </div>
 
-        {/* User Avatar */}
+        {/* User Avatar & Stats */}
         <div className="flex items-center gap-6 mb-8">
           <div className="w-20 h-20 rounded-full bg-black text-white flex items-center justify-center text-2xl font-bold">
             {user.name
@@ -97,15 +99,26 @@ export default function Account() {
               .map((n) => n[0])
               .join("")}
           </div>
-          <div>
+          <div className="flex-1">
             <h2 className="text-xl font-semibold text-black">{user.name}</h2>
-            <p className="text-gray-600">{user.email}</p>
-            {user.role === "admin" && (
-              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800 mt-1">
-                Administrador
-              </span>
-            )}
+            <p className="text-gray-600 mb-2">{user.email}</p>
+            <div className="flex items-center gap-3">
+              <UserPointsBadge userId={user.id} size="md" showPoints showBadges />
+              {user.role === "admin" && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  Administrador
+                </span>
+              )}
+            </div>
           </div>
+        </div>
+
+        {/* Badges Section */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-black border-b border-gray-200 pb-2 mb-4">
+            🏆 Seus Emblemas e Conquistas
+          </h3>
+          <BadgesSection userId={user.id} />
         </div>
 
         {/* Account Information */}
