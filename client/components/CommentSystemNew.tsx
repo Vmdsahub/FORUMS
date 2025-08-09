@@ -294,6 +294,7 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
       if (response.ok) {
         const data = await response.json();
         setComments(data.comments || []);
+        setApiStatus('online');
         console.log(`[COMMENTS] Carregados ${data.comments?.length || 0} comentários`);
       } else {
         console.error(`Erro na requisição: ${response.status}`);
