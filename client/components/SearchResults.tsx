@@ -24,27 +24,12 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
   const [results, setResults] = useState<Topic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState(0);
-  const [savedTopicIds, setSavedTopicIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (query.trim()) {
       performSearch();
     }
   }, [query, categories]);
-
-  // Load saved topics
-  useEffect(() => {
-    if (user) {
-      const saved = localStorage.getItem(`savedTopics_${user.email}`);
-      if (saved) {
-        try {
-          setSavedTopicIds(JSON.parse(saved));
-        } catch (error) {
-          console.error("Error loading saved topics:", error);
-        }
-      }
-    }
-  }, [user]);
 
   const performSearch = async () => {
     setIsLoading(true);
@@ -98,38 +83,6 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
     }
   };
 
-  const handleSaveTopic = (topicId: string, topicTitle: string) => {
-    if (!user) {
-      toast.error("Faça login para salvar tópicos");
-      return;
-    }
-
-    const storageKey = `savedTopics_${user.email}`;
-    const saved = localStorage.getItem(storageKey);
-    let savedIds: string[] = [];
-
-    if (saved) {
-      try {
-        savedIds = JSON.parse(saved);
-      } catch (error) {
-        console.error("Error parsing saved topics:", error);
-      }
-    }
-
-    if (savedIds.includes(topicId)) {
-      // Remove from saved
-      const updatedIds = savedIds.filter(id => id !== topicId);
-      localStorage.setItem(storageKey, JSON.stringify(updatedIds));
-      setSavedTopicIds(updatedIds);
-      toast.success("Tópico removido dos salvos");
-    } else {
-      // Add to saved
-      const updatedIds = [...savedIds, topicId];
-      localStorage.setItem(storageKey, JSON.stringify(updatedIds));
-      setSavedTopicIds(updatedIds);
-      toast.success(`"${topicTitle}" salvo com sucesso!`);
-    }
-  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pt-BR", {
