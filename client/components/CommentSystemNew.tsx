@@ -71,8 +71,8 @@ function CommentItem({ comment, depth, topicId, topicAuthorId, onReply, onLike, 
     }
   };
 
-  // Calcular indentação baseada na profundidade
-  const indentationClass = depth === 0 ? "" : `ml-${Math.min(depth * 6, 12)}`; // Tailwind classes
+  // Calcular indentação baseada na profundidade (máximo 8 níveis visuais)
+  const indentationClass = depth === 0 ? "" : `ml-${Math.min(depth * 4, 32)}`;
   const hasReplies = comment.replies && comment.replies.length > 0;
 
   return (
