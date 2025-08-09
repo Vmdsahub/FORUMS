@@ -25,9 +25,29 @@ export default function SavedTopics() {
       if (saved) {
         try {
           const topicIds = JSON.parse(saved);
-          // For now, we'll show placeholder data since we don't have the full API
+          // Create mock topics for demonstration
           // In a real implementation, you'd fetch the full topic data from the API
-          setSavedTopics([]);
+          const mockTopics = topicIds.map((id: string, index: number) => ({
+            id,
+            title: `Tópico Salvo ${index + 1}`,
+            description: `Descrição do tópico salvo com ID ${id}`,
+            author: "Usuário",
+            authorAvatar: "U",
+            category: "Geral",
+            replies: Math.floor(Math.random() * 50),
+            views: Math.floor(Math.random() * 1000),
+            likes: Math.floor(Math.random() * 25),
+            isLiked: false,
+            createdAt: new Date().toISOString(),
+            isPinned: false,
+            isHot: false,
+            lastPost: {
+              author: "Alguém",
+              date: "Hoje",
+              time: "14:30"
+            }
+          }));
+          setSavedTopics(mockTopics);
         } catch (error) {
           console.error("Error loading saved topics:", error);
         }
