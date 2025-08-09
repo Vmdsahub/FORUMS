@@ -778,6 +778,165 @@ function isCommentOrReply(commentId: string, targetId: string): boolean {
 }
 
 
+export const handleGetTopics: RequestHandler = (req, res) => {
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 10;
+  const category = req.query.category as string;
+  const search = req.query.search as string;
+  const categories = req.query.categories as string;
+
+  let filteredTopics = Array.from(topics.values());
+
+  if (search) {
+    filteredTopics = filteredTopics.filter((topic) =>
+      topic.title.toLowerCase().includes(search.toLowerCase()),
+    );
+  }
+
+  if (category) {
+    filteredTopics = filteredTopics.filter(
+      (topic) => topic.category === category,
+    );
+  }
+
+  if (categories) {
+    const categoryList = categories.split(",").filter(Boolean);
+    if (categoryList.length > 0) {
+      filteredTopics = filteredTopics.filter((topic) =>
+        categoryList.includes(topic.category),
+      );
+    }
+  }
+
+  if (search) {
+    filteredTopics.sort((a, b) => b.likes - a.likes);
+  } else {
+    filteredTopics.sort((a, b) => {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  }
+
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  const paginatedTopics = filteredTopics.slice(startIndex, endIndex);
+
+  const topicsForList = paginatedTopics.map(
+    ({ content, comments, ...topic }) => topic,
+  );
+
+  res.json({
+    topics: topicsForList,
+    total: filteredTopics.length,
+    page,
+    limit,
+    search: search || null,
+    categories: categories || null,
+  });
+};
+
+export const handleCreateTopic: RequestHandler = (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Autenticação necessária" });
+  }
+
+  try {
+    const data = createTopicSchema.parse(req.body);
+    const { date, time } = formatDate();
+
+    const newTopic: Topic = {
+      id: generateId(),
+      title: data.title,
+      description: data.description,
+      content: data.content,
+      author: req.user.name,
+      authorId: req.user.id,
+      authorAvatar: getUserInitials(req.user.name),
+      category: data.category,
+      replies: 0,
+      views: 0,
+      likes: 0,
+      isLiked: false,
+      lastPost: {
+        author: req.user.name,
+        date,
+        time,
+      },
+      isPinned: false,
+      isHot: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      comments: [],
+    };
+
+    topics.set(newTopic.id, newTopic);
+    addPoints(req.user.id, POINTS.CREATE_POST);
+    res.status(201).json(newTopic);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({
+        message: "Dados inválidos",
+        errors: error.errors.map((e) => e.message),
+      });
+    }
+    console.error("Create topic error:", error);
+    res.status(500).json({ message: "Erro interno do servidor" });
+  }
+};
+
+export const handleLikeTopic: RequestHandler = (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Autenticação necessária" });
+  }
+
+  const { topicId } = req.params;
+  const topic = topics.get(topicId);
+
+  if (!topic) {
+    return res.status(404).json({ message: "Tópico não encontrado" });
+  }
+
+  const likeResult = toggleLike(topicId, req.user.id);
+  topic.likes = likeResult.likes;
+  topic.isLiked = likeResult.isLiked;
+
+  if (likeResult.isLiked && topic.authorId !== req.user.id && likeResult.likes % 5 === 0) {
+    addPoints(topic.authorId, POINTS.RECEIVE_POST_LIKE);
+  }
+
+  res.json(likeResult);
+};
+
+export const handleDeleteTopic: RequestHandler = (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Autenticação necessária" });
+  }
+
+  if (req.user.role !== "admin") {
+    return res
+      .status(403)
+      .json({ message: "Apenas administradores podem excluir tópicos" });
+  }
+
+  const { topicId } = req.params;
+  const topic = topics.get(topicId);
+
+  if (!topic) {
+    return res.status(404).json({ message: "Tópico não encontrado" });
+  }
+
+  topics.delete(topicId);
+
+  Array.from(comments.entries()).forEach(([commentId, comment]) => {
+    if (comment.topicId === topicId) {
+      comments.delete(commentId);
+    }
+  });
+
+  res.json({ message: "Tópico excluído com sucesso" });
+};
+
 export const handleGetUserTopics: RequestHandler = (req, res) => {
   if (!req.user) {
     return res.status(401).json({ message: "Autenticação necessária" });
@@ -786,12 +945,10 @@ export const handleGetUserTopics: RequestHandler = (req, res) => {
   const page = parseInt(req.query.page as string) || 1;
   const limit = parseInt(req.query.limit as string) || 20;
 
-  // Filter topics by current user
   const userTopics = Array.from(topics.values()).filter(
     (topic) => topic.authorId === req.user!.id,
   );
 
-  // Sort by creation date (newest first)
   userTopics.sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   );
