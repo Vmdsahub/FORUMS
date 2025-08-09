@@ -332,7 +332,7 @@ export default function Index(props: IndexProps) {
               </p>
             </div>
 
-            {currentNewsletter?.topics?.map((topic) => (
+            {(currentNewsletter?.topics || []).map((topic) => (
               <div
                 key={topic.id}
                 className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 ease-in-out hover:-translate-y-1"
