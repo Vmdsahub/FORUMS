@@ -373,3 +373,63 @@ export const handleLikeComment: RequestHandler = (req, res) => {
 
   res.json(likeResult);
 };
+
+export const handleDeleteTopic: RequestHandler = (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Autenticação necessária" });
+  }
+
+  // Verificar se é admin
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: "Apenas administradores podem excluir tópicos" });
+  }
+
+  const { topicId } = req.params;
+  const topic = topics.get(topicId);
+
+  if (!topic) {
+    return res.status(404).json({ message: "Tópico não encontrado" });
+  }
+
+  // Remover tópico
+  topics.delete(topicId);
+
+  // Remover comentários associados
+  Array.from(comments.entries()).forEach(([commentId, comment]) => {
+    if (comment.topicId === topicId) {
+      comments.delete(commentId);
+    }
+  });
+
+  res.json({ message: "Tópico excluído com sucesso" });
+};
+
+export const handleDeleteComment: RequestHandler = (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Autenticação necessária" });
+  }
+
+  // Verificar se é admin
+  if (req.user.role !== 'admin') {
+    return res.status(403).json({ message: "Apenas administradores podem excluir comentários" });
+  }
+
+  const { commentId } = req.params;
+  const comment = comments.get(commentId);
+
+  if (!comment) {
+    return res.status(404).json({ message: "Comentário não encontrado" });
+  }
+
+  // Remover comentário
+  comments.delete(commentId);
+
+  // Atualizar contador de replies no tópico
+  const topic = topics.get(comment.topicId);
+  if (topic) {
+    topic.replies = Math.max(0, topic.replies - 1);
+    topic.comments = topic.comments.filter(c => c.id !== commentId);
+  }
+
+  res.json({ message: "Comentário excluído com sucesso" });
+};
