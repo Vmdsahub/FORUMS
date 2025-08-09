@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import Header from "@/components/Header";
 import TopicView from "@/pages/TopicView";
-import Admin from "@/pages/Admin";
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
 
@@ -62,7 +61,7 @@ const weeklyNewsletters: WeeklyNewsletter[] = [
         id: 1,
         title: "GPT-4 Turbo vs Claude 3: Análise Comparativa de Performance",
         content:
-          "Uma análise técnica detalhada dos principais modelos de linguagem que estão redefinindo o panorama da inteligência artificial empresarial.\n\nO OpenAI anunciou significativas otimizações no GPT-4 Turbo, resultando em melhorias de 40% na velocidade de resposta e redução de 50% nos custos operacionais. Simultaneamente, a Anthropic introduziu o Claude 3, estabelecendo novos padrões para compreensão contextual e raciocínio complexo.\n\nPrincipais diferenciadores técnicos:\n\n• Arquitetura de processamento otimizada\n• Redução substancial de latência\n• Expansão do contexto para 200k tokens\n• Integração nativa com APIs empresariais\n• Capacidades multimodais avançadas\n\nEssas inovações representam um marco na evolução da IA conversacional, estabelecendo novos padrões para aplicações empresariais de grande escala.",
+          "Uma análise t��cnica detalhada dos principais modelos de linguagem que estão redefinindo o panorama da inteligência artificial empresarial.\n\nO OpenAI anunciou significativas otimizações no GPT-4 Turbo, resultando em melhorias de 40% na velocidade de resposta e redução de 50% nos custos operacionais. Simultaneamente, a Anthropic introduziu o Claude 3, estabelecendo novos padrões para compreensão contextual e raciocínio complexo.\n\nPrincipais diferenciadores técnicos:\n\n• Arquitetura de processamento otimizada\n• Redução substancial de latência\n• Expansão do contexto para 200k tokens\n• Integração nativa com APIs empresariais\n• Capacidades multimodais avançadas\n\nEssas inovações representam um marco na evolução da IA conversacional, estabelecendo novos padrões para aplicações empresariais de grande escala.",
         readTime: "8 min",
       },
       {
@@ -111,7 +110,7 @@ const weeklyNewsletters: WeeklyNewsletter[] = [
         id: 6,
         title: "2024: O Ano da IA Multimodal",
         content:
-          "2024 promete ser o ano em que a IA multimodal se torna mainstream. Modelos capazes de processar texto, imagem, áudio e vídeo simultaneamente estão revolucionando interações.\n\nTendências principais:\n• GPT-4V com análise de imagens\n• Claude 3 com capacidades visuais\n• Gemini Ultra da Google\n• LLaVA para código aberto\n\nAplicações emergentes:\n• Assistentes visuais inteligentes\n• Análise automática de documentos\n• Criação de conteúdo integrado\n• Acessibilidade aprimorada\n\nEstas tecnologias estão criando experiências mais naturais e intuitivas.",
+          "2024 promete ser o ano em que a IA multimodal se torna mainstream. Modelos capazes de processar texto, imagem, áudio e vídeo simultaneamente estão revolucionando interações.\n\nTendências principais:\n• GPT-4V com análise de imagens\n• Claude 3 com capacidades visuais\n• Gemini Ultra da Google\n• LLaVA para código aberto\n\nAplicações emergentes:\n• Assistentes visuais inteligentes\n• An��lise automática de documentos\n• Criação de conteúdo integrado\n• Acessibilidade aprimorada\n\nEstas tecnologias estão criando experiências mais naturais e intuitivas.",
         readTime: "9 min",
       },
     ],
