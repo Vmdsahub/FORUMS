@@ -28,6 +28,9 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [activeSearchQuery, setActiveSearchQuery] = useState("");
+  const [activeSearchCategories, setActiveSearchCategories] = useState<string[]>([]);
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState("");
