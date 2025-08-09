@@ -41,7 +41,7 @@ function CommentItem({ comment, depth, topicId, topicAuthorId, onReply, onLike, 
   const isTopicOwner = user?.id === topicAuthorId;
   const isCommentOwner = user?.id === comment.authorId;
   const canDelete = isAdmin || isTopicOwner || isCommentOwner;
-  const canReply = user && depth < 3; // Limite de 3 níveis
+  const canReply = user; // Sem limite de profundidade
 
   const handleReplySubmit = async (e: React.FormEvent) => {
     e.preventDefault();

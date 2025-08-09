@@ -41,7 +41,7 @@ function getUserInitials(name: string): string {
     .toUpperCase();
 }
 
-// Função para construir árvore de comentários
+// Função RECURSIVA para construir árvore de comentários com profundidade ilimitada
 function buildCommentTree(topicId: string, userId?: string): SimpleComment[] {
   const commentIds = topicComments.get(topicId) || [];
   
@@ -63,57 +63,24 @@ function buildCommentTree(topicId: string, userId?: string): SimpleComment[] {
     }
   });
   
-  // Separar comentários raiz dos replies
-  const rootComments = allComments.filter(c => !c.parentId);
-  const replyComments = allComments.filter(c => c.parentId);
-  
-  // Ordenar por data
-  const sortByDate = (a: SimpleComment, b: SimpleComment) => {
-    return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-  };
-  
-  rootComments.sort(sortByDate);
-  
-  // Construir estrutura hierárquica
-  const result: SimpleComment[] = [];
-  
-  rootComments.forEach(comment => {
-    const commentWithReplies: SimpleComment = {
-      ...comment,
-      replies: [],
-      repliesCount: 0
-    };
+  // Função recursiva para construir hierarquia ilimitada
+  function buildHierarchy(parentId: string | null): SimpleComment[] {
+    const children = allComments
+      .filter(c => c.parentId === parentId)
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
     
-    // Encontrar replies diretos
-    const directReplies = replyComments.filter(r => r.parentId === comment.id);
-    directReplies.sort(sortByDate);
-    
-    directReplies.forEach(reply => {
-      const replyWithSubReplies: SimpleComment = {
-        ...reply,
-        replies: [],
-        repliesCount: 0
+    return children.map(comment => {
+      const replies = buildHierarchy(comment.id);
+      return {
+        ...comment,
+        replies,
+        repliesCount: replies.length
       };
-      
-      // Encontrar sub-replies
-      const subReplies = replyComments.filter(sr => sr.parentId === reply.id);
-      subReplies.sort(sortByDate);
-      
-      replyWithSubReplies.replies = subReplies.map(sr => ({
-        ...sr,
-        replies: [],
-        repliesCount: 0
-      }));
-      replyWithSubReplies.repliesCount = subReplies.length;
-      
-      commentWithReplies.replies!.push(replyWithSubReplies);
     });
-    
-    commentWithReplies.repliesCount = directReplies.length;
-    result.push(commentWithReplies);
-  });
+  }
   
-  return result;
+  // Retornar apenas comentários raiz (parentId === null)
+  return buildHierarchy(null);
 }
 
 // Handlers da API
@@ -126,7 +93,7 @@ export const getComments: RequestHandler = (req, res) => {
     
     const commentTree = buildCommentTree(topicId, userId);
     
-    console.log(`[COMMENTS] Encontrados ${commentTree.length} comentários`);
+    console.log(`[COMMENTS] Encontrados ${commentTree.length} comentários raiz`);
     
     res.json({ comments: commentTree });
   } catch (error) {
@@ -172,7 +139,7 @@ export const createComment: RequestHandler = (req, res) => {
     }
     topicComments.get(topicId)!.push(commentId);
     
-    console.log(`[COMMENTS] Comentário criado: ${commentId} por ${req.user.name}`);
+    console.log(`[COMMENTS] Comentário criado: ${commentId} por ${req.user.name} (parent: ${data.parentId || 'null'})`);
     
     res.status(201).json(newComment);
   } catch (error) {
@@ -242,7 +209,7 @@ export const deleteComment: RequestHandler = (req, res) => {
       return res.status(403).json({ message: "Sem permissão" });
     }
     
-    // Deletar comentário e suas respostas
+    // Deletar comentário e suas respostas recursivamente
     function deleteRecursive(id: string) {
       const allComments = Array.from(comments.values());
       const replies = allComments.filter(c => c.parentId === id);
@@ -268,14 +235,14 @@ export const deleteComment: RequestHandler = (req, res) => {
   }
 };
 
-// Inicializar dados demo
+// Inicializar dados demo mais extensos para testar profundidade
 export function initializeDemo() {
   // Limpar dados
   comments.clear();
   topicComments.clear();
   commentLikes.clear();
   
-  // Dados demo para tópico "1"
+  // Dados demo para tópico "1" com múltiplos níveis
   const demoData = [
     {
       id: "demo1",
@@ -285,7 +252,7 @@ export function initializeDemo() {
       authorAvatar: "AN",
       topicId: "1",
       parentId: null,
-      createdAt: new Date(Date.now() - 7200000).toISOString(), // 2h atrás
+      createdAt: new Date(Date.now() - 7200000).toISOString(),
     },
     {
       id: "demo2",
@@ -295,7 +262,7 @@ export function initializeDemo() {
       authorAvatar: "CA",
       topicId: "1", 
       parentId: "demo1",
-      createdAt: new Date(Date.now() - 6600000).toISOString(), // 1h50min atrás
+      createdAt: new Date(Date.now() - 6600000).toISOString(),
     },
     {
       id: "demo3",
@@ -305,7 +272,27 @@ export function initializeDemo() {
       authorAvatar: "BR",
       topicId: "1",
       parentId: "demo2", 
-      createdAt: new Date(Date.now() - 6000000).toISOString(), // 1h40min atrás
+      createdAt: new Date(Date.now() - 6000000).toISOString(),
+    },
+    {
+      id: "demo4",
+      content: "Posso adicionar uma resposta aqui no nível 4?",
+      author: "Diana",
+      authorId: "user_diana",
+      authorAvatar: "DI",
+      topicId: "1",
+      parentId: "demo3", 
+      createdAt: new Date(Date.now() - 5400000).toISOString(),
+    },
+    {
+      id: "demo5",
+      content: "E eu no nível 5! Testando profundidade.",
+      author: "Eduardo",
+      authorId: "user_eduardo", 
+      authorAvatar: "ED",
+      topicId: "1",
+      parentId: "demo4",
+      createdAt: new Date(Date.now() - 4800000).toISOString(),
     }
   ];
   
@@ -325,5 +312,5 @@ export function initializeDemo() {
     topicComments.get(item.topicId)!.push(item.id);
   });
   
-  console.log('[COMMENTS] Sistema inicializado com dados demo');
+  console.log('[COMMENTS] Sistema inicializado com dados demo de múltiplos níveis');
 }
