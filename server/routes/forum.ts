@@ -7,7 +7,7 @@ import {
   CreateCommentRequest,
   LikeResponse,
 } from "@shared/forum";
-import { POINTS, calculateUserBadges, BADGES } from "@shared/badges";
+// import { POINTS, calculateUserBadges, BADGES } from "@shared/badges"; // Temporariamente removido
 
 // Simple in-memory storage for demo purposes
 const topics: Map<string, Topic> = new Map();
@@ -295,7 +295,7 @@ function initializeDemoData() {
     },
     {
       id: "c5",
-      content: "E a diferença na resolução é notável!",
+      content: "E a diferença na resolução �� not��vel!",
       author: "TechEnthusiast",
       authorId: "user_tech_enthusiast",
       authorAvatar: "TE",
