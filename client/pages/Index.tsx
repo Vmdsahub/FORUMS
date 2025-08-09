@@ -128,6 +128,33 @@ export default function Index(props: IndexProps) {
     toast.success("Tópico criado com sucesso!");
   };
 
+  const handleDeleteTopic = async (topicId: string, topicTitle: string) => {
+    if (!isAdmin) return;
+
+    if (!confirm(`Tem certeza que deseja excluir o tópico "${topicTitle}"?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/topics/${topicId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
+
+      if (response.ok) {
+        setRealTopics((prev) => prev.filter((topic) => topic.id !== topicId));
+        toast.success("Tópico excluído com sucesso!");
+      } else {
+        toast.error("Erro ao excluir tópico");
+      }
+    } catch (error) {
+      console.error("Error deleting topic:", error);
+      toast.error("Erro ao excluir tópico");
+    }
+  };
+
   return (
     <main className="container max-w-7xl mx-auto px-6 py-12">
       {/* Hero Section */}
