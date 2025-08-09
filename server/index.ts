@@ -91,5 +91,14 @@ export function createServer() {
   app.get("/api/user/stats", authenticateToken, handleGetUserStats);
   app.get("/api/badges", handleGetAllBadges);
 
+  // Novo sistema de comentários
+  app.get("/api/comments/:topicId", handleGetComments);
+  app.post("/api/comments/:topicId", authenticateToken, handleCreateCommentNew);
+  app.post("/api/comments/:commentId/like", authenticateToken, handleLikeCommentNew);
+  app.delete("/api/comments/:commentId", authenticateToken, handleDeleteCommentNew);
+
+  // Inicializar dados demo
+  initializeCommentsDemo();
+
   return app;
 }
