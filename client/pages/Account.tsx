@@ -172,6 +172,67 @@ export default function Account() {
           )}
         </div>
 
+        {/* User's Topics */}
+        <div className="mt-8 pt-8 border-t border-gray-200">
+          <h3 className="text-lg font-semibold text-black mb-4">Meus Tópicos</h3>
+          {userTopics.length === 0 ? (
+            <div className="text-center py-8 bg-gray-50 rounded-lg">
+              <p className="text-gray-500 mb-4">Você ainda não criou nenhum tópico.</p>
+              <Link
+                to="/"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                Criar Primeiro Tópico
+              </Link>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {userTopics.map((topic) => (
+                <div key={topic.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Link
+                          to={`/topic/${topic.id}`}
+                          className="text-lg font-semibold text-black hover:text-blue-600 transition-colors"
+                        >
+                          {topic.title}
+                        </Link>
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                          {topic.category}
+                        </span>
+                      </div>
+                      <p className="text-gray-600 text-sm mb-3">{topic.description}</p>
+                      <div className="flex items-center gap-4 text-sm text-gray-500">
+                        <span>Criado em {new Date(topic.createdAt).toLocaleDateString("pt-BR")}</span>
+                        <span>•</span>
+                        <span>{topic.views} visualizações</span>
+                        <span>•</span>
+                        <span>{topic.replies} respostas</span>
+                        <span>•</span>
+                        <span>{topic.likes} curtidas</span>
+                      </div>
+                      <div className="text-xs text-gray-400 mt-1">
+                        Última atividade: {topic.lastActivity}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 ml-4">
+                      <Link
+                        to={`/topic/${topic.id}`}
+                        className="text-blue-600 hover:text-blue-800 p-2 rounded hover:bg-blue-50 transition-colors"
+                        title="Ver tópico"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        </svg>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Danger Zone */}
         <div className="mt-8 pt-8 border-t border-gray-200">
