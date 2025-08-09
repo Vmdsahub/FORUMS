@@ -278,15 +278,33 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
   const loadComments = async () => {
     setIsLoading(true);
     try {
+      console.log(`[DEBUG] Carregando comentários para tópico: ${topicId}`);
+
       const response = await fetch(`/api/comments/${topicId}`, {
         headers: user ? { Authorization: `Bearer ${localStorage.getItem("auth_token")}` } : {}
       });
+
+      console.log(`[DEBUG] Response status: ${response.status}`);
+      console.log(`[DEBUG] Response headers:`, response.headers.get('content-type'));
+
       if (response.ok) {
-        const data = await response.json();
-        setComments(data.comments || []);
+        const text = await response.text();
+        console.log(`[DEBUG] Response text:`, text.substring(0, 200));
+
+        try {
+          const data = JSON.parse(text);
+          setComments(data.comments || []);
+        } catch (parseError) {
+          console.error("Erro ao fazer parse do JSON:", parseError);
+          toast.error("Erro no formato da resposta do servidor");
+        }
+      } else {
+        console.error(`Erro na requisição: ${response.status} ${response.statusText}`);
+        toast.error("Erro ao carregar comentários");
       }
     } catch (error) {
       console.error("Erro ao carregar comentários:", error);
+      toast.error("Erro de conexão");
     } finally {
       setIsLoading(false);
     }
