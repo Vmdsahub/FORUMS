@@ -106,28 +106,15 @@ export default function CreateTopicModal({ currentCategory, onTopicCreated }: Cr
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl glass-minimal border border-black/10">
         <DialogHeader>
-          <DialogTitle className="text-black">Criar Novo Tópico</DialogTitle>
+          <DialogTitle className="text-black">
+            Criar Novo Tópico em {currentCategory.name}
+          </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="category" className="text-black/80">
-              Categoria
-            </Label>
-            <Select 
-              value={formData.category} 
-              onValueChange={(value) => handleInputChange("category", value)}
-            >
-              <SelectTrigger className="border-black/20 focus:border-black/40">
-                <SelectValue placeholder="Selecione uma categoria" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
-                    {category.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
+              <strong>Categoria:</strong> {currentCategory.name} - {currentCategory.description}
+            </div>
           </div>
 
           <div className="space-y-2">
