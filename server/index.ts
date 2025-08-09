@@ -19,6 +19,7 @@ import {
   handleLikeComment,
   handleDeleteTopic,
   handleDeleteComment,
+  handleGetUserTopics,
 } from "./routes/forum";
 import { uploadMiddleware, handleUpload } from "./routes/upload";
 
