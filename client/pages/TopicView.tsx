@@ -178,6 +178,36 @@ export default function TopicView() {
     }
   };
 
+  const handleDeleteComment = async (commentId: string) => {
+    if (!isAdmin) return;
+
+    try {
+      const response = await fetch(`/api/comments/${commentId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
+
+      if (response.ok) {
+        setTopic((prev) => {
+          if (!prev) return null;
+          return {
+            ...prev,
+            comments: prev.comments.filter((comment) => comment.id !== commentId),
+            replies: prev.replies - 1,
+          };
+        });
+        toast.success("Comentário excluído!");
+      } else {
+        toast.error("Erro ao excluir comentário");
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      toast.error("Erro ao excluir comentário");
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
