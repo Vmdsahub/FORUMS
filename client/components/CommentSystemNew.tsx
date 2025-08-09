@@ -274,13 +274,21 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Carregar comentários
-  const loadComments = async () => {
+  // Carregar comentários com retry e fallback
+  const loadComments = async (retryCount = 0) => {
     setIsLoading(true);
     try {
+      console.log(`[COMMENTS] Tentativa ${retryCount + 1} - Carregando comentários para tópico: ${topicId}`);
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
       const response = await fetch(`/api/comments/${topicId}`, {
-        headers: user ? { Authorization: `Bearer ${localStorage.getItem("auth_token")}` } : {}
+        headers: user ? { Authorization: `Bearer ${localStorage.getItem("auth_token")}` } : {},
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json();
@@ -288,11 +296,24 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
         console.log(`[COMMENTS] Carregados ${data.comments?.length || 0} comentários`);
       } else {
         console.error(`Erro na requisição: ${response.status}`);
-        toast.error("Erro ao carregar comentários");
+        if (retryCount < 2) {
+          console.log(`[COMMENTS] Tentando novamente em 2s...`);
+          setTimeout(() => loadComments(retryCount + 1), 2000);
+        } else {
+          toast.error("Erro ao carregar comentários");
+        }
       }
     } catch (error) {
       console.error("Erro ao carregar comentários:", error);
-      toast.error("Erro de conexão");
+
+      if (retryCount < 2 && error.name !== 'AbortError') {
+        console.log(`[COMMENTS] Tentando novamente em 2s...`);
+        setTimeout(() => loadComments(retryCount + 1), 2000);
+      } else {
+        // Fallback: mostrar comentários vazios em vez de erro
+        setComments([]);
+        console.warn("[COMMENTS] Usando fallback - comentários vazios");
+      }
     } finally {
       setIsLoading(false);
     }
