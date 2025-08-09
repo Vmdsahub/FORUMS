@@ -90,6 +90,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const register = async (name: string, email: string, password: string, captcha: string): Promise<boolean> => {
+    console.log('Starting registration request...', { name, email, captcha });
     setIsLoading(true);
     try {
       const controller = new AbortController();
