@@ -45,6 +45,22 @@ export default function Account() {
     topics: false,
   });
 
+  // Badge selection state
+  const [availableBadges] = useState([
+    {
+      id: "iniciante",
+      name: "Iniciante",
+      description: "Primeiros passos no fórum",
+      icon: "https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100",
+      requiredPoints: 5,
+      color: "purple",
+      isEarned: true,
+    }
+  ]);
+
+  const [selectedBadges, setSelectedBadges] = useState<string[]>(["iniciante"]);
+  const [memberSince] = useState("2024-01-15"); // Data real de cadastro
+
   // Fetch user's topics
   useEffect(() => {
     if (user) {
