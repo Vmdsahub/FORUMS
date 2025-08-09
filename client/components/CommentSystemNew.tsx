@@ -184,45 +184,29 @@ function CommentContent({
   };
 
   return (
-    <div className="flex items-start gap-3">
-      <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
-        {comment.authorAvatar}
-      </div>
-      <div className="flex-1">
-        <div className="flex items-center gap-2 mb-2 flex-wrap">
-          <span className="font-medium text-black text-sm">
-            {comment.author}
-          </span>
-          <UserPointsBadge userId={comment.authorId} size="sm" showBadges={false} />
-          {comment.authorId === topicAuthorId && (
-            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
-              Autor
-            </span>
-          )}
-          <span className="text-xs text-gray-500">
-            {formatDate(comment.createdAt)}
-          </span>
+    <div className="flex items-start gap-3 relative">
+      {/* Perfil do usuário */}
+      <CommentUserProfile
+        userId={comment.authorId}
+        userName={comment.author}
+        userAvatar={comment.authorAvatar}
+        isTopicAuthor={comment.authorId === topicAuthorId}
+        size="sm"
+      />
+
+      <div className="flex-1 relative">
+        {/* Data do comentário */}
+        <div className="text-xs text-gray-500 mb-2">
+          {formatDate(comment.createdAt)}
         </div>
 
+        {/* Conteúdo do comentário */}
         <div className="text-gray-700 mb-3 text-sm leading-relaxed">
           <MarkdownRenderer content={comment.content} />
         </div>
 
+        {/* Botões de ação */}
         <div className="flex items-center gap-2 flex-wrap">
-          <button
-            onClick={onLike}
-            className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${
-              comment.isLiked
-                ? "text-red-600 bg-red-50 hover:bg-red-100"
-                : "text-gray-500 hover:text-red-600 hover:bg-red-50"
-            }`}
-          >
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
-            </svg>
-            {comment.likes}
-          </button>
-
           {canReply && (
             <button
               onClick={onShowReply}
@@ -252,6 +236,21 @@ function CommentContent({
             </button>
           )}
         </div>
+
+        {/* Botão de curtida no canto direito inferior */}
+        <button
+          onClick={onLike}
+          className={`absolute bottom-0 right-0 flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${
+            comment.isLiked
+              ? "text-red-600 bg-red-50 hover:bg-red-100"
+              : "text-gray-500 hover:text-red-600 hover:bg-red-50"
+          }`}
+        >
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
+          </svg>
+          {comment.likes}
+        </button>
       </div>
     </div>
   );
