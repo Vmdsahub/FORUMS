@@ -533,7 +533,7 @@ export const handleCreateComment: RequestHandler = (req, res) => {
     topic.updatedAt = new Date().toISOString();
     
     // Adicionar pontos por comentar
-    addPoints(req.user.id, POINTS.CREATE_COMMENT);
+    // addPoints(req.user.id, POINTS.CREATE_COMMENT); // Temporariamente desabilitado
 
     res.status(201).json(newComment);
   } catch (error) {
