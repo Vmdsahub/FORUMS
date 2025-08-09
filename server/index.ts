@@ -34,6 +34,9 @@ import {
 export function createServer() {
   const app = express();
 
+  // Inicializar dados demo do sistema de comentários
+  initializeCommentsDemo();
+
   // Middleware
   app.use(cors());
   app.use(express.json({ limit: "50mb" }));
