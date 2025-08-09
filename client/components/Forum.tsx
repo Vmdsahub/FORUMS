@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -8,16 +8,6 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import {
   Brain,
   Image,
@@ -25,34 +15,25 @@ import {
   Shield,
   Music,
   Code,
-  Plus,
   Heart,
   MessageCircle,
   Users,
   TrendingUp,
 } from "lucide-react";
+import { Topic } from "@shared/forum";
+import CreateTopicModal from "@/components/CreateTopicModal";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
-interface Subtopic {
-  id: string;
-  title: string;
-  description: string;
-  author: string;
-  likes: number;
-  comments: number;
-  createdAt: string;
-  liked?: boolean;
-}
-
-interface ForumTopic {
+interface ForumCategory {
   id: string;
   name: string;
   description: string;
   icon: React.ReactNode;
   color: string;
-  subtopics: Subtopic[];
 }
 
-const mockForumData: ForumTopic[] = [
+const forumCategories: ForumCategory[] = [
   {
     id: "ia-hub",
     name: "IA HUB",
@@ -60,37 +41,6 @@ const mockForumData: ForumTopic[] = [
       "Discussões sobre inteligência artificial, machine learning e automação",
     icon: <Brain className="w-6 h-6" />,
     color: "bg-blue-500",
-    subtopics: [
-      {
-        id: "chatgpt-tips",
-        title: "ChatGPT: Dicas e Prompts Avançados",
-        description:
-          "Compartilhe suas melhores práticas e prompts para obter resultados incríveis",
-        author: "TechGuru",
-        likes: 45,
-        comments: 23,
-        createdAt: "2024-01-15T10:30:00Z",
-      },
-      {
-        id: "claude-vs-gpt",
-        title: "Claude vs GPT-4: Qual é melhor?",
-        description:
-          "Comparativo detalhado entre os principais modelos de IA do mercado",
-        author: "AIExpert",
-        likes: 32,
-        comments: 18,
-        createdAt: "2024-01-14T15:45:00Z",
-      },
-      {
-        id: "ml-beginners",
-        title: "Machine Learning para Iniciantes",
-        description: "Guia completo para quem está começando na área de ML",
-        author: "DataScientist",
-        likes: 28,
-        comments: 12,
-        createdAt: "2024-01-13T09:20:00Z",
-      },
-    ],
   },
   {
     id: "imagem",
@@ -98,64 +48,13 @@ const mockForumData: ForumTopic[] = [
     description: "Geração de imagens, edição e ferramentas visuais com IA",
     icon: <Image className="w-6 h-6" />,
     color: "bg-green-500",
-    subtopics: [
-      {
-        id: "midjourney-guide",
-        title: "Midjourney: Guia Completo 2024",
-        description:
-          "Tudo que você precisa saber sobre a ferramenta de geração de imagens",
-        author: "VisualArt",
-        likes: 67,
-        comments: 34,
-        createdAt: "2024-01-15T14:20:00Z",
-      },
-      {
-        id: "dall-e-vs-midjourney",
-        title: "DALL-E vs Midjourney: Comparativo",
-        description:
-          "Análise detalhada das principais ferramentas de geração de imagem",
-        author: "CreativeAI",
-        likes: 41,
-        comments: 19,
-        createdAt: "2024-01-14T11:30:00Z",
-      },
-      {
-        id: "stable-diffusion",
-        title: "Stable Diffusion Local Setup",
-        description: "Como configurar o Stable Diffusion na sua máquina",
-        author: "TechSetup",
-        likes: 35,
-        comments: 15,
-        createdAt: "2024-01-13T16:45:00Z",
-      },
-    ],
   },
   {
     id: "video",
     name: "VÍDEO",
-    description: "Criação e ediç��o de vídeos com inteligência artificial",
+    description: "Criação e edição de vídeos com inteligência artificial",
     icon: <Video className="w-6 h-6" />,
     color: "bg-purple-500",
-    subtopics: [
-      {
-        id: "runway-tips",
-        title: "Runway ML: Dicas de Produção",
-        description: "Como criar vídeos profissionais usando Runway ML",
-        author: "VideoMaker",
-        likes: 38,
-        comments: 21,
-        createdAt: "2024-01-15T12:10:00Z",
-      },
-      {
-        id: "pika-labs",
-        title: "Pika Labs: Primeiras Impressões",
-        description: "Review completo da nova ferramenta de geração de vídeos",
-        author: "ContentCreator",
-        likes: 29,
-        comments: 14,
-        createdAt: "2024-01-14T08:30:00Z",
-      },
-    ],
   },
   {
     id: "seguranca",
@@ -163,27 +62,6 @@ const mockForumData: ForumTopic[] = [
     description: "Cybersecurity, privacidade e proteção de dados",
     icon: <Shield className="w-6 h-6" />,
     color: "bg-red-500",
-    subtopics: [
-      {
-        id: "password-managers",
-        title: "Melhores Gerenciadores de Senha 2024",
-        description:
-          "Análise dos principais gerenciadores de senha disponíveis",
-        author: "SecurityPro",
-        likes: 52,
-        comments: 27,
-        createdAt: "2024-01-15T09:45:00Z",
-      },
-      {
-        id: "vpn-guide",
-        title: "VPN: Guia Completo de Escolha",
-        description: "Como escolher a VPN ideal para suas necessidades",
-        author: "PrivacyAdvocate",
-        likes: 44,
-        comments: 22,
-        createdAt: "2024-01-14T13:20:00Z",
-      },
-    ],
   },
   {
     id: "musica-audio",
@@ -191,26 +69,6 @@ const mockForumData: ForumTopic[] = [
     description: "Produção musical e processamento de áudio com IA",
     icon: <Music className="w-6 h-6" />,
     color: "bg-pink-500",
-    subtopics: [
-      {
-        id: "suno-ai",
-        title: "Suno AI: Criando Músicas Incríveis",
-        description: "Tutorial completo para gerar músicas profissionais",
-        author: "MusicProducer",
-        likes: 36,
-        comments: 18,
-        createdAt: "2024-01-15T11:15:00Z",
-      },
-      {
-        id: "udio-review",
-        title: "Udio: Review da Nova Ferramenta",
-        description: "Análise completa da plataforma de geração musical",
-        author: "AudioEngineer",
-        likes: 24,
-        comments: 11,
-        createdAt: "2024-01-13T14:30:00Z",
-      },
-    ],
   },
   {
     id: "vibe-coding",
@@ -218,100 +76,68 @@ const mockForumData: ForumTopic[] = [
     description: "Ferramentas de desenvolvimento, IDEs e produtividade",
     icon: <Code className="w-6 h-6" />,
     color: "bg-indigo-500",
-    subtopics: [
-      {
-        id: "cursor-review",
-        title: "Cursor: O Futuro do Desenvolvimento",
-        description:
-          "Review completo do editor que está revolucionando o coding",
-        author: "DevMaster",
-        likes: 78,
-        comments: 42,
-        createdAt: "2024-01-15T16:20:00Z",
-      },
-      {
-        id: "claude-code",
-        title: "Claude Code: Minha Experiência",
-        description: "Como o Claude está mudando minha forma de programar",
-        author: "FullStackDev",
-        likes: 56,
-        comments: 31,
-        createdAt: "2024-01-14T10:45:00Z",
-      },
-      {
-        id: "github-copilot",
-        title: "GitHub Copilot vs Cursor",
-        description: "Comparativo entre as principais ferramentas de AI coding",
-        author: "CodeReviewer",
-        likes: 49,
-        comments: 25,
-        createdAt: "2024-01-13T12:15:00Z",
-      },
-    ],
   },
 ];
 
 export default function Forum() {
-  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
-  const [subtopics, setSubtopics] = useState<{ [topicId: string]: Subtopic[] }>(
-    () => {
-      const initial: { [topicId: string]: Subtopic[] } = {};
-      mockForumData.forEach((topic) => {
-        initial[topic.id] = [...topic.subtopics].sort(
-          (a, b) => b.likes - a.likes,
-        );
-      });
-      return initial;
-    },
-  );
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [newSubtopic, setNewSubtopic] = useState({
-    title: "",
-    description: "",
-  });
+  const { user } = useAuth();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [topics, setTopics] = useState<Topic[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const toggleLike = (topicId: string, subtopicId: string) => {
-    setSubtopics((prev) => ({
-      ...prev,
-      [topicId]: prev[topicId]
-        .map((subtopic) => {
-          if (subtopic.id === subtopicId) {
-            const newLikes = subtopic.liked
-              ? subtopic.likes - 1
-              : subtopic.likes + 1;
-            return { ...subtopic, likes: newLikes, liked: !subtopic.liked };
-          }
-          return subtopic;
-        })
-        .sort((a, b) => b.likes - a.likes),
-    }));
+  const fetchTopics = async (category?: string) => {
+    setIsLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (category) params.append("category", category);
+      
+      const response = await fetch(`/api/topics?${params}`);
+      if (response.ok) {
+        const data = await response.json();
+        setTopics(data.topics);
+      } else {
+        toast.error("Erro ao carregar tópicos");
+      }
+    } catch (error) {
+      console.error("Error fetching topics:", error);
+      toast.error("Erro ao carregar tópicos");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const createSubtopic = () => {
-    if (!selectedTopic || !newSubtopic.title.trim()) return;
+  const handleTopicCreated = (newTopic: Topic) => {
+    setTopics((prev) => [newTopic, ...prev]);
+  };
 
-    const topic = mockForumData.find((t) => t.id === selectedTopic);
-    if (!topic) return;
+  const toggleLike = async (topicId: string) => {
+    if (!user) {
+      toast.error("Faça login para curtir tópicos");
+      return;
+    }
 
-    const newSub: Subtopic = {
-      id: `new-${Date.now()}`,
-      title: newSubtopic.title,
-      description: newSubtopic.description,
-      author: "Você",
-      likes: 0,
-      comments: 0,
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      const response = await fetch(`/api/topics/${topicId}/like`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
 
-    setSubtopics((prev) => ({
-      ...prev,
-      [selectedTopic]: [newSub, ...prev[selectedTopic]].sort(
-        (a, b) => b.likes - a.likes,
-      ),
-    }));
-
-    setNewSubtopic({ title: "", description: "" });
-    setIsCreateOpen(false);
+      if (response.ok) {
+        const data = await response.json();
+        setTopics((prev) =>
+          prev.map((topic) =>
+            topic.id === topicId
+              ? { ...topic, likes: data.likes, isLiked: data.isLiked }
+              : topic
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Error toggling like:", error);
+      toast.error("Erro ao curtir tópico");
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -322,9 +148,15 @@ export default function Forum() {
     });
   };
 
-  if (selectedTopic) {
-    const topic = mockForumData.find((t) => t.id === selectedTopic);
-    if (!topic) return null;
+  useEffect(() => {
+    if (selectedCategory) {
+      fetchTopics(selectedCategory);
+    }
+  }, [selectedCategory]);
+
+  if (selectedCategory) {
+    const category = forumCategories.find((c) => c.id === selectedCategory);
+    if (!category) return null;
 
     return (
       <div className="space-y-6">
@@ -332,128 +164,107 @@ export default function Forum() {
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
-              onClick={() => setSelectedTopic(null)}
+              onClick={() => setSelectedCategory(null)}
               className="text-muted-foreground hover:text-foreground"
             >
               ← Voltar
             </Button>
-            <div className={`p-2 rounded-lg text-white ${topic.color}`}>
-              {topic.icon}
+            <div className={`p-2 rounded-lg text-white ${category.color}`}>
+              {category.icon}
             </div>
             <div>
-              <h3 className="text-2xl font-semibold">{topic.name}</h3>
-              <p className="text-muted-foreground">{topic.description}</p>
+              <h3 className="text-2xl font-semibold">{category.name}</h3>
+              <p className="text-muted-foreground">{category.description}</p>
             </div>
           </div>
 
-          <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-            <DialogTrigger asChild>
-              <Button className="flex items-center gap-2">
-                <Plus className="w-4 h-4" />
-                Criar Subtópico
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Criar Novo Subtópico</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Título</Label>
-                  <Input
-                    id="title"
-                    value={newSubtopic.title}
-                    onChange={(e) =>
-                      setNewSubtopic((prev) => ({
-                        ...prev,
-                        title: e.target.value,
-                      }))
-                    }
-                    placeholder="Digite o título do subtópico"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Descrição</Label>
-                  <Textarea
-                    id="description"
-                    value={newSubtopic.description}
-                    onChange={(e) =>
-                      setNewSubtopic((prev) => ({
-                        ...prev,
-                        description: e.target.value,
-                      }))
-                    }
-                    placeholder="Descreva o subtópico"
-                    rows={3}
-                  />
-                </div>
-                <Button onClick={createSubtopic} className="w-full">
-                  Criar Subtópico
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <CreateTopicModal
+            currentCategory={category}
+            onTopicCreated={handleTopicCreated}
+          />
         </div>
 
-        <div className="space-y-4">
-          {subtopics[selectedTopic]?.map((subtopic) => (
-            <Card
-              key={subtopic.id}
-              className="hover:shadow-md transition-all duration-200"
-            >
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-lg mb-2">
-                      {subtopic.title}
-                    </CardTitle>
-                    <CardDescription className="mb-3">
-                      {subtopic.description}
-                    </CardDescription>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span>Por {subtopic.author}</span>
-                      <span>{formatDate(subtopic.createdAt)}</span>
+        {isLoading ? (
+          <div className="flex justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black"></div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {topics.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>Nenhum tópico encontrado nesta categoria.</p>
+                <p className="text-sm mt-2">Seja o primeiro a criar um tópico!</p>
+              </div>
+            ) : (
+              topics.map((topic) => (
+                <Card
+                  key={topic.id}
+                  className="hover:shadow-md transition-all duration-200"
+                >
+                  <CardHeader>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-2">
+                          <CardTitle className="text-lg">{topic.title}</CardTitle>
+                          {topic.isPinned && (
+                            <Badge variant="secondary" className="text-xs">
+                              Fixado
+                            </Badge>
+                          )}
+                          {topic.isHot && (
+                            <Badge
+                              variant="destructive"
+                              className="text-xs flex items-center gap-1"
+                            >
+                              <TrendingUp className="w-3 h-3" />
+                              Hot
+                            </Badge>
+                          )}
+                        </div>
+                        <CardDescription className="mb-3">
+                          {topic.description}
+                        </CardDescription>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <span>Por {topic.author}</span>
+                          <span>{formatDate(topic.createdAt)}</span>
+                          <span>• {topic.views} visualizações</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleLike(selectedTopic, subtopic.id)}
-                      className={`flex items-center gap-2 ${
-                        subtopic.liked
-                          ? "text-red-500"
-                          : "text-muted-foreground"
-                      }`}
-                    >
-                      <Heart
-                        className={`w-4 h-4 ${subtopic.liked ? "fill-current" : ""}`}
-                      />
-                      {subtopic.likes}
-                    </Button>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <MessageCircle className="w-4 h-4" />
-                      {subtopic.comments}
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleLike(topic.id)}
+                          className={`flex items-center gap-2 ${
+                            topic.isLiked
+                              ? "text-red-500"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          <Heart
+                            className={`w-4 h-4 ${topic.isLiked ? "fill-current" : ""}`}
+                          />
+                          {topic.likes}
+                        </Button>
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <MessageCircle className="w-4 h-4" />
+                          {topic.replies}
+                        </div>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Último post: {topic.lastPost.author} em {topic.lastPost.date} às {topic.lastPost.time}
+                      </div>
                     </div>
-                  </div>
-                  {subtopic.likes > 30 && (
-                    <Badge
-                      variant="secondary"
-                      className="flex items-center gap-1"
-                    >
-                      <TrendingUp className="w-3 h-3" />
-                      Popular
-                    </Badge>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        )}
       </div>
     );
   }
@@ -468,32 +279,32 @@ export default function Forum() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {mockForumData.map((topic) => (
+        {forumCategories.map((category) => (
           <Card
-            key={topic.id}
+            key={category.id}
             className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:scale-105"
-            onClick={() => setSelectedTopic(topic.id)}
+            onClick={() => setSelectedCategory(category.id)}
           >
             <CardHeader>
               <div className="flex items-center gap-3 mb-3">
-                <div className={`p-3 rounded-lg text-white ${topic.color}`}>
-                  {topic.icon}
+                <div className={`p-3 rounded-lg text-white ${category.color}`}>
+                  {category.icon}
                 </div>
-                <CardTitle className="text-xl">{topic.name}</CardTitle>
+                <CardTitle className="text-xl">{category.name}</CardTitle>
               </div>
               <CardDescription className="text-sm leading-relaxed">
-                {topic.description}
+                {category.description}
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4" />
-                  {topic.subtopics.length} subtópicos
+                  Tópicos disponíveis
                 </div>
                 <div className="flex items-center gap-2">
-                  <Heart className="w-4 h-4" />
-                  {topic.subtopics.reduce((acc, sub) => acc + sub.likes, 0)}
+                  <MessageCircle className="w-4 h-4" />
+                  Discussões ativas
                 </div>
               </div>
             </CardContent>
