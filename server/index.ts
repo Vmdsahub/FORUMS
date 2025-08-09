@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import path from "path";
 import { handleDemo } from "./routes/demo";
 import { handleLogin, handleRegister, handleMe, handleLogout, authenticateToken } from "./routes/auth";
 import {
@@ -11,6 +12,7 @@ import {
   handleLikeTopic,
   handleLikeComment
 } from "./routes/forum";
+import { uploadMiddleware, handleUpload } from "./routes/upload";
 
 export function createServer() {
   const app = express();
