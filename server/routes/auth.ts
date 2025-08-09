@@ -2,6 +2,12 @@ import { RequestHandler } from "express";
 import { z } from "zod";
 import { LoginRequest, RegisterRequest, AuthResponse, ErrorResponse, User } from "@shared/auth";
 
+// Simple password hashing (use bcrypt in production)
+function hashPassword(password: string): string {
+  // This is not secure - use bcrypt or similar in production
+  return Buffer.from(password).toString('base64');
+}
+
 // Simple in-memory storage for demo purposes
 // In production, use a proper database
 const users: Map<string, { id: string; name: string; email: string; password: string }> = new Map();
