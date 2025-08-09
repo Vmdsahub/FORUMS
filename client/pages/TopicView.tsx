@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
-import CommentThread from "@/components/CommentThread";
+import CommentSystemNew from "@/components/CommentSystemNew";
 import UserPointsBadge from "@/components/UserPointsBadge";
 
 interface Comment {
