@@ -241,7 +241,13 @@ export default function Account() {
           </div>
           <div className="flex-1">
             <h2 className="text-xl font-semibold text-black">{user.name}</h2>
-            <p className="text-gray-600 mb-2">{user.email}</p>
+            <p className="text-gray-600 mb-1">{user.email}</p>
+            <p className="text-sm text-gray-500 mb-2">
+              Membro desde {new Date(memberSince).toLocaleDateString('pt-BR', {
+                month: 'long',
+                year: 'numeric'
+              })}
+            </p>
             <div className="flex items-center gap-3">
               <UserPointsBadge
                 userId={user.id}
@@ -351,7 +357,7 @@ export default function Account() {
                 </p>
                 {selectedBadges.length === 0 && (
                   <p className="text-xs text-amber-600 mt-1">
-                    Selecione pelo menos um emblema para exibir nos comentários
+                    Selecione pelo menos um emblema para exibir nos coment��rios
                   </p>
                 )}
               </div>
