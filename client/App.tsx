@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import Header from "@/components/Header";
 import TopicView from "@/pages/TopicView";
+import Admin from "@/pages/Admin";
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
 
@@ -89,7 +90,7 @@ const weeklyNewsletters: WeeklyNewsletter[] = [
         id: 4,
         title: "AI Art Revolution: Novas Ferramentas Transformam Criatividade",
         content:
-          "A indústria criativa está passando por uma revolução sem precedentes. Novas ferramentas de IA estão democratizando o acesso à criação artística profissional.\n\nPrincipais avanços:\n• DALL-E 3 com precisão fotorrealística\n• Midjourney v6 com controle de composição\n• Stable Diffusion XL para uso comercial\n• RunwayML para criação de vídeos\n\nImpacto no mercado:\n• Redução de 70% no tempo de produção\n• Democratização de ferramentas profissionais\n• Novos modelos de negócio emergindo\n• Questões éticas sobre autoria\n\nEstes desenvolvimentos estão redefinindo completamente o que significa ser criativo na era digital.",
+          "A indústria criativa está passando por uma revolução sem precedentes. Novas ferramentas de IA estão democratizando o acesso à criação artística profissional.\n\nPrincipais avanços:\n• DALL-E 3 com precisão fotorrealística\n• Midjourney v6 com controle de composição\n• Stable Diffusion XL para uso comercial\n• RunwayML para criação de vídeos\n\nImpacto no mercado:\n• Redução de 70% no tempo de produção\n• Democratização de ferramentas profissionais\n• Novos modelos de neg��cio emergindo\n• Questões éticas sobre autoria\n\nEstes desenvolvimentos estão redefinindo completamente o que significa ser criativo na era digital.",
         readTime: "10 min",
       },
       {
