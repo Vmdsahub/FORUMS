@@ -7,6 +7,15 @@ import { LoginRequest, RegisterRequest, AuthResponse, ErrorResponse, User } from
 const users: Map<string, { id: string; name: string; email: string; password: string }> = new Map();
 const tokens: Map<string, string> = new Map(); // token -> userId
 
+// Add a demo user for testing
+const demoUserId = 'demo_user_123';
+users.set(demoUserId, {
+  id: demoUserId,
+  name: 'João Silva',
+  email: 'demo@exemplo.com',
+  password: hashPassword('123456') // password: 123456
+});
+
 // Validation schemas
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
