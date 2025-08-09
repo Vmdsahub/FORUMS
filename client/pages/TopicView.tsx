@@ -467,65 +467,11 @@ export default function TopicView() {
           </div>
         </div>
 
-        {/* Comments Section */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-black mb-4">
-            Comentários ({topic.comments.length})
-          </h3>
-
-          {/* Add Comment Form - Only for logged users */}
-          {user && (
-            <form
-              onSubmit={handleSubmitComment}
-              className="mb-6 p-4 bg-gray-50 rounded-lg"
-            >
-              <div className="space-y-3">
-                <Label htmlFor="comment" className="text-black/80">
-                  Adicionar comentário
-                </Label>
-                <textarea
-                  id="comment"
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Escreva seu comentário..."
-                  className="w-full p-3 border border-gray-200 rounded-md focus:ring-2 focus:ring-black/20 focus:border-black/40 resize-none"
-                  rows={3}
-                  required
-                />
-                <Button
-                  type="submit"
-                  disabled={isSubmitting || !newComment.trim()}
-                  className="bg-black text-white hover:bg-black/90"
-                >
-                  {isSubmitting ? "Enviando..." : "Comentar"}
-                </Button>
-              </div>
-            </form>
-          )}
-
-          {/* Comments List */}
-          <div className="space-y-6">
-            {topic.comments.length === 0 ? (
-              <p className="text-gray-500 text-center py-8">
-                Seja o primeiro a comentar neste tópico!
-              </p>
-            ) : (
-              topic.comments.map((comment) => (
-                <CommentThread
-                  key={comment.id}
-                  comment={comment}
-                  topicId={topic.id}
-                  topicAuthorId={topic.authorId}
-                  onLike={handleLikeComment}
-                  onDelete={handleDeleteComment}
-                  onReply={handleReplyToComment}
-                  depth={0}
-                  maxDepth={5}
-                />
-              ))
-            )}
-          </div>
-        </div>
+        {/* Novo Sistema de Comentários */}
+        <CommentSystemNew
+          topicId={topic.id}
+          topicAuthorId={topic.authorId}
+        />
       </div>
     </div>
   );
