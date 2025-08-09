@@ -86,11 +86,14 @@ export default function Header({ activeSection }: HeaderProps) {
     navigate('/saved-topics');
   };
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setShowAdvancedDropdown(false);
+      }
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
       }
     };
 
@@ -99,6 +102,10 @@ export default function Header({ activeSection }: HeaderProps) {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const handleDeleteNotification = (notificationId: string) => {
+    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+  };
 
   const toggleCategory = (categoryId: string) => {
     setSelectedCategories(prev =>
