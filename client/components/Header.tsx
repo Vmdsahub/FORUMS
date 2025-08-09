@@ -41,6 +41,37 @@ export default function Header() {
   const [registerCaptcha, setRegisterCaptcha] = useState("");
   const [registerCaptchaValid, setRegisterCaptchaValid] = useState(false);
 
+  // Categories for advanced search
+  const categories = [
+    { id: "ia-hub", name: "IA HUB" },
+    { id: "imagem", name: "IMAGEM" },
+    { id: "video", name: "VÍDEO" },
+    { id: "seguranca", name: "SEGURANÇA" },
+    { id: "musica-audio", name: "MÚSICA/ÁUDIO" },
+    { id: "vibe-coding", name: "VIBE CODING" },
+  ];
+
+  const handleSearch = () => {
+    if (!searchQuery.trim()) return;
+
+    // Emit search event or call search function
+    const searchParams = {
+      query: searchQuery,
+      categories: selectedCategories,
+    };
+
+    // For now, just show a toast - later we'll implement proper search
+    toast.success(`Buscando por: "${searchQuery}"${selectedCategories.length > 0 ? ` em ${selectedCategories.length} categoria(s)` : ''}`);
+  };
+
+  const toggleCategory = (categoryId: string) => {
+    setSelectedCategories(prev =>
+      prev.includes(categoryId)
+        ? prev.filter(id => id !== categoryId)
+        : [...prev, categoryId]
+    );
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full glass-minimal border-b border-black/5">
       <div className="container flex h-16 max-w-7xl items-center justify-between px-6 mx-auto">
