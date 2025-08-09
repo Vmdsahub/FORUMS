@@ -87,6 +87,9 @@ export default function CommentThread({
   const marginLeft = depth > 0 ? `${Math.min(depth * 2, 8)}rem` : '0';
   const showBorder = depth > 0;
 
+  // Debug temporário
+  console.log(`CommentThread - ${comment.author} - depth: ${depth}, marginLeft: ${marginLeft}, parentId: ${comment.parentId}`);
+
   return (
     <div style={{ marginLeft }} className={`${depth > 0 ? 'mt-4' : ''}`}>
       <div className={`${showBorder ? 'border-l-2 border-gray-200 pl-4' : ''}`}>
