@@ -19,7 +19,7 @@ interface UserPointsBadgeProps {
 export default function UserPointsBadge({
   userId,
   showPoints = true,
-  showBadges = true,
+  showBadges = false, // Default to false to remove badge display
   size = "sm",
 }: UserPointsBadgeProps) {
   const [userStats, setUserStats] = useState<{
