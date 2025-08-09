@@ -58,14 +58,10 @@ export default function Header() {
   const handleSearch = () => {
     if (!searchQuery.trim()) return;
 
-    // Emit search event or call search function
-    const searchParams = {
-      query: searchQuery,
-      categories: selectedCategories,
-    };
-
-    // For now, just show a toast - later we'll implement proper search
-    toast.success(`Buscando por: "${searchQuery}"${selectedCategories.length > 0 ? ` em ${selectedCategories.length} categoria(s)` : ''}`);
+    setActiveSearchQuery(searchQuery);
+    setActiveSearchCategories([...selectedCategories]);
+    setShowSearchResults(true);
+    setShowAdvancedSearch(false);
   };
 
   const toggleCategory = (categoryId: string) => {
