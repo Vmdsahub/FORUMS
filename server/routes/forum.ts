@@ -566,7 +566,7 @@ export const handleLikeTopic: RequestHandler = (req, res) => {
   topic.isLiked = likeResult.isLiked;
   
   if (likeResult.isLiked && topic.authorId !== req.user.id && likeResult.likes % 5 === 0) {
-    addPoints(topic.authorId, POINTS.RECEIVE_POST_LIKE);
+    // addPoints(topic.authorId, POINTS.RECEIVE_POST_LIKE); // Temporariamente desabilitado
   }
 
   res.json(likeResult);
