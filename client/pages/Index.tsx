@@ -213,6 +213,39 @@ export default function Index(props: IndexProps) {
     }
   };
 
+  const handleSaveTopic = (topicId: string, topicTitle: string) => {
+    if (!user) {
+      toast.error("Faça login para salvar tópicos");
+      return;
+    }
+
+    const storageKey = `savedTopics_${user.email}`;
+    const saved = localStorage.getItem(storageKey);
+    let savedIds: string[] = [];
+
+    if (saved) {
+      try {
+        savedIds = JSON.parse(saved);
+      } catch (error) {
+        console.error("Error parsing saved topics:", error);
+      }
+    }
+
+    if (savedIds.includes(topicId)) {
+      // Remove from saved
+      const updatedIds = savedIds.filter(id => id !== topicId);
+      localStorage.setItem(storageKey, JSON.stringify(updatedIds));
+      setSavedTopicIds(updatedIds);
+      toast.success("Tópico removido dos salvos");
+    } else {
+      // Add to saved
+      const updatedIds = [...savedIds, topicId];
+      localStorage.setItem(storageKey, JSON.stringify(updatedIds));
+      setSavedTopicIds(updatedIds);
+      toast.success(`"${topicTitle}" salvo com sucesso!`);
+    }
+  };
+
   return (
     <main className="container max-w-7xl mx-auto px-6 py-12">
       {/* Hero Section */}
