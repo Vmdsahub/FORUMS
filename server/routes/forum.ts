@@ -520,6 +520,8 @@ export const handleCreateComment: RequestHandler = (req, res) => {
       repliesCount: 0,
     };
 
+    console.log('DEBUG - Criando comentário:', { id: newComment.id, author: newComment.author, parentId: newComment.parentId });
+
     comments.set(newComment.id, newComment);
     topic.comments.push(newComment);
     topic.replies += 1;
