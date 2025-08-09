@@ -100,6 +100,16 @@ export default function Index(props: IndexProps) {
   const [realTopics, setRealTopics] = useState<Topic[]>([]);
   const [isLoadingTopics, setIsLoadingTopics] = useState(false);
 
+  // Estados para modais admin
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
+  const [newCategory, setNewCategory] = useState({ name: "", description: "" });
+  const [newNewsletter, setNewNewsletter] = useState({
+    title: "",
+    content: "",
+    readTime: ""
+  });
+
   // Buscar tópicos reais da API quando uma categoria é selecionada
   useEffect(() => {
     if (selectedCategory && activeSection === "forum") {
