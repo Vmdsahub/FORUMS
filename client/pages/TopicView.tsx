@@ -511,7 +511,7 @@ export default function TopicView() {
               </p>
             ) : (
               topic.comments.map((comment) => (
-                <CommentThreadNew
+                <CommentThread
                   key={comment.id}
                   comment={comment}
                   topicId={topic.id}
