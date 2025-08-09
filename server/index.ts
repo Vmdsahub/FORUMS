@@ -22,6 +22,7 @@ import {
   handleGetUserTopics,
 } from "./routes/forum";
 import { uploadMiddleware, handleUpload } from "./routes/upload";
+import { handleGetUserStats, handleGetAllBadges } from "./routes/user-stats";
 
 export function createServer() {
   const app = express();
@@ -78,6 +79,10 @@ export function createServer() {
 
   // Upload route
   app.post("/api/upload", authenticateToken, uploadMiddleware, handleUpload);
+
+  // User stats routes
+  app.get("/api/user/stats", authenticateToken, handleGetUserStats);
+  app.get("/api/badges", handleGetAllBadges);
 
   return app;
 }
