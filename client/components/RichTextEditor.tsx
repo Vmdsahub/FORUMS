@@ -313,7 +313,7 @@ export default function RichTextEditor({
         ref={editorRef}
         contentEditable
         onInput={handleInput}
-        className="w-full p-3 min-h-[200px] focus:outline-none bg-white"
+        className="w-full p-3 min-h-[200px] focus:outline-none bg-white rich-editor"
         style={{
           lineHeight: "1.6",
           fontSize: "14px",
@@ -321,6 +321,19 @@ export default function RichTextEditor({
         suppressContentEditableWarning={true}
         data-placeholder={placeholder}
       />
+
+      {/* CSS para placeholder */}
+      <style>{`
+        .rich-editor[data-empty="true"]:before {
+          content: attr(data-placeholder);
+          color: #9ca3af;
+          pointer-events: none;
+          position: absolute;
+        }
+        .rich-editor {
+          position: relative;
+        }
+      `}</style>
 
       {/* Hidden file inputs */}
       <input
