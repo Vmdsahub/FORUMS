@@ -123,7 +123,7 @@ export default function CommentThread({
                 {comment.likes}
               </button>
               
-              {user && depth < 3 && (
+              {user && (
                 <button
                   onClick={() => setShowReplyForm(!showReplyForm)}
                   className="text-sm text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
