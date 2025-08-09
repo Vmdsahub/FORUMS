@@ -149,6 +149,28 @@ export default function Index(props: IndexProps) {
     toast.success("Tópico criado com sucesso!");
   };
 
+  const handleCreateCategory = () => {
+    if (!newCategory.name.trim() || !newCategory.description.trim()) {
+      toast.error("Preencha todos os campos");
+      return;
+    }
+
+    toast.success(`Categoria "${newCategory.name}" criada! (Demo - não persistente)`);
+    setNewCategory({ name: "", description: "" });
+    setIsCategoryModalOpen(false);
+  };
+
+  const handleCreateNewsletter = () => {
+    if (!newNewsletter.title.trim() || !newNewsletter.content.trim()) {
+      toast.error("Preencha título e conteúdo");
+      return;
+    }
+
+    toast.success(`Artigo "${newNewsletter.title}" criado! (Demo - não persistente)`);
+    setNewNewsletter({ title: "", content: "", readTime: "" });
+    setIsNewsletterModalOpen(false);
+  };
+
   const handleDeleteTopic = async (topicId: string, topicTitle: string) => {
     if (!isAdmin) return;
 
