@@ -366,7 +366,7 @@ export default function Index(props: IndexProps) {
                             >
                               <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
                             </svg>
-                            Curtir artigo
+                            0
                           </button>
                         </div>
                       )}
