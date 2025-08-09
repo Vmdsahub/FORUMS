@@ -154,20 +154,16 @@ export default function CreateTopicModal({ currentCategory, onTopicCreated }: Cr
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="content" className="text-black/80">
+            <Label className="text-black/80">
               Conteúdo
             </Label>
-            <textarea
-              id="content"
-              placeholder="Descreva seu tópico em detalhes..."
+            <RichTextEditor
               value={formData.content}
-              onChange={(e) => handleInputChange("content", e.target.value)}
-              className="w-full p-3 border border-black/20 rounded-md focus:ring-2 focus:ring-black/20 focus:border-black/40 resize-none min-h-[120px]"
-              required
-              maxLength={2000}
+              onChange={(value) => handleInputChange("content", value)}
+              placeholder="Descreva seu tópico em detalhes... Use as ferramentas acima para formatar o texto, adicionar imagens e vídeos."
             />
             <p className="text-xs text-gray-500">
-              {formData.content.length}/2000 caracteres
+              {formData.content.length} caracteres
             </p>
           </div>
 
