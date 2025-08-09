@@ -2,10 +2,26 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import UserPointsBadge from "@/components/UserPointsBadge";
-import BadgesSection from "@/components/BadgesSection";
+import { toast } from "sonner";
+
+interface Topic {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  createdAt: string;
+  views: number;
+  replies: number;
+  likes: number;
+  lastActivity?: string;
+  lastPost?: {
+    date: string;
+    time: string;
+  };
+}
 
 export default function Account() {
   const { user, logout } = useAuth();
@@ -15,8 +31,17 @@ export default function Account() {
     name: user?.name || "",
     email: user?.email || "",
   });
-  const [userTopics, setUserTopics] = useState([]);
+  const [userTopics, setUserTopics] = useState<Topic[]>([]);
   const [isLoadingTopics, setIsLoadingTopics] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Collapsible sections state
+  const [sectionsExpanded, setSectionsExpanded] = useState({
+    badges: false,
+    topics: false,
+  });
 
   // Fetch user's topics
   useEffect(() => {
@@ -50,6 +75,64 @@ export default function Account() {
     }
   };
 
+  const handleAvatarClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Por favor, selecione apenas arquivos de imagem");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Imagem muito grande. Máximo 5MB");
+      return;
+    }
+
+    setAvatarFile(file);
+    setIsUploadingAvatar(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("type", "avatar");
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        toast.success("Foto do perfil atualizada!");
+        // TODO: Update user avatar in context/state
+      } else {
+        toast.error("Erro ao carregar foto");
+      }
+    } catch (error) {
+      console.error("Avatar upload error:", error);
+      toast.error("Erro ao carregar foto");
+    } finally {
+      setIsUploadingAvatar(false);
+      setAvatarFile(null);
+      event.target.value = "";
+    }
+  };
+
+  const toggleSection = (section: 'badges' | 'topics') => {
+    setSectionsExpanded(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
+
   if (!user) {
     navigate("/");
     return null;
@@ -74,8 +157,8 @@ export default function Account() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-black mb-2">Minha Conta</h1>
-            <p className="text-gray-600">Gerencie suas informações pessoais</p>
+            <h1 className="text-3xl font-bold text-black mb-2">Central do Usuário</h1>
+            <p className="text-gray-600">Gerencie suas informações e conquistas</p>
           </div>
           <button
             onClick={() => navigate("/")}
@@ -91,13 +174,39 @@ export default function Account() {
           </button>
         </div>
 
-        {/* User Avatar & Stats */}
+        {/* User Avatar & Info */}
         <div className="flex items-center gap-6 mb-8">
-          <div className="w-20 h-20 rounded-full bg-black text-white flex items-center justify-center text-2xl font-bold">
-            {user.name
-              .split(" ")
-              .map((n) => n[0])
-              .join("")}
+          <div className="relative">
+            <button
+              onClick={handleAvatarClick}
+              className="w-20 h-20 rounded-full bg-black text-white flex items-center justify-center text-2xl font-bold hover:bg-gray-800 transition-colors relative group"
+              disabled={isUploadingAvatar}
+            >
+              {isUploadingAvatar ? (
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+              ) : (
+                user.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+              )}
+              
+              {/* Upload overlay */}
+              {!isUploadingAvatar && (
+                <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                    <path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z"/>
+                  </svg>
+                </div>
+              )}
+            </button>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleAvatarChange}
+              className="hidden"
+            />
           </div>
           <div className="flex-1">
             <h2 className="text-xl font-semibold text-black">{user.name}</h2>
@@ -106,8 +215,8 @@ export default function Account() {
               <UserPointsBadge
                 userId={user.id}
                 size="md"
-                showPoints
-                showBadges
+                showPoints={true}
+                showBadges={false}
               />
               {user.role === "admin" && (
                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
@@ -118,16 +227,50 @@ export default function Account() {
           </div>
         </div>
 
-        {/* Badges Section */}
+        {/* Collapsible Badges Section */}
         <div className="mb-8">
-          <h3 className="text-lg font-semibold text-black border-b border-gray-200 pb-2 mb-4">
-            🏆 Seus Emblemas e Conquistas
-          </h3>
-          <BadgesSection userId={user.id} />
+          <button
+            onClick={() => toggleSection('badges')}
+            className="w-full flex items-center justify-between text-lg font-semibold text-black border-b border-gray-200 pb-2 mb-4 hover:text-gray-700 transition-colors"
+          >
+            <span className="flex items-center gap-2">
+              🏆 Seus Emblemas
+            </span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className={`transform transition-transform ${
+                sectionsExpanded.badges ? 'rotate-180' : ''
+              }`}
+            >
+              <path d="M4 6l4 4 4-4H4z" />
+            </svg>
+          </button>
+          
+          {sectionsExpanded.badges && (
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="text-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
+                  <img
+                    src="https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100"
+                    alt="Iniciante"
+                    className="w-12 h-12 object-contain"
+                  />
+                </div>
+                <h3 className="font-semibold text-black mb-2">Iniciante</h3>
+                <p className="text-sm text-gray-600">Primeiros passos no fórum</p>
+                <div className="mt-4 text-xs text-gray-500">
+                  Você conquistou 1 emblema
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Account Information */}
-        <div className="space-y-6">
+        <div className="space-y-6 mb-8">
           <h3 className="text-lg font-semibold text-black border-b border-gray-200 pb-2">
             Informações da Conta
           </h3>
@@ -213,90 +356,109 @@ export default function Account() {
           )}
         </div>
 
-        {/* User's Topics */}
-        <div className="mt-8 pt-8 border-t border-gray-200">
-          <h3 className="text-lg font-semibold text-black mb-4">
-            Meus Tópicos
-          </h3>
-          {isLoadingTopics ? (
-            <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto mb-4"></div>
-              <p className="text-gray-600">Carregando seus tópicos...</p>
-            </div>
-          ) : userTopics.length === 0 ? (
-            <div className="text-center py-8 bg-gray-50 rounded-lg">
-              <p className="text-gray-500 mb-4">
-                Você ainda não criou nenhum tópico.
-              </p>
-              <Link
-                to="/"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
-              >
-                Criar Primeiro Tópico
-              </Link>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {userTopics.map((topic) => (
-                <div
-                  key={topic.id}
-                  className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Link
-                          to={`/topic/${topic.id}`}
-                          className="text-lg font-semibold text-black hover:text-blue-600 transition-colors"
-                        >
-                          {topic.title}
-                        </Link>
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                          {topic.category}
-                        </span>
-                      </div>
-                      <p className="text-gray-600 text-sm mb-3">
-                        {topic.description}
-                      </p>
-                      <div className="flex items-center gap-4 text-sm text-gray-500">
-                        <span>
-                          Criado em{" "}
-                          {new Date(topic.createdAt).toLocaleDateString(
-                            "pt-BR",
-                          )}
-                        </span>
-                        <span>•</span>
-                        <span>{topic.views} visualizações</span>
-                        <span>•</span>
-                        <span>{topic.replies} respostas</span>
-                        <span>•</span>
-                        <span>{topic.likes} curtidas</span>
-                      </div>
-                      <div className="text-xs text-gray-400 mt-1">
-                        Última atividade:{" "}
-                        {topic.lastActivity ||
-                          `${topic.lastPost?.date} às ${topic.lastPost?.time}`}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 ml-4">
-                      <Link
-                        to={`/topic/${topic.id}`}
-                        className="text-blue-600 hover:text-blue-800 p-2 rounded hover:bg-blue-50 transition-colors"
-                        title="Ver tópico"
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                        >
-                          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
-                        </svg>
-                      </Link>
-                    </div>
-                  </div>
+        {/* Collapsible Topics Section */}
+        <div className="pt-8 border-t border-gray-200">
+          <button
+            onClick={() => toggleSection('topics')}
+            className="w-full flex items-center justify-between text-lg font-semibold text-black mb-4 hover:text-gray-700 transition-colors"
+          >
+            <span>Meus Tópicos</span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className={`transform transition-transform ${
+                sectionsExpanded.topics ? 'rotate-180' : ''
+              }`}
+            >
+              <path d="M4 6l4 4 4-4H4z" />
+            </svg>
+          </button>
+          
+          {sectionsExpanded.topics && (
+            <div>
+              {isLoadingTopics ? (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto mb-4"></div>
+                  <p className="text-gray-600">Carregando seus tópicos...</p>
                 </div>
-              ))}
+              ) : userTopics.length === 0 ? (
+                <div className="text-center py-8 bg-gray-50 rounded-lg">
+                  <p className="text-gray-500 mb-4">
+                    Você ainda não criou nenhum tópico.
+                  </p>
+                  <Link
+                    to="/"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+                  >
+                    Criar Primeiro Tópico
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {userTopics.map((topic) => (
+                    <div
+                      key={topic.id}
+                      className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Link
+                              to={`/topic/${topic.id}`}
+                              className="text-lg font-semibold text-black hover:text-blue-600 transition-colors"
+                            >
+                              {topic.title}
+                            </Link>
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                              {topic.category}
+                            </span>
+                          </div>
+                          <p className="text-gray-600 text-sm mb-3">
+                            {topic.description}
+                          </p>
+                          <div className="flex items-center gap-4 text-sm text-gray-500">
+                            <span>
+                              Criado em{" "}
+                              {new Date(topic.createdAt).toLocaleDateString(
+                                "pt-BR",
+                              )}
+                            </span>
+                            <span>•</span>
+                            <span>{topic.views} visualizações</span>
+                            <span>•</span>
+                            <span>{topic.replies} respostas</span>
+                            <span>•</span>
+                            <span>{topic.likes} curtidas</span>
+                          </div>
+                          <div className="text-xs text-gray-400 mt-1">
+                            Última atividade:{" "}
+                            {topic.lastActivity ||
+                              `${topic.lastPost?.date} às ${topic.lastPost?.time}`}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 ml-4">
+                          <Link
+                            to={`/topic/${topic.id}`}
+                            className="text-blue-600 hover:text-blue-800 p-2 rounded hover:bg-blue-50 transition-colors"
+                            title="Ver tópico"
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="currentColor"
+                            >
+                              <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                            </svg>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
