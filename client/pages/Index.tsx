@@ -425,19 +425,66 @@ export default function Index(props: IndexProps) {
                   Categorias do Fórum
                 </h2>
                 {isAdmin && (
-                  <button
-                    onClick={() => {
-                      const name = prompt("Nome da nova categoria:");
-                      const description = prompt("Descrição da categoria:");
-                      if (name && description) {
-                        toast.success(`Categoria "${name}" criada! (Demo - não persistente)`);
-                      }
-                    }}
-                    className="bg-gray-800 text-white px-3 py-2 rounded-md hover:bg-gray-700 transition-colors text-sm"
-                    title="Adicionar categoria (Admin)"
-                  >
-                    + Nova Categoria
-                  </button>
+                  <Dialog open={isCategoryModalOpen} onOpenChange={setIsCategoryModalOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        className="bg-gray-900 text-white hover:bg-gray-800 text-sm"
+                        size="sm"
+                      >
+                        + Nova Categoria
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-white border border-gray-200 shadow-lg sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle className="text-gray-900 text-xl font-semibold">
+                          Criar Nova Categoria
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="cat-name" className="text-gray-900 font-medium">
+                            Nome da Categoria
+                          </Label>
+                          <Input
+                            id="cat-name"
+                            value={newCategory.name}
+                            onChange={(e) => setNewCategory({ ...newCategory, name: e.target.value })}
+                            placeholder="Ex: Inteligência Artificial"
+                            className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="cat-desc" className="text-gray-900 font-medium">
+                            Descrição
+                          </Label>
+                          <Textarea
+                            id="cat-desc"
+                            value={newCategory.description}
+                            onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
+                            placeholder="Descreva o que será discutido nesta categoria"
+                            rows={3}
+                            className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                          />
+                        </div>
+                        <div className="flex justify-end gap-3 pt-4">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setIsCategoryModalOpen(false)}
+                            className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                          >
+                            Cancelar
+                          </Button>
+                          <Button
+                            onClick={handleCreateCategory}
+                            className="bg-gray-900 text-white hover:bg-gray-800"
+                          >
+                            Criar Categoria
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                 )}
               </div>
 
