@@ -201,13 +201,16 @@ export default function Forum() {
               topics.map((topic) => (
                 <Card
                   key={topic.id}
-                  className="hover:shadow-md transition-all duration-200"
+                  className="hover:shadow-md transition-all duration-200 cursor-pointer"
+                  onClick={() => navigate(`/topic/${topic.id}`)}
                 >
                   <CardHeader>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <CardTitle className="text-lg">{topic.title}</CardTitle>
+                          <CardTitle className="text-lg hover:text-blue-600">
+                            {topic.title}
+                          </CardTitle>
                           {topic.isPinned && (
                             <Badge variant="secondary" className="text-xs">
                               Fixado
@@ -240,7 +243,10 @@ export default function Forum() {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => toggleLike(topic.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleLike(topic.id);
+                          }}
                           className={`flex items-center gap-2 ${
                             topic.isLiked
                               ? "text-red-500"
