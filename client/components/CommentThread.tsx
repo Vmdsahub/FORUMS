@@ -28,9 +28,10 @@ interface CommentThreadProps {
   onDelete: (commentId: string) => void;
   onReply: (parentId: string, content: string) => void;
   depth?: number;
+  maxDepth?: number;
 }
 
-export default function CommentThread({
+export default function CommentThreadNew({
   comment,
   topicId,
   topicAuthorId,
@@ -38,16 +39,18 @@ export default function CommentThread({
   onDelete,
   onReply,
   depth = 0,
+  maxDepth = 5,
 }: CommentThreadProps) {
   const { user, isAdmin } = useAuth();
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyContent, setReplyContent] = useState("");
-  const [showReplies, setShowReplies] = useState(depth === 0 ? true : false);
+  const [showReplies, setShowReplies] = useState(true);
   const [isSubmittingReply, setIsSubmittingReply] = useState(false);
 
   const isTopicOwner = user?.id === topicAuthorId;
   const isCommentOwner = user?.id === comment.authorId;
   const canDelete = isAdmin || isTopicOwner || isCommentOwner;
+  const canReply = user && depth < maxDepth;
 
   const handleReplySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,93 +83,92 @@ export default function CommentThread({
     }
   };
 
+  // Calcular margem baseada na profundidade
+  const marginLeft = depth > 0 ? `${Math.min(depth * 2, 8)}rem` : '0';
+  const showBorder = depth > 0;
+
   return (
-    <div className={`${depth > 0 ? 'ml-8 mt-3' : ''}`}>
-      <div className={`border-l-2 ${depth > 0 ? 'border-gray-200' : 'border-transparent'} ${depth > 0 ? 'pl-4' : ''}`}>
-        <div className="flex items-start gap-3">
-          <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
-            {comment.authorAvatar}
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <span className="font-medium text-black">
-                {comment.author}
-              </span>
-              <UserPointsBadge userId={comment.authorId} size="sm" />
-              {comment.authorId === topicAuthorId && (
-                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
-                  Autor
+    <div style={{ marginLeft }} className={`${depth > 0 ? 'mt-4' : ''}`}>
+      <div className={`${showBorder ? 'border-l-2 border-gray-200 pl-4' : ''}`}>
+        {/* Comment Content */}
+        <div className="bg-white rounded-lg border border-gray-100 p-4 shadow-sm">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
+              {comment.authorAvatar}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <span className="font-medium text-black text-sm">
+                  {comment.author}
                 </span>
-              )}
-              <span className="text-xs text-gray-500">
-                {comment.date} às {comment.time}
-              </span>
-            </div>
-            <div className="text-gray-700 mb-3 leading-relaxed">
-              <MarkdownRenderer content={comment.content} />
-            </div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <button
-                onClick={() => onLike(comment.id)}
-                className={`flex items-center gap-1 text-sm px-2 py-1 rounded transition-colors ${
-                  comment.isLiked
-                    ? "text-red-600 bg-red-50 hover:bg-red-100"
-                    : "text-gray-500 hover:text-red-600 hover:bg-red-50"
-                }`}
-              >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                >
-                  <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
-                </svg>
-                {comment.likes}
-              </button>
+                <UserPointsBadge userId={comment.authorId} size="sm" />
+                {comment.authorId === topicAuthorId && (
+                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
+                    Autor
+                  </span>
+                )}
+                <span className="text-xs text-gray-500">
+                  {comment.date} às {comment.time}
+                </span>
+              </div>
               
-              {user && (
+              <div className="text-gray-700 mb-3 text-sm leading-relaxed">
+                <MarkdownRenderer content={comment.content} />
+              </div>
+              
+              <div className="flex items-center gap-2 flex-wrap">
                 <button
-                  onClick={() => setShowReplyForm(!showReplyForm)}
-                  className="text-sm text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
+                  onClick={() => onLike(comment.id)}
+                  className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${
+                    comment.isLiked
+                      ? "text-red-600 bg-red-50 hover:bg-red-100"
+                      : "text-gray-500 hover:text-red-600 hover:bg-red-50"
+                  }`}
                 >
-                  Responder
-                </button>
-              )}
-
-              {comment.replies && comment.replies.length > 0 && (
-                <button
-                  onClick={() => setShowReplies(!showReplies)}
-                  className="text-sm text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
-                >
-                  {showReplies ? 'Ocultar' : 'Ver'} {comment.replies.length} resposta{comment.replies.length !== 1 ? 's' : ''}
-                </button>
-              )}
-
-              {canDelete && (
-                <button
-                  onClick={handleDelete}
-                  className="flex items-center gap-1 text-sm px-2 py-1 rounded transition-colors text-red-600 hover:bg-red-50"
-                  title={`Excluir comentário ${isAdmin ? '(Admin)' : isTopicOwner ? '(Dono do post)' : '(Seu comentário)'}`}
-                >
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+                    <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
                   </svg>
+                  {comment.likes}
                 </button>
-              )}
+                
+                {canReply && (
+                  <button
+                    onClick={() => setShowReplyForm(!showReplyForm)}
+                    className="text-xs text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
+                  >
+                    Responder
+                  </button>
+                )}
+
+                {comment.replies && comment.replies.length > 0 && (
+                  <button
+                    onClick={() => setShowReplies(!showReplies)}
+                    className="text-xs text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
+                  >
+                    {showReplies ? 'Ocultar' : 'Ver'} {comment.replies.length} resposta{comment.replies.length !== 1 ? 's' : ''}
+                  </button>
+                )}
+
+                {canDelete && (
+                  <button
+                    onClick={handleDelete}
+                    className="flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors text-red-600 hover:bg-red-50"
+                    title={`Excluir comentário ${isAdmin ? '(Admin)' : isTopicOwner ? '(Dono do post)' : '(Seu comentário)'}`}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                    </svg>
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Reply Form */}
         {showReplyForm && user && (
-          <form onSubmit={handleReplySubmit} className="mt-3 ml-13">
-            <div className="bg-gray-50 rounded-lg p-3">
+          <form onSubmit={handleReplySubmit} className="mt-3">
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
               <textarea
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
@@ -202,9 +204,9 @@ export default function CommentThread({
 
         {/* Nested Replies */}
         {showReplies && comment.replies && comment.replies.length > 0 && (
-          <div className="mt-3">
+          <div className="mt-3 space-y-3">
             {comment.replies.map((reply) => (
-              <CommentThread
+              <CommentThreadNew
                 key={reply.id}
                 comment={reply}
                 topicId={topicId}
@@ -213,6 +215,7 @@ export default function CommentThread({
                 onDelete={onDelete}
                 onReply={onReply}
                 depth={depth + 1}
+                maxDepth={maxDepth}
               />
             ))}
           </div>
