@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { BADGES, calculateUserBadges, getNextBadge, getPointsToNextBadge } from "@shared/badges";
+// import { BADGES, calculateUserBadges, getNextBadge, getPointsToNextBadge } from "@shared/badges"; // Temporariamente removido
 
 // Simular dados de usuários (isso deveria vir de um banco de dados)
 const userStats: Map<string, { points: number; badges: string[] }> = new Map();
