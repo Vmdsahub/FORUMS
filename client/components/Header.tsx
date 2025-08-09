@@ -40,26 +40,7 @@ export default function Header({ activeSection }: HeaderProps) {
     string[]
   >([]);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([
-    {
-      id: "1",
-      message: "Novo comentário no tópico 'GPT-4 vs Claude'",
-      time: "5 min atrás",
-      type: "comment",
-    },
-    {
-      id: "2",
-      message: "Seu tópico recebeu uma curtida",
-      time: "2h atrás",
-      type: "like",
-    },
-    {
-      id: "3",
-      message: "Nova resposta no tópico salvo 'Midjourney vs DALL-E 3'",
-      time: "1 dia atrás",
-      type: "reply",
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
 
