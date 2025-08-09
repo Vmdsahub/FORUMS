@@ -324,9 +324,9 @@ export default function TopicView() {
                           {comment.date} às {comment.time}
                         </span>
                       </div>
-                      <p className="text-gray-700 mb-3 leading-relaxed">
-                        {comment.content}
-                      </p>
+                      <div className="text-gray-700 mb-3 leading-relaxed">
+                        <MarkdownRenderer content={comment.content} />
+                      </div>
                       <button
                         onClick={() => handleLikeComment(comment.id)}
                         className={`flex items-center gap-1 text-sm px-2 py-1 rounded transition-colors ${
