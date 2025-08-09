@@ -320,13 +320,6 @@ export default function RichTextEditor({
         </p>
       </div>
 
-      <style jsx>{`
-        div[contenteditable]:empty:before {
-          content: attr(data-placeholder);
-          color: #9ca3af;
-          pointer-events: none;
-        }
-      `}</style>
     </div>
   );
 }
