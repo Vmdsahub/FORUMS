@@ -9,17 +9,13 @@ export const handleGetUserStats: RequestHandler = (req, res) => {
     return res.status(401).json({ message: "Autenticação necessária" });
   }
 
-  const stats = userStats.get(req.user.id) || { points: 0, badges: [] };
-  const userBadges = calculateUserBadges(stats.points);
-  const nextBadge = getNextBadge(stats.points);
-  const pointsToNext = getPointsToNextBadge(stats.points);
-
+  // Versão simplificada temporária
   res.json({
-    points: stats.points,
-    badges: userBadges,
-    nextBadge,
-    pointsToNext,
-    allBadges: BADGES,
+    points: 0,
+    badges: [],
+    nextBadge: null,
+    pointsToNext: 0,
+    allBadges: [],
   });
 };
 
