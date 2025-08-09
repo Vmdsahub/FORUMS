@@ -329,7 +329,7 @@ export default function TopicView() {
           </div>
 
           {/* Like Button */}
-          <div className="flex items-center gap-4 pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between pt-4 border-t border-gray-100">
             <button
               onClick={handleLikeTopic}
               className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
@@ -348,6 +348,18 @@ export default function TopicView() {
               </svg>
               {topic.likes} {topic.likes === 1 ? "curtida" : "curtidas"}
             </button>
+            {isAdmin && (
+              <button
+                onClick={handleDeleteTopic}
+                className="flex items-center gap-2 px-3 py-2 rounded-md text-red-600 hover:bg-red-50 transition-colors"
+                title="Excluir tópico (Admin)"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                </svg>
+                Excluir Tópico
+              </button>
+            )}
           </div>
         </div>
 
