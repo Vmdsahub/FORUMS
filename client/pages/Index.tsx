@@ -428,7 +428,11 @@ export default function Index(props: IndexProps) {
                 </div>
                 {user && getSelectedCategoryData() && (
                   <CreateTopicModal
-                    currentCategory={getSelectedCategoryData()!}
+                    currentCategory={{
+                      id: getSelectedCategoryData()!.id,
+                      name: getSelectedCategoryData()!.name,
+                      description: getSelectedCategoryData()!.description,
+                    }}
                     onTopicCreated={handleTopicCreated}
                   />
                 )}
