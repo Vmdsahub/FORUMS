@@ -12,15 +12,17 @@ import {
 } from "./routes/auth";
 import {
   handleGetTopics,
-  handleGetTopic,
   handleCreateTopic,
-  handleCreateComment,
   handleLikeTopic,
-  handleLikeComment,
   handleDeleteTopic,
-  handleDeleteComment,
   handleGetUserTopics,
 } from "./routes/forum";
+import {
+  handleGetTopic,
+  handleCreateComment,
+  handleLikeComment,
+  handleDeleteComment,
+} from "./routes/forum-new";
 import { uploadMiddleware, handleUpload } from "./routes/upload";
 import { handleGetUserStats, handleGetAllBadges } from "./routes/user-stats";
 
