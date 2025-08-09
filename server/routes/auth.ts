@@ -41,12 +41,6 @@ function generateToken(): string {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
 }
 
-// Simple password hashing (use bcrypt in production)
-function hashPassword(password: string): string {
-  // This is not secure - use bcrypt or similar in production
-  return Buffer.from(password).toString('base64');
-}
-
 function verifyPassword(password: string, hash: string): boolean {
   return Buffer.from(password).toString('base64') === hash;
 }
