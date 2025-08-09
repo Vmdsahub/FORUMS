@@ -535,3 +535,41 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
 
   res.json({ message: "Comentário excluído com sucesso" });
 };
+
+export const handleGetUserTopics: RequestHandler = (req, res) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Autenticação necessária" });
+  }
+
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 20;
+
+  // Filter topics by current user
+  const userTopics = Array.from(topics.values()).filter(
+    (topic) => topic.authorId === req.user!.id
+  );
+
+  // Sort by creation date (newest first)
+  userTopics.sort((a, b) =>
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
+
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+  const paginatedTopics = userTopics.slice(startIndex, endIndex);
+
+  // Remove content and comments for list view to reduce payload
+  const topicsForList = paginatedTopics.map(
+    ({ content, comments, ...topic }) => ({
+      ...topic,
+      lastActivity: `${topic.lastPost.date} às ${topic.lastPost.time}`
+    })
+  );
+
+  res.json({
+    topics: topicsForList,
+    total: userTopics.length,
+    page,
+    limit,
+  });
+};
