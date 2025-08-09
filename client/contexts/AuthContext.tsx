@@ -22,6 +22,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const isAdmin = user?.role === 'admin';
+
   useEffect(() => {
     // Check if user is logged in on app start
     const token = localStorage.getItem("auth_token");
