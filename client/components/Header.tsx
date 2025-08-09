@@ -243,9 +243,9 @@ export default function Header() {
                     Cadastrar
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-md glass-minimal border border-black/10">
+                <DialogContent className="sm:max-w-md bg-white border border-gray-200 shadow-lg">
                   <DialogHeader>
-                    <DialogTitle className="text-black">
+                    <DialogTitle className="text-gray-900 text-xl font-semibold">
                       Criar Conta
                     </DialogTitle>
                   </DialogHeader>
@@ -288,7 +288,7 @@ export default function Header() {
                     className="space-y-4 py-4"
                   >
                     <div className="space-y-2">
-                      <Label htmlFor="name" className="text-black/80">
+                      <Label htmlFor="name" className="text-gray-900 font-medium">
                         Nome
                       </Label>
                       <Input
@@ -296,13 +296,13 @@ export default function Header() {
                         placeholder="Seu nome"
                         value={registerName}
                         onChange={(e) => setRegisterName(e.target.value)}
-                        className="border-black/20 focus:border-black/40"
+                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
                         required
                         minLength={2}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="register-email" className="text-black/80">
+                      <Label htmlFor="register-email" className="text-gray-900 font-medium">
                         Email
                       </Label>
                       <Input
@@ -311,14 +311,14 @@ export default function Header() {
                         placeholder="seu@email.com"
                         value={registerEmail}
                         onChange={(e) => setRegisterEmail(e.target.value)}
-                        className="border-black/20 focus:border-black/40"
+                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
                         required
                       />
                     </div>
                     <div className="space-y-2">
                       <Label
                         htmlFor="register-password"
-                        className="text-black/80"
+                        className="text-gray-900 font-medium"
                       >
                         Senha
                       </Label>
@@ -328,7 +328,7 @@ export default function Header() {
                         placeholder="••••••••"
                         value={registerPassword}
                         onChange={(e) => setRegisterPassword(e.target.value)}
-                        className="border-black/20 focus:border-black/40"
+                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
                         required
                         minLength={6}
                       />
@@ -342,7 +342,7 @@ export default function Header() {
                     />
                     <Button
                       type="submit"
-                      className="w-full bg-black text-white hover:bg-black/90 font-medium"
+                      className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium"
                       disabled={isLoading || !registerCaptchaValid}
                     >
                       {isLoading ? "Criando conta..." : "Criar Conta"}
