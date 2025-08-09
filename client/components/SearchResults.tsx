@@ -229,32 +229,15 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
                           <span>• {topic.views} visualizações</span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 ml-4">
-                        {user && (
-                          <button
-                            onClick={() => handleSaveTopic(topic.id, topic.title)}
-                            className={`p-1 rounded transition-colors ${
-                              savedTopicIds.includes(topic.id)
-                                ? "text-yellow-600 hover:text-yellow-800 bg-yellow-50 hover:bg-yellow-100"
-                                : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
-                            }`}
-                            title={savedTopicIds.includes(topic.id) ? "Remover dos salvos" : "Salvar tópico"}
-                          >
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill={savedTopicIds.includes(topic.id) ? "currentColor" : "none"} stroke="currentColor">
-                              <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" strokeWidth="2"/>
-                            </svg>
-                          </button>
-                        )}
-                        {isAdmin && (
-                          <button
-                            onClick={() => handleDeleteTopic(topic.id, topic.title)}
-                            className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50 transition-colors"
-                            title="Excluir tópico (Admin)"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
-                      </div>
+                      {isAdmin && (
+                        <button
+                          onClick={() => handleDeleteTopic(topic.id, topic.title)}
+                          className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50 transition-colors ml-4"
+                          title="Excluir tópico (Admin)"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
