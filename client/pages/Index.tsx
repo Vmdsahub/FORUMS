@@ -117,22 +117,47 @@ export default function Index(props: IndexProps) {
     }
   }, [selectedCategory, activeSection]);
 
-  const fetchTopics = async (category: string) => {
+  const fetchTopics = async (category: string, retryCount = 0) => {
     setIsLoadingTopics(true);
     try {
       const params = new URLSearchParams();
       params.append("category", category);
 
-      const response = await fetch(`/api/topics?${params}`);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
+
+      const response = await fetch(`/api/topics?${params}`, {
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
       if (response.ok) {
         const data = await response.json();
-        setRealTopics(data.topics);
+        setRealTopics(data.topics || []);
       } else {
-        toast.error("Erro ao carregar tópicos");
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
     } catch (error) {
       console.error("Error fetching topics:", error);
-      toast.error("Erro ao carregar tópicos");
+
+      // Retry logic for network errors
+      if (retryCount < 2 && (error instanceof TypeError || error.name === "AbortError")) {
+        console.log(`Retrying fetch topics (attempt ${retryCount + 1}/3)...`);
+        setTimeout(() => fetchTopics(category, retryCount + 1), 1000);
+        return;
+      }
+
+      if (error.name === "AbortError") {
+        toast.error("Timeout ao carregar tópicos. Tente novamente.");
+      } else if (error instanceof TypeError) {
+        toast.error("Erro de conexão. Verifique sua internet.");
+      } else {
+        toast.error("Erro ao carregar tópicos");
+      }
+
+      // Set empty array on error to prevent UI issues
+      setRealTopics([]);
     } finally {
       setIsLoadingTopics(false);
     }
