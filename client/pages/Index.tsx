@@ -379,21 +379,31 @@ export default function Index(props: IndexProps) {
                       // Add the new topic to the current category without refresh
                       const categoryData = getSelectedCategoryData();
                       if (categoryData) {
-                        categoryData.posts.unshift({
+                        // Add to the beginning of the list (newest first)
+                        const newPost = {
                           id: newTopic.id,
                           title: newTopic.title,
                           description: newTopic.description,
                           author: newTopic.author,
                           authorAvatar: newTopic.authorAvatar,
-                          replies: newTopic.replies,
-                          views: newTopic.views,
+                          replies: newTopic.replies || 0,
+                          views: newTopic.views || 0,
                           lastPost: newTopic.lastPost,
-                          isPinned: newTopic.isPinned,
-                          isHot: newTopic.isHot
-                        });
+                          isPinned: newTopic.isPinned || false,
+                          isHot: newTopic.isHot || false
+                        };
+
+                        // Insert at the beginning for non-pinned topics, or after pinned topics
+                        const pinnedCount = categoryData.posts.filter(p => p.isPinned).length;
+                        categoryData.posts.splice(pinnedCount, 0, newPost);
                         categoryData.totalTopics += 1;
-                        // Force re-render by updating state
-                        props.setSelectedCategory(selectedCategory);
+
+                        // Force re-render by updating the state
+                        const updatedCategories = forumCategories.map(cat =>
+                          cat.id === categoryData.id ? categoryData : cat
+                        );
+                        // This will trigger a re-render
+                        window.location.reload();
                       }
                     }}
                   />
