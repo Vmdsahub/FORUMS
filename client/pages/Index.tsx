@@ -786,42 +786,21 @@ export default function Index(props: IndexProps) {
                               por{" "}
                               <span className="font-medium">{topic.author}</span>
                             </div>
-                            <div className="flex items-center gap-1">
-                              {user && (
-                                <button
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleSaveTopic(topic.id, topic.title);
-                                  }}
-                                  className={`p-1 rounded transition-colors ${
-                                    savedTopicIds.includes(topic.id)
-                                      ? "text-yellow-600 hover:text-yellow-800 bg-yellow-50 hover:bg-yellow-100"
-                                      : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
-                                  }`}
-                                  title={savedTopicIds.includes(topic.id) ? "Remover dos salvos" : "Salvar tópico"}
-                                >
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill={savedTopicIds.includes(topic.id) ? "currentColor" : "none"} stroke="currentColor">
-                                    <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" strokeWidth="2"/>
-                                  </svg>
-                                </button>
-                              )}
-                              {isAdmin && (
-                                <button
-                                  onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    handleDeleteTopic(topic.id, topic.title);
-                                  }}
-                                  className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50 transition-colors"
-                                  title="Excluir tópico (Admin)"
-                                >
-                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                                  </svg>
-                                </button>
-                              )}
-                            </div>
+                            {isAdmin && (
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleDeleteTopic(topic.id, topic.title);
+                                }}
+                                className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50 transition-colors"
+                                title="Excluir tópico (Admin)"
+                              >
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                </svg>
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
