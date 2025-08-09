@@ -266,20 +266,9 @@ export default function Index(props: IndexProps) {
             {/* Forum Categories */}
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
               <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-semibold text-black">
-                    Categorias do Fórum
-                  </h2>
-                  {user && (
-                    <CreateTopicModal
-                      categories={forumCategories}
-                      onTopicCreated={() => {
-                        // Refresh the page or update data when a topic is created
-                        window.location.reload();
-                      }}
-                    />
-                  )}
-                </div>
+                <h2 className="text-xl font-semibold text-black">
+                  Categorias do Fórum
+                </h2>
               </div>
 
               <div className="divide-y divide-gray-100">
