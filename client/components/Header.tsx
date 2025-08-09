@@ -246,11 +246,16 @@ export default function Header() {
                   <form
                     onSubmit={async (e) => {
                       e.preventDefault();
+                      if (isLoading) {
+                        console.log('Already loading, preventing duplicate submission');
+                        return;
+                      }
                       if (!registerCaptchaValid) {
                         toast.error('Por favor, complete a verificação de segurança');
                         return;
                       }
 
+                      console.log('Submitting registration form...', { registerName, registerEmail, registerCaptcha });
                       const success = await register(registerName, registerEmail, registerPassword, registerCaptcha);
                       if (success) {
                         setIsRegisterOpen(false);
@@ -301,7 +306,7 @@ export default function Header() {
                       <Input
                         id="register-password"
                         type="password"
-                        placeholder="•••••••���"
+                        placeholder="••••••••"
                         value={registerPassword}
                         onChange={(e) => setRegisterPassword(e.target.value)}
                         className="border-black/20 focus:border-black/40"
