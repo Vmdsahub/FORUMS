@@ -1,6 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import Header from "@/components/Header";
+import TopicView from "@/pages/TopicView";
+import Index from "@/pages/Index";
+import NotFound from "@/pages/NotFound";
 
 interface NewsletterTopic {
   id: number;
