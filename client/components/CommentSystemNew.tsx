@@ -45,7 +45,7 @@ function CommentItem({
 }: CommentItemProps) {
   const { user, isAdmin } = useAuth();
   const [showReplyModal, setShowReplyModal] = useState(false);
-  const [showReplies, setShowReplies] = useState(true);
+  const [showReplies, setShowReplies] = useState(false);
 
   const isTopicOwner = user?.id === topicAuthorId;
   const isCommentOwner = user?.id === comment.authorId;
