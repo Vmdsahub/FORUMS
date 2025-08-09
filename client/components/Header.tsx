@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import SearchResults from "@/components/SearchResults";
@@ -445,7 +445,7 @@ export default function Header({ activeSection }: HeaderProps) {
                       <Input
                         id="register-password"
                         type="password"
-                        placeholder="•��••••••"
+                        placeholder="••••••••"
                         value={registerPassword}
                         onChange={(e) => setRegisterPassword(e.target.value)}
                         className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
