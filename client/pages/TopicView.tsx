@@ -378,7 +378,7 @@ export default function TopicView() {
                         {topic.author}
                       </span>
                     </span>
-                    <UserPointsBadge userId={topic.authorId} size="sm" />
+                    <UserPointsBadge userId={topic.authorId} size="sm" showBadges={false} />
                   </div>
                 </div>
                 <span>•</span>
