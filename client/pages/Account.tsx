@@ -36,7 +36,8 @@ export default function Account() {
         const data = await response.json();
         setUserTopics(data.topics || []);
       } else {
-        console.error("Failed to fetch user topics");
+        const errorData = await response.json();
+        console.error("Failed to fetch user topics:", errorData.message);
         setUserTopics([]);
       }
     } catch (error) {
