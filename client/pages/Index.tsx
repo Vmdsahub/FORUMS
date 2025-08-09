@@ -363,12 +363,25 @@ export default function Index(props: IndexProps) {
 
             {/* Category Header */}
             <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h2 className="text-2xl font-bold text-black mb-2">
-                {getSelectedCategoryData()?.name}
-              </h2>
-              <p className="text-gray-600">
-                {getSelectedCategoryData()?.description}
-              </p>
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-black mb-2">
+                    {getSelectedCategoryData()?.name}
+                  </h2>
+                  <p className="text-gray-600">
+                    {getSelectedCategoryData()?.description}
+                  </p>
+                </div>
+                {user && (
+                  <CreateTopicModal
+                    categories={forumCategories}
+                    onTopicCreated={() => {
+                      // Refresh the page or update data when a topic is created
+                      window.location.reload();
+                    }}
+                  />
+                )}
+              </div>
             </div>
 
             {/* Topics List */}
