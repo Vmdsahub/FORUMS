@@ -118,8 +118,13 @@ export default function Index(props: IndexProps) {
   };
 
   const handleTopicCreated = (newTopic: Topic) => {
+    console.log("Novo tópico criado na Index:", newTopic);
     // Adicionar o novo tópico ao início da lista
-    setRealTopics((prev) => [newTopic, ...prev]);
+    setRealTopics((prev) => {
+      const updated = [newTopic, ...prev];
+      console.log("Tópicos atualizados:", updated);
+      return updated;
+    });
     toast.success("Tópico criado com sucesso!");
   };
 
