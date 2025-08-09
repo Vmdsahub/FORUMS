@@ -120,11 +120,22 @@ function buildCommentTree(topicId: string, userId?: string): CommentData[] {
 
 // API Handlers
 export const handleGetComments: RequestHandler = (req, res) => {
-  const { topicId } = req.params;
-  const userId = req.user?.id;
-  
-  const comments = buildCommentTree(topicId, userId);
-  res.json({ comments });
+  try {
+    const { topicId } = req.params;
+    const userId = req.user?.id;
+
+    console.log(`[DEBUG] Buscando comentários para tópico: ${topicId}, usuário: ${userId}`);
+
+    const comments = buildCommentTree(topicId, userId);
+
+    console.log(`[DEBUG] Encontrados ${comments.length} comentários para tópico ${topicId}`);
+
+    res.setHeader('Content-Type', 'application/json');
+    res.json({ comments });
+  } catch (error) {
+    console.error('[ERROR] Erro ao buscar comentários:', error);
+    res.status(500).json({ error: 'Erro interno do servidor', comments: [] });
+  }
 };
 
 export const handleCreateComment: RequestHandler = (req, res) => {
