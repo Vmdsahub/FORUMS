@@ -325,11 +325,45 @@ export default function Index(props: IndexProps) {
                           </button>
                         </div>
                       )}
+                      {isAdmin && (
+                        <div className="px-6 py-3 border-t border-gray-200 bg-gray-50">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                if (confirm(`Tem certeza que deseja excluir o artigo "${topic.title}"?`)) {
+                                  toast.success("Artigo excluído! (Demo - não persistente)");
+                                }
+                              }}
+                              className="text-red-600 hover:text-red-800 px-3 py-1 rounded text-sm hover:bg-red-50 transition-colors"
+                            >
+                              🗑️ Excluir Artigo
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
               </div>
             ))}
+
+            {isAdmin && (
+              <div className="bg-white rounded-lg border border-gray-200 p-6">
+                <button
+                  onClick={() => {
+                    const title = prompt("Título do novo artigo:");
+                    const content = prompt("Conteúdo do artigo:");
+                    const readTime = prompt("Tempo de leitura (ex: 10 min):");
+                    if (title && content && readTime) {
+                      toast.success(`Artigo "${title}" criado! (Demo - não persistente)`);
+                    }
+                  }}
+                  className="w-full border-2 border-dashed border-gray-300 rounded-lg p-6 text-gray-600 hover:border-gray-400 hover:text-gray-800 transition-colors"
+                >
+                  + Adicionar Novo Artigo da Newsletter
+                </button>
+              </div>
+            )}
           </div>
         )}
 
