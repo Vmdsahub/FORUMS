@@ -13,6 +13,30 @@ export default function Account() {
     name: user?.name || "",
     email: user?.email || "",
   });
+  const [userTopics, setUserTopics] = useState([
+    {
+      id: "1",
+      title: "Como usar IA para desenvolvimento web",
+      description: "Discussão sobre ferramentas de IA que podem ajudar desenvolvedores",
+      category: "VIBE CODING",
+      replies: 15,
+      views: 342,
+      likes: 28,
+      createdAt: "2024-01-15",
+      lastActivity: "Hoje às 14:30"
+    },
+    {
+      id: "2",
+      title: "Midjourney vs DALL-E: Comparativo detalhado",
+      description: "Análise técnica das principais ferramentas de geração de imagem",
+      category: "IMAGEM",
+      replies: 23,
+      views: 567,
+      likes: 45,
+      createdAt: "2024-01-10",
+      lastActivity: "Ontem às 16:45"
+    }
+  ]);
 
   if (!user) {
     navigate("/");
