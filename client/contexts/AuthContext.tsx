@@ -51,13 +51,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string, captcha: string): Promise<boolean> => {
     setIsLoading(true);
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password, captcha }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data: AuthResponse = await response.json();
@@ -70,9 +76,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.error(error.message || 'Erro ao fazer login');
         return false;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
-      toast.error('Erro de conexão. Tente novamente.');
+      if (error.name === 'AbortError') {
+        toast.error('Requisição expirou. Tente novamente.');
+      } else {
+        toast.error('Erro de conexão. Tente novamente.');
+      }
       return false;
     } finally {
       setIsLoading(false);
