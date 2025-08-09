@@ -323,13 +323,16 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
     loadComments();
   }, [topicId]);
 
-  // Adicionar comentário principal
+  // Adicionar comentário principal com retry
   const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !newComment.trim()) return;
 
     setIsSubmitting(true);
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
       const response = await fetch(`/api/comments/${topicId}`, {
         method: "POST",
         headers: {
@@ -337,17 +340,26 @@ export default function CommentSystemNew({ topicId, topicAuthorId }: CommentSyst
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
         body: JSON.stringify({ content: newComment, parentId: null }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         setNewComment("");
         await loadComments(); // Recarregar para mostrar novo comentário
         toast.success("Comentário adicionado!");
       } else {
-        toast.error("Erro ao adicionar comentário");
+        const errorData = await response.json().catch(() => ({}));
+        toast.error(errorData.message || "Erro ao adicionar comentário");
       }
     } catch (error) {
-      toast.error("Erro ao adicionar comentário");
+      console.error("Erro ao adicionar comentário:", error);
+      if (error.name === 'AbortError') {
+        toast.error("Timeout - tente novamente");
+      } else {
+        toast.error("Erro de conexão - tente novamente");
+      }
     } finally {
       setIsSubmitting(false);
     }
