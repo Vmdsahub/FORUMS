@@ -164,7 +164,25 @@ export default function Header() {
                       Fazer Login
                     </DialogTitle>
                   </DialogHeader>
-                  <div className="space-y-4 py-4">
+                  <form
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      if (!loginCaptchaValid) {
+                        toast.error('Por favor, complete a verificação de segurança');
+                        return;
+                      }
+
+                      const success = await login(loginEmail, loginPassword, loginCaptcha);
+                      if (success) {
+                        setIsLoginOpen(false);
+                        setLoginEmail('');
+                        setLoginPassword('');
+                        setLoginCaptcha('');
+                        setLoginCaptchaValid(false);
+                      }
+                    }}
+                    className="space-y-4 py-4"
+                  >
                     <div className="space-y-2">
                       <Label htmlFor="email" className="text-black/80">
                         Email
@@ -173,7 +191,10 @@ export default function Header() {
                         id="email"
                         type="email"
                         placeholder="seu@email.com"
+                        value={loginEmail}
+                        onChange={(e) => setLoginEmail(e.target.value)}
                         className="border-black/20 focus:border-black/40"
+                        required
                       />
                     </div>
                     <div className="space-y-2">
@@ -184,19 +205,25 @@ export default function Header() {
                         id="password"
                         type="password"
                         placeholder="••••••••"
+                        value={loginPassword}
+                        onChange={(e) => setLoginPassword(e.target.value)}
                         className="border-black/20 focus:border-black/40"
+                        required
+                        minLength={6}
                       />
                     </div>
+                    <Captcha
+                      onCaptchaChange={setLoginCaptcha}
+                      onValidationChange={setLoginCaptchaValid}
+                    />
                     <Button
+                      type="submit"
                       className="w-full bg-black text-white hover:bg-black/90 font-medium"
-                      onClick={() => {
-                        setIsLoggedIn(true);
-                        setIsLoginOpen(false);
-                      }}
+                      disabled={isLoading || !loginCaptchaValid}
                     >
-                      Entrar
+                      {isLoading ? 'Entrando...' : 'Entrar'}
                     </Button>
-                  </div>
+                  </form>
                 </DialogContent>
               </Dialog>
 
