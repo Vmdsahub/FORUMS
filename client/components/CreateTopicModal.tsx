@@ -41,27 +41,33 @@ export default function CreateTopicModal({ currentCategory, onTopicCreated }: Cr
       return;
     }
 
-    if (!formData.title.trim() || !formData.description.trim() || !formData.content.trim() || !formData.category) {
+    if (!formData.title.trim() || !formData.description.trim() || !formData.content.trim()) {
       toast.error("Preencha todos os campos");
       return;
     }
 
     setIsSubmitting(true);
     try {
+      const topicData = {
+        ...formData,
+        category: currentCategory.id
+      };
+
       const response = await fetch("/api/topics", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${localStorage.getItem("auth_token")}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(topicData),
       });
 
       if (response.ok) {
+        const newTopic = await response.json();
         toast.success("Tópico criado com sucesso!");
-        setFormData({ title: "", description: "", content: "", category: "" });
+        setFormData({ title: "", description: "", content: "" });
         setIsOpen(false);
-        onTopicCreated?.();
+        onTopicCreated?.(newTopic);
       } else {
         const error = await response.json();
         toast.error(error.message || "Erro ao criar tópico");
