@@ -37,6 +37,7 @@ export default function Header({ activeSection }: HeaderProps) {
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [activeSearchQuery, setActiveSearchQuery] = useState("");
   const [activeSearchCategories, setActiveSearchCategories] = useState<string[]>([]);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState("");
