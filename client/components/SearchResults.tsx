@@ -24,12 +24,27 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
   const [results, setResults] = useState<Topic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState(0);
+  const [savedTopicIds, setSavedTopicIds] = useState<string[]>([]);
 
   useEffect(() => {
     if (query.trim()) {
       performSearch();
     }
   }, [query, categories]);
+
+  // Load saved topics
+  useEffect(() => {
+    if (user) {
+      const saved = localStorage.getItem(`savedTopics_${user.email}`);
+      if (saved) {
+        try {
+          setSavedTopicIds(JSON.parse(saved));
+        } catch (error) {
+          console.error("Error loading saved topics:", error);
+        }
+      }
+    }
+  }, [user]);
 
   const performSearch = async () => {
     setIsLoading(true);
@@ -58,7 +73,7 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
 
   const handleDeleteTopic = async (topicId: string, topicTitle: string) => {
     if (!isAdmin) return;
-    
+
     if (!confirm(`Tem certeza que deseja excluir o tópico "${topicTitle}"?`)) {
       return;
     }
@@ -80,6 +95,39 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
     } catch (error) {
       console.error("Error deleting topic:", error);
       toast.error("Erro ao excluir tópico");
+    }
+  };
+
+  const handleSaveTopic = (topicId: string, topicTitle: string) => {
+    if (!user) {
+      toast.error("Faça login para salvar tópicos");
+      return;
+    }
+
+    const storageKey = `savedTopics_${user.email}`;
+    const saved = localStorage.getItem(storageKey);
+    let savedIds: string[] = [];
+
+    if (saved) {
+      try {
+        savedIds = JSON.parse(saved);
+      } catch (error) {
+        console.error("Error parsing saved topics:", error);
+      }
+    }
+
+    if (savedIds.includes(topicId)) {
+      // Remove from saved
+      const updatedIds = savedIds.filter(id => id !== topicId);
+      localStorage.setItem(storageKey, JSON.stringify(updatedIds));
+      setSavedTopicIds(updatedIds);
+      toast.success("Tópico removido dos salvos");
+    } else {
+      // Add to saved
+      const updatedIds = [...savedIds, topicId];
+      localStorage.setItem(storageKey, JSON.stringify(updatedIds));
+      setSavedTopicIds(updatedIds);
+      toast.success(`"${topicTitle}" salvo com sucesso!`);
     }
   };
 
@@ -181,15 +229,32 @@ export default function SearchResults({ query, categories, onClose }: SearchResu
                           <span>• {topic.views} visualizações</span>
                         </div>
                       </div>
-                      {isAdmin && (
-                        <button
-                          onClick={() => handleDeleteTopic(topic.id, topic.title)}
-                          className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50 transition-colors ml-4"
-                          title="Excluir tópico (Admin)"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      )}
+                      <div className="flex items-center gap-1 ml-4">
+                        {user && (
+                          <button
+                            onClick={() => handleSaveTopic(topic.id, topic.title)}
+                            className={`p-1 rounded transition-colors ${
+                              savedTopicIds.includes(topic.id)
+                                ? "text-yellow-600 hover:text-yellow-800 bg-yellow-50 hover:bg-yellow-100"
+                                : "text-gray-400 hover:text-gray-600 hover:bg-gray-50"
+                            }`}
+                            title={savedTopicIds.includes(topic.id) ? "Remover dos salvos" : "Salvar tópico"}
+                          >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill={savedTopicIds.includes(topic.id) ? "currentColor" : "none"} stroke="currentColor">
+                              <path d="M17 3H7c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z" strokeWidth="2"/>
+                            </svg>
+                          </button>
+                        )}
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDeleteTopic(topic.id, topic.title)}
+                            className="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-50 transition-colors"
+                            title="Excluir tópico (Admin)"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
