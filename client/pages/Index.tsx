@@ -372,12 +372,29 @@ export default function Index(props: IndexProps) {
                     {getSelectedCategoryData()?.description}
                   </p>
                 </div>
-                {user && (
+                {user && getSelectedCategoryData() && (
                   <CreateTopicModal
-                    categories={forumCategories}
-                    onTopicCreated={() => {
-                      // Refresh the page or update data when a topic is created
-                      window.location.reload();
+                    currentCategory={getSelectedCategoryData()!}
+                    onTopicCreated={(newTopic) => {
+                      // Add the new topic to the current category without refresh
+                      const categoryData = getSelectedCategoryData();
+                      if (categoryData) {
+                        categoryData.posts.unshift({
+                          id: newTopic.id,
+                          title: newTopic.title,
+                          description: newTopic.description,
+                          author: newTopic.author,
+                          authorAvatar: newTopic.authorAvatar,
+                          replies: newTopic.replies,
+                          views: newTopic.views,
+                          lastPost: newTopic.lastPost,
+                          isPinned: newTopic.isPinned,
+                          isHot: newTopic.isHot
+                        });
+                        categoryData.totalTopics += 1;
+                        // Force re-render by updating state
+                        props.setSelectedCategory(selectedCategory);
+                      }
                     }}
                   />
                 )}
