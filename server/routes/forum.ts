@@ -450,6 +450,10 @@ export const handleCreateTopic: RequestHandler = (req, res) => {
     };
 
     topics.set(newTopic.id, newTopic);
+
+    // Adicionar pontos por criar post
+    addPoints(req.user.id, POINTS.CREATE_POST);
+
     res.status(201).json(newTopic);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -514,6 +518,9 @@ export const handleCreateComment: RequestHandler = (req, res) => {
     };
     topic.updatedAt = new Date().toISOString();
 
+    // Adicionar pontos por comentar
+    addPoints(req.user.id, POINTS.CREATE_COMMENT);
+
     res.status(201).json(newComment);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -544,6 +551,11 @@ export const handleLikeTopic: RequestHandler = (req, res) => {
   topic.likes = likeResult.likes;
   topic.isLiked = likeResult.isLiked;
 
+  // Adicionar pontos ao autor do tópico a cada 5 likes
+  if (likeResult.isLiked && topic.authorId !== req.user.id && likeResult.likes % 5 === 0) {
+    addPoints(topic.authorId, POINTS.RECEIVE_POST_LIKE);
+  }
+
   res.json(likeResult);
 };
 
@@ -562,6 +574,11 @@ export const handleLikeComment: RequestHandler = (req, res) => {
   const likeResult = toggleLike(commentId, req.user.id);
   comment.likes = likeResult.likes;
   comment.isLiked = likeResult.isLiked;
+
+  // Adicionar pontos ao autor do comentário quando recebe like
+  if (likeResult.isLiked && comment.authorId !== req.user.id) {
+    addPoints(comment.authorId, POINTS.RECEIVE_COMMENT_LIKE);
+  }
 
   res.json(likeResult);
 };
