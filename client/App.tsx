@@ -330,6 +330,7 @@ function App() {
             }
           />
           <Route path="/topic/:topicId" element={<TopicView />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
