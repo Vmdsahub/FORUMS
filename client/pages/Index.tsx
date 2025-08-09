@@ -300,10 +300,12 @@ export default function Index(props: IndexProps) {
                   <h2 className="text-3xl font-bold text-black">
                     Newsletter Semanal
                   </h2>
-                  <p className="text-lg text-gray-600 mt-2">
-                    Semana {currentNewsletter.week} •{" "}
-                    {currentNewsletter.startDate} - {currentNewsletter.endDate}
-                  </p>
+                  {currentNewsletter && (
+                    <p className="text-lg text-gray-600 mt-2">
+                      Semana {currentNewsletter.week} •{" "}
+                      {currentNewsletter.startDate} - {currentNewsletter.endDate}
+                    </p>
+                  )}
                 </div>
 
                 <button
