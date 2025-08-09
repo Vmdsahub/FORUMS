@@ -14,12 +14,27 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useAuth } from "@/contexts/AuthContext";
+import Captcha from "@/components/Captcha";
+import { toast } from "sonner";
 
 export default function Header() {
+  const { user, isLoading, login, logout } = useAuth();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // Simulating logged in user
-  const [userName] = useState("João Silva");
+
+  // Login form state
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginCaptcha, setLoginCaptcha] = useState("");
+  const [loginCaptchaValid, setLoginCaptchaValid] = useState(false);
+
+  // Register form state
+  const [registerName, setRegisterName] = useState("");
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerPassword, setRegisterPassword] = useState("");
+  const [registerCaptcha, setRegisterCaptcha] = useState("");
+  const [registerCaptchaValid, setRegisterCaptchaValid] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 w-full glass-minimal border-b border-black/5">
@@ -31,17 +46,17 @@ export default function Header() {
         </div>
 
         <div className="flex items-center space-x-4">
-          {isLoggedIn ? (
+          {user ? (
             <Popover>
               <PopoverTrigger asChild>
                 <button className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-black/5 transition-colors duration-200">
                   <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold">
-                    {userName
+                    {user.name
                       .split(" ")
                       .map((n) => n[0])
                       .join("")}
                   </div>
-                  <span className="font-medium text-black">{userName}</span>
+                  <span className="font-medium text-black">{user.name}</span>
                   <svg
                     width="16"
                     height="16"
@@ -58,17 +73,17 @@ export default function Header() {
                   <div className="p-4 border-b border-gray-100">
                     <div className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center font-semibold">
-                        {userName
+                        {user.name
                           .split(" ")
                           .map((n) => n[0])
                           .join("")}
                       </div>
                       <div>
                         <div className="font-semibold text-black">
-                          {userName}
+                          {user.name}
                         </div>
                         <div className="text-sm text-gray-600">
-                          joao@exemplo.com
+                          {user.email}
                         </div>
                       </div>
                     </div>
@@ -113,7 +128,7 @@ export default function Header() {
                     <hr className="my-2" />
                     <button
                       className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-red-50 transition-colors text-left"
-                      onClick={() => setIsLoggedIn(false)}
+                      onClick={logout}
                     >
                       <svg
                         width="16"
