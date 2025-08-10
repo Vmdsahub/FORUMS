@@ -7,20 +7,7 @@ import {
   CreateCommentRequest,
   LikeResponse,
 } from "@shared/forum";
-// import { POINTS, calculateUserBadges, BADGES } from "@shared/badges"; // Temporariamente removido
-
-// Definições locais temporárias para evitar problemas de importação
-const BADGES = [
-  { id: "iniciante", name: "Iniciante", requiredPoints: 5 },
-  { id: "participante", name: "Participante", requiredPoints: 25 },
-  { id: "experiente", name: "Experiente", requiredPoints: 50 },
-  { id: "expert", name: "Expert", requiredPoints: 100 },
-  { id: "lenda", name: "Lenda", requiredPoints: 200 },
-];
-
-function calculateUserBadges(points: number) {
-  return BADGES.filter((badge) => points >= badge.requiredPoints);
-}
+// Temporariamente removido para evitar problemas de importação
 
 // Simple in-memory storage for demo purposes
 const topics: Map<string, Topic> = new Map();
