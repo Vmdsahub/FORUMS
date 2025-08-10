@@ -106,20 +106,18 @@ export default function UserHoverCard({
             </div>
           ) : userProfile ? (
             <>
-              {/* Header com avatar e nome */}
+              {/* Header com avatar, nome e likes */}
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center text-lg font-semibold">
                   {userAvatar}
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">{userName}</h3>
-                </div>
-              </div>
-
-              {/* 1. Likes (primeiro conforme solicitado) */}
-              <div className="mb-4">
-                <div className="text-lg font-semibold text-red-600 flex items-center gap-2">
-                  ❤️ {userProfile.points}
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold text-gray-900">{userName}</h3>
+                    <span className="text-sm font-medium text-red-600 bg-red-50 px-2 py-1 rounded-full flex items-center gap-1">
+                      ❤️ {userProfile.points}
+                    </span>
+                  </div>
                 </div>
               </div>
 
