@@ -640,8 +640,42 @@ export const handleLikeComment: RequestHandler = (req, res) => {
     // addPoints(comment.authorId, POINTS.RECEIVE_COMMENT_LIKE); // Temporariamente desabilitado
   }
 
+  // Sincronizar com sistema de stats
+  const { onLikeToggled } = require('./user-stats');
+  onLikeToggled(commentId, comment.authorId, likeResult.isLiked);
+
   res.json(likeResult);
 };
+
+// Função para calcular total de likes recebidos por um usuário nos tópicos
+export function getTopicLikesForUser(userId: string): number {
+  let totalLikes = 0;
+
+  // Percorrer todos os tópicos do usuário
+  for (const [topicId, topic] of topics.entries()) {
+    if (topic.authorId === userId) {
+      const likes = getLikeCount(topicId);
+      totalLikes += likes;
+    }
+  }
+
+  return totalLikes;
+}
+
+// Função para calcular total de likes recebidos por um usuário nos comentários do fórum
+export function getForumCommentLikesForUser(userId: string): number {
+  let totalLikes = 0;
+
+  // Percorrer todos os comentários do usuário
+  for (const [commentId, comment] of comments.entries()) {
+    if (comment.authorId === userId) {
+      const likes = getLikeCount(commentId);
+      totalLikes += likes;
+    }
+  }
+
+  return totalLikes;
+}
 
 export const handleDeleteTopic: RequestHandler = (req, res) => {
   if (!req.user) {
