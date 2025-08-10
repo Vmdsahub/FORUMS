@@ -116,10 +116,10 @@ export default function UserHoverCard({
                 </div>
               </div>
 
-              {/* 1. Pontos (primeiro conforme solicitado) */}
+              {/* 1. Likes (primeiro conforme solicitado) */}
               <div className="mb-4">
-                <div className="text-lg font-semibold text-amber-600">
-                  {userProfile.points} pontos
+                <div className="text-lg font-semibold text-red-600 flex items-center gap-2">
+                  ❤️ {userProfile.points}
                 </div>
               </div>
 
