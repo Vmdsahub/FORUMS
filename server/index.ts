@@ -23,7 +23,7 @@ import {
   handleGetCategoryStats,
 } from "./routes/forum";
 import { uploadMiddleware, handleUpload } from "./routes/upload";
-import { handleGetUserStats, handleGetAllBadges, handleGetUserProfile } from "./routes/user-stats";
+import { handleGetUserStats, handleGetAllBadges, handleGetUserProfile } from "./routes/user-stats-temp";
 import {
   getComments,
   createComment,
