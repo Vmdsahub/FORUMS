@@ -31,6 +31,11 @@ import {
   deleteComment,
   initializeDemo,
 } from "./routes/simple-comments";
+import {
+  handleCreateArticle,
+  handleGetArticles,
+  handleDeleteArticle,
+} from "./routes/newsletter";
 
 export function createServer() {
   const app = express();
@@ -102,6 +107,15 @@ export function createServer() {
   app.post("/api/comments/:topicId", authenticateToken, createComment);
   app.post("/api/comments/:commentId/like", authenticateToken, likeComment);
   app.delete("/api/comments/:commentId", authenticateToken, deleteComment);
+
+  // Newsletter routes
+  app.get("/api/newsletter/articles", handleGetArticles);
+  app.post("/api/newsletter/articles", authenticateToken, handleCreateArticle);
+  app.delete(
+    "/api/newsletter/articles/:articleId",
+    authenticateToken,
+    handleDeleteArticle,
+  );
 
   return app;
 }

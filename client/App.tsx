@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { useCategoryStats } from "@/hooks/useCategoryStats";
 import TopicView from "@/pages/TopicView";
@@ -9,7 +9,7 @@ import SavedTopics from "@/pages/SavedTopics";
 import NotFound from "@/pages/NotFound";
 
 interface NewsletterTopic {
-  id: number;
+  id: number | string;
   title: string;
   content: string;
   readTime: string;
@@ -54,8 +54,8 @@ interface ForumCategory {
   };
 }
 
-// Demo newsletters disabled - use real data only
-const weeklyNewsletters: WeeklyNewsletter[] = [] || [
+// Weekly newsletters now loaded from API
+let weeklyNewsletters: WeeklyNewsletter[] = [
   {
     week: 3,
     startDate: "15 Jan",
@@ -164,16 +164,40 @@ function App() {
   const [activeSection, setActiveSection] = useState<"newsletter" | "forum">(
     "newsletter",
   );
-  const [expandedNewsletter, setExpandedNewsletter] = useState<number | null>(
-    null,
-  );
+  const [expandedNewsletter, setExpandedNewsletter] = useState<
+    number | string | null
+  >(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentWeek, setCurrentWeek] = useState(0);
+  const [newsletters, setNewsletters] = useState<WeeklyNewsletter[]>([]);
+  const [isLoadingNewsletters, setIsLoadingNewsletters] = useState(false);
 
   // Get dynamic category statistics
   const { categoryStats, refreshStats } = useCategoryStats();
 
-  const toggleNewsletterTopic = (id: number) => {
+  // Load newsletters from API
+  const loadNewsletters = async () => {
+    setIsLoadingNewsletters(true);
+    try {
+      const response = await fetch("/api/newsletter/articles");
+      if (response.ok) {
+        const data = await response.json();
+        setNewsletters(data.weeklyNewsletters || []);
+      } else {
+        console.error("Failed to load newsletters");
+      }
+    } catch (error) {
+      console.error("Error loading newsletters:", error);
+    } finally {
+      setIsLoadingNewsletters(false);
+    }
+  };
+
+  useEffect(() => {
+    loadNewsletters();
+  }, []);
+
+  const toggleNewsletterTopic = (id: number | string) => {
     setExpandedNewsletter(expandedNewsletter === id ? null : id);
   };
 
@@ -197,7 +221,7 @@ function App() {
   };
 
   const navigateWeek = (direction: "prev" | "next") => {
-    if (direction === "prev" && currentWeek < weeklyNewsletters.length - 1) {
+    if (direction === "prev" && currentWeek < newsletters.length - 1) {
       setCurrentWeek(currentWeek + 1);
     } else if (direction === "next" && currentWeek > 0) {
       setCurrentWeek(currentWeek - 1);
@@ -205,7 +229,7 @@ function App() {
     setExpandedNewsletter(null);
   };
 
-  const currentNewsletter = weeklyNewsletters[currentWeek] || null;
+  const currentNewsletter = newsletters[currentWeek] || null;
 
   return (
     <BrowserRouter>
@@ -224,7 +248,8 @@ function App() {
                 setSelectedCategory={setSelectedCategory}
                 currentWeek={currentWeek}
                 setCurrentWeek={setCurrentWeek}
-                weeklyNewsletters={weeklyNewsletters}
+                weeklyNewsletters={newsletters}
+                onNewsletterRefresh={loadNewsletters}
                 forumCategories={getDynamicCategories()}
                 toggleNewsletterTopic={toggleNewsletterTopic}
                 refreshCategoryStats={refreshStats}
