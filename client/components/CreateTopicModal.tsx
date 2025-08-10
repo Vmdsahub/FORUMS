@@ -29,6 +29,7 @@ interface CreateTopicModalProps {
 export default function CreateTopicModal({
   currentCategory,
   onTopicCreated,
+  onStatsRefresh,
 }: CreateTopicModalProps) {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
