@@ -78,6 +78,7 @@ interface IndexProps {
   getSelectedCategoryData: () => ForumCategory | undefined;
   navigateWeek: (direction: "prev" | "next") => void;
   currentNewsletter: WeeklyNewsletter;
+  refreshCategoryStats?: () => void;
 }
 
 export default function Index(props: IndexProps) {
