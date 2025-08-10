@@ -79,7 +79,7 @@ let weeklyNewsletters: WeeklyNewsletter[] = [
         id: 3,
         title: "Segurança Pós-Quântica: Preparação para a Próxima Era Digital",
         content:
-          "2024 marca o início de uma era crítica para a segurança digital. O avanço dos computadores quânticos acelera a obsolescência de protocolos criptográficos tradicionais.\n\nEstratégias de preparação:\n\n• Implementaç��o de criptografia resistente a quantum\n• Migração para autenticação biométrica avançada\n• Adoção de arquiteturas Zero Trust\n• Integração de IA para detecção proativa\n• Sistemas de backup imutáveis\n\nRecomendações imediatas:\n• Autenticação multifator obrigatória\n• Gerenciamento centralizado de credenciais\n• Monitoramento contínuo de vulnerabilidades\n• Programas de treinamento especializados\n• Testes regulares de recuperação de desastres\n\nOrganizações que não iniciarem essa transição imediatamente enfrentarão riscos exponencialmente crescentes de comprometimento de dados.",
+          "2024 marca o início de uma era crítica para a segurança digital. O avanço dos computadores quânticos acelera a obsolescência de protocolos criptográficos tradicionais.\n\nEstratégias de preparação:\n\n• Implementação de criptografia resistente a quantum\n• Migração para autenticação biométrica avançada\n• Adoção de arquiteturas Zero Trust\n• Integração de IA para detecção proativa\n• Sistemas de backup imutáveis\n\nRecomendações imediatas:\n• Autenticação multifator obrigatória\n• Gerenciamento centralizado de credenciais\n• Monitoramento contínuo de vulnerabilidades\n• Programas de treinamento especializados\n• Testes regulares de recuperação de desastres\n\nOrganizações que não iniciarem essa transição imediatamente enfrentarão riscos exponencialmente crescentes de comprometimento de dados.",
         readTime: "15 min",
       },
     ],
@@ -221,7 +221,7 @@ function App() {
   };
 
   const navigateWeek = (direction: "prev" | "next") => {
-    if (direction === "prev" && currentWeek < weeklyNewsletters.length - 1) {
+    if (direction === "prev" && currentWeek < newsletters.length - 1) {
       setCurrentWeek(currentWeek + 1);
     } else if (direction === "next" && currentWeek > 0) {
       setCurrentWeek(currentWeek - 1);
@@ -229,7 +229,7 @@ function App() {
     setExpandedNewsletter(null);
   };
 
-  const currentNewsletter = weeklyNewsletters[currentWeek] || null;
+  const currentNewsletter = newsletters[currentWeek] || null;
 
   return (
     <BrowserRouter>
