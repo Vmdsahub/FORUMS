@@ -365,7 +365,19 @@ export function initializeDemo() {
     topicComments.get(item.topicId)!.push(item.id);
   });
 
+  // Adicionar likes demo para testar sistema de pontos
+  // demo_user_123 (João) recebe 6 likes total (vai ganhar o badge!)
+  commentLikes.set("demo1", new Set(["admin_vitoca_456", "user_maria_789", "user_pedro_101", "user_ana_202"])); // 4 likes
+  commentLikes.set("demo2", new Set(["demo_user_123", "user_pedro_101"])); // +2 likes para João = 6 total
+
+  // admin_vitoca_456 (Admin) recebe 8 likes total
+  commentLikes.set("demo3", new Set(["demo_user_123", "user_maria_789", "user_pedro_101", "user_ana_202"])); // 4 likes para Admin
+  commentLikes.set("demo4", new Set(["demo_user_123", "user_maria_789", "user_pedro_101", "user_ana_202"])); // +4 likes para Admin = 8 total
+
+  // user_maria_789 (Maria) recebe 2 likes
+  commentLikes.set("demo5", new Set(["demo_user_123", "admin_vitoca_456"])); // 2 likes para Maria
+
   console.log(
-    "[COMMENTS] Sistema inicializado com dados demo de múltiplos níveis",
+    "[COMMENTS] Sistema inicializado com dados demo de múltiplos níveis e likes para pontos reais",
   );
 }
