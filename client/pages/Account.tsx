@@ -55,7 +55,7 @@ export default function Account() {
       requiredPoints: 5,
       color: "purple",
       isEarned: true,
-    }
+    },
   ]);
 
   const [selectedBadges, setSelectedBadges] = useState<string[]>(["iniciante"]);
@@ -97,7 +97,9 @@ export default function Account() {
     fileInputRef.current?.click();
   };
 
-  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -144,10 +146,10 @@ export default function Account() {
     }
   };
 
-  const toggleSection = (section: 'account' | 'badges' | 'topics') => {
-    setSectionsExpanded(prev => ({
+  const toggleSection = (section: "account" | "badges" | "topics") => {
+    setSectionsExpanded((prev) => ({
       ...prev,
-      [section]: !prev[section]
+      [section]: !prev[section],
     }));
   };
 
@@ -191,8 +193,12 @@ export default function Account() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-black mb-2">Central do Usuário</h1>
-            <p className="text-gray-600">Gerencie suas informações e conquistas</p>
+            <h1 className="text-3xl font-bold text-black mb-2">
+              Central do Usuário
+            </h1>
+            <p className="text-gray-600">
+              Gerencie suas informações e conquistas
+            </p>
           </div>
           <button
             onClick={() => navigate("/")}
@@ -221,12 +227,12 @@ export default function Account() {
               ) : (
                 getAvatarContent()
               )}
-              
+
               {/* Upload overlay */}
               {!isUploadingAvatar && (
                 <div className="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
-                    <path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z"/>
+                    <path d="M14.06 9.02l.92.92L5.92 19H5v-.92l9.06-9.06M17.66 3c-.25 0-.51.1-.7.29l-1.83 1.83 3.75 3.75 1.83-1.83c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.2-.2-.45-.29-.71-.29zm-3.6 3.19L3 17.25V21h3.75L17.81 9.94l-3.75-3.75z" />
                   </svg>
                 </div>
               )}
@@ -243,9 +249,10 @@ export default function Account() {
             <h2 className="text-xl font-semibold text-black">{user.name}</h2>
             <p className="text-gray-600 mb-1">{user.email}</p>
             <p className="text-sm text-gray-500 mb-2">
-              Membro desde {new Date(memberSince).toLocaleDateString('pt-BR', {
-                month: 'long',
-                year: 'numeric'
+              Membro desde{" "}
+              {new Date(memberSince).toLocaleDateString("pt-BR", {
+                month: "long",
+                year: "numeric",
               })}
             </p>
             <div className="flex items-center gap-3">
@@ -267,31 +274,32 @@ export default function Account() {
         {/* Collapsible Badges Section */}
         <div className="mb-8">
           <button
-            onClick={() => toggleSection('badges')}
+            onClick={() => toggleSection("badges")}
             className="w-full flex items-center justify-between text-lg font-semibold text-black border-b border-gray-200 pb-2 mb-4 hover:text-gray-700 transition-colors"
           >
-            <span className="flex items-center gap-2">
-              🏆 Seus Emblemas
-            </span>
+            <span className="flex items-center gap-2">🏆 Seus Emblemas</span>
             <svg
               width="16"
               height="16"
               viewBox="0 0 16 16"
               fill="currentColor"
               className={`transform transition-transform ${
-                sectionsExpanded.badges ? 'rotate-180' : ''
+                sectionsExpanded.badges ? "rotate-180" : ""
               }`}
             >
               <path d="M4 6l4 4 4-4H4z" />
             </svg>
           </button>
-          
+
           {sectionsExpanded.badges && (
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="mb-4">
-                <h4 className="font-semibold text-black mb-2">Selecione até 6 emblemas para exibir nos comentários:</h4>
+                <h4 className="font-semibold text-black mb-2">
+                  Selecione até 6 emblemas para exibir nos comentários:
+                </h4>
                 <p className="text-sm text-gray-600 mb-4">
-                  Estes emblemas aparecerão abaixo do seu avatar quando você comentar
+                  Estes emblemas aparecerão abaixo do seu avatar quando você
+                  comentar
                 </p>
               </div>
 
@@ -314,9 +322,11 @@ export default function Account() {
                         if (!canSelect && !isSelected) return;
 
                         if (isSelected) {
-                          setSelectedBadges(prev => prev.filter(id => id !== badge.id));
+                          setSelectedBadges((prev) =>
+                            prev.filter((id) => id !== badge.id),
+                          );
                         } else {
-                          setSelectedBadges(prev => [...prev, badge.id]);
+                          setSelectedBadges((prev) => [...prev, badge.id]);
                         }
                       }}
                     >
@@ -326,12 +336,19 @@ export default function Account() {
                           alt={badge.name}
                           className="w-12 h-12 object-contain mx-auto hover:scale-110 transition-transform duration-300"
                         />
-                        <div className="text-xs font-medium mt-1">{badge.name}</div>
+                        <div className="text-xs font-medium mt-1">
+                          {badge.name}
+                        </div>
 
                         {isSelected && (
                           <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                            <svg width="10" height="10" viewBox="0 0 16 16" fill="white">
-                              <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                            <svg
+                              width="10"
+                              height="10"
+                              viewBox="0 0 16 16"
+                              fill="white"
+                            >
+                              <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
                             </svg>
                           </div>
                         )}
@@ -341,7 +358,10 @@ export default function Account() {
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 p-2 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
                         <div className="font-semibold">{badge.name}</div>
                         <div className="text-gray-300">{badge.description}</div>
-                        <div className="text-gray-400 mt-1">Obtido em: {new Date(memberSince).toLocaleDateString('pt-BR')}</div>
+                        <div className="text-gray-400 mt-1">
+                          Obtido em:{" "}
+                          {new Date(memberSince).toLocaleDateString("pt-BR")}
+                        </div>
 
                         {/* Seta do tooltip */}
                         <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
@@ -368,7 +388,7 @@ export default function Account() {
         {/* Collapsible Account Information */}
         <div className="mb-8">
           <button
-            onClick={() => toggleSection('account')}
+            onClick={() => toggleSection("account")}
             className="w-full flex items-center justify-between text-lg font-semibold text-black border-b border-gray-200 pb-2 mb-4 hover:text-gray-700 transition-colors"
           >
             <span>Informações da Conta</span>
@@ -378,7 +398,7 @@ export default function Account() {
               viewBox="0 0 16 16"
               fill="currentColor"
               className={`transform transition-transform ${
-                sectionsExpanded.account ? 'rotate-180' : ''
+                sectionsExpanded.account ? "rotate-180" : ""
               }`}
             >
               <path d="M4 6l4 4 4-4H4z" />
@@ -473,7 +493,7 @@ export default function Account() {
         {/* Collapsible Topics Section */}
         <div className="pt-8 border-t border-gray-200">
           <button
-            onClick={() => toggleSection('topics')}
+            onClick={() => toggleSection("topics")}
             className="w-full flex items-center justify-between text-lg font-semibold text-black mb-4 hover:text-gray-700 transition-colors"
           >
             <span>Meus Tópicos</span>
@@ -483,13 +503,13 @@ export default function Account() {
               viewBox="0 0 16 16"
               fill="currentColor"
               className={`transform transition-transform ${
-                sectionsExpanded.topics ? 'rotate-180' : ''
+                sectionsExpanded.topics ? "rotate-180" : ""
               }`}
             >
               <path d="M4 6l4 4 4-4H4z" />
             </svg>
           </button>
-          
+
           {sectionsExpanded.topics && (
             <div>
               {isLoadingTopics ? (

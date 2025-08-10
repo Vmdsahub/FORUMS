@@ -18,7 +18,8 @@ interface CategoryStatsResponse {
 }
 
 export function useCategoryStats() {
-  const [categoryStats, setCategoryStats] = useState<CategoryStatsResponse | null>(null);
+  const [categoryStats, setCategoryStats] =
+    useState<CategoryStatsResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,9 +27,9 @@ export function useCategoryStats() {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       const response = await fetch("/api/categories/stats");
-      
+
       if (response.ok) {
         const data = await response.json();
         setCategoryStats(data);

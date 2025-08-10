@@ -68,9 +68,9 @@ export default function ReplyModal({
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
-        body: JSON.stringify({ 
-          content: replyContent, 
-          parentId: comment.id 
+        body: JSON.stringify({
+          content: replyContent,
+          parentId: comment.id,
         }),
       });
 
@@ -110,7 +110,7 @@ export default function ReplyModal({
             Respondendo a {comment.author}
           </DialogTitle>
         </DialogHeader>
-        
+
         {/* Comentário original */}
         <div className="py-4 border-b border-gray-100">
           <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">

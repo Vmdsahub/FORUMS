@@ -144,7 +144,10 @@ export default function Index(props: IndexProps) {
       console.error("Error fetching topics:", error);
 
       // Retry logic for network errors
-      if (retryCount < 2 && (error instanceof TypeError || error.name === "AbortError")) {
+      if (
+        retryCount < 2 &&
+        (error instanceof TypeError || error.name === "AbortError")
+      ) {
         console.log(`Retrying fetch topics (attempt ${retryCount + 1}/3)...`);
         setTimeout(() => fetchTopics(category, retryCount + 1), 1000);
         return;
@@ -305,7 +308,8 @@ export default function Index(props: IndexProps) {
                   {currentNewsletter && (
                     <p className="text-lg text-gray-600 mt-2">
                       Semana {currentNewsletter.week} •{" "}
-                      {currentNewsletter.startDate} - {currentNewsletter.endDate}
+                      {currentNewsletter.startDate} -{" "}
+                      {currentNewsletter.endDate}
                     </p>
                   )}
                 </div>

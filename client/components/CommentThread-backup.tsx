@@ -71,28 +71,33 @@ export default function CommentThread({
   };
 
   const handleDelete = () => {
-    const confirmMessage = comment.replies && comment.replies.length > 0
-      ? "Este comentário tem respostas. Tem certeza que deseja excluir tudo?"
-      : "Tem certeza que deseja excluir este comentário?";
-    
+    const confirmMessage =
+      comment.replies && comment.replies.length > 0
+        ? "Este comentário tem respostas. Tem certeza que deseja excluir tudo?"
+        : "Tem certeza que deseja excluir este comentário?";
+
     if (confirm(confirmMessage)) {
       onDelete(comment.id);
     }
   };
 
   return (
-    <div className={`${depth > 0 ? 'ml-8 mt-3' : ''}`}>
-      <div className={`border-l-2 ${depth > 0 ? 'border-gray-200' : 'border-transparent'} ${depth > 0 ? 'pl-4' : ''}`}>
+    <div className={`${depth > 0 ? "ml-8 mt-3" : ""}`}>
+      <div
+        className={`border-l-2 ${depth > 0 ? "border-gray-200" : "border-transparent"} ${depth > 0 ? "pl-4" : ""}`}
+      >
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
             {comment.authorAvatar}
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <span className="font-medium text-black">
-                {comment.author}
-              </span>
-              <UserPointsBadge userId={comment.authorId} size="sm" showBadges={false} />
+              <span className="font-medium text-black">{comment.author}</span>
+              <UserPointsBadge
+                userId={comment.authorId}
+                size="sm"
+                showBadges={false}
+              />
               {comment.authorId === topicAuthorId && (
                 <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
                   Autor
@@ -124,7 +129,7 @@ export default function CommentThread({
                 </svg>
                 {comment.likes}
               </button>
-              
+
               {user && (
                 <button
                   onClick={() => setShowReplyForm(!showReplyForm)}
@@ -139,7 +144,8 @@ export default function CommentThread({
                   onClick={() => setShowReplies(!showReplies)}
                   className="text-sm text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
                 >
-                  {showReplies ? 'Ocultar' : 'Ver'} {comment.replies.length} resposta{comment.replies.length !== 1 ? 's' : ''}
+                  {showReplies ? "Ocultar" : "Ver"} {comment.replies.length}{" "}
+                  resposta{comment.replies.length !== 1 ? "s" : ""}
                 </button>
               )}
 
@@ -147,7 +153,7 @@ export default function CommentThread({
                 <button
                   onClick={handleDelete}
                   className="flex items-center gap-1 text-sm px-2 py-1 rounded transition-colors text-red-600 hover:bg-red-50"
-                  title={`Excluir comentário ${isAdmin ? '(Admin)' : isTopicOwner ? '(Dono do post)' : '(Seu comentário)'}`}
+                  title={`Excluir comentário ${isAdmin ? "(Admin)" : isTopicOwner ? "(Dono do post)" : "(Seu comentário)"}`}
                 >
                   <svg
                     width="14"

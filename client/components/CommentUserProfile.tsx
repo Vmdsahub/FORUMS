@@ -51,7 +51,7 @@ export default function CommentUserProfile({
               requiredPoints: 5,
               color: "purple",
               isSelected: true,
-            }
+            },
           ],
           memberSince: "2024-01-15", // Data real de cadastro
           selectedBadges: ["iniciante"], // Emblemas selecionados pelo usuário
@@ -73,7 +73,9 @@ export default function CommentUserProfile({
   if (isLoading || !userProfile) {
     return (
       <div className="flex flex-col items-center">
-        <div className={`${size === "sm" ? "w-8 h-8" : "w-10 h-10"} rounded-full bg-gray-200 animate-pulse`}></div>
+        <div
+          className={`${size === "sm" ? "w-8 h-8" : "w-10 h-10"} rounded-full bg-gray-200 animate-pulse`}
+        ></div>
       </div>
     );
   }
@@ -86,9 +88,9 @@ export default function CommentUserProfile({
     });
   };
 
-  const selectedBadges = userProfile.badges.filter(badge => 
-    userProfile.selectedBadges.includes(badge.id)
-  ).slice(0, 6); // Máximo 6 emblemas
+  const selectedBadges = userProfile.badges
+    .filter((badge) => userProfile.selectedBadges.includes(badge.id))
+    .slice(0, 6); // Máximo 6 emblemas
 
   const avatarSize = size === "sm" ? "w-8 h-8" : "w-10 h-10";
   const badgeSize = size === "sm" ? "w-4 h-4" : "w-5 h-5";
@@ -97,7 +99,9 @@ export default function CommentUserProfile({
   return (
     <div className="flex flex-col items-center gap-1">
       {/* Avatar */}
-      <div className={`${avatarSize} rounded-full bg-black text-white flex items-center justify-center ${textSize} font-semibold flex-shrink-0`}>
+      <div
+        className={`${avatarSize} rounded-full bg-black text-white flex items-center justify-center ${textSize} font-semibold flex-shrink-0`}
+      >
         {userAvatar}
       </div>
 
@@ -106,7 +110,7 @@ export default function CommentUserProfile({
         <div className={`font-medium text-black ${textSize} leading-tight`}>
           {userName}
         </div>
-        
+
         {/* Badges do usuário */}
         {selectedBadges.length > 0 && (
           <div className="flex flex-wrap justify-center gap-1 mt-1 max-w-16">
@@ -121,7 +125,7 @@ export default function CommentUserProfile({
                   alt={badge.name}
                   className={`${badgeSize} object-contain hover:scale-110 transition-transform`}
                 />
-                
+
                 {/* Tooltip */}
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
                   {badge.name}

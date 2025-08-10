@@ -102,7 +102,11 @@ export default function CommentThread({
                 <span className="font-medium text-black text-sm">
                   {comment.author}
                 </span>
-                <UserPointsBadge userId={comment.authorId} size="sm" showBadges={false} />
+                <UserPointsBadge
+                  userId={comment.authorId}
+                  size="sm"
+                  showBadges={false}
+                />
                 {comment.authorId === topicAuthorId && (
                   <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
                     Autor

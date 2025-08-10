@@ -183,7 +183,7 @@ function App() {
 
   // Create dynamic categories with real stats
   const getDynamicCategories = (): ForumCategory[] => {
-    return forumCategories.map(category => ({
+    return forumCategories.map((category) => ({
       ...category,
       totalTopics: categoryStats[category.id]?.totalTopics || 0,
       totalPosts: categoryStats[category.id]?.totalPosts || 0,

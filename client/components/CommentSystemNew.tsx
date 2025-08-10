@@ -70,7 +70,9 @@ function CommentItem({
   // Calcular indentação baseada na profundidade (máximo 8 níveis visuais)
   const indentationClass = depth === 0 ? "" : `ml-${Math.min(depth * 4, 32)}`;
   const hasReplies = comment.replies && comment.replies.length > 0;
-  const actualRepliesCount = comment.replies ? comment.replies.length : (comment.repliesCount || 0);
+  const actualRepliesCount = comment.replies
+    ? comment.replies.length
+    : comment.repliesCount || 0;
 
   return (
     <div className={`${indentationClass} ${depth > 0 ? "mt-4" : ""}`}>
