@@ -9,7 +9,7 @@ import SavedTopics from "@/pages/SavedTopics";
 import NotFound from "@/pages/NotFound";
 
 interface NewsletterTopic {
-  id: number;
+  id: number | string;
   title: string;
   content: string;
   readTime: string;
