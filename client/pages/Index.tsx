@@ -770,6 +770,7 @@ export default function Index(props: IndexProps) {
                       description: getSelectedCategoryData()!.description,
                     }}
                     onTopicCreated={handleTopicCreated}
+                    onStatsRefresh={refreshCategoryStats}
                   />
                 )}
               </div>
