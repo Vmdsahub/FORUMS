@@ -79,6 +79,7 @@ interface IndexProps {
   navigateWeek: (direction: "prev" | "next") => void;
   currentNewsletter: WeeklyNewsletter;
   refreshCategoryStats?: () => void;
+  onNewsletterRefresh?: () => void;
 }
 
 export default function Index(props: IndexProps) {
