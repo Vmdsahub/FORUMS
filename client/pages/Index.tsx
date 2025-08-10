@@ -370,7 +370,8 @@ export default function Index(props: IndexProps) {
               </p>
             </div>
 
-            {(currentNewsletter?.topics || []).map((topic) => (
+            {currentNewsletter?.topics && currentNewsletter.topics.length > 0 ? (
+              currentNewsletter.topics.map((topic) => (
               <div
                 key={topic.id}
                 className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 ease-in-out hover:-translate-y-1"
@@ -484,7 +485,13 @@ export default function Index(props: IndexProps) {
                   </div>
                 )}
               </div>
-            ))}
+              ))
+            ) : (
+              <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
+                <p className="text-gray-500 text-lg mb-2">Nenhum artigo publicado esta semana</p>
+                <p className="text-gray-400 text-sm">Os administradores podem adicionar novos artigos à newsletter semanal.</p>
+              </div>
+            )}
 
             {isAdmin && (
               <div className="bg-white rounded-lg border border-gray-200 p-6">
