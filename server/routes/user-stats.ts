@@ -94,7 +94,7 @@ export const handleGetUserProfile: RequestHandler = (req, res) => {
   const realLikes = calculateUserLikes(userId);
   user.totalLikes = realLikes; // Atualizar cache
   
-  const badges = hasUserBadge(realLikes) ? [SINGLE_BADGE] : [];
+  const badges = calculateUserBadges(realLikes);
 
   res.json({
     points: realLikes, // Pontos = likes totais recebidos
