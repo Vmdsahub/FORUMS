@@ -169,6 +169,8 @@ function App() {
   );
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentWeek, setCurrentWeek] = useState(0);
+  const [newsletters, setNewsletters] = useState<WeeklyNewsletter[]>([]);
+  const [isLoadingNewsletters, setIsLoadingNewsletters] = useState(false);
 
   // Get dynamic category statistics
   const { categoryStats, refreshStats } = useCategoryStats();
