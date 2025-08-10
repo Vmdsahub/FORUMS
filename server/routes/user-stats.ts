@@ -32,7 +32,7 @@ function calculateUserLikes(userId: string): number {
 
 // Função para calcular se usuário tem o badge
 function hasUserBadge(likes: number): boolean {
-  return likes >= SINGLE_BADGE.requiredPoints;
+  return calculateUserBadges(likes).length > 0;
 }
 
 // Rota para buscar stats do usuário atual (autenticado)
