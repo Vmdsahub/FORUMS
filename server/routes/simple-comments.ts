@@ -232,7 +232,7 @@ export function getCommentLikesForUser(userId: string): number {
 
 // Função para sincronizar likes (chamada quando likes mudam)
 export function syncCommentLikes() {
-  const { onLikeToggled } = require('./user-stats');
+  const { onLikeToggled } = require('./user-stats-final');
 
   // Notificar mudanças para todos os autores de comentários
   for (const [commentId, comment] of comments.entries()) {
