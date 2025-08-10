@@ -20,6 +20,7 @@ import {
   handleDeleteTopic,
   handleDeleteComment,
   handleGetUserTopics,
+  handleGetCategoryStats,
 } from "./routes/forum";
 import { uploadMiddleware, handleUpload } from "./routes/upload";
 import { handleGetUserStats, handleGetAllBadges } from "./routes/user-stats";
