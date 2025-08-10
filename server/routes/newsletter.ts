@@ -27,21 +27,25 @@ const createArticleSchema = z.object({
 // Helper function to get current week info
 function getCurrentWeekInfo() {
   const now = new Date();
-  const weekNumber = Math.ceil(
-    (now.getTime() - new Date(now.getFullYear(), 0, 1).getTime()) /
-      (7 * 24 * 60 * 60 * 1000)
-  );
-  
+  const currentYear = now.getFullYear();
+
+  // Get start of year
+  const startOfYear = new Date(currentYear, 0, 1);
+
+  // Calculate week number based on ISO week date system
+  const dayOfYear = Math.floor((now.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+  const weekNumber = Math.ceil(dayOfYear / 7);
+
   // Get start of current week (Monday)
   const startOfWeek = new Date(now);
   const day = startOfWeek.getDay();
   const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1);
   startOfWeek.setDate(diff);
-  
+
   // Get end of current week (Sunday)
   const endOfWeek = new Date(startOfWeek);
   endOfWeek.setDate(startOfWeek.getDate() + 6);
-  
+
   return {
     week: weekNumber,
     startDate: startOfWeek.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }),
