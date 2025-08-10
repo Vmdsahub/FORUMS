@@ -248,7 +248,8 @@ function App() {
                 setSelectedCategory={setSelectedCategory}
                 currentWeek={currentWeek}
                 setCurrentWeek={setCurrentWeek}
-                weeklyNewsletters={weeklyNewsletters}
+                weeklyNewsletters={newsletters}
+                onNewsletterRefresh={loadNewsletters}
                 forumCategories={getDynamicCategories()}
                 toggleNewsletterTopic={toggleNewsletterTopic}
                 refreshCategoryStats={refreshStats}
