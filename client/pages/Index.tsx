@@ -194,17 +194,47 @@ export default function Index(props: IndexProps) {
     setIsCategoryModalOpen(false);
   };
 
-  const handleCreateNewsletter = () => {
+  const handleCreateNewsletter = async () => {
     if (!newNewsletter.title.trim() || !newNewsletter.content.trim()) {
       toast.error("Preencha título e conteúdo");
       return;
     }
 
-    toast.success(
-      `Artigo "${newNewsletter.title}" criado! (Demo - não persistente)`,
-    );
-    setNewNewsletter({ title: "", content: "", readTime: "" });
-    setIsNewsletterModalOpen(false);
+    if (!newNewsletter.readTime.trim()) {
+      toast.error("Preencha o tempo de leitura");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/newsletter/articles", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+        body: JSON.stringify({
+          title: newNewsletter.title,
+          content: newNewsletter.content,
+          readTime: newNewsletter.readTime,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success("Artigo criado com sucesso!");
+        setNewNewsletter({ title: "", content: "", readTime: "" });
+        setIsNewsletterModalOpen(false);
+        // Refresh newsletters
+        if (onNewsletterRefresh) {
+          onNewsletterRefresh();
+        }
+      } else {
+        const error = await response.json();
+        toast.error(error.message || "Erro ao criar artigo");
+      }
+    } catch (error) {
+      console.error("Error creating newsletter:", error);
+      toast.error("Erro ao criar artigo");
+    }
   };
 
   const handleDeleteTopic = async (topicId: string, topicTitle: string) => {
