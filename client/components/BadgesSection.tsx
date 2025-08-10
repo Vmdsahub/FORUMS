@@ -133,7 +133,7 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
             <div>
               <h4 className="font-semibold text-black">Próximo Objetivo</h4>
               <p className="text-sm text-gray-600">
-                Faltam {userStats.pointsToNext} pontos para conquistar "
+                Faltam {userStats.pointsToNext} likes para conquistar "
                 {userStats.nextBadge.name}"
               </p>
             </div>
@@ -192,12 +192,12 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
               </h5>
               <p className="text-xs text-gray-600 mb-2">{badge.description}</p>
               <div className="text-xs text-gray-500">
-                {badge.requiredPoints} pontos
+                {badge.requiredPoints} ❤️
               </div>
 
               {!isEarned && userStats.points < badge.requiredPoints && (
                 <div className="text-xs text-red-500 mt-1">
-                  Faltam {badge.requiredPoints - userStats.points} pts
+                  Faltam {badge.requiredPoints - userStats.points} ❤️
                 </div>
               )}
             </div>
@@ -210,10 +210,10 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
         <h4 className="font-semibold text-black mb-3">Suas Estatísticas</h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
           <div>
-            <div className="text-2xl font-bold text-blue-600">
-              {userStats.points}
+            <div className="text-2xl font-bold text-red-600 flex items-center justify-center gap-1">
+              ❤️ {userStats.points}
             </div>
-            <div className="text-sm text-gray-600">Pontos Totais</div>
+            <div className="text-sm text-gray-600">Likes Totais</div>
           </div>
           <div>
             <div className="text-2xl font-bold text-purple-600">
