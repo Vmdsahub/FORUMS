@@ -73,7 +73,7 @@ interface IndexProps {
   setCurrentWeek: (week: number) => void;
   weeklyNewsletters: WeeklyNewsletter[];
   forumCategories: ForumCategory[];
-  toggleNewsletterTopic: (id: number) => void;
+  toggleNewsletterTopic: (id: number | string) => void;
   handleCategoryClick: (categoryId: string) => void;
   getSelectedCategoryData: () => ForumCategory | undefined;
   navigateWeek: (direction: "prev" | "next") => void;
