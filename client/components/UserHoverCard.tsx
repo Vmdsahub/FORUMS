@@ -121,7 +121,7 @@ export default function UserHoverCard({
                 </div>
               </div>
 
-              {/* 2. Emblemas (abaixo dos pontos) */}
+              {/* 2. Emblemas */}
               {availableBadges.length > 0 && (
                 <div className="mb-4">
                   <h4 className="text-sm font-medium text-gray-700 mb-2">
