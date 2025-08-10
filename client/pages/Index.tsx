@@ -96,6 +96,7 @@ export default function Index(props: IndexProps) {
     getSelectedCategoryData,
     navigateWeek,
     currentNewsletter,
+    refreshCategoryStats,
   } = props;
 
   const [realTopics, setRealTopics] = useState<Topic[]>([]);
