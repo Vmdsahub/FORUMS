@@ -197,7 +197,7 @@ function App() {
     loadNewsletters();
   }, []);
 
-  const toggleNewsletterTopic = (id: number) => {
+  const toggleNewsletterTopic = (id: number | string) => {
     setExpandedNewsletter(expandedNewsletter === id ? null : id);
   };
 
