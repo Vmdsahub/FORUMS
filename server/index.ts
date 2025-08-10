@@ -31,6 +31,11 @@ import {
   deleteComment,
   initializeDemo,
 } from "./routes/simple-comments";
+import {
+  handleCreateArticle,
+  handleGetArticles,
+  handleDeleteArticle,
+} from "./routes/newsletter";
 
 export function createServer() {
   const app = express();
