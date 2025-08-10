@@ -65,8 +65,8 @@ interface ForumCategory {
 interface IndexProps {
   activeSection: "newsletter" | "forum";
   setActiveSection: (section: "newsletter" | "forum") => void;
-  expandedNewsletter: number | null;
-  setExpandedNewsletter: (id: number | null) => void;
+  expandedNewsletter: number | string | null;
+  setExpandedNewsletter: (id: number | string | null) => void;
   selectedCategory: string | null;
   setSelectedCategory: (id: string | null) => void;
   currentWeek: number;
