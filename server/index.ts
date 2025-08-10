@@ -108,5 +108,10 @@ export function createServer() {
   app.post("/api/comments/:commentId/like", authenticateToken, likeComment);
   app.delete("/api/comments/:commentId", authenticateToken, deleteComment);
 
+  // Newsletter routes
+  app.get("/api/newsletter/articles", handleGetArticles);
+  app.post("/api/newsletter/articles", authenticateToken, handleCreateArticle);
+  app.delete("/api/newsletter/articles/:articleId", authenticateToken, handleDeleteArticle);
+
   return app;
 }
