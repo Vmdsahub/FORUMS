@@ -202,7 +202,7 @@ export const likeComment: RequestHandler = (req, res) => {
 
     // Sincronizar com sistema de stats
     const comment = comments.get(commentId)!;
-    const { onLikeToggled } = require('./user-stats');
+    const { onLikeToggled } = require('./user-stats-final');
     onLikeToggled(commentId, comment.authorId, !wasLiked);
 
     res.json({
