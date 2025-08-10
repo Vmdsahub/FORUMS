@@ -4,10 +4,10 @@ import { BADGES, calculateUserBadges, getNextBadge, getPointsToNextBadge } from 
 // Simular dados de usuários (isso deveria vir de um banco de dados)
 const userStats: Map<string, { points: number; badges: string[]; createdAt: string }> = new Map();
 
-// Dados demo para usuários existentes
+// Dados demo para usuários existentes baseados em atividade real
 const demoUserStats = new Map([
-  ["demo_user_123", { points: 85, badges: ["iniciante", "participante", "experiente"], createdAt: "2024-01-15T10:30:00Z" }],
-  ["admin_vitoca_456", { points: 250, badges: ["iniciante", "participante", "experiente", "expert", "lenda"], createdAt: "2023-12-01T08:00:00Z" }],
+  ["demo_user_123", { points: 85, badges: [], createdAt: "2024-01-15T10:30:00Z" }],
+  ["admin_vitoca_456", { points: 250, badges: [], createdAt: "2023-12-01T08:00:00Z" }],
 ]);
 
 // Inicializar com dados demo
