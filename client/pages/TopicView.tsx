@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import CommentSystemNew from "@/components/CommentSystemNew";
 import UserPointsBadge from "@/components/UserPointsBadge";
+import UserHoverCard from "@/components/UserHoverCard";
 
 interface Comment {
   id: string;
