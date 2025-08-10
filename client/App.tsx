@@ -54,8 +54,8 @@ interface ForumCategory {
   };
 }
 
-// Demo newsletters disabled - use real data only
-const weeklyNewsletters: WeeklyNewsletter[] = [] || [
+// Weekly newsletters now loaded from API
+let weeklyNewsletters: WeeklyNewsletter[] = [
   {
     week: 3,
     startDate: "15 Jan",
