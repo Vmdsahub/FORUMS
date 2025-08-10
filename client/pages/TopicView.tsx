@@ -369,22 +369,32 @@ export default function TopicView() {
               <p className="text-gray-600 mb-4">{topic.description}</p>
               <div className="flex items-center gap-4 text-sm text-gray-500 flex-wrap">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold">
-                    {topic.authorAvatar}
-                  </div>
-                  <div className="flex flex-col gap-1">
-                    <span>
-                      por{" "}
-                      <span className="font-medium text-black">
-                        {topic.author}
-                      </span>
-                    </span>
-                    <UserPointsBadge
-                      userId={topic.authorId}
-                      size="sm"
-                      showBadges={false}
-                    />
-                  </div>
+                  <UserHoverCard
+                    userId={topic.authorId}
+                    userName={topic.author}
+                    userAvatar={topic.authorAvatar}
+                    isTopicAuthor={true}
+                    size="sm"
+                  >
+                    <div className="flex items-center gap-2 cursor-pointer">
+                      <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold hover:bg-gray-800 transition-colors">
+                        {topic.authorAvatar}
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <span>
+                          por{" "}
+                          <span className="font-medium text-black hover:text-gray-700 transition-colors">
+                            {topic.author}
+                          </span>
+                        </span>
+                        <UserPointsBadge
+                          userId={topic.authorId}
+                          size="sm"
+                          showBadges={true}
+                        />
+                      </div>
+                    </div>
+                  </UserHoverCard>
                 </div>
                 <span>•</span>
                 <span>{topic.views.toLocaleString()} visualizações</span>
