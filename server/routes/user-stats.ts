@@ -57,9 +57,9 @@ export const handleGetUserStats: RequestHandler = (req, res) => {
   const realLikes = calculateUserLikes(userId);
   user.totalLikes = realLikes; // Atualizar cache
   
-  const badges = hasUserBadge(realLikes) ? [SINGLE_BADGE] : [];
-  const nextBadge = !hasUserBadge(realLikes) ? SINGLE_BADGE : null;
-  const pointsToNext = nextBadge ? nextBadge.requiredPoints - realLikes : 0;
+  const badges = calculateUserBadges(realLikes);
+  const nextBadge = getNextBadge(realLikes);
+  const pointsToNext = getPointsToNextBadge(realLikes);
 
   res.json({
     points: realLikes, // Pontos = likes totais recebidos
