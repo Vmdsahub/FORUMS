@@ -19,7 +19,7 @@ interface UserPointsBadgeProps {
 export default function UserPointsBadge({
   userId,
   showPoints = true,
-  showBadges = false, // Default to false to remove badge display
+  showBadges = false,
   size = "sm",
 }: UserPointsBadgeProps) {
   const [userStats, setUserStats] = useState<{
@@ -29,28 +29,34 @@ export default function UserPointsBadge({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // TODO: Substituir por API real para buscar pontos do usuário
     const fetchUserStats = async () => {
       try {
-        // Por enquanto, usar pontos fixos baseados no userId
-        const userStats = {
-          points: 25, // Pontos reais do usuário
-          badges: [
-            {
-              id: "iniciante",
-              name: "Iniciante",
-              description: "Primeiros passos no fórum",
-              icon: "https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100",
-              requiredPoints: 5,
-              color: "purple",
-            },
-          ],
-        };
-
-        setUserStats(userStats);
-        setIsLoading(false);
+        console.log(`[UserPointsBadge] Buscando stats para usuário: ${userId}`);
+        
+        const response = await fetch(`/api/user/profile/${userId}`);
+        if (response.ok) {
+          const data = await response.json();
+          console.log(`[UserPointsBadge] Dados recebidos:`, data);
+          setUserStats({
+            points: data.points,
+            badges: data.badges,
+          });
+        } else {
+          console.error("Erro ao buscar stats do usuário:", response.status);
+          // Fallback para dados básicos
+          setUserStats({
+            points: 0,
+            badges: [],
+          });
+        }
       } catch (error) {
-        console.error("Error fetching user stats:", error);
+        console.error("Erro ao buscar stats do usuário:", error);
+        // Fallback para dados básicos
+        setUserStats({
+          points: 0,
+          badges: [],
+        });
+      } finally {
         setIsLoading(false);
       }
     };
@@ -94,32 +100,28 @@ export default function UserPointsBadge({
 
       {showBadges && userStats.badges.length > 0 && (
         <div className={`flex items-center ${classes.gap}`}>
-          {userStats.badges.slice(0, 2).map(
-            (
-              badge, // Mostrar no máximo 2 badges
-            ) => (
-              <div
-                key={badge.id}
-                className="relative group"
-                title={`${badge.name}: ${badge.description}`}
-              >
-                {badge.icon.startsWith("http") ? (
-                  <img
-                    src={badge.icon}
-                    alt={badge.name}
-                    className={`${classes.badge} object-contain`}
-                  />
-                ) : (
-                  <span className={`${classes.text}`}>{badge.icon}</span>
-                )}
+          {userStats.badges.slice(0, 2).map((badge) => (
+            <div
+              key={badge.id}
+              className="relative group"
+              title={`${badge.name}: ${badge.description}`}
+            >
+              {badge.icon.startsWith("http") ? (
+                <img
+                  src={badge.icon}
+                  alt={badge.name}
+                  className={`${classes.badge} object-contain`}
+                />
+              ) : (
+                <span className={`${classes.text}`}>{badge.icon}</span>
+              )}
 
-                {/* Tooltip */}
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                  {badge.name}
-                </div>
+              {/* Tooltip */}
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
+                {badge.name}
               </div>
-            ),
-          )}
+            </div>
+          ))}
 
           {userStats.badges.length > 2 && (
             <span className={`${classes.text} text-gray-500`}>
