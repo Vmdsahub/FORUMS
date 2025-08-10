@@ -7,7 +7,7 @@ import {
   CreateCommentRequest,
   LikeResponse,
 } from "@shared/forum";
-// import { POINTS, calculateUserBadges, BADGES } from "@shared/badges"; // Temporariamente removido
+import { POINTS, calculateUserBadges, BADGES } from "@shared/badges";
 
 // Simple in-memory storage for demo purposes
 const topics: Map<string, Topic> = new Map();
