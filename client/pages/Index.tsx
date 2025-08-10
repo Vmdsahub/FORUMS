@@ -441,15 +441,36 @@ export default function Index(props: IndexProps) {
                         <div className="px-6 py-3 border-t border-gray-200 bg-gray-50">
                           <div className="flex gap-2">
                             <button
-                              onClick={() => {
+                              onClick={async () => {
                                 if (
                                   confirm(
                                     `Tem certeza que deseja excluir o artigo "${topic.title}"?`,
                                   )
                                 ) {
-                                  toast.success(
-                                    "Artigo excluído! (Demo - não persistente)",
-                                  );
+                                  try {
+                                    const response = await fetch(
+                                      `/api/newsletter/articles/${topic.id}`,
+                                      {
+                                        method: "DELETE",
+                                        headers: {
+                                          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+                                        },
+                                      }
+                                    );
+
+                                    if (response.ok) {
+                                      toast.success("Artigo excluído com sucesso!");
+                                      if (onNewsletterRefresh) {
+                                        onNewsletterRefresh();
+                                      }
+                                    } else {
+                                      const error = await response.json();
+                                      toast.error(error.message || "Erro ao excluir artigo");
+                                    }
+                                  } catch (error) {
+                                    console.error("Error deleting article:", error);
+                                    toast.error("Erro ao excluir artigo");
+                                  }
                                 }
                               }}
                               className="text-red-600 hover:text-red-800 px-3 py-1 rounded text-sm hover:bg-red-50 transition-colors"
