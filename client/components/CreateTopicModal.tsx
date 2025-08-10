@@ -79,6 +79,7 @@ export default function CreateTopicModal({
         setFormData({ title: "", description: "", content: "" });
         setIsOpen(false);
         onTopicCreated?.(newTopic);
+        onStatsRefresh?.(); // Refresh category statistics
       } else {
         const errorData = await response
           .json()
