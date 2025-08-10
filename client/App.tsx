@@ -170,6 +170,9 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentWeek, setCurrentWeek] = useState(0);
 
+  // Get dynamic category statistics
+  const { categoryStats, refreshStats } = useCategoryStats();
+
   const toggleNewsletterTopic = (id: number) => {
     setExpandedNewsletter(expandedNewsletter === id ? null : id);
   };
