@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import Header from "@/components/Header";
+import { useCategoryStats } from "@/hooks/useCategoryStats";
 import TopicView from "@/pages/TopicView";
 import Index from "@/pages/Index";
 import Account from "@/pages/Account";
@@ -53,7 +54,8 @@ interface ForumCategory {
   };
 }
 
-const weeklyNewsletters: WeeklyNewsletter[] = [
+// Demo newsletters disabled - use real data only
+const weeklyNewsletters: WeeklyNewsletter[] = [] || [
   {
     week: 3,
     startDate: "15 Jan",
@@ -70,7 +72,7 @@ const weeklyNewsletters: WeeklyNewsletter[] = [
         id: 2,
         title: "Cursor vs VS Code: Evolução dos Ambientes de Desenvolvimento",
         content:
-          "O mercado de editores de código está passando por uma transformação fundamental. Enquanto o VS Code consolida sua posição como padrão da indústria, o Cursor emerge como pioneiro na integração nativa de IA.\n\nAnálise comparativa:\n\nCursor - Inovação Orientada por IA:\n• Integração nativa com modelos de linguagem\n• Interface otimizada para desenvolvimento assistido\n• Sugestões contextuais inteligentes\n• Workflow de pair programming com IA\n\nVS Code - Estabilidade e Ecossistema:\n• Base instalada de 15+ milhões de desenvolvedores\n• Ecossistema maduro com 40k+ extensões\n• Performance battle-tested em projetos enterprise\n• Suporte oficial da Microsoft\n\nA decisão entre plataformas agora transcende funcionalidades básicas, focando na visão estratégica para o futuro do desenvolvimento de software.",
+          "O mercado de editores de código está passando por uma transformação fundamental. Enquanto o VS Code consolida sua posição como padrão da indústria, o Cursor emerge como pioneiro na integração nativa de IA.\n\nAnálise comparativa:\n\nCursor - Inovação Orientada por IA:\n• Integração nativa com modelos de linguagem\n�� Interface otimizada para desenvolvimento assistido\n• Sugestões contextuais inteligentes\n• Workflow de pair programming com IA\n\nVS Code - Estabilidade e Ecossistema:\n• Base instalada de 15+ milhões de desenvolvedores\n• Ecossistema maduro com 40k+ extensões\n• Performance battle-tested em projetos enterprise\n• Suporte oficial da Microsoft\n\nA decisão entre plataformas agora transcende funcionalidades básicas, focando na visão estratégica para o futuro do desenvolvimento de software.",
         readTime: "12 min",
       },
       {
@@ -124,149 +126,37 @@ const forumCategories: ForumCategory[] = [
     id: "imagem",
     name: "Imagem",
     description: "Geração de imagens, edição e ferramentas visuais com IA",
-    totalTopics: 834,
-    totalPosts: 4521,
-    lastPost: {
-      title: "Midjourney vs DALL-E 3: Comparativo",
-      author: "VisualAI",
-      date: "Hoje",
-      time: "12:20",
-    },
-    posts: [
-      {
-        id: "1",
-        title: "Midjourney vs DALL-E 3: Comparativo de qualidade",
-        description:
-          "Teste side-by-side das principais ferramentas de geração de imagem",
-        author: "VisualAI",
-        authorAvatar: "VA",
-        replies: 56,
-        views: 1823,
-        lastPost: { author: "CreativeAI", date: "Hoje", time: "11:45" },
-        isHot: true,
-      },
-      {
-        id: "2",
-        title: "Stable Diffusion XL: Novidades e melhorias",
-        description: "Análise das novas funcionalidades do SDXL",
-        author: "ImageGen",
-        authorAvatar: "IG",
-        replies: 28,
-        views: 945,
-        lastPost: { author: "AIArtist", date: "Hoje", time: "10:30" },
-        isPinned: true,
-      },
-    ],
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
   },
   {
     id: "video",
     name: "Vídeo",
     description: "Criação e edição de vídeos com inteligência artificial",
-    totalTopics: 456,
-    totalPosts: 2341,
-    lastPost: {
-      title: "Runway ML: Dicas de Produção",
-      author: "VideoMaker",
-      date: "Hoje",
-      time: "15:10",
-    },
-    posts: [
-      {
-        id: "3",
-        title: "Runway ML: Dicas de Produção",
-        description: "Como criar vídeos profissionais usando Runway ML",
-        author: "VideoMaker",
-        authorAvatar: "VM",
-        replies: 38,
-        views: 1247,
-        lastPost: { author: "FilmPro", date: "Hoje", time: "15:10" },
-        isHot: true,
-      },
-      {
-        id: "4",
-        title: "Pika Labs: Review da Nova Ferramenta",
-        description: "Análise completa da plataforma de geração de vídeos",
-        author: "ContentCreator",
-        authorAvatar: "CC",
-        replies: 29,
-        views: 892,
-        lastPost: { author: "VideoTech", date: "Ontem", time: "18:45" },
-      },
-    ],
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
   },
   {
     id: "musica-audio",
     name: "Música/Áudio",
     description: "Produção musical e processamento de áudio com IA",
-    totalTopics: 312,
-    totalPosts: 1567,
-    lastPost: {
-      title: "Suno AI: Criando Músicas Incríveis",
-      author: "MusicProducer",
-      date: "Hoje",
-      time: "11:25",
-    },
-    posts: [
-      {
-        id: "5",
-        title: "Suno AI: Criando Músicas Incríveis",
-        description: "Tutorial completo para gerar músicas profissionais",
-        author: "MusicProducer",
-        authorAvatar: "MP",
-        replies: 36,
-        views: 1156,
-        lastPost: { author: "AudioEngineer", date: "Hoje", time: "11:25" },
-        isPinned: true,
-      },
-      {
-        id: "6",
-        title: "Voice Synthesis: Aplicações Empresariais",
-        description: "Como usar síntese vocal para atendimento automatizado",
-        author: "AudioTech",
-        authorAvatar: "AT",
-        replies: 24,
-        views: 678,
-        lastPost: { author: "VoicePro", date: "Ontem", time: "20:10" },
-      },
-    ],
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
   },
   {
     id: "vibe-coding",
     name: "Vibe Coding",
     description: "Ferramentas de desenvolvimento, IDEs e produtividade",
-    totalTopics: 892,
-    totalPosts: 5234,
-    lastPost: {
-      title: "Cursor: O Futuro do Desenvolvimento",
-      author: "DevMaster",
-      date: "Hoje",
-      time: "16:45",
-    },
-    posts: [
-      {
-        id: "7",
-        title: "Cursor: O Futuro do Desenvolvimento",
-        description:
-          "Review completo do editor que está revolucionando o coding",
-        author: "DevMaster",
-        authorAvatar: "DM",
-        replies: 78,
-        views: 3241,
-        lastPost: { author: "CodeNinja", date: "Hoje", time: "16:45" },
-        isHot: true,
-        isPinned: true,
-      },
-      {
-        id: "8",
-        title: "GitHub Copilot vs Cursor: Comparativo",
-        description: "Análise das principais ferramentas de AI coding",
-        author: "CodeReviewer",
-        authorAvatar: "CR",
-        replies: 49,
-        views: 1876,
-        lastPost: { author: "AIHelper", date: "Hoje", time: "14:20" },
-      },
-    ],
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
   },
 ];
 
@@ -280,6 +170,9 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [currentWeek, setCurrentWeek] = useState(0);
 
+  // Get dynamic category statistics
+  const { categoryStats, refreshStats } = useCategoryStats();
+
   const toggleNewsletterTopic = (id: number) => {
     setExpandedNewsletter(expandedNewsletter === id ? null : id);
   };
@@ -288,8 +181,19 @@ function App() {
     setSelectedCategory(selectedCategory === categoryId ? null : categoryId);
   };
 
+  // Create dynamic categories with real stats
+  const getDynamicCategories = (): ForumCategory[] => {
+    return forumCategories.map((category) => ({
+      ...category,
+      totalTopics: categoryStats[category.id]?.totalTopics || 0,
+      totalPosts: categoryStats[category.id]?.totalPosts || 0,
+      lastPost: categoryStats[category.id]?.lastPost || undefined,
+    }));
+  };
+
   const getSelectedCategoryData = () => {
-    return forumCategories.find((cat) => cat.id === selectedCategory);
+    const dynamicCategories = getDynamicCategories();
+    return dynamicCategories.find((cat) => cat.id === selectedCategory);
   };
 
   const navigateWeek = (direction: "prev" | "next") => {
@@ -301,7 +205,7 @@ function App() {
     setExpandedNewsletter(null);
   };
 
-  const currentNewsletter = weeklyNewsletters[currentWeek];
+  const currentNewsletter = weeklyNewsletters[currentWeek] || null;
 
   return (
     <BrowserRouter>
@@ -321,8 +225,9 @@ function App() {
                 currentWeek={currentWeek}
                 setCurrentWeek={setCurrentWeek}
                 weeklyNewsletters={weeklyNewsletters}
-                forumCategories={forumCategories}
+                forumCategories={getDynamicCategories()}
                 toggleNewsletterTopic={toggleNewsletterTopic}
+                refreshCategoryStats={refreshStats}
                 handleCategoryClick={handleCategoryClick}
                 getSelectedCategoryData={getSelectedCategoryData}
                 navigateWeek={navigateWeek}

@@ -23,11 +23,13 @@ interface ForumCategory {
 interface CreateTopicModalProps {
   currentCategory: ForumCategory;
   onTopicCreated?: (newTopic: Topic) => void;
+  onStatsRefresh?: () => void;
 }
 
 export default function CreateTopicModal({
   currentCategory,
   onTopicCreated,
+  onStatsRefresh,
 }: CreateTopicModalProps) {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
@@ -77,6 +79,7 @@ export default function CreateTopicModal({
         setFormData({ title: "", description: "", content: "" });
         setIsOpen(false);
         onTopicCreated?.(newTopic);
+        onStatsRefresh?.(); // Refresh category statistics
       } else {
         const errorData = await response
           .json()

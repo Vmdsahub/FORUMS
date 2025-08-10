@@ -40,26 +40,7 @@ export default function Header({ activeSection }: HeaderProps) {
     string[]
   >([]);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([
-    {
-      id: "1",
-      message: "Novo comentário no tópico 'GPT-4 vs Claude'",
-      time: "5 min atrás",
-      type: "comment",
-    },
-    {
-      id: "2",
-      message: "Seu tópico recebeu uma curtida",
-      time: "2h atrás",
-      type: "like",
-    },
-    {
-      id: "3",
-      message: "Nova resposta no tópico salvo 'Midjourney vs DALL-E 3'",
-      time: "1 dia atrás",
-      type: "reply",
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
 
@@ -397,7 +378,7 @@ export default function Header({ activeSection }: HeaderProps) {
                       >
                         <path d="M8 7c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 1c-1.5 0-4 .8-4 2.5V12h8v-1.5c0-1.7-2.5-2.5-4-2.5z" />
                       </svg>
-                      <span className="text-gray-700">Minha Conta</span>
+                      <span className="text-gray-700">Central do Usuário</span>
                     </button>
                     <hr className="my-2" />
                     <button

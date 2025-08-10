@@ -65,6 +65,19 @@ function buildCommentTree(topicId: string, userId?: string): SimpleComment[] {
     }
   });
 
+  // Função para contar todas as respostas (incluindo respostas de respostas)
+  function countAllReplies(commentId: string): number {
+    const directReplies = allComments.filter((c) => c.parentId === commentId);
+    let totalCount = directReplies.length;
+
+    // Contar recursivamente as respostas das respostas
+    directReplies.forEach((reply) => {
+      totalCount += countAllReplies(reply.id);
+    });
+
+    return totalCount;
+  }
+
   // Função recursiva para construir hierarquia ilimitada
   function buildHierarchy(parentId: string | null): SimpleComment[] {
     const children = allComments
@@ -79,7 +92,7 @@ function buildCommentTree(topicId: string, userId?: string): SimpleComment[] {
       return {
         ...comment,
         replies,
-        repliesCount: replies.length,
+        repliesCount: countAllReplies(comment.id),
       };
     });
   }

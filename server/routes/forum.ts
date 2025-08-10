@@ -334,8 +334,8 @@ function initializeDemoData() {
   });
 }
 
-// Initialize demo data
-initializeDemoData();
+// Initialize demo data - disabled to use real data only
+// initializeDemoData();
 
 // Route handlers
 export const handleGetTopics: RequestHandler = (req, res) => {
@@ -716,6 +716,82 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
   });
 
   res.json({ message: "Comentário excluído com sucesso" });
+};
+
+// Get category statistics
+export const handleGetCategoryStats: RequestHandler = (req, res) => {
+  try {
+    const allTopics = Array.from(topics.values());
+    const allComments = Array.from(comments.values());
+
+    // Calculate stats for each category
+    const categoryStats = {
+      imagem: {
+        totalTopics: allTopics.filter((t) => t.category === "imagem").length,
+        totalPosts: allComments.filter((c) => {
+          const topic = allTopics.find((t) => t.id === c.topicId);
+          return topic?.category === "imagem";
+        }).length,
+        lastPost: null as any,
+      },
+      video: {
+        totalTopics: allTopics.filter((t) => t.category === "video").length,
+        totalPosts: allComments.filter((c) => {
+          const topic = allTopics.find((t) => t.id === c.topicId);
+          return topic?.category === "video";
+        }).length,
+        lastPost: null as any,
+      },
+      "musica-audio": {
+        totalTopics: allTopics.filter((t) => t.category === "musica-audio")
+          .length,
+        totalPosts: allComments.filter((c) => {
+          const topic = allTopics.find((t) => t.id === c.topicId);
+          return topic?.category === "musica-audio";
+        }).length,
+        lastPost: null as any,
+      },
+      "vibe-coding": {
+        totalTopics: allTopics.filter((t) => t.category === "vibe-coding")
+          .length,
+        totalPosts: allComments.filter((c) => {
+          const topic = allTopics.find((t) => t.id === c.topicId);
+          return topic?.category === "vibe-coding";
+        }).length,
+        lastPost: null as any,
+      },
+    };
+
+    // Find last post for each category
+    Object.keys(categoryStats).forEach((categoryId) => {
+      const categoryTopics = allTopics.filter((t) => t.category === categoryId);
+      if (categoryTopics.length > 0) {
+        // Get the most recent topic
+        const lastTopic = categoryTopics.sort(
+          (a, b) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        )[0];
+
+        categoryStats[categoryId].lastPost = {
+          title: lastTopic.title,
+          author: lastTopic.author,
+          date:
+            lastTopic.lastPost?.date || new Date().toLocaleDateString("pt-BR"),
+          time:
+            lastTopic.lastPost?.time ||
+            new Date().toLocaleTimeString("pt-BR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+        };
+      }
+    });
+
+    res.json({ categories: categoryStats });
+  } catch (error) {
+    console.error("Error getting category stats:", error);
+    res.status(500).json({ error: "Error fetching category statistics" });
+  }
 };
 
 export const handleGetUserTopics: RequestHandler = (req, res) => {

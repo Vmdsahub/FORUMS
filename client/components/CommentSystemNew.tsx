@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
-import UserPointsBadge from "@/components/UserPointsBadge";
+import CommentUserProfile from "@/components/CommentUserProfile";
+import ReplyModal from "@/components/ReplyModal";
 
 interface Comment {
   id: string;
@@ -28,6 +29,7 @@ interface CommentItemProps {
   onReply: (parentId: string, content: string) => Promise<void>;
   onLike: (commentId: string) => Promise<void>;
   onDelete: (commentId: string) => Promise<void>;
+  onReloadComments: () => Promise<void>;
 }
 
 // COMPONENTE INDIVIDUAL DE COMENTÁRIO
@@ -39,34 +41,20 @@ function CommentItem({
   onReply,
   onLike,
   onDelete,
+  onReloadComments,
 }: CommentItemProps) {
   const { user, isAdmin } = useAuth();
-  const [showReplyForm, setShowReplyForm] = useState(false);
-  const [replyText, setReplyText] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showReplies, setShowReplies] = useState(true);
+  const [showReplyModal, setShowReplyModal] = useState(false);
+  const [showReplies, setShowReplies] = useState(false);
 
   const isTopicOwner = user?.id === topicAuthorId;
   const isCommentOwner = user?.id === comment.authorId;
   const canDelete = isAdmin || isTopicOwner || isCommentOwner;
   const canReply = user; // Sem limite de profundidade
 
-  const handleReplySubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!replyText.trim()) return;
-
-    setIsSubmitting(true);
-    try {
-      await onReply(comment.id, replyText);
-      setReplyText("");
-      setShowReplyForm(false);
-      setShowReplies(true);
-      toast.success("Resposta adicionada!");
-    } catch (error) {
-      toast.error("Erro ao responder");
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleReplyAdded = async () => {
+    await onReloadComments();
+    setShowReplies(true);
   };
 
   const handleDelete = async () => {
@@ -82,6 +70,9 @@ function CommentItem({
   // Calcular indentação baseada na profundidade (máximo 8 níveis visuais)
   const indentationClass = depth === 0 ? "" : `ml-${Math.min(depth * 4, 32)}`;
   const hasReplies = comment.replies && comment.replies.length > 0;
+  const actualRepliesCount = comment.replies
+    ? comment.replies.length
+    : comment.repliesCount || 0;
 
   return (
     <div className={`${indentationClass} ${depth > 0 ? "mt-4" : ""}`}>
@@ -96,10 +87,11 @@ function CommentItem({
               canDelete={canDelete}
               onLike={() => onLike(comment.id)}
               onDelete={handleDelete}
-              onShowReply={() => setShowReplyForm(!showReplyForm)}
+              onShowReply={() => setShowReplyModal(true)}
               hasReplies={hasReplies}
               showReplies={showReplies}
               onToggleReplies={() => setShowReplies(!showReplies)}
+              actualRepliesCount={actualRepliesCount}
             />
           </div>
         </div>
@@ -115,45 +107,23 @@ function CommentItem({
             canDelete={canDelete}
             onLike={() => onLike(comment.id)}
             onDelete={handleDelete}
-            onShowReply={() => setShowReplyForm(!showReplyForm)}
+            onShowReply={() => setShowReplyModal(true)}
             hasReplies={hasReplies}
             showReplies={showReplies}
             onToggleReplies={() => setShowReplies(!showReplies)}
+            actualRepliesCount={actualRepliesCount}
           />
         </div>
       )}
 
-      {/* Formulário de resposta */}
-      {showReplyForm && (
-        <form
-          onSubmit={handleReplySubmit}
-          className={`mt-3 ${depth > 0 ? "ml-6" : ""}`}
-        >
-          <div className="bg-gray-50 rounded-lg p-3 border">
-            <textarea
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-              placeholder={`Responder para ${comment.author}...`}
-              className="w-full p-2 border rounded text-sm resize-none"
-              rows={2}
-              required
-            />
-            <div className="flex gap-2 mt-2">
-              <Button type="submit" size="sm" disabled={isSubmitting}>
-                {isSubmitting ? "Enviando..." : "Responder"}
-              </Button>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={() => setShowReplyForm(false)}
-              >
-                Cancelar
-              </Button>
-            </div>
-          </div>
-        </form>
-      )}
+      {/* Modal de resposta */}
+      <ReplyModal
+        isOpen={showReplyModal}
+        onClose={() => setShowReplyModal(false)}
+        comment={comment}
+        topicId={topicId}
+        onReplyAdded={handleReplyAdded}
+      />
 
       {/* Respostas aninhadas */}
       {showReplies && hasReplies && (
@@ -168,6 +138,7 @@ function CommentItem({
               onReply={onReply}
               onLike={onLike}
               onDelete={onDelete}
+              onReloadComments={onReloadComments}
             />
           ))}
         </div>
@@ -188,6 +159,7 @@ function CommentContent({
   hasReplies,
   showReplies,
   onToggleReplies,
+  actualRepliesCount,
 }: {
   comment: Comment;
   topicAuthorId: string;
@@ -199,6 +171,7 @@ function CommentContent({
   hasReplies: boolean;
   showReplies: boolean;
   onToggleReplies: () => void;
+  actualRepliesCount: number;
 }) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -213,45 +186,29 @@ function CommentContent({
   };
 
   return (
-    <div className="flex items-start gap-3">
-      <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
-        {comment.authorAvatar}
-      </div>
-      <div className="flex-1">
-        <div className="flex items-center gap-2 mb-2 flex-wrap">
-          <span className="font-medium text-black text-sm">
-            {comment.author}
-          </span>
-          <UserPointsBadge userId={comment.authorId} size="sm" />
-          {comment.authorId === topicAuthorId && (
-            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
-              Autor
-            </span>
-          )}
-          <span className="text-xs text-gray-500">
-            {formatDate(comment.createdAt)}
-          </span>
+    <div className="flex items-start gap-3 relative">
+      {/* Perfil do usuário */}
+      <CommentUserProfile
+        userId={comment.authorId}
+        userName={comment.author}
+        userAvatar={comment.authorAvatar}
+        isTopicAuthor={comment.authorId === topicAuthorId}
+        size="sm"
+      />
+
+      <div className="flex-1 relative">
+        {/* Data do comentário */}
+        <div className="text-xs text-gray-500 mb-2">
+          {formatDate(comment.createdAt)}
         </div>
 
+        {/* Conteúdo do comentário */}
         <div className="text-gray-700 mb-3 text-sm leading-relaxed">
           <MarkdownRenderer content={comment.content} />
         </div>
 
+        {/* Botões de ação */}
         <div className="flex items-center gap-2 flex-wrap">
-          <button
-            onClick={onLike}
-            className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${
-              comment.isLiked
-                ? "text-red-600 bg-red-50 hover:bg-red-100"
-                : "text-gray-500 hover:text-red-600 hover:bg-red-50"
-            }`}
-          >
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-              <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
-            </svg>
-            {comment.likes}
-          </button>
-
           {canReply && (
             <button
               onClick={onShowReply}
@@ -266,8 +223,8 @@ function CommentContent({
               onClick={onToggleReplies}
               className="text-xs text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
             >
-              {showReplies ? "Ocultar" : "Ver"} {comment.repliesCount} resposta
-              {comment.repliesCount !== 1 ? "s" : ""}
+              {showReplies ? "Ocultar" : "Ver"} {actualRepliesCount} resposta
+              {actualRepliesCount !== 1 ? "s" : ""}
             </button>
           )}
 
@@ -281,6 +238,21 @@ function CommentContent({
             </button>
           )}
         </div>
+
+        {/* Botão de curtida no canto direito inferior */}
+        <button
+          onClick={onLike}
+          className={`absolute bottom-0 right-0 flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${
+            comment.isLiked
+              ? "text-red-600 bg-red-50 hover:bg-red-100"
+              : "text-gray-500 hover:text-red-600 hover:bg-red-50"
+          }`}
+        >
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
+          </svg>
+          {comment.likes}
+        </button>
       </div>
     </div>
   );
@@ -583,6 +555,7 @@ export default function CommentSystemNew({
               onReply={handleReply}
               onLike={handleLike}
               onDelete={handleDelete}
+              onReloadComments={loadComments}
             />
           ))
         )}

@@ -19,7 +19,7 @@ interface UserPointsBadgeProps {
 export default function UserPointsBadge({
   userId,
   showPoints = true,
-  showBadges = true,
+  showBadges = false, // Default to false to remove badge display
   size = "sm",
 }: UserPointsBadgeProps) {
   const [userStats, setUserStats] = useState<{
@@ -29,26 +29,33 @@ export default function UserPointsBadge({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Para este exemplo, vamos simular dados baseados no userId
-    // Em um app real, isso viria de uma API
-    const mockStats = {
-      points: Math.floor(Math.random() * 100), // Simular pontos aleatórios
-      badges: [
-        {
-          id: "iniciante",
-          name: "Iniciante",
-          description: "Primeiros passos no fórum",
-          icon: "https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100",
-          requiredPoints: 5,
-          color: "purple",
-        },
-      ],
+    // TODO: Substituir por API real para buscar pontos do usuário
+    const fetchUserStats = async () => {
+      try {
+        // Por enquanto, usar pontos fixos baseados no userId
+        const userStats = {
+          points: 25, // Pontos reais do usuário
+          badges: [
+            {
+              id: "iniciante",
+              name: "Iniciante",
+              description: "Primeiros passos no fórum",
+              icon: "https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100",
+              requiredPoints: 5,
+              color: "purple",
+            },
+          ],
+        };
+
+        setUserStats(userStats);
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching user stats:", error);
+        setIsLoading(false);
+      }
     };
 
-    setTimeout(() => {
-      setUserStats(mockStats);
-      setIsLoading(false);
-    }, 100);
+    fetchUserStats();
   }, [userId]);
 
   if (isLoading || !userStats) {
