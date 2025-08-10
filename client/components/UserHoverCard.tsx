@@ -9,11 +9,10 @@ interface Badge {
   color: string;
 }
 
-interface UserProfile {
+interface UserProfileData {
   points: number;
   badges: Badge[];
-  memberSince: string;
-  selectedBadges: string[];
+  createdAt: string;
 }
 
 interface UserHoverCardProps {
@@ -33,66 +32,43 @@ export default function UserHoverCard({
   size = "sm",
   children,
 }: UserHoverCardProps) {
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showCard, setShowCard] = useState(false);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        // Simular dados reais baseados no userId
-        const mockProfile: UserProfile = {
-          points: 125,
-          badges: [
-            {
-              id: "iniciante",
-              name: "Iniciante",
-              description: "Primeiros passos no fórum",
-              icon: "🏆",
-              requiredPoints: 5,
-              color: "purple",
-            },
-            {
-              id: "colaborador",
-              name: "Colaborador",
-              description: "Ajuda outros membros",
-              icon: "🤝",
-              requiredPoints: 50,
-              color: "blue",
-            },
-            {
-              id: "expert",
-              name: "Expert",
-              description: "Conhecimento avançado",
-              icon: "🎓",
-              requiredPoints: 100,
-              color: "gold",
-            },
-            {
-              id: "popular",
-              name: "Popular",
-              description: "Posts bem avaliados",
-              icon: "⭐",
-              requiredPoints: 75,
-              color: "orange",
-            },
-          ],
-          memberSince: "2024-01-15",
-          selectedBadges: ["iniciante", "colaborador", "expert", "popular"],
-        };
-
-        setTimeout(() => {
-          setUserProfile(mockProfile);
-          setIsLoading(false);
-        }, 100);
+        const response = await fetch(`/api/user/profile/${userId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setUserProfile(data);
+        } else {
+          console.error("Erro ao buscar perfil do usuário:", response.status);
+          // Fallback para dados básicos em caso de erro
+          setUserProfile({
+            points: 0,
+            badges: [],
+            createdAt: new Date().toISOString(),
+          });
+        }
       } catch (error) {
-        console.error("Error fetching user profile:", error);
+        console.error("Erro ao buscar perfil do usuário:", error);
+        // Fallback para dados básicos em caso de erro
+        setUserProfile({
+          points: 0,
+          badges: [],
+          createdAt: new Date().toISOString(),
+        });
+      } finally {
         setIsLoading(false);
       }
     };
 
-    fetchUserProfile();
-  }, [userId]);
+    if (showCard) {
+      fetchUserProfile();
+    }
+  }, [userId, showCard]);
 
   const formatMemberSince = (dateString: string) => {
     const date = new Date(dateString);
@@ -103,9 +79,8 @@ export default function UserHoverCard({
     });
   };
 
-  const availableBadges = userProfile?.badges
-    .filter((badge) => userProfile.selectedBadges.includes(badge.id))
-    .slice(0, 9) || []; // Máximo 9 emblemas (3x3)
+  // Só mostrar emblemas que o usuário realmente possui, máximo 9 (3x3)
+  const availableBadges = userProfile?.badges?.slice(0, 9) || [];
 
   return (
     <div
@@ -117,11 +92,11 @@ export default function UserHoverCard({
       
       {showCard && (
         <div className="absolute z-50 left-0 top-full mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg p-4 animate-fade-in">
-          {isLoading || !userProfile ? (
+          {isLoading ? (
             <div className="text-center py-4">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900 mx-auto"></div>
             </div>
-          ) : (
+          ) : userProfile ? (
             <>
               {/* Header com avatar e nome */}
               <div className="flex items-center gap-3 mb-4">
@@ -130,27 +105,19 @@ export default function UserHoverCard({
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900">{userName}</h3>
-                  <p className="text-sm text-gray-500">
-                    {userProfile.points} pontos
-                  </p>
                 </div>
               </div>
 
-              {/* Tags especiais */}
-              <div className="flex flex-wrap gap-2 mb-4">
-                {isTopicAuthor && (
-                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                    Autor do Tópico
-                  </span>
-                )}
-                <span className="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">
-                  Membro desde {formatMemberSince(userProfile.memberSince)}
-                </span>
+              {/* 1. Pontos (primeiro conforme solicitado) */}
+              <div className="mb-4">
+                <div className="text-lg font-semibold text-amber-600">
+                  {userProfile.points} pontos
+                </div>
               </div>
 
-              {/* Emblemas em grid 3x3 */}
+              {/* 2. Emblemas (abaixo dos pontos) */}
               {availableBadges.length > 0 && (
-                <div>
+                <div className="mb-4">
                   <h4 className="text-sm font-medium text-gray-700 mb-2">
                     Emblemas ({availableBadges.length})
                   </h4>
@@ -161,7 +128,17 @@ export default function UserHoverCard({
                         className="group relative flex flex-col items-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                         title={badge.description}
                       >
-                        <div className="text-xl mb-1">{badge.icon}</div>
+                        <div className="text-lg mb-1">
+                          {badge.icon.startsWith('http') ? (
+                            <img 
+                              src={badge.icon} 
+                              alt={badge.name} 
+                              className="w-6 h-6 object-contain"
+                            />
+                          ) : (
+                            <span>{badge.icon}</span>
+                          )}
+                        </div>
                         <span className="text-xs text-gray-600 text-center leading-tight">
                           {badge.name}
                         </span>
@@ -174,13 +151,31 @@ export default function UserHoverCard({
                     ))}
                     
                     {/* Preencher espaços vazios para manter grid 3x3 */}
-                    {Array.from({ length: 9 - availableBadges.length }).map((_, index) => (
+                    {availableBadges.length < 9 && Array.from({ length: 9 - availableBadges.length }).map((_, index) => (
                       <div key={`empty-${index}`} className="p-2"></div>
                     ))}
                   </div>
                 </div>
               )}
+
+              {/* 3. Tags (seguido dos emblemas) */}
+              {isTopicAuthor && (
+                <div className="mb-4">
+                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                    Autor do Tópico
+                  </span>
+                </div>
+              )}
+
+              {/* 4. Data de criação da conta (por fim) */}
+              <div className="text-sm text-gray-500">
+                Membro desde {formatMemberSince(userProfile.createdAt)}
+              </div>
             </>
+          ) : (
+            <div className="text-center py-4 text-gray-500">
+              Erro ao carregar dados do usuário
+            </div>
           )}
         </div>
       )}
