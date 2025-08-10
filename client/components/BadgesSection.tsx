@@ -24,68 +24,48 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simular dados para demonstração
-    const mockData = {
-      points: 25,
-      badges: [
-        {
-          id: "iniciante",
-          name: "Iniciante",
-          description: "Primeiros passos no fórum",
-          icon: "https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100",
-          requiredPoints: 5,
-          color: "purple",
-        },
-      ],
-      nextBadge: {
-        id: "participante",
-        name: "Participante",
-        description: "Membro ativo da comunidade",
-        icon: "🏆",
-        requiredPoints: 50,
-        color: "blue",
-      },
-      pointsToNext: 25,
-      allBadges: [
-        {
-          id: "iniciante",
-          name: "Iniciante",
-          description: "Primeiros passos no fórum",
-          icon: "https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100",
-          requiredPoints: 5,
-          color: "purple",
-        },
-        {
-          id: "participante",
-          name: "Participante",
-          description: "Membro ativo da comunidade",
-          icon: "🏆",
-          requiredPoints: 50,
-          color: "blue",
-        },
-        {
-          id: "experiente",
-          name: "Experiente",
-          description: "Usuário experiente",
-          icon: "⭐",
-          requiredPoints: 100,
-          color: "yellow",
-        },
-        {
-          id: "expert",
-          name: "Expert",
-          description: "Especialista da comunidade",
-          icon: "💎",
-          requiredPoints: 200,
-          color: "cyan",
-        },
-      ],
+    const fetchUserStats = async () => {
+      try {
+        console.log(`[BadgesSection] Buscando stats para usuário: ${userId}`);
+        
+        // Buscar stats do usuário autenticado
+        const response = await fetch(`/api/user/stats`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+          },
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log(`[BadgesSection] Dados recebidos:`, data);
+          setUserStats(data);
+        } else {
+          console.error("Erro ao buscar stats:", response.status);
+          // Fallback para dados básicos
+          setUserStats({
+            points: 0,
+            badges: [],
+            nextBadge: null,
+            pointsToNext: 0,
+            allBadges: [],
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao buscar stats:", error);
+        // Fallback para dados básicos
+        setUserStats({
+          points: 0,
+          badges: [],
+          nextBadge: null,
+          pointsToNext: 0,
+          allBadges: [],
+        });
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    setTimeout(() => {
-      setUserStats(mockData);
-      setIsLoading(false);
-    }, 100);
+    fetchUserStats();
   }, [userId]);
 
   if (isLoading) {
@@ -223,9 +203,9 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
           </div>
           <div>
             <div className="text-2xl font-bold text-green-600">
-              {Math.round(
-                (userStats.badges.length / userStats.allBadges.length) * 100,
-              )}
+              {userStats.allBadges.length > 0 
+                ? Math.round((userStats.badges.length / userStats.allBadges.length) * 100)
+                : 0}
               %
             </div>
             <div className="text-sm text-gray-600">Progresso</div>
@@ -233,9 +213,9 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
           <div>
             <div className="text-2xl font-bold text-orange-600">
               #
-              {userStats.allBadges.findIndex(
-                (b) => userStats.points < b.requiredPoints,
-              ) + 1}
+              {userStats.allBadges.length > 0 
+                ? (userStats.allBadges.findIndex((b) => userStats.points < b.requiredPoints) + 1) || userStats.allBadges.length + 1
+                : 1}
             </div>
             <div className="text-sm text-gray-600">Ranking</div>
           </div>
