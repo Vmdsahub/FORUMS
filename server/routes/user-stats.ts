@@ -105,7 +105,7 @@ export const handleGetUserProfile: RequestHandler = (req, res) => {
 
 // Rota para buscar todos os badges disponíveis
 export const handleGetAllBadges: RequestHandler = (req, res) => {
-  res.json({ badges: [SINGLE_BADGE] });
+  res.json({ badges: BADGES });
 };
 
 // Função chamada quando um like é adicionado/removido (para sincronização)
