@@ -200,6 +200,11 @@ export const likeComment: RequestHandler = (req, res) => {
       likes.add(userId);
     }
 
+    // Sincronizar com sistema de stats
+    const comment = comments.get(commentId)!;
+    const { onLikeToggled } = require("./user-stats-final");
+    onLikeToggled(commentId, comment.authorId, !wasLiked);
+
     res.json({
       likes: likes.size,
       isLiked: !wasLiked,
@@ -209,6 +214,32 @@ export const likeComment: RequestHandler = (req, res) => {
     res.status(500).json({ message: "Erro interno" });
   }
 };
+
+// Função para calcular total de likes recebidos por um usuário nos comentários
+export function getCommentLikesForUser(userId: string): number {
+  let totalLikes = 0;
+
+  // Percorrer todos os comentários do usuário
+  for (const [commentId, comment] of comments.entries()) {
+    if (comment.authorId === userId) {
+      const likes = commentLikes.get(commentId)?.size || 0;
+      totalLikes += likes;
+    }
+  }
+
+  return totalLikes;
+}
+
+// Função para sincronizar likes (chamada quando likes mudam)
+export function syncCommentLikes() {
+  const { onLikeToggled } = require("./user-stats-final");
+
+  // Notificar mudanças para todos os autores de comentários
+  for (const [commentId, comment] of comments.entries()) {
+    const likes = commentLikes.get(commentId)?.size || 0;
+    onLikeToggled(commentId, comment.authorId, likes > 0);
+  }
+}
 
 export const deleteComment: RequestHandler = (req, res) => {
   if (!req.user) {
@@ -334,7 +365,43 @@ export function initializeDemo() {
     topicComments.get(item.topicId)!.push(item.id);
   });
 
+  // Adicionar likes demo para testar sistema de pontos
+  // demo_user_123 (João) recebe 6 likes total (vai ganhar o badge!)
+  commentLikes.set(
+    "demo1",
+    new Set([
+      "admin_vitoca_456",
+      "user_maria_789",
+      "user_pedro_101",
+      "user_ana_202",
+    ]),
+  ); // 4 likes
+  commentLikes.set("demo2", new Set(["demo_user_123", "user_pedro_101"])); // +2 likes para João = 6 total
+
+  // admin_vitoca_456 (Admin) recebe 8 likes total
+  commentLikes.set(
+    "demo3",
+    new Set([
+      "demo_user_123",
+      "user_maria_789",
+      "user_pedro_101",
+      "user_ana_202",
+    ]),
+  ); // 4 likes para Admin
+  commentLikes.set(
+    "demo4",
+    new Set([
+      "demo_user_123",
+      "user_maria_789",
+      "user_pedro_101",
+      "user_ana_202",
+    ]),
+  ); // +4 likes para Admin = 8 total
+
+  // user_maria_789 (Maria) recebe 2 likes
+  commentLikes.set("demo5", new Set(["demo_user_123", "admin_vitoca_456"])); // 2 likes para Maria
+
   console.log(
-    "[COMMENTS] Sistema inicializado com dados demo de múltiplos níveis",
+    "[COMMENTS] Sistema inicializado com dados demo de múltiplos níveis e likes para pontos reais",
   );
 }

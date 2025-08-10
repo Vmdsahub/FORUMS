@@ -23,7 +23,11 @@ import {
   handleGetCategoryStats,
 } from "./routes/forum";
 import { uploadMiddleware, handleUpload } from "./routes/upload";
-import { handleGetUserStats, handleGetAllBadges } from "./routes/user-stats";
+import {
+  handleGetUserStats,
+  handleGetAllBadges,
+  handleGetUserProfile,
+} from "./routes/user-stats-final";
 import {
   getComments,
   createComment,
@@ -101,6 +105,7 @@ export function createServer() {
   // User stats routes
   app.get("/api/user/stats", authenticateToken, handleGetUserStats);
   app.get("/api/badges", handleGetAllBadges);
+  app.get("/api/user/profile/:userId", handleGetUserProfile);
 
   // Novo sistema de comentários - ANTES das rotas antigas para evitar conflito
   app.get("/api/comments/:topicId", getComments);

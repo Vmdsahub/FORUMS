@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
-import UserPointsBadge from "@/components/UserPointsBadge";
+import UserHoverCard from "@/components/UserHoverCard";
 
 interface Comment {
   id: string;
@@ -94,24 +94,24 @@ export default function CommentThread({
         {/* Comment Content */}
         <div className="bg-white rounded-lg border border-gray-100 p-4 shadow-sm">
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-xs font-semibold flex-shrink-0">
-              {comment.authorAvatar}
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <span className="font-medium text-black text-sm">
+            <UserHoverCard
+              userId={comment.authorId}
+              userName={comment.author}
+              userAvatar={comment.authorAvatar}
+              isTopicAuthor={comment.authorId === topicAuthorId}
+              size="sm"
+            >
+              <div className="flex flex-col items-center gap-1">
+                <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold hover:bg-gray-800 transition-colors cursor-pointer">
+                  {comment.authorAvatar}
+                </div>
+                <span className="text-sm font-medium text-gray-900 hover:text-black cursor-pointer transition-colors text-center">
                   {comment.author}
                 </span>
-                <UserPointsBadge
-                  userId={comment.authorId}
-                  size="sm"
-                  showBadges={false}
-                />
-                {comment.authorId === topicAuthorId && (
-                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
-                    Autor
-                  </span>
-                )}
+              </div>
+            </UserHoverCard>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <span className="text-xs text-gray-500">
                   {comment.date} às {comment.time}
                 </span>

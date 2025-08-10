@@ -7,7 +7,7 @@ import {
   CreateCommentRequest,
   LikeResponse,
 } from "@shared/forum";
-import { POINTS, calculateUserBadges, BADGES } from "@shared/badges";
+// import { POINTS, calculateUserBadges, BADGES } from "@shared/badges"; // Temporariamente removido
 
 // Simple in-memory storage for demo purposes
 const topics: Map<string, Topic> = new Map();
@@ -65,10 +65,12 @@ function addPoints(userId: string, points: number) {
 
   // Verificar novos badges
   const currentBadges = calculateUserBadges(stats.points);
-  const newBadgeIds = currentBadges.map(b => b.id);
+  const newBadgeIds = currentBadges.map((b) => b.id);
 
   // Atualizar badges se mudaram
-  if (JSON.stringify(stats.badges.sort()) !== JSON.stringify(newBadgeIds.sort())) {
+  if (
+    JSON.stringify(stats.badges.sort()) !== JSON.stringify(newBadgeIds.sort())
+  ) {
     stats.badges = newBadgeIds;
   }
 
@@ -93,7 +95,7 @@ function organizeComments(comments: Comment[]): Comment[] {
     // Se a data for "Hoje", usar data atual
     if (date === "Hoje") {
       const today = new Date();
-      const [hours, minutes] = time.split(':');
+      const [hours, minutes] = time.split(":");
       today.setHours(parseInt(hours), parseInt(minutes), 0, 0);
       return today.getTime();
     }
@@ -102,14 +104,14 @@ function organizeComments(comments: Comment[]): Comment[] {
     if (date === "Ontem") {
       const yesterday = new Date();
       yesterday.setDate(yesterday.getDate() - 1);
-      const [hours, minutes] = time.split(':');
+      const [hours, minutes] = time.split(":");
       yesterday.setHours(parseInt(hours), parseInt(minutes), 0, 0);
       return yesterday.getTime();
     }
 
     // Para outras datas, tentar fazer parsing
     try {
-      const dateTime = new Date(date + ' ' + time);
+      const dateTime = new Date(date + " " + time);
       if (!isNaN(dateTime.getTime())) {
         return dateTime.getTime();
       }
@@ -121,11 +123,11 @@ function organizeComments(comments: Comment[]): Comment[] {
   }
 
   // Primeiro, criar o mapa de comentários com inicialização correta
-  comments.forEach(comment => {
+  comments.forEach((comment) => {
     commentMap.set(comment.id, {
       ...comment,
       replies: [],
-      repliesCount: 0
+      repliesCount: 0,
     });
   });
 
@@ -133,7 +135,7 @@ function organizeComments(comments: Comment[]): Comment[] {
   const rootCommentsList: Comment[] = [];
   const repliesList: Comment[] = [];
 
-  comments.forEach(comment => {
+  comments.forEach((comment) => {
     if (comment.parentId) {
       repliesList.push(comment);
     } else {
@@ -152,13 +154,13 @@ function organizeComments(comments: Comment[]): Comment[] {
   });
 
   // Adicionar comentários raiz ao resultado
-  rootCommentsList.forEach(comment => {
+  rootCommentsList.forEach((comment) => {
     const commentWithReplies = commentMap.get(comment.id)!;
     rootComments.push(commentWithReplies);
   });
 
   // Processar replies e anexar aos pais corretos
-  repliesList.forEach(reply => {
+  repliesList.forEach((reply) => {
     const replyWithReplies = commentMap.get(reply.id)!;
     const parent = commentMap.get(reply.parentId!);
 
@@ -178,14 +180,14 @@ function organizeComments(comments: Comment[]): Comment[] {
       });
 
       // Aplicar recursivamente para sub-replies
-      comment.replies.forEach(reply => {
+      comment.replies.forEach((reply) => {
         sortRepliesRecursively(reply);
       });
     }
   }
 
   // Aplicar ordenação recursiva para todos os comentários raiz
-  rootComments.forEach(comment => {
+  rootComments.forEach((comment) => {
     sortRepliesRecursively(comment);
   });
 
@@ -583,7 +585,9 @@ export const handleCreateComment: RequestHandler = (req, res) => {
     if (data.parentId) {
       const parentComment = comments.get(data.parentId);
       if (!parentComment || parentComment.topicId !== topicId) {
-        return res.status(400).json({ message: "Comentário pai não encontrado" });
+        return res
+          .status(400)
+          .json({ message: "Comentário pai não encontrado" });
       }
     }
 
@@ -647,7 +651,11 @@ export const handleLikeTopic: RequestHandler = (req, res) => {
   topic.isLiked = likeResult.isLiked;
 
   // Adicionar pontos ao autor do tópico a cada 5 likes
-  if (likeResult.isLiked && topic.authorId !== req.user.id && likeResult.likes % 5 === 0) {
+  if (
+    likeResult.isLiked &&
+    topic.authorId !== req.user.id &&
+    likeResult.likes % 5 === 0
+  ) {
     addPoints(topic.authorId, POINTS.RECEIVE_POST_LIKE);
   }
 
@@ -734,7 +742,8 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
 
   if (!isAdmin && !isTopicOwner && !isCommentOwner) {
     return res.status(403).json({
-      message: "Você só pode excluir seus próprios comentários ou comentários em seus posts"
+      message:
+        "Você só pode excluir seus próprios comentários ou comentários em seus posts",
     });
   }
 
@@ -743,8 +752,10 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
     let deletedCount = 0;
 
     // Encontrar e remover todas as respostas primeiro
-    const replies = Array.from(comments.values()).filter(c => c.parentId === commentId);
-    replies.forEach(reply => {
+    const replies = Array.from(comments.values()).filter(
+      (c) => c.parentId === commentId,
+    );
+    replies.forEach((reply) => {
       deletedCount += deleteCommentAndReplies(reply.id);
     });
 

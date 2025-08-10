@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
-import CommentUserProfile from "@/components/CommentUserProfile";
+import UserHoverCard from "@/components/UserHoverCard";
 import ReplyModal from "@/components/ReplyModal";
 
 interface Comment {
@@ -50,7 +50,7 @@ function CommentItem({
   const isTopicOwner = user?.id === topicAuthorId;
   const isCommentOwner = user?.id === comment.authorId;
   const canDelete = isAdmin || isTopicOwner || isCommentOwner;
-  const canReply = user; // Sem limite de profundidade
+  const canReply = !!user; // Sem limite de profundidade
 
   const handleReplyAdded = async () => {
     await onReloadComments();
@@ -187,14 +187,23 @@ function CommentContent({
 
   return (
     <div className="flex items-start gap-3 relative">
-      {/* Perfil do usuário */}
-      <CommentUserProfile
+      {/* Perfil do usuário com hover */}
+      <UserHoverCard
         userId={comment.authorId}
         userName={comment.author}
         userAvatar={comment.authorAvatar}
         isTopicAuthor={comment.authorId === topicAuthorId}
         size="sm"
-      />
+      >
+        <div className="flex flex-col items-center gap-2">
+          <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold hover:bg-gray-800 transition-colors cursor-pointer">
+            {comment.authorAvatar}
+          </div>
+          <span className="text-sm font-medium text-gray-900 hover:text-black cursor-pointer transition-colors">
+            {comment.author}
+          </span>
+        </div>
+      </UserHoverCard>
 
       <div className="flex-1 relative">
         {/* Data do comentário */}
