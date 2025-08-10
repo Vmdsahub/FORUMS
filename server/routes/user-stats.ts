@@ -1,23 +1,7 @@
 import { RequestHandler } from "express";
+import { BADGES, calculateUserBadges, getNextBadge, getPointsToNextBadge, Badge } from "@shared/badges";
 
-// Badge único aos 5 likes
-interface Badge {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  requiredPoints: number;
-  color: string;
-}
-
-const SINGLE_BADGE: Badge = {
-  id: "popular",
-  name: "Popular",
-  description: "Recebeu 5 likes na comunidade",
-  icon: "⭐",
-  requiredPoints: 5,
-  color: "gold",
-};
+const SINGLE_BADGE = BADGES[0]; // Único badge disponível
 
 // Storage para dados dos usuários (userId -> { createdAt, totalLikes })
 const userData: Map<string, { createdAt: string; totalLikes: number }> = new Map();
