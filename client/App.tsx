@@ -225,8 +225,9 @@ function App() {
                 currentWeek={currentWeek}
                 setCurrentWeek={setCurrentWeek}
                 weeklyNewsletters={weeklyNewsletters}
-                forumCategories={forumCategories}
+                forumCategories={getDynamicCategories()}
                 toggleNewsletterTopic={toggleNewsletterTopic}
+                refreshCategoryStats={refreshStats}
                 handleCategoryClick={handleCategoryClick}
                 getSelectedCategoryData={getSelectedCategoryData}
                 navigateWeek={navigateWeek}
