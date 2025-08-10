@@ -210,6 +210,32 @@ export const likeComment: RequestHandler = (req, res) => {
   }
 };
 
+// Função para calcular total de likes recebidos por um usuário nos comentários
+export function getCommentLikesForUser(userId: string): number {
+  let totalLikes = 0;
+
+  // Percorrer todos os comentários do usuário
+  for (const [commentId, comment] of comments.entries()) {
+    if (comment.authorId === userId) {
+      const likes = commentLikes.get(commentId)?.size || 0;
+      totalLikes += likes;
+    }
+  }
+
+  return totalLikes;
+}
+
+// Função para sincronizar likes (chamada quando likes mudam)
+export function syncCommentLikes() {
+  const { onLikeToggled } = require('./user-stats');
+
+  // Notificar mudanças para todos os autores de comentários
+  for (const [commentId, comment] of comments.entries()) {
+    const likes = commentLikes.get(commentId)?.size || 0;
+    onLikeToggled(commentId, comment.authorId, likes > 0);
+  }
+}
+
 export const deleteComment: RequestHandler = (req, res) => {
   if (!req.user) {
     return res.status(401).json({ message: "Login necessário" });
