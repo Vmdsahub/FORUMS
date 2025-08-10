@@ -617,7 +617,7 @@ export const handleLikeTopic: RequestHandler = (req, res) => {
   }
 
   // Sincronizar com sistema de stats
-  const { onLikeToggled } = require('./user-stats');
+  const { onLikeToggled } = require('./user-stats-final');
   onLikeToggled(topicId, topic.authorId, likeResult.isLiked);
 
   res.json(likeResult);
