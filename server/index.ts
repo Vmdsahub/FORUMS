@@ -66,6 +66,7 @@ export function createServer() {
   // Forum routes
   app.get("/api/topics", handleGetTopics);
   app.get("/api/topics/user", authenticateToken, handleGetUserTopics);
+  app.get("/api/categories/stats", handleGetCategoryStats);
   app.get("/api/topics/:topicId", handleGetTopic);
   app.post("/api/topics", authenticateToken, handleCreateTopic);
   // ROTAS ANTIGAS DE COMENTÁRIOS - TEMPORARIAMENTE DESABILITADAS
