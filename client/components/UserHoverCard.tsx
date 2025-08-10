@@ -39,12 +39,20 @@ export default function UserHoverCard({
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch(`/api/user/profile/${userId}`);
+        console.log(`[UserHoverCard] Buscando perfil para usuário: ${userId}`);
+        const url = `/api/user/profile/${userId}`;
+        console.log(`[UserHoverCard] URL da requisição: ${url}`);
+
+        const response = await fetch(url);
+        console.log(`[UserHoverCard] Status da resposta: ${response.status}`);
+
         if (response.ok) {
           const data = await response.json();
+          console.log(`[UserHoverCard] Dados recebidos:`, data);
           setUserProfile(data);
         } else {
-          console.error("Erro ao buscar perfil do usuário:", response.status);
+          const text = await response.text();
+          console.error("Erro ao buscar perfil do usuário:", response.status, text);
           // Fallback para dados básicos em caso de erro
           setUserProfile({
             points: 0,
