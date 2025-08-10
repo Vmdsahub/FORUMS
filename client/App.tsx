@@ -164,7 +164,7 @@ function App() {
   const [activeSection, setActiveSection] = useState<"newsletter" | "forum">(
     "newsletter",
   );
-  const [expandedNewsletter, setExpandedNewsletter] = useState<number | null>(
+  const [expandedNewsletter, setExpandedNewsletter] = useState<number | string | null>(
     null,
   );
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
