@@ -27,14 +27,14 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
     const fetchUserStats = async () => {
       try {
         console.log(`[BadgesSection] Buscando stats para usuário: ${userId}`);
-        
+
         // Buscar stats do usuário autenticado
         const response = await fetch(`/api/user/stats`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
           },
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           console.log(`[BadgesSection] Dados recebidos:`, data);
@@ -203,8 +203,11 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
           </div>
           <div>
             <div className="text-2xl font-bold text-green-600">
-              {userStats.allBadges.length > 0 
-                ? Math.round((userStats.badges.length / userStats.allBadges.length) * 100)
+              {userStats.allBadges.length > 0
+                ? Math.round(
+                    (userStats.badges.length / userStats.allBadges.length) *
+                      100,
+                  )
                 : 0}
               %
             </div>
@@ -213,8 +216,10 @@ export default function BadgesSection({ userId }: BadgesSectionProps) {
           <div>
             <div className="text-2xl font-bold text-orange-600">
               #
-              {userStats.allBadges.length > 0 
-                ? (userStats.allBadges.findIndex((b) => userStats.points < b.requiredPoints) + 1) || userStats.allBadges.length + 1
+              {userStats.allBadges.length > 0
+                ? userStats.allBadges.findIndex(
+                    (b) => userStats.points < b.requiredPoints,
+                  ) + 1 || userStats.allBadges.length + 1
                 : 1}
             </div>
             <div className="text-sm text-gray-600">Ranking</div>

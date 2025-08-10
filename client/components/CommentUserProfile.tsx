@@ -27,7 +27,9 @@ export default function CommentUserProfile({
 
       {/* Nome do usuário */}
       <div className="text-center">
-        <div className={`font-medium text-black ${textSize} leading-tight hover:text-gray-700 cursor-pointer transition-colors`}>
+        <div
+          className={`font-medium text-black ${textSize} leading-tight hover:text-gray-700 cursor-pointer transition-colors`}
+        >
           {userName}
         </div>
       </div>

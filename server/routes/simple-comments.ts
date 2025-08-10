@@ -202,7 +202,7 @@ export const likeComment: RequestHandler = (req, res) => {
 
     // Sincronizar com sistema de stats
     const comment = comments.get(commentId)!;
-    const { onLikeToggled } = require('./user-stats-final');
+    const { onLikeToggled } = require("./user-stats-final");
     onLikeToggled(commentId, comment.authorId, !wasLiked);
 
     res.json({
@@ -232,7 +232,7 @@ export function getCommentLikesForUser(userId: string): number {
 
 // Função para sincronizar likes (chamada quando likes mudam)
 export function syncCommentLikes() {
-  const { onLikeToggled } = require('./user-stats-final');
+  const { onLikeToggled } = require("./user-stats-final");
 
   // Notificar mudanças para todos os autores de comentários
   for (const [commentId, comment] of comments.entries()) {
@@ -367,12 +367,36 @@ export function initializeDemo() {
 
   // Adicionar likes demo para testar sistema de pontos
   // demo_user_123 (João) recebe 6 likes total (vai ganhar o badge!)
-  commentLikes.set("demo1", new Set(["admin_vitoca_456", "user_maria_789", "user_pedro_101", "user_ana_202"])); // 4 likes
+  commentLikes.set(
+    "demo1",
+    new Set([
+      "admin_vitoca_456",
+      "user_maria_789",
+      "user_pedro_101",
+      "user_ana_202",
+    ]),
+  ); // 4 likes
   commentLikes.set("demo2", new Set(["demo_user_123", "user_pedro_101"])); // +2 likes para João = 6 total
 
   // admin_vitoca_456 (Admin) recebe 8 likes total
-  commentLikes.set("demo3", new Set(["demo_user_123", "user_maria_789", "user_pedro_101", "user_ana_202"])); // 4 likes para Admin
-  commentLikes.set("demo4", new Set(["demo_user_123", "user_maria_789", "user_pedro_101", "user_ana_202"])); // +4 likes para Admin = 8 total
+  commentLikes.set(
+    "demo3",
+    new Set([
+      "demo_user_123",
+      "user_maria_789",
+      "user_pedro_101",
+      "user_ana_202",
+    ]),
+  ); // 4 likes para Admin
+  commentLikes.set(
+    "demo4",
+    new Set([
+      "demo_user_123",
+      "user_maria_789",
+      "user_pedro_101",
+      "user_ana_202",
+    ]),
+  ); // +4 likes para Admin = 8 total
 
   // user_maria_789 (Maria) recebe 2 likes
   commentLikes.set("demo5", new Set(["demo_user_123", "admin_vitoca_456"])); // 2 likes para Maria

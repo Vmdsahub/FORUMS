@@ -29,29 +29,38 @@ function getNextBadge(likesReceived: number): Badge | null {
 }
 
 function getPointsToNextBadge(likesReceived: number): number {
-  return likesReceived < BADGE.requiredPoints ? BADGE.requiredPoints - likesReceived : 0;
+  return likesReceived < BADGE.requiredPoints
+    ? BADGE.requiredPoints - likesReceived
+    : 0;
 }
 
 // Storage para dados dos usuários
-const userData: Map<string, { createdAt: string; totalLikes: number }> = new Map();
+const userData: Map<string, { createdAt: string; totalLikes: number }> =
+  new Map();
 
 // Inicializar usuários demo
-userData.set("demo_user_123", { createdAt: "2024-01-15T10:30:00Z", totalLikes: 0 });
-userData.set("admin_vitoca_456", { createdAt: "2023-12-01T08:00:00Z", totalLikes: 0 });
+userData.set("demo_user_123", {
+  createdAt: "2024-01-15T10:30:00Z",
+  totalLikes: 0,
+});
+userData.set("admin_vitoca_456", {
+  createdAt: "2023-12-01T08:00:00Z",
+  totalLikes: 0,
+});
 
 // Função para calcular total de likes recebidos por um usuário
 function calculateUserLikes(userId: string): number {
   let totalLikes = 0;
-  
+
   try {
     // Importar likes do sistema de comentários (simple-comments.ts)
-    const simpleCommentsModule = require('./simple-comments');
+    const simpleCommentsModule = require("./simple-comments");
     if (simpleCommentsModule.getCommentLikesForUser) {
       totalLikes += simpleCommentsModule.getCommentLikesForUser(userId);
     }
-    
-    // Importar likes do sistema de fórum (forum.ts) 
-    const forumModule = require('./forum');
+
+    // Importar likes do sistema de fórum (forum.ts)
+    const forumModule = require("./forum");
     if (forumModule.getTopicLikesForUser) {
       totalLikes += forumModule.getTopicLikesForUser(userId);
     }
@@ -64,7 +73,7 @@ function calculateUserLikes(userId: string): number {
     const user = userData.get(userId);
     return user?.totalLikes || 0;
   }
-  
+
   return totalLikes;
 }
 
@@ -76,7 +85,7 @@ export const handleGetUserStats: RequestHandler = (req, res) => {
 
   const userId = req.user.id;
   let user = userData.get(userId);
-  
+
   // Se não existir, criar novo usuário
   if (!user) {
     user = {
@@ -89,9 +98,9 @@ export const handleGetUserStats: RequestHandler = (req, res) => {
   // Calcular likes reais em tempo real
   const realLikes = calculateUserLikes(userId);
   user.totalLikes = realLikes; // Atualizar cache
-  
+
   console.log(`[USER-STATS] Usuário ${userId} tem ${realLikes} likes totais`);
-  
+
   const badges = calculateUserBadges(realLikes);
   const nextBadge = getNextBadge(realLikes);
   const pointsToNext = getPointsToNextBadge(realLikes);
@@ -109,13 +118,13 @@ export const handleGetUserStats: RequestHandler = (req, res) => {
 // Rota para buscar dados de um usuário específico (para hover cards)
 export const handleGetUserProfile: RequestHandler = (req, res) => {
   const { userId } = req.params;
-  
+
   if (!userId) {
     return res.status(400).json({ message: "ID do usuário é obrigatório" });
   }
 
   let user = userData.get(userId);
-  
+
   // Se não existir, criar dados básicos
   if (!user) {
     user = {
@@ -128,9 +137,11 @@ export const handleGetUserProfile: RequestHandler = (req, res) => {
   // Calcular likes reais em tempo real
   const realLikes = calculateUserLikes(userId);
   user.totalLikes = realLikes; // Atualizar cache
-  
-  console.log(`[USER-STATS] Perfil usuário ${userId} tem ${realLikes} likes totais`);
-  
+
+  console.log(
+    `[USER-STATS] Perfil usuário ${userId} tem ${realLikes} likes totais`,
+  );
+
   const badges = calculateUserBadges(realLikes);
 
   res.json({
@@ -146,16 +157,24 @@ export const handleGetAllBadges: RequestHandler = (req, res) => {
 };
 
 // Função chamada quando um like é adicionado/removido (para sincronização)
-export function onLikeToggled(entityId: string, authorId: string, isLiked: boolean) {
-  console.log(`[USER-STATS] Like ${isLiked ? 'adicionado' : 'removido'} para ${authorId} na entidade ${entityId}`);
-  
+export function onLikeToggled(
+  entityId: string,
+  authorId: string,
+  isLiked: boolean,
+) {
+  console.log(
+    `[USER-STATS] Like ${isLiked ? "adicionado" : "removido"} para ${authorId} na entidade ${entityId}`,
+  );
+
   // Força recálculo dos likes do autor na próxima consulta
   const user = userData.get(authorId);
   if (user) {
     // Invalidar cache forçando recálculo
     const newTotal = calculateUserLikes(authorId);
     user.totalLikes = newTotal;
-    console.log(`[USER-STATS] Total atualizado para ${authorId}: ${newTotal} likes`);
+    console.log(
+      `[USER-STATS] Total atualizado para ${authorId}: ${newTotal} likes`,
+    );
   }
 }
 
@@ -169,7 +188,7 @@ export function getUserData(userId: string) {
     };
     userData.set(userId, user);
   }
-  
+
   // Sempre recalcular likes em tempo real
   user.totalLikes = calculateUserLikes(userId);
   return user;

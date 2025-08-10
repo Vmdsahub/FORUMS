@@ -52,7 +52,11 @@ export default function UserHoverCard({
           setUserProfile(data);
         } else {
           const text = await response.text();
-          console.error("Erro ao buscar perfil do usuário:", response.status, text);
+          console.error(
+            "Erro ao buscar perfil do usuário:",
+            response.status,
+            text,
+          );
           // Fallback para dados básicos em caso de erro
           setUserProfile({
             points: 0,
@@ -97,7 +101,7 @@ export default function UserHoverCard({
       onMouseLeave={() => setShowCard(false)}
     >
       {children}
-      
+
       {showCard && (
         <div className="absolute z-50 left-0 top-full mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg p-4 animate-fade-in">
           {isLoading ? (
@@ -135,10 +139,10 @@ export default function UserHoverCard({
                         title={badge.description}
                       >
                         <div className="text-lg mb-1">
-                          {badge.icon.startsWith('http') ? (
-                            <img 
-                              src={badge.icon} 
-                              alt={badge.name} 
+                          {badge.icon.startsWith("http") ? (
+                            <img
+                              src={badge.icon}
+                              alt={badge.name}
                               className="w-6 h-6 object-contain"
                             />
                           ) : (
@@ -148,18 +152,21 @@ export default function UserHoverCard({
                         <span className="text-xs text-gray-600 text-center leading-tight">
                           {badge.name}
                         </span>
-                        
+
                         {/* Tooltip para descrição */}
                         <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-20">
                           {badge.description}
                         </div>
                       </div>
                     ))}
-                    
+
                     {/* Preencher espaços vazios para manter grid 3x3 */}
-                    {availableBadges.length < 9 && Array.from({ length: 9 - availableBadges.length }).map((_, index) => (
-                      <div key={`empty-${index}`} className="p-2"></div>
-                    ))}
+                    {availableBadges.length < 9 &&
+                      Array.from({ length: 9 - availableBadges.length }).map(
+                        (_, index) => (
+                          <div key={`empty-${index}`} className="p-2"></div>
+                        ),
+                      )}
                   </div>
                 </div>
               )}

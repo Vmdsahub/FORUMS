@@ -604,7 +604,7 @@ export const handleLikeTopic: RequestHandler = (req, res) => {
   }
 
   // Sincronizar com sistema de stats
-  const { onLikeToggled } = require('./user-stats-final');
+  const { onLikeToggled } = require("./user-stats-final");
   onLikeToggled(topicId, topic.authorId, likeResult.isLiked);
 
   res.json(likeResult);
@@ -632,7 +632,7 @@ export const handleLikeComment: RequestHandler = (req, res) => {
   }
 
   // Sincronizar com sistema de stats
-  const { onLikeToggled } = require('./user-stats-final');
+  const { onLikeToggled } = require("./user-stats-final");
   onLikeToggled(commentId, comment.authorId, likeResult.isLiked);
 
   res.json(likeResult);

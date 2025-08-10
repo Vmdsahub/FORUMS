@@ -32,7 +32,7 @@ export default function UserPointsBadge({
     const fetchUserStats = async () => {
       try {
         console.log(`[UserPointsBadge] Buscando stats para usuário: ${userId}`);
-        
+
         const response = await fetch(`/api/user/profile/${userId}`);
         if (response.ok) {
           const data = await response.json();

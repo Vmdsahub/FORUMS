@@ -70,12 +70,21 @@ function getPointsToNextBadge(points: number): number {
 }
 
 // Simular dados de usuários (isso deveria vir de um banco de dados)
-const userStats: Map<string, { points: number; badges: string[]; createdAt: string }> = new Map();
+const userStats: Map<
+  string,
+  { points: number; badges: string[]; createdAt: string }
+> = new Map();
 
 // Dados demo para usuários existentes baseados em atividade real
 const demoUserStats = new Map([
-  ["demo_user_123", { points: 85, badges: [], createdAt: "2024-01-15T10:30:00Z" }],
-  ["admin_vitoca_456", { points: 250, badges: [], createdAt: "2023-12-01T08:00:00Z" }],
+  [
+    "demo_user_123",
+    { points: 85, badges: [], createdAt: "2024-01-15T10:30:00Z" },
+  ],
+  [
+    "admin_vitoca_456",
+    { points: 250, badges: [], createdAt: "2023-12-01T08:00:00Z" },
+  ],
 ]);
 
 // Inicializar com dados demo
@@ -90,7 +99,7 @@ export const handleGetUserStats: RequestHandler = (req, res) => {
 
   const userId = req.user.id;
   let stats = userStats.get(userId);
-  
+
   // Se não existir, criar novo usuário com dados básicos
   if (!stats) {
     stats = {
@@ -122,13 +131,13 @@ export const handleGetAllBadges: RequestHandler = (req, res) => {
 // Rota para buscar dados de um usuário específico (para hover cards)
 export const handleGetUserProfile: RequestHandler = (req, res) => {
   const { userId } = req.params;
-  
+
   if (!userId) {
     return res.status(400).json({ message: "ID do usuário é obrigatório" });
   }
 
   let stats = userStats.get(userId);
-  
+
   // Se não existir, criar dados básicos
   if (!stats) {
     stats = {
@@ -151,7 +160,11 @@ export const handleGetUserProfile: RequestHandler = (req, res) => {
 // Helper para atualizar pontos (usado pelos outros módulos)
 export function updateUserPoints(userId: string, points: number) {
   if (!userStats.has(userId)) {
-    userStats.set(userId, { points: 0, badges: [], createdAt: new Date().toISOString() });
+    userStats.set(userId, {
+      points: 0,
+      badges: [],
+      createdAt: new Date().toISOString(),
+    });
   }
 
   const stats = userStats.get(userId)!;

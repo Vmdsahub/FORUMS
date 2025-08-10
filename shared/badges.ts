@@ -33,7 +33,9 @@ export function calculateUserBadges(likesReceived: number): Badge[] {
 }
 
 export function getNextBadge(likesReceived: number): Badge | null {
-  const nextBadge = BADGES.find((badge) => likesReceived < badge.requiredPoints);
+  const nextBadge = BADGES.find(
+    (badge) => likesReceived < badge.requiredPoints,
+  );
   return nextBadge || null;
 }
 
