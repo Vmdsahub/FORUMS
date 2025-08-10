@@ -86,9 +86,9 @@ export default function UserPointsBadge({
     <div className={`flex items-center ${classes.gap}`}>
       {showPoints && (
         <span
-          className={`${classes.text} text-amber-600 font-medium bg-amber-50 px-2 py-0.5 rounded-full`}
+          className={`${classes.text} text-red-600 font-medium bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1`}
         >
-          {userStats.points} pts
+          ❤️ {userStats.points}
         </span>
       )}
 
