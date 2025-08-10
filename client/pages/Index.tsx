@@ -17,7 +17,7 @@ import {
 import CreateTopicModal from "@/components/CreateTopicModal";
 
 interface NewsletterTopic {
-  id: number;
+  id: number | string;
   title: string;
   content: string;
   readTime: string;
