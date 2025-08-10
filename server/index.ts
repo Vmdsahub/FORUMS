@@ -111,7 +111,11 @@ export function createServer() {
   // Newsletter routes
   app.get("/api/newsletter/articles", handleGetArticles);
   app.post("/api/newsletter/articles", authenticateToken, handleCreateArticle);
-  app.delete("/api/newsletter/articles/:articleId", authenticateToken, handleDeleteArticle);
+  app.delete(
+    "/api/newsletter/articles/:articleId",
+    authenticateToken,
+    handleDeleteArticle,
+  );
 
   return app;
 }

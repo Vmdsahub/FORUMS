@@ -54,7 +54,7 @@ Este sistema substitui completamente os dados demo anteriores e agora funciona c
       createdAt: new Date().toISOString(),
       week: currentWeekInfo.week,
       startDate: currentWeekInfo.startDate,
-      endDate: currentWeekInfo.endDate
+      endDate: currentWeekInfo.endDate,
     };
 
     articles.set(exampleArticle.id, exampleArticle);
@@ -80,7 +80,10 @@ function getCurrentWeekInfo() {
   const startOfYear = new Date(currentYear, 0, 1);
 
   // Calculate week number based on ISO week date system
-  const dayOfYear = Math.floor((now.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000)) + 1;
+  const dayOfYear =
+    Math.floor(
+      (now.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000),
+    ) + 1;
   const weekNumber = Math.ceil(dayOfYear / 7);
 
   // Get start of current week (Monday)
@@ -95,8 +98,15 @@ function getCurrentWeekInfo() {
 
   return {
     week: weekNumber,
-    startDate: startOfWeek.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }),
-    endDate: endOfWeek.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
+    startDate: startOfWeek.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "short",
+    }),
+    endDate: endOfWeek.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }),
   };
 }
 
@@ -108,14 +118,17 @@ export const handleCreateArticle: RequestHandler = (req, res) => {
     }
 
     if (req.user.role !== "admin") {
-      return res.status(403).json({ message: "Apenas administradores podem criar artigos" });
+      return res
+        .status(403)
+        .json({ message: "Apenas administradores podem criar artigos" });
     }
 
     const { title, content, readTime } = createArticleSchema.parse(req.body);
-    
+
     const currentWeekInfo = getCurrentWeekInfo();
-    const articleId = Date.now().toString() + "_" + Math.random().toString(36).substring(2);
-    
+    const articleId =
+      Date.now().toString() + "_" + Math.random().toString(36).substring(2);
+
     const article: NewsletterArticle = {
       id: articleId,
       title,
@@ -126,14 +139,14 @@ export const handleCreateArticle: RequestHandler = (req, res) => {
       createdAt: new Date().toISOString(),
       week: currentWeekInfo.week,
       startDate: currentWeekInfo.startDate,
-      endDate: currentWeekInfo.endDate
+      endDate: currentWeekInfo.endDate,
     };
-    
+
     articles.set(articleId, article);
-    
+
     res.status(201).json({
       message: "Artigo criado com sucesso",
-      article
+      article,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -154,32 +167,37 @@ export const handleCreateArticle: RequestHandler = (req, res) => {
 export const handleGetArticles: RequestHandler = (req, res) => {
   try {
     const allArticles = Array.from(articles.values());
-    
+
     // Group articles by week
-    const articlesByWeek = allArticles.reduce((acc, article) => {
-      const weekKey = article.week;
-      if (!acc[weekKey]) {
-        acc[weekKey] = {
-          week: article.week,
-          startDate: article.startDate,
-          endDate: article.endDate,
-          topics: []
-        };
-      }
-      
-      acc[weekKey].topics.push({
-        id: article.id, // Keep original string ID for proper deletion
-        title: article.title,
-        content: article.content,
-        readTime: article.readTime
-      });
-      
-      return acc;
-    }, {} as Record<number, any>);
-    
+    const articlesByWeek = allArticles.reduce(
+      (acc, article) => {
+        const weekKey = article.week;
+        if (!acc[weekKey]) {
+          acc[weekKey] = {
+            week: article.week,
+            startDate: article.startDate,
+            endDate: article.endDate,
+            topics: [],
+          };
+        }
+
+        acc[weekKey].topics.push({
+          id: article.id, // Keep original string ID for proper deletion
+          title: article.title,
+          content: article.content,
+          readTime: article.readTime,
+        });
+
+        return acc;
+      },
+      {} as Record<number, any>,
+    );
+
     // Convert to array and sort by week (newest first)
-    const weeklyNewsletters = Object.values(articlesByWeek).sort((a, b) => b.week - a.week);
-    
+    const weeklyNewsletters = Object.values(articlesByWeek).sort(
+      (a, b) => b.week - a.week,
+    );
+
     res.json({ weeklyNewsletters });
   } catch (error) {
     console.error("Get articles error:", error);
@@ -197,17 +215,19 @@ export const handleDeleteArticle: RequestHandler = (req, res) => {
     }
 
     if (req.user.role !== "admin") {
-      return res.status(403).json({ message: "Apenas administradores podem excluir artigos" });
+      return res
+        .status(403)
+        .json({ message: "Apenas administradores podem excluir artigos" });
     }
 
     const { articleId } = req.params;
-    
+
     if (!articles.has(articleId)) {
       return res.status(404).json({ message: "Artigo não encontrado" });
     }
-    
+
     articles.delete(articleId);
-    
+
     res.json({ message: "Artigo excluído com sucesso" });
   } catch (error) {
     console.error("Delete article error:", error);

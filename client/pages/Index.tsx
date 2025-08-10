@@ -370,126 +370,140 @@ export default function Index(props: IndexProps) {
               </p>
             </div>
 
-            {currentNewsletter?.topics && currentNewsletter.topics.length > 0 ? (
+            {currentNewsletter?.topics &&
+            currentNewsletter.topics.length > 0 ? (
               currentNewsletter.topics.map((topic) => (
-              <div
-                key={topic.id}
-                className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 ease-in-out hover:-translate-y-1"
-              >
                 <div
-                  className="p-6 cursor-pointer"
-                  onClick={() => toggleNewsletterTopic(topic.id)}
+                  key={topic.id}
+                  className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-all duration-300 ease-in-out hover:-translate-y-1"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="text-sm text-gray-500 mb-2">
-                        #{topic.id.toString().padStart(2, "0")}
+                  <div
+                    className="p-6 cursor-pointer"
+                    onClick={() => toggleNewsletterTopic(topic.id)}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="text-sm text-gray-500 mb-2">
+                          #{topic.id.toString().padStart(2, "0")}
+                        </div>
+                        <h3 className="text-xl font-semibold text-black mb-3">
+                          {topic.title}
+                        </h3>
+                        <div className="text-sm text-gray-500">
+                          {topic.readTime} de leitura
+                        </div>
                       </div>
-                      <h3 className="text-xl font-semibold text-black mb-3">
-                        {topic.title}
-                      </h3>
-                      <div className="text-sm text-gray-500">
-                        {topic.readTime} de leitura
-                      </div>
-                    </div>
-                    <div
-                      className={`transform transition-transform duration-300 ease-in-out ${expandedNewsletter === topic.id ? "rotate-180" : ""}`}
-                    >
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        className="text-gray-400"
+                      <div
+                        className={`transform transition-transform duration-300 ease-in-out ${expandedNewsletter === topic.id ? "rotate-180" : ""}`}
                       >
-                        <path d="M5 7l5 5 5-5H5z" />
-                      </svg>
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                          className="text-gray-400"
+                        >
+                          <path d="M5 7l5 5 5-5H5z" />
+                        </svg>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {expandedNewsletter === topic.id && (
-                  <div className="border-t border-gray-100 bg-gray-50 animate-slide-up">
-                    <div className="p-6">
-                      <div className="prose max-w-none text-gray-700 leading-relaxed whitespace-pre-line mb-4">
-                        {topic.content}
-                      </div>
-                      {user && (
-                        <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
-                          <button
-                            onClick={() => {
-                              // Handle newsletter like - you can implement this later
-                              console.log(
-                                "Newsletter like clicked for topic",
-                                topic.id,
-                              );
-                            }}
-                            className="flex items-center gap-2 px-3 py-2 rounded-md bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
-                          >
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 16 16"
-                              fill="currentColor"
-                            >
-                              <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
-                            </svg>
-                            0
-                          </button>
+                  {expandedNewsletter === topic.id && (
+                    <div className="border-t border-gray-100 bg-gray-50 animate-slide-up">
+                      <div className="p-6">
+                        <div className="prose max-w-none text-gray-700 leading-relaxed whitespace-pre-line mb-4">
+                          {topic.content}
                         </div>
-                      )}
-                      {isAdmin && (
-                        <div className="px-6 py-3 border-t border-gray-200 bg-gray-50">
-                          <div className="flex gap-2">
+                        {user && (
+                          <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
                             <button
-                              onClick={async () => {
-                                if (
-                                  confirm(
-                                    `Tem certeza que deseja excluir o artigo "${topic.title}"?`,
-                                  )
-                                ) {
-                                  try {
-                                    const response = await fetch(
-                                      `/api/newsletter/articles/${topic.id}`,
-                                      {
-                                        method: "DELETE",
-                                        headers: {
-                                          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-                                        },
-                                      }
-                                    );
-
-                                    if (response.ok) {
-                                      toast.success("Artigo excluído com sucesso!");
-                                      if (onNewsletterRefresh) {
-                                        onNewsletterRefresh();
-                                      }
-                                    } else {
-                                      const error = await response.json();
-                                      toast.error(error.message || "Erro ao excluir artigo");
-                                    }
-                                  } catch (error) {
-                                    console.error("Error deleting article:", error);
-                                    toast.error("Erro ao excluir artigo");
-                                  }
-                                }
+                              onClick={() => {
+                                // Handle newsletter like - you can implement this later
+                                console.log(
+                                  "Newsletter like clicked for topic",
+                                  topic.id,
+                                );
                               }}
-                              className="text-red-600 hover:text-red-800 px-3 py-1 rounded text-sm hover:bg-red-50 transition-colors"
+                              className="flex items-center gap-2 px-3 py-2 rounded-md bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
                             >
-                              🗑️ Excluir Artigo
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                fill="currentColor"
+                              >
+                                <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
+                              </svg>
+                              0
                             </button>
                           </div>
-                        </div>
-                      )}
+                        )}
+                        {isAdmin && (
+                          <div className="px-6 py-3 border-t border-gray-200 bg-gray-50">
+                            <div className="flex gap-2">
+                              <button
+                                onClick={async () => {
+                                  if (
+                                    confirm(
+                                      `Tem certeza que deseja excluir o artigo "${topic.title}"?`,
+                                    )
+                                  ) {
+                                    try {
+                                      const response = await fetch(
+                                        `/api/newsletter/articles/${topic.id}`,
+                                        {
+                                          method: "DELETE",
+                                          headers: {
+                                            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+                                          },
+                                        },
+                                      );
+
+                                      if (response.ok) {
+                                        toast.success(
+                                          "Artigo excluído com sucesso!",
+                                        );
+                                        if (onNewsletterRefresh) {
+                                          onNewsletterRefresh();
+                                        }
+                                      } else {
+                                        const error = await response.json();
+                                        toast.error(
+                                          error.message ||
+                                            "Erro ao excluir artigo",
+                                        );
+                                      }
+                                    } catch (error) {
+                                      console.error(
+                                        "Error deleting article:",
+                                        error,
+                                      );
+                                      toast.error("Erro ao excluir artigo");
+                                    }
+                                  }
+                                }}
+                                className="text-red-600 hover:text-red-800 px-3 py-1 rounded text-sm hover:bg-red-50 transition-colors"
+                              >
+                                🗑️ Excluir Artigo
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
               ))
             ) : (
               <div className="bg-white rounded-lg border border-gray-200 p-12 text-center">
-                <p className="text-gray-500 text-lg mb-2">Nenhum artigo publicado esta semana</p>
-                <p className="text-gray-400 text-sm">Os administradores podem adicionar novos artigos à newsletter semanal.</p>
+                <p className="text-gray-500 text-lg mb-2">
+                  Nenhum artigo publicado esta semana
+                </p>
+                <p className="text-gray-400 text-sm">
+                  Os administradores podem adicionar novos artigos à newsletter
+                  semanal.
+                </p>
               </div>
             )}
 
