@@ -616,6 +616,10 @@ export const handleLikeTopic: RequestHandler = (req, res) => {
     // addPoints(topic.authorId, POINTS.RECEIVE_POST_LIKE); // Temporariamente desabilitado
   }
 
+  // Sincronizar com sistema de stats
+  const { onLikeToggled } = require('./user-stats');
+  onLikeToggled(topicId, topic.authorId, likeResult.isLiked);
+
   res.json(likeResult);
 };
 
