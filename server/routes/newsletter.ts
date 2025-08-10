@@ -117,7 +117,7 @@ export const handleGetArticles: RequestHandler = (req, res) => {
       }
       
       acc[weekKey].topics.push({
-        id: parseInt(article.id.split('_')[0]), // Use timestamp as numeric ID for frontend compatibility
+        id: article.id, // Keep original string ID for proper deletion
         title: article.title,
         content: article.content,
         readTime: article.readTime
