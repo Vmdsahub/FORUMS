@@ -181,8 +181,19 @@ function App() {
     setSelectedCategory(selectedCategory === categoryId ? null : categoryId);
   };
 
+  // Create dynamic categories with real stats
+  const getDynamicCategories = (): ForumCategory[] => {
+    return forumCategories.map(category => ({
+      ...category,
+      totalTopics: categoryStats[category.id]?.totalTopics || 0,
+      totalPosts: categoryStats[category.id]?.totalPosts || 0,
+      lastPost: categoryStats[category.id]?.lastPost || undefined,
+    }));
+  };
+
   const getSelectedCategoryData = () => {
-    return forumCategories.find((cat) => cat.id === selectedCategory);
+    const dynamicCategories = getDynamicCategories();
+    return dynamicCategories.find((cat) => cat.id === selectedCategory);
   };
 
   const navigateWeek = (direction: "prev" | "next") => {
