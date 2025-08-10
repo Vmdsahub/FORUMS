@@ -50,7 +50,7 @@ function CommentItem({
   const isTopicOwner = user?.id === topicAuthorId;
   const isCommentOwner = user?.id === comment.authorId;
   const canDelete = isAdmin || isTopicOwner || isCommentOwner;
-  const canReply = user; // Sem limite de profundidade
+  const canReply = !!user; // Sem limite de profundidade
 
   const handleReplyAdded = async () => {
     await onReloadComments();
