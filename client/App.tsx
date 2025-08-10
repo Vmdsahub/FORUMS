@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import Header from "@/components/Header";
+import { useCategoryStats } from "@/hooks/useCategoryStats";
 import TopicView from "@/pages/TopicView";
 import Index from "@/pages/Index";
 import Account from "@/pages/Account";
@@ -71,7 +72,7 @@ const weeklyNewsletters: WeeklyNewsletter[] = [] || [
         id: 2,
         title: "Cursor vs VS Code: Evolução dos Ambientes de Desenvolvimento",
         content:
-          "O mercado de editores de código está passando por uma transformação fundamental. Enquanto o VS Code consolida sua posição como padrão da indústria, o Cursor emerge como pioneiro na integração nativa de IA.\n\nAnálise comparativa:\n\nCursor - Inovação Orientada por IA:\n• Integração nativa com modelos de linguagem\n• Interface otimizada para desenvolvimento assistido\n• Sugestões contextuais inteligentes\n• Workflow de pair programming com IA\n\nVS Code - Estabilidade e Ecossistema:\n• Base instalada de 15+ milhões de desenvolvedores\n• Ecossistema maduro com 40k+ extensões\n• Performance battle-tested em projetos enterprise\n• Suporte oficial da Microsoft\n\nA decisão entre plataformas agora transcende funcionalidades básicas, focando na visão estratégica para o futuro do desenvolvimento de software.",
+          "O mercado de editores de código está passando por uma transformação fundamental. Enquanto o VS Code consolida sua posição como padrão da indústria, o Cursor emerge como pioneiro na integração nativa de IA.\n\nAnálise comparativa:\n\nCursor - Inovação Orientada por IA:\n• Integração nativa com modelos de linguagem\n�� Interface otimizada para desenvolvimento assistido\n• Sugestões contextuais inteligentes\n• Workflow de pair programming com IA\n\nVS Code - Estabilidade e Ecossistema:\n• Base instalada de 15+ milhões de desenvolvedores\n• Ecossistema maduro com 40k+ extensões\n• Performance battle-tested em projetos enterprise\n• Suporte oficial da Microsoft\n\nA decisão entre plataformas agora transcende funcionalidades básicas, focando na visão estratégica para o futuro do desenvolvimento de software.",
         readTime: "12 min",
       },
       {
