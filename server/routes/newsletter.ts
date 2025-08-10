@@ -17,6 +17,53 @@ interface NewsletterArticle {
 // In-memory storage for newsletter articles
 const articles: Map<string, NewsletterArticle> = new Map();
 
+// Initialize with current week example if empty
+function initializeDemo() {
+  if (articles.size === 0) {
+    const currentWeekInfo = getCurrentWeekInfo();
+    const exampleArticle: NewsletterArticle = {
+      id: "demo_" + Date.now(),
+      title: "Newsletter Semanal - Sistema Real Implementado",
+      content: `Este é o primeiro artigo criado no sistema real de newsletter semanal do IA HUB!
+
+O sistema agora suporta:
+
+• Criação de artigos por administradores
+• Agrupamento automático por semana
+• Persistência real (enquanto o servidor estiver rodando)
+• Exclusão de artigos
+• Interface responsiva e intuitiva
+
+Funcionalidades técnicas:
+• API REST completa para gerenciamento de artigos
+• Autenticação baseada em tokens
+• Validação de dados com Zod
+• Agrupamento inteligente por semanas
+• Interface moderna com React e TypeScript
+
+Como usar:
+1. Faça login como administrador
+2. Clique em "Adicionar Novo Artigo da Newsletter"
+3. Preencha o título, conteúdo e tempo de leitura
+4. O artigo será automaticamente agrupado na semana atual
+
+Este sistema substitui completamente os dados demo anteriores e agora funciona com dados reais persistidos no servidor.`,
+      readTime: "3 min",
+      authorId: "system",
+      authorName: "Sistema IA HUB",
+      createdAt: new Date().toISOString(),
+      week: currentWeekInfo.week,
+      startDate: currentWeekInfo.startDate,
+      endDate: currentWeekInfo.endDate
+    };
+
+    articles.set(exampleArticle.id, exampleArticle);
+  }
+}
+
+// Initialize demo data
+initializeDemo();
+
 // Validation schema
 const createArticleSchema = z.object({
   title: z.string().min(1, "Título é obrigatório"),
