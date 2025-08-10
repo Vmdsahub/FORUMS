@@ -772,8 +772,11 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
         categoryStats[categoryId].lastPost = {
           title: lastTopic.title,
           author: lastTopic.author,
-          date: lastTopic.lastPost.date,
-          time: lastTopic.lastPost.time,
+          date: lastTopic.lastPost?.date || new Date().toLocaleDateString("pt-BR"),
+          time: lastTopic.lastPost?.time || new Date().toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
         };
       }
     });
