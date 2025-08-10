@@ -66,7 +66,7 @@ export const handleGetUserStats: RequestHandler = (req, res) => {
     badges,
     nextBadge,
     pointsToNext,
-    allBadges: [SINGLE_BADGE],
+    allBadges: BADGES,
     createdAt: user.createdAt,
   });
 };
