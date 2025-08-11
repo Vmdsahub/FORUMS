@@ -106,6 +106,9 @@ export default function Index(props: IndexProps) {
 
   // Estados para modais admin
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [iconModalOpen, setIconModalOpen] = useState(false);
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
+  const [customIcons, setCustomIcons] = useState<Record<string, string>>({});
   const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
   const [newCategory, setNewCategory] = useState({ name: "", description: "" });
   const [newNewsletter, setNewNewsletter] = useState({
