@@ -278,6 +278,7 @@ export default function CommentSystemNew({
   topicAuthorId,
 }: CommentSystemProps) {
   const { user } = useAuth();
+  const { showBadgeNotification } = useBadgeNotification();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -325,7 +326,7 @@ export default function CommentSystemNew({
           `[COMMENTS] Carregados ${data.comments?.length || 0} comentários`,
         );
       } else {
-        console.error(`Erro na requisiç��o: ${response.status}`);
+        console.error(`Erro na requisição: ${response.status}`);
         if (retryCount < 2) {
           console.log(`[COMMENTS] Tentando novamente em 2s...`);
           setTimeout(() => loadComments(retryCount + 1), 2000);
