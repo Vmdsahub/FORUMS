@@ -214,7 +214,11 @@ export const likeComment: RequestHandler = (req, res) => {
     if (!wasLiked) {
       // Só verifica quando adiciona like
       const currentLikes = getCommentLikesForUser(comment.authorId);
+      console.log(`[BADGES] Usuário ${comment.authorId}: ${previousLikes} -> ${currentLikes} likes`);
       newBadge = checkForNewBadge(previousLikes, currentLikes);
+      if (newBadge) {
+        console.log(`[BADGES] Novo emblema conquistado: ${newBadge.name}`);
+      }
     }
 
     res.json({
