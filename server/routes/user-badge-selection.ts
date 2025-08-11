@@ -47,6 +47,18 @@ export const handleGetBadgeSelection: RequestHandler = (req, res) => {
   res.json({ selectedBadges });
 };
 
+// Rota para buscar seleção de emblemas de qualquer usuário (para hover cards)
+export const handleGetUserBadgeSelection: RequestHandler = (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ message: "ID do usuário é obrigatório" });
+  }
+
+  const selectedBadges = userBadgeSelections.get(userId) || [];
+  res.json({ selectedBadges });
+};
+
 // Função para obter seleção de emblemas de um usuário (para outros módulos)
 export function getUserBadgeSelection(userId: string): string[] {
   return userBadgeSelections.get(userId) || [];
