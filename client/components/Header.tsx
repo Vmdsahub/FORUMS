@@ -243,7 +243,13 @@ export default function Header({ activeSection }: HeaderProps) {
           {user && (
             <div ref={notificationRef} className="relative">
               <button
-                onClick={() => setShowNotifications(!showNotifications)}
+                onClick={() => {
+                  const isOpening = !showNotifications;
+                  setShowNotifications(isOpening);
+                  if (isOpening && unreadCount > 0) {
+                    markAllAsRead();
+                  }
+                }}
                 className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
                 title="Notificações"
               >
