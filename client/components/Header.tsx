@@ -292,8 +292,16 @@ export default function Header({ activeSection }: HeaderProps) {
                           >
                             <div className="flex items-start gap-2 flex-1">
                               {notification.type === 'badge' && (
-                                <div className="text-yellow-500 mt-0.5">
-                                  🏆
+                                <div className="flex-shrink-0 w-8 h-8 mt-0.5">
+                                  {notification.icon ? (
+                                    <img
+                                      src={notification.icon}
+                                      alt="Emblema"
+                                      className="w-full h-full object-contain"
+                                    />
+                                  ) : (
+                                    <div className="text-yellow-500">🏆</div>
+                                  )}
                                 </div>
                               )}
                               {notification.type === 'quote' && (
