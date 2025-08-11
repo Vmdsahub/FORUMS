@@ -70,18 +70,15 @@ export default function UserPointsBadge({
 
   const sizeClasses = {
     sm: {
-      text: "text-xs",
-      badge: "w-4 h-4",
+      text: "text-sm",
       gap: "gap-1",
     },
     md: {
-      text: "text-sm",
-      badge: "w-5 h-5",
+      text: "text-base",
       gap: "gap-2",
     },
     lg: {
-      text: "text-base",
-      badge: "w-6 h-6",
+      text: "text-lg",
       gap: "gap-2",
     },
   };
