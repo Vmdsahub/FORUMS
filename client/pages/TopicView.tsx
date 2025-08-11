@@ -77,17 +77,32 @@ export default function TopicView() {
   }, [user]);
 
   const fetchTopic = async () => {
+    console.log("[TOPIC] Fetching topic with ID:", topicId);
+
+    if (!topicId) {
+      console.error("[TOPIC] No topicId provided");
+      toast.error("ID do tópico não encontrado");
+      navigate("/");
+      setIsLoading(false);
+      return;
+    }
+
     try {
+      console.log("[TOPIC] Making request to:", `/api/topics/${topicId}`);
       const response = await fetch(`/api/topics/${topicId}`);
+      console.log("[TOPIC] Response status:", response.status);
+
       if (response.ok) {
         const data = await response.json();
+        console.log("[TOPIC] Topic data received:", data);
         setTopic(data);
       } else {
+        console.error("[TOPIC] Response not OK:", response.status);
         toast.error("Tópico não encontrado");
         navigate("/");
       }
     } catch (error) {
-      console.error("Error fetching topic:", error);
+      console.error("[TOPIC] Error fetching topic:", error);
       toast.error("Erro ao carregar tópico");
     } finally {
       setIsLoading(false);
