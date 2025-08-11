@@ -115,6 +115,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     name: string,
     email: string,
     password: string,
+    phone: string,
+    birthDate: string,
+    acceptTerms: boolean,
+    acceptNewsletter: boolean,
     captcha: string,
   ): Promise<boolean> => {
     console.log("[REGISTER] Starting registration...", { name, email });
