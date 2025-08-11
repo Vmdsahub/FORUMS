@@ -29,6 +29,10 @@ import {
   handleGetUserProfile,
 } from "./routes/user-stats-final";
 import {
+  handleSaveBadgeSelection,
+  handleGetBadgeSelection,
+} from "./routes/user-badge-selection";
+import {
   getComments,
   createComment,
   likeComment,
