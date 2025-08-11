@@ -758,7 +758,7 @@ export default function Header({ activeSection }: HeaderProps) {
                     <Button
                       type="submit"
                       className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium"
-                      disabled={isLoading || !registerCaptchaValid}
+                      disabled={isLoading || !registerCaptchaValid || !registerAcceptTerms}
                     >
                       {isLoading ? "Criando conta..." : "Criar Conta"}
                     </Button>
