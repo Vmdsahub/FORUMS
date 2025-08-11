@@ -983,7 +983,7 @@ export default function Index(props: IndexProps) {
                         <div className="col-span-6">
                           <div className="flex items-start gap-4">
                             <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0 overflow-hidden">
-                              {topic.topicAvatarUrl ? (
+                              {topic.topicAvatarUrl && topic.topicAvatarUrl.trim() !== "" ? (
                                 <img
                                   src={topic.topicAvatarUrl}
                                   alt={topic.author}
