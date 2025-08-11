@@ -164,7 +164,6 @@ export const handleLogin: RequestHandler = (req, res) => {
 };
 
 export const handleRegister: RequestHandler = (req, res) => {
-  console.log("[REGISTER] Handler called with body:", req.body);
   try {
     const {
       name,
