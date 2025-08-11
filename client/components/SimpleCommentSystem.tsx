@@ -152,7 +152,7 @@ function CommentItem({
 
 export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCommentSystemProps) {
   const { user } = useAuth();
-  const { showBadgeNotification } = useBadgeNotification();
+  const { addNotification } = useNotifications();
   const [comments, setComments] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [newComment, setNewComment] = useState("");
