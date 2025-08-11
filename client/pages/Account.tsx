@@ -85,6 +85,11 @@ export default function Account() {
         setUserBadges(userStatsData.badges || []);
         setAvailableBadges(allBadgesData.badges || []);
 
+        // Definir data real de criação da conta
+        if (userStatsData.createdAt) {
+          setMemberSince(userStatsData.createdAt);
+        }
+
         // Usar seleção salva ou todos os badges conquistados como fallback
         if (selectionResponse.ok) {
           const selectionData = await selectionResponse.json();
