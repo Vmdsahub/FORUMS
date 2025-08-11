@@ -474,7 +474,7 @@ export default function TopicView() {
         </div>
 
         {/* Novo Sistema de Comentários */}
-        <CommentSystemNew topicId={topic.id} topicAuthorId={topic.authorId} />
+        <SimpleCommentSystem topicId={topic.id} topicAuthorId={topic.authorId} />
       </div>
     </div>
   );
