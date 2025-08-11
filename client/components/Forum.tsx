@@ -167,6 +167,43 @@ export default function Forum() {
     }
   }, [selectedCategory]);
 
+  // Função para lidar com upload de ícone
+  const handleIconUpload = async (file: File, categoryId: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setCustomIcons(prev => ({
+          ...prev,
+          [categoryId]: result.url
+        }));
+        setIconModalOpen(false);
+        setEditingCategoryId(null);
+      }
+    } catch (error) {
+      console.error('Erro ao fazer upload do ícone:', error);
+    }
+  };
+
+  // Função para quando admin clica no ícone
+  const handleIconClick = (categoryId: string, event: React.MouseEvent) => {
+    if (user?.name === "Vitoca" && isAdmin) {
+      event.stopPropagation();
+      setEditingCategoryId(categoryId);
+      setIconModalOpen(true);
+    }
+  };
+
   if (selectedCategory) {
     const category = forumCategories.find((c) => c.id === selectedCategory);
     if (!category) return null;
