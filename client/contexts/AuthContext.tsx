@@ -113,9 +113,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     password: string,
     captcha: string,
   ): Promise<boolean> => {
-    console.log("Starting registration request...", { name, email, captcha });
-    setIsLoading(true);
     try {
+      console.log("Starting registration request...", { name, email, captcha });
+      setIsLoading(true);
+
+      try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
@@ -185,8 +187,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.error(`Erro inesperado: ${error?.message || "Tente novamente."}`);
       }
       return false;
-    } finally {
+      } finally {
+        setIsLoading(false);
+      }
+    } catch (outerError: any) {
+      console.error("[REGISTER] Outer error wrapper caught:", outerError);
       setIsLoading(false);
+      setTimeout(() => {
+        toast.error("Erro crítico no cadastro. Recarregue a página.");
+      }, 0);
+      return false;
     }
   };
 
