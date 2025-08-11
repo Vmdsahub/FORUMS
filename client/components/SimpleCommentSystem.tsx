@@ -161,7 +161,7 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [quotedComment, setQuotedComment] = useState<Comment | null>(null);
-  const [showAllComments, setShowAllComments] = useState(false);
+  const [commentsToShow, setCommentsToShow] = useState(8);
 
   // Carregar comentários
   const loadComments = async () => {
