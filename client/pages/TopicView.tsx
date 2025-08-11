@@ -387,11 +387,6 @@ export default function TopicView() {
                             {topic.author}
                           </span>
                         </span>
-                        <UserPointsBadge
-                          userId={topic.authorId}
-                          size="sm"
-                          showBadges={true}
-                        />
                       </div>
                     </div>
                   </UserHoverCard>
