@@ -234,8 +234,7 @@ function App() {
 
   return (
     <NotificationProvider>
-      <BadgeNotificationProvider>
-        <BrowserRouter>
+      <BrowserRouter>
         <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
           <Header activeSection={activeSection} />
           <Routes>
@@ -269,8 +268,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
-        </BrowserRouter>
-      </BadgeNotificationProvider>
+      </BrowserRouter>
     </NotificationProvider>
   );
 }
