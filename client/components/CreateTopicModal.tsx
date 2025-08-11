@@ -97,9 +97,17 @@ export default function CreateTopicModal({
 
     setIsSubmitting(true);
     try {
+      let avatarUrl = null;
+
+      // Upload do avatar se foi selecionado
+      if (avatarFile) {
+        avatarUrl = await uploadAvatar(avatarFile);
+      }
+
       const topicData = {
         ...formData,
         category: currentCategory.id,
+        avatarUrl,
       };
 
       const response = await fetch("/api/topics", {
