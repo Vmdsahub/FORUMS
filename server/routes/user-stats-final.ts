@@ -199,12 +199,18 @@ export function checkForNewBadge(previousLikes: number, currentLikes: number) {
   const previousBadges = calculateUserBadges(previousLikes);
   const currentBadges = calculateUserBadges(currentLikes);
 
+  console.log(`[BADGES DEBUG] Likes: ${previousLikes} -> ${currentLikes}`);
+  console.log(`[BADGES DEBUG] Emblemas anteriores: ${previousBadges.length}, atuais: ${currentBadges.length}`);
+  console.log(`[BADGES DEBUG] Requirido para emblema: ${BADGE.requiredPoints}`);
+
   // Verificar se há novo emblema
   if (currentBadges.length > previousBadges.length) {
-    // Retornar o novo emblema
-    return currentBadges[currentBadges.length - 1];
+    const newBadge = currentBadges[currentBadges.length - 1];
+    console.log(`[BADGES DEBUG] Novo emblema conquistado: ${newBadge.name}`);
+    return newBadge;
   }
 
+  console.log(`[BADGES DEBUG] Nenhum novo emblema`);
   return null;
 }
 
