@@ -190,8 +190,8 @@ export const createComment: RequestHandler = (req, res) => {
 
     // Notificar usuário quotado (se houver)
     if (quotedComment && quotedComment.authorId !== req.user.id) {
-      console.log(`[NOTIFICATIONS] Usuário ${quotedComment.author} (${quotedComment.authorId}) foi quotado por ${req.user.name}`);
-      // Aqui seria implementado o sistema de notificações (email, push, etc.)
+      console.log(`[NOTIFICATIONS] Usuário ${quotedComment.author} foi quotado por ${req.user.name}`);
+      // TODO: Implementar notificação em tempo real quando sistema de websocket for adicionado
     }
 
     res.status(201).json(newComment);
