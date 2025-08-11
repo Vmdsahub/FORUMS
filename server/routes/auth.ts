@@ -58,7 +58,13 @@ const loginSchema = z.object({
 const registerSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   email: z.string().email("Email inválido"),
-  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+  password: z.string()
+    .min(8, "Senha deve ter pelo menos 8 caracteres")
+    .regex(/[A-Z]/, "Senha deve conter pelo menos uma letra maiúscula"),
+  phone: z.string().min(10, "Telefone deve ter pelo menos 10 dígitos"),
+  birthDate: z.string().min(1, "Data de nascimento é obrigatória"),
+  acceptTerms: z.boolean().refine((val) => val === true, "Você deve aceitar os termos de condições"),
+  acceptNewsletter: z.boolean().optional(),
   captcha: z.string().min(1, "Captcha é obrigatório"),
 });
 
