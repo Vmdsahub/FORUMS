@@ -202,12 +202,24 @@ export const likeComment: RequestHandler = (req, res) => {
 
     // Sincronizar com sistema de stats
     const comment = comments.get(commentId)!;
-    const { onLikeToggled } = require("./user-stats-final");
+    const { onLikeToggled, checkForNewBadge } = require("./user-stats-final");
+
+    // Verificar estado anterior dos emblemas
+    const previousLikes = getCommentLikesForUser(comment.authorId);
+
     onLikeToggled(commentId, comment.authorId, !wasLiked);
+
+    // Verificar se o usuário ganhou um novo emblema
+    let newBadge = null;
+    if (!wasLiked) { // Só verifica quando adiciona like
+      const currentLikes = getCommentLikesForUser(comment.authorId);
+      newBadge = checkForNewBadge(previousLikes, currentLikes);
+    }
 
     res.json({
       likes: likes.size,
       isLiked: !wasLiked,
+      newBadge: newBadge, // Incluir info do novo emblema se houver
     });
   } catch (error) {
     console.error("[COMMENTS] Erro ao curtir comentário:", error);
