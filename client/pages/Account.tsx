@@ -380,11 +380,7 @@ export default function Account() {
                     <div
                       key={badge.id}
                       className={`relative group p-2 transition-all cursor-pointer ${
-                        isSelected
-                          ? "bg-blue-50 rounded-lg"
-                          : canSelect
-                            ? "hover:bg-gray-50 rounded-lg"
-                            : "opacity-50 cursor-not-allowed"
+                        !canSelect && !isSelected ? "opacity-50 cursor-not-allowed" : ""
                       }`}
                       onClick={() => {
                         if (!canSelect && !isSelected) return;
