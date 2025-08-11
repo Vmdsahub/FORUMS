@@ -33,6 +33,7 @@ const commentLikes = new Map<string, Set<string>>(); // commentId -> userIds
 const createCommentSchema = z.object({
   content: z.string().min(1).max(1000),
   parentId: z.string().nullable().optional(),
+  quotedCommentId: z.string().nullable().optional(),
 });
 
 // Helpers
