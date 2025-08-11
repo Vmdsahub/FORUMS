@@ -475,7 +475,7 @@ export const handleCreateTopic: RequestHandler = (req, res) => {
       author: req.user.name,
       authorId: req.user.id,
       authorAvatar: getUserInitials(req.user.name),
-      topicAvatarUrl: data.avatarUrl,
+      topicAvatarUrl: data.avatarUrl || undefined,
       category: data.category,
       replies: 0,
       views: 0,
