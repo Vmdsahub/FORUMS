@@ -572,27 +572,28 @@ export default function Header({ activeSection }: HeaderProps) {
                           registerCaptcha,
                         });
 
-                        try {
-                          const success = await register(
-                            registerName,
-                            registerEmail,
-                            registerPassword,
-                            registerCaptcha,
-                          );
+                        console.log("[DEBUG] About to call register function");
 
-                          if (success) {
-                            setIsRegisterOpen(false);
-                            setRegisterName("");
-                            setRegisterEmail("");
-                            setRegisterPassword("");
-                            setRegisterCaptcha("");
-                            setRegisterCaptchaValid(false);
-                          }
-                        } catch (registerError) {
-                          console.error("[REGISTER FORM] Register function error:", registerError);
-                          setTimeout(() => {
-                            toast.error("Erro no cadastro. Tente novamente.");
-                          }, 0);
+                        const success = await register(
+                          registerName,
+                          registerEmail,
+                          registerPassword,
+                          registerCaptcha,
+                        ).catch((err) => {
+                          console.error("[REGISTER FORM] Register call failed:", err);
+                          toast.error("Erro no cadastro. Tente novamente.");
+                          return false;
+                        });
+
+                        console.log("[DEBUG] Register call completed, success:", success);
+
+                        if (success) {
+                          setIsRegisterOpen(false);
+                          setRegisterName("");
+                          setRegisterEmail("");
+                          setRegisterPassword("");
+                          setRegisterCaptcha("");
+                          setRegisterCaptchaValid(false);
                         }
                       } catch (formError) {
                         console.error("[REGISTER FORM] Form submission error:", formError);
