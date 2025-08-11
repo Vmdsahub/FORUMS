@@ -11,6 +11,10 @@ interface AuthContextType {
     name: string,
     email: string,
     password: string,
+    phone: string,
+    birthDate: string,
+    acceptTerms: boolean,
+    acceptNewsletter: boolean,
     captcha: string,
   ) => Promise<boolean>;
   logout: () => void;
