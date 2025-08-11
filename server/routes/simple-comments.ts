@@ -375,10 +375,10 @@ export function initializeDemo() {
       "user_pedro_101",
       "user_ana_202",
     ]),
-  ); // 4 likes
-  commentLikes.set("demo2", new Set(["demo_user_123", "user_pedro_101"])); // +2 likes para João = 6 total
+  ); // 4 likes para comentário do João (demo1)
+  commentLikes.set("demo4", new Set(["user_carlos", "user_pedro_101"])); // +2 likes para segundo comentário do João (demo4) = 6 total
 
-  // admin_vitoca_456 (Admin) recebe 8 likes total
+  // admin_vitoca_456 (Admin) recebe 4 likes total
   commentLikes.set(
     "demo3",
     new Set([
@@ -387,7 +387,7 @@ export function initializeDemo() {
       "user_pedro_101",
       "user_ana_202",
     ]),
-  ); // 4 likes para Admin
+  ); // 4 likes para comentário do Admin (demo3)
   commentLikes.set(
     "demo4",
     new Set([
