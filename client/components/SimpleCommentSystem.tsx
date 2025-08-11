@@ -202,7 +202,11 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
 
         // Verificar se o usuário ganhou um novo emblema
         if (data.newBadge) {
-          addNotification(`🎉 Parabéns! Você conquistou o emblema "${data.newBadge.name}"!`, 'badge');
+          addNotification(
+            `Parabéns! Você conquistou o emblema "${data.newBadge.name}": ${data.newBadge.description}`,
+            'badge',
+            data.newBadge.icon
+          );
         }
 
         await loadComments();
