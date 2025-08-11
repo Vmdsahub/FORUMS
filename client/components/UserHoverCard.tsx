@@ -15,6 +15,10 @@ interface UserProfileData {
   createdAt: string;
 }
 
+interface BadgeSelectionData {
+  selectedBadges: string[];
+}
+
 interface UserHoverCardProps {
   userId: string;
   userName: string;
