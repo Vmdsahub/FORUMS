@@ -233,7 +233,7 @@ function CommentContent({
               onClick={onToggleReplies}
               className="text-xs text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
             >
-              Continuar discussão ({actualRepliesCount})
+              {showReplies ? "Retrair discussão" : "Continuar discussão"} ({actualRepliesCount})
             </button>
           )}
 
