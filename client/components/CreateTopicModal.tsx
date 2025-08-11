@@ -201,6 +201,41 @@ export default function CreateTopicModal({
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="avatar" className="text-gray-900 font-medium">
+              Avatar do Tópico (Opcional)
+            </Label>
+            <div className="flex items-center gap-4">
+              {avatarPreview ? (
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gray-300">
+                  <img
+                    src={avatarPreview}
+                    alt="Preview do avatar"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-gray-200 border-2 border-gray-300 flex items-center justify-center">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="text-gray-400">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  </svg>
+                </div>
+              )}
+              <div className="flex-1">
+                <Input
+                  id="avatar"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Selecione uma imagem para o avatar do tópico. Será exibida em formato circular.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="description" className="text-gray-900 font-medium">
               Descrição
             </Label>
