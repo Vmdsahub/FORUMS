@@ -392,7 +392,8 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
         </div>
       ) : (
         <div className="space-y-4">
-          {comments.map((comment) => (
+          {/* Mostrar apenas 6 comentários inicialmente */}
+          {(showAllComments ? comments : comments.slice(0, 6)).map((comment) => (
             <CommentItem
               key={comment.id}
               comment={comment}
@@ -402,6 +403,36 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
               onQuote={handleQuote}
             />
           ))}
+
+          {/* Botão Ver mais */}
+          {comments.length > 6 && !showAllComments && (
+            <div className="text-center py-4">
+              <button
+                onClick={() => setShowAllComments(true)}
+                className="flex items-center gap-2 mx-auto text-gray-600 hover:text-black transition-colors text-sm"
+              >
+                Ver mais ({comments.length - 6} comentários restantes)
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M7.41 8.84L12 13.42l4.59-4.58L18 10.25l-6 6-6-6z" />
+                </svg>
+              </button>
+            </div>
+          )}
+
+          {/* Botão Ver menos */}
+          {showAllComments && comments.length > 6 && (
+            <div className="text-center py-4">
+              <button
+                onClick={() => setShowAllComments(false)}
+                className="flex items-center gap-2 mx-auto text-gray-600 hover:text-black transition-colors text-sm"
+              >
+                Ver menos
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z" />
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
