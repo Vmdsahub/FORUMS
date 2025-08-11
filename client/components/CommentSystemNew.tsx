@@ -14,23 +14,24 @@ interface Comment {
   authorId: string;
   authorAvatar: string;
   topicId: string;
-  parentId: string | null;
   createdAt: string;
   likes: number;
   isLiked: boolean;
-  replies?: Comment[];
-  repliesCount?: number;
+  quotedComment?: {
+    id: string;
+    content: string;
+    author: string;
+    authorId: string;
+  };
 }
 
 interface CommentItemProps {
   comment: Comment;
-  depth: number;
   topicId: string;
   topicAuthorId: string;
-  onReply: (parentId: string, content: string) => Promise<void>;
   onLike: (commentId: string) => Promise<void>;
   onDelete: (commentId: string) => Promise<void>;
-  onReloadComments: () => Promise<void>;
+  onQuote: (comment: Comment) => void;
 }
 
 // COMPONENTE INDIVIDUAL DE COMENTÁRIO
