@@ -22,6 +22,7 @@ export interface Topic {
   author: string;
   authorId: string;
   authorAvatar: string;
+  topicAvatarUrl?: string;
   replies: number;
   views: number;
   likes: number;
