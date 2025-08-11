@@ -122,6 +122,13 @@ export const handleLogin: RequestHandler = (req, res) => {
       } as ErrorResponse);
     }
 
+    // Check if email is confirmed
+    if (!user.emailConfirmed) {
+      return res.status(403).json({
+        message: "Confirme seu email antes de fazer login. Verifique sua caixa de entrada.",
+      } as ErrorResponse);
+    }
+
     // Generate token
     const token = generateToken();
     tokens.set(token, user.id);
