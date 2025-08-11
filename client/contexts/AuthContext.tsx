@@ -137,27 +137,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.success("Conta criada com sucesso!");
         return true;
       } else {
+        console.log("[REGISTER] Non-OK response received");
         let errorMessage = "Erro ao criar conta";
+
         try {
           console.log("[REGISTER] Error response status:", response.status);
-          console.log("[REGISTER] Error response headers:", response.headers);
-          const errorText = await response.text();
-          console.log("[REGISTER] Error response text:", errorText);
+          console.log("[REGISTER] Error response statusText:", response.statusText);
 
-          try {
-            const error: ErrorResponse = JSON.parse(errorText);
-            errorMessage = error.message || errorMessage;
-            console.log("[REGISTER] Parsed error message:", errorMessage);
-          } catch (parseError) {
-            console.error("[REGISTER] Failed to parse error JSON:", parseError);
-            errorMessage = errorText || errorMessage;
+          // Check if response has content
+          const contentType = response.headers.get('content-type');
+          console.log("[REGISTER] Content-Type:", contentType);
+
+          if (contentType && contentType.includes('application/json')) {
+            const errorData = await response.json();
+            console.log("[REGISTER] Error data:", errorData);
+            errorMessage = errorData?.message || `Erro HTTP ${response.status}`;
+          } else {
+            const errorText = await response.text();
+            console.log("[REGISTER] Error text:", errorText);
+            errorMessage = errorText || `Erro HTTP ${response.status}`;
           }
-        } catch (jsonError) {
-          console.error("[REGISTER] Error reading response:", jsonError);
+        } catch (responseError) {
+          console.error("[REGISTER] Error processing response:", responseError);
+          errorMessage = `Erro HTTP ${response.status}: ${response.statusText}`;
         }
 
-        console.log("[REGISTER] Final error message:", errorMessage);
-        toast.error(errorMessage);
+        console.log("[REGISTER] Showing toast with message:", errorMessage);
+
+        // Use setTimeout to ensure toast is called in next tick
+        setTimeout(() => {
+          toast.error(errorMessage);
+        }, 0);
+
         return false;
       }
     } catch (error: any) {
