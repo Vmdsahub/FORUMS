@@ -398,6 +398,13 @@ export default function Account() {
                     </div>
                   );
                 })}
+
+                {/* Preencher espaços vazios para manter grid 3x3 quando há emblemas */}
+                {userBadges.length > 0 && userBadges.length < 9 &&
+                  Array.from({ length: 9 - userBadges.length }).map((_, index) => (
+                    <div key={`empty-${index}`} className="p-2"></div>
+                  ))
+                }
               </div>
 
               <div className="text-center">
