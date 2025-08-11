@@ -199,16 +199,10 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
 
       if (response.ok) {
         const data = await response.json();
-        console.log("[DEBUG] Like response:", data);
-        console.log("[DEBUG] newBadge field:", data.newBadge);
-        console.log("[DEBUG] typeof newBadge:", typeof data.newBadge);
 
         // Verificar se o usuário ganhou um novo emblema
         if (data.newBadge) {
-          console.log("[DEBUG] New badge earned:", data.newBadge);
           addNotification(`🎉 Parabéns! Você conquistou o emblema "${data.newBadge.name}"!`, 'badge');
-        } else {
-          console.log("[DEBUG] No new badge in response");
         }
 
         await loadComments();
