@@ -416,7 +416,7 @@ export default function Header({ activeSection }: HeaderProps) {
                       >
                         <path d="M8 7c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 1c-1.5 0-4 .8-4 2.5V12h8v-1.5c0-1.7-2.5-2.5-4-2.5z" />
                       </svg>
-                      <span className="text-gray-700">Central do Usuário</span>
+                      <span className="text-gray-700">Central do Usu��rio</span>
                     </button>
                     <hr className="my-2" />
                     <button
@@ -551,37 +551,45 @@ export default function Header({ activeSection }: HeaderProps) {
                   <form
                     onSubmit={async (e) => {
                       e.preventDefault();
-                      if (isLoading) {
-                        console.log(
-                          "Already loading, preventing duplicate submission",
-                        );
-                        return;
-                      }
-                      if (!registerCaptchaValid) {
-                        toast.error(
-                          "Por favor, complete a verificação de segurança",
-                        );
-                        return;
-                      }
 
-                      console.log("Submitting registration form...", {
-                        registerName,
-                        registerEmail,
-                        registerCaptcha,
-                      });
-                      const success = await register(
-                        registerName,
-                        registerEmail,
-                        registerPassword,
-                        registerCaptcha,
-                      );
-                      if (success) {
-                        setIsRegisterOpen(false);
-                        setRegisterName("");
-                        setRegisterEmail("");
-                        setRegisterPassword("");
-                        setRegisterCaptcha("");
-                        setRegisterCaptchaValid(false);
+                      try {
+                        if (isLoading) {
+                          console.log(
+                            "Already loading, preventing duplicate submission",
+                          );
+                          return;
+                        }
+                        if (!registerCaptchaValid) {
+                          toast.error(
+                            "Por favor, complete a verificação de segurança",
+                          );
+                          return;
+                        }
+
+                        console.log("Submitting registration form...", {
+                          registerName,
+                          registerEmail,
+                          registerCaptcha,
+                        });
+
+                        const success = await register(
+                          registerName,
+                          registerEmail,
+                          registerPassword,
+                          registerCaptcha,
+                        );
+
+                        if (success) {
+                          setIsRegisterOpen(false);
+                          setRegisterName("");
+                          setRegisterEmail("");
+                          setRegisterPassword("");
+                          setRegisterCaptcha("");
+                          setRegisterCaptchaValid(false);
+                        }
+                      } catch (formError) {
+                        console.error("[REGISTER FORM] Form submission error:", formError);
+                        toast.error("Erro no formulário. Tente novamente.");
                       }
                     }}
                     className="space-y-4 py-4"
