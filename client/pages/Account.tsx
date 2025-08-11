@@ -71,6 +71,13 @@ export default function Account() {
       // Buscar todos os badges disponíveis
       const allBadgesResponse = await fetch("/api/badges");
 
+      // Buscar seleção atual de badges
+      const selectionResponse = await fetch("/api/user/badge-selection", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
+
       if (userStatsResponse.ok && allBadgesResponse.ok) {
         const userStatsData = await userStatsResponse.json();
         const allBadgesData = await allBadgesResponse.json();
@@ -78,12 +85,40 @@ export default function Account() {
         setUserBadges(userStatsData.badges || []);
         setAvailableBadges(allBadgesData.badges || []);
 
-        // Selecionar apenas os badges que o usuário possui
-        const earnedBadgeIds = (userStatsData.badges || []).map((badge: any) => badge.id);
-        setSelectedBadges(earnedBadgeIds);
+        // Usar seleção salva ou todos os badges conquistados como fallback
+        if (selectionResponse.ok) {
+          const selectionData = await selectionResponse.json();
+          setSelectedBadges(selectionData.selectedBadges || []);
+        } else {
+          const earnedBadgeIds = (userStatsData.badges || []).map((badge: any) => badge.id);
+          setSelectedBadges(earnedBadgeIds);
+        }
       }
     } catch (error) {
       console.error("Error fetching badges:", error);
+    }
+  };
+
+  const saveBadgeSelection = async () => {
+    try {
+      const response = await fetch("/api/user/badge-selection", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+        body: JSON.stringify({ selectedBadges }),
+      });
+
+      if (response.ok) {
+        toast.success("Seleção de emblemas salva com sucesso!");
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.message || "Erro ao salvar seleção");
+      }
+    } catch (error) {
+      console.error("Error saving badge selection:", error);
+      toast.error("Erro ao salvar seleção");
     }
   };
 
