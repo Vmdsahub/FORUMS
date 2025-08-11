@@ -51,10 +51,24 @@ export default function UserHoverCard({
         const response = await fetch(url);
         console.log(`[UserHoverCard] Status da resposta: ${response.status}`);
 
+        // Buscar seleção de badges do usuário específico
+        let userSelection: string[] = [];
+        try {
+          const selectionResponse = await fetch(`/api/user/badge-selection/${userId}`);
+          if (selectionResponse.ok) {
+            const selectionData = await selectionResponse.json();
+            userSelection = selectionData.selectedBadges || [];
+            console.log(`[UserHoverCard] Seleção de badges do usuário ${userId}:`, userSelection);
+          }
+        } catch (error) {
+          console.log("Não foi possível buscar seleção de badges (usuário pode não ter seleção)");
+        }
+
         if (response.ok) {
           const data = await response.json();
           console.log(`[UserHoverCard] Dados recebidos:`, data);
           setUserProfile(data);
+          setBadgeSelection(userSelection);
         } else {
           const text = await response.text();
           console.error(
@@ -68,6 +82,7 @@ export default function UserHoverCard({
             badges: [],
             createdAt: new Date().toISOString(),
           });
+          setBadgeSelection([]);
         }
       } catch (error) {
         console.error("Erro ao buscar perfil do usuário:", error);
@@ -77,6 +92,7 @@ export default function UserHoverCard({
           badges: [],
           createdAt: new Date().toISOString(),
         });
+        setBadgeSelection([]);
       } finally {
         setIsLoading(false);
       }
