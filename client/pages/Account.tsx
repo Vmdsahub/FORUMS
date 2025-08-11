@@ -336,8 +336,8 @@ export default function Account() {
                 )}
               </div>
 
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                {userBadges.map((badge) => {
+              <div className="grid grid-cols-3 gap-4 mb-6 min-h-[180px]">
+                {userBadges.slice(0, 9).map((badge) => {
                   const isSelected = selectedBadges.includes(badge.id);
                   const canSelect = selectedBadges.length < 9 || isSelected;
 
