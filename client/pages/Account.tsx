@@ -327,6 +327,13 @@ export default function Account() {
                     </p>
                   </div>
                 )}
+                {userBadges.length > 0 && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                    <p className="text-sm text-blue-800">
+                      🎉 Emblemas conquistados: {userBadges.length}. Selecione até 9 para exibir nos comentários.
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-3 gap-4 mb-6">
