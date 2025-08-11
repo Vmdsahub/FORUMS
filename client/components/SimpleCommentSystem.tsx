@@ -395,8 +395,8 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
         </div>
       ) : (
         <div className="space-y-4">
-          {/* Mostrar apenas 6 comentários inicialmente */}
-          {(showAllComments ? comments : comments.slice(0, 6)).map((comment) => (
+          {/* Mostrar apenas 8 comentários inicialmente */}
+          {(showAllComments ? comments : comments.slice(0, 8)).map((comment) => (
             <CommentItem
               key={comment.id}
               comment={comment}
