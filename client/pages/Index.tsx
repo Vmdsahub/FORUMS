@@ -124,6 +124,23 @@ export default function Index(props: IndexProps) {
     }
   }, [selectedCategory, activeSection]);
 
+  // Carregar ícones salvos ao montar componente
+  useEffect(() => {
+    loadSavedIcons();
+  }, []);
+
+  const loadSavedIcons = async () => {
+    try {
+      const response = await fetch('/api/category-icons');
+      if (response.ok) {
+        const data = await response.json();
+        setCustomIcons(data.icons || {});
+      }
+    } catch (error) {
+      console.error('Erro ao carregar ícones salvos:', error);
+    }
+  };
+
   const fetchTopics = async (category: string, retryCount = 0) => {
     setIsLoadingTopics(true);
     try {
