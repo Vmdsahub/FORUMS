@@ -259,11 +259,14 @@ export const likeComment: RequestHandler = (req, res) => {
       console.log(`[BADGES DEBUG] Like removido, não verifica emblemas`);
     }
 
-    res.json({
+    const responseData = {
       likes: likes.size,
       isLiked: !wasLiked,
       newBadge: newBadge, // Incluir info do novo emblema se houver
-    });
+    };
+
+    console.log(`[BADGES DEBUG] Sending response:`, responseData);
+    res.json(responseData);
   } catch (error) {
     console.error("[COMMENTS] Erro ao curtir comentário:", error);
     res.status(500).json({ message: "Erro interno" });
