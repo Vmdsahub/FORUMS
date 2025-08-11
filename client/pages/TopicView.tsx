@@ -346,53 +346,25 @@ export default function TopicView() {
 
         {/* Topic Header */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-3">
-                {topic.isPinned && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                    Fixado
-                  </span>
-                )}
-                {topic.isHot && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                    🔥 Quente
-                  </span>
-                )}
-                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                  {topic.category}
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-3">
+              {topic.isPinned && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  Fixado
                 </span>
-              </div>
-              <h1 className="text-2xl font-bold text-black mb-2">
-                {topic.title}
-              </h1>
-              <p className="text-gray-600 mb-4">{topic.description}</p>
-              <div className="flex items-center gap-4 text-sm text-gray-500 flex-wrap">
-                <div className="flex items-center gap-2">
-                  <UserHoverCard
-                    userId={topic.authorId}
-                    userName={topic.author}
-                    userAvatar={topic.authorAvatar}
-                    isTopicAuthor={true}
-                    size="sm"
-                  >
-                    <div className="flex items-center gap-2 cursor-pointer">
-                      <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold hover:bg-gray-800 transition-colors overflow-hidden">
-                        {topic.authorAvatar}
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <span>
-                          por{" "}
-                          <span className="font-medium text-black hover:text-gray-700 transition-colors">
-                            {topic.author}
-                          </span>
-                        </span>
-                      </div>
-                    </div>
-                  </UserHoverCard>
-                </div>
-              </div>
+              )}
+              {topic.isHot && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                  🔥 Quente
+                </span>
+              )}
+              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                {topic.category}
+              </span>
             </div>
+            <h1 className="text-2xl font-bold text-black mb-4">
+              {topic.title}
+            </h1>
           </div>
 
           {/* Topic Content */}
