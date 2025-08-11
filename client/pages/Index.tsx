@@ -290,7 +290,8 @@ export default function Index(props: IndexProps) {
     formData.append('file', file);
 
     try {
-      const response = await fetch('/api/upload', {
+      // Primeiro, fazer upload da imagem
+      const uploadResponse = await fetch('/api/upload', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
@@ -298,15 +299,31 @@ export default function Index(props: IndexProps) {
         body: formData,
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        setCustomIcons(prev => ({
-          ...prev,
-          [categoryId]: result.url
-        }));
-        setIconModalOpen(false);
-        setEditingCategoryId(null);
-        toast.success("Ícone atualizado com sucesso!");
+      if (uploadResponse.ok) {
+        const uploadResult = await uploadResponse.json();
+
+        // Depois, salvar o ícone na API
+        const saveResponse = await fetch('/api/category-icons', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+          },
+          body: JSON.stringify({
+            categoryId,
+            iconUrl: uploadResult.url
+          }),
+        });
+
+        if (saveResponse.ok) {
+          setCustomIcons(prev => ({
+            ...prev,
+            [categoryId]: uploadResult.url
+          }));
+          setIconModalOpen(false);
+          setEditingCategoryId(null);
+          toast.success("Ícone atualizado com sucesso!");
+        }
       }
     } catch (error) {
       console.error('Erro ao fazer upload do ícone:', error);
