@@ -415,9 +415,9 @@ export default function Account() {
                 <p className="text-sm text-gray-600">
                   {selectedBadges.length}/6 emblemas selecionados
                 </p>
-                {selectedBadges.length === 0 && (
+                {userBadges.length > 0 && selectedBadges.length === 0 && (
                   <p className="text-xs text-amber-600 mt-1">
-                    Selecione pelo menos um emblema para exibir nos coment��rios
+                    Selecione pelo menos um emblema para exibir nos comentários
                   </p>
                 )}
               </div>
