@@ -152,19 +152,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.success("Conta criada com sucesso!");
         return true;
       } else {
-        console.log("[REGISTER] Error response");
+        console.log("[REGISTER] Error response, status:", response.status);
         let errorMessage = "Erro ao criar conta";
+
+        // Log do content-type para debug
+        console.log("[REGISTER] Content-Type:", response.headers.get('content-type'));
 
         try {
           const errorData = await response.json();
-          console.log("[REGISTER] Error data:", errorData);
-          errorMessage = errorData.message || errorMessage;
+          console.log("[REGISTER] Parsed error data:", errorData);
+
+          if (errorData && typeof errorData === 'object' && errorData.message) {
+            errorMessage = errorData.message;
+            console.log("[REGISTER] Using server message:", errorMessage);
+          } else {
+            console.log("[REGISTER] No valid message in response, using default");
+          }
         } catch (parseError) {
-          console.log("[REGISTER] Could not parse error response:", parseError);
+          console.log("[REGISTER] Parse error details:", parseError);
+          console.log("[REGISTER] Parse error type:", parseError.constructor.name);
           errorMessage = `Erro HTTP ${response.status}`;
         }
 
-        console.log("[REGISTER] Showing error message:", errorMessage);
+        console.log("[REGISTER] Final error message:", errorMessage);
         toast.error(errorMessage);
         return false;
       }
