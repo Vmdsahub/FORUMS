@@ -466,6 +466,13 @@ export default function CommentSystemNew({
       });
 
       if (response.ok) {
+        const data = await response.json();
+
+        // Verificar se o usuário ganhou um novo emblema
+        if (data.newBadge) {
+          showBadgeNotification(data.newBadge);
+        }
+
         await loadComments();
       }
     } catch (error) {
