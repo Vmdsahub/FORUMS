@@ -294,7 +294,11 @@ export default function Header({ activeSection }: HeaderProps) {
                         {notifications.map((notification) => (
                           <div
                             key={notification.id}
-                            className="flex items-start justify-between p-2 border border-gray-100 rounded-lg hover:bg-gray-50"
+                            className={`flex items-start justify-between p-2 border rounded-lg hover:bg-gray-50 ${
+                              notification.read
+                                ? 'border-gray-100 bg-white'
+                                : 'border-blue-200 bg-blue-50'
+                            }`}
                           >
                             <div className="flex items-start gap-2 flex-1">
                               {notification.type === 'badge' && (
