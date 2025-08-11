@@ -5,6 +5,7 @@ import { useBadgeNotification } from "@/contexts/BadgeNotificationContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import UserHoverCard from "@/components/UserHoverCard";
+import RichTextEditor from "@/components/RichTextEditor";
 
 interface Comment {
   id: string;
