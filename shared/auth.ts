@@ -21,6 +21,10 @@ export interface RegisterRequest {
   name: string;
   email: string;
   password: string;
+  phone: string;
+  birthDate: string;
+  acceptTerms: boolean;
+  acceptNewsletter?: boolean;
   captcha: string;
 }
 
