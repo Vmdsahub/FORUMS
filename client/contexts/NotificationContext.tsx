@@ -70,7 +70,11 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     setNotifications([]);
   };
 
-  const unreadCount = notifications.length;
+  const markAllAsRead = () => {
+    setNotifications((prev) => prev.map(n => ({ ...n, read: true })));
+  };
+
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <NotificationContext.Provider 
