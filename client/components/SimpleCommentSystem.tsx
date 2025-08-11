@@ -66,7 +66,7 @@ function CommentItem({
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm mb-4">
+    <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm mb-4 min-h-[120px]">
       {/* Quote exibido se existir */}
       {comment.quotedComment && (
         <div className="mb-3 p-3 bg-gray-50 border-l-4 border-gray-300 rounded">
