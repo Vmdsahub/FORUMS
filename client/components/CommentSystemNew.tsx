@@ -216,7 +216,7 @@ function CommentContent({
           <MarkdownRenderer content={comment.content} />
         </div>
 
-        {/* Botões de ação */}
+        {/* Bot��es de ação */}
         <div className="flex items-center gap-2 flex-wrap">
           {canReply && (
             <button
@@ -284,6 +284,13 @@ export default function CommentSystemNew({
   const [apiStatus, setApiStatus] = useState<"online" | "offline" | "unknown">(
     "unknown",
   );
+
+  // Função para contar total de comentários + respostas
+  const getTotalCommentsCount = (commentsList: Comment[]): number => {
+    return commentsList.reduce((total, comment) => {
+      return total + 1 + (comment.replies ? comment.replies.length : 0);
+    }, 0);
+  };
 
   // Carregar comentários com retry e fallback
   const loadComments = async (retryCount = 0) => {
