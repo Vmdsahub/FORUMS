@@ -572,24 +572,33 @@ export default function Header({ activeSection }: HeaderProps) {
                           registerCaptcha,
                         });
 
-                        const success = await register(
-                          registerName,
-                          registerEmail,
-                          registerPassword,
-                          registerCaptcha,
-                        );
+                        try {
+                          const success = await register(
+                            registerName,
+                            registerEmail,
+                            registerPassword,
+                            registerCaptcha,
+                          );
 
-                        if (success) {
-                          setIsRegisterOpen(false);
-                          setRegisterName("");
-                          setRegisterEmail("");
-                          setRegisterPassword("");
-                          setRegisterCaptcha("");
-                          setRegisterCaptchaValid(false);
+                          if (success) {
+                            setIsRegisterOpen(false);
+                            setRegisterName("");
+                            setRegisterEmail("");
+                            setRegisterPassword("");
+                            setRegisterCaptcha("");
+                            setRegisterCaptchaValid(false);
+                          }
+                        } catch (registerError) {
+                          console.error("[REGISTER FORM] Register function error:", registerError);
+                          setTimeout(() => {
+                            toast.error("Erro no cadastro. Tente novamente.");
+                          }, 0);
                         }
                       } catch (formError) {
                         console.error("[REGISTER FORM] Form submission error:", formError);
-                        toast.error("Erro no formulário. Tente novamente.");
+                        setTimeout(() => {
+                          toast.error("Erro no formulário. Tente novamente.");
+                        }, 0);
                       }
                     }}
                     className="space-y-4 py-4"
@@ -646,7 +655,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         minLength={6}
                       />
                       <p className="text-xs text-gray-500">
-                        Mínimo de 6 caracteres
+                        M��nimo de 6 caracteres
                       </p>
                     </div>
                     <Captcha
