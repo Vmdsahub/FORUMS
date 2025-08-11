@@ -247,7 +247,9 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
       return;
     }
 
-    if (!newComment.trim()) {
+    // Verificar se há conteúdo real (remover HTML vazio)
+    const textContent = newComment.replace(/<[^>]*>/g, '').trim();
+    if (!textContent) {
       toast.error("Digite um comentário");
       return;
     }
