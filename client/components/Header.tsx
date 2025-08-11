@@ -677,6 +677,80 @@ export default function Header({ activeSection }: HeaderProps) {
                         Mínimo de 8 caracteres com pelo menos uma letra maiúscula
                       </p>
                     </div>
+
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="register-phone"
+                        className="text-gray-900 font-medium"
+                      >
+                        Telefone
+                      </Label>
+                      <Input
+                        id="register-phone"
+                        type="tel"
+                        placeholder="(11) 99999-9999"
+                        value={registerPhone}
+                        onChange={(e) => setRegisterPhone(e.target.value)}
+                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        required
+                        minLength={10}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="register-birthdate"
+                        className="text-gray-900 font-medium"
+                      >
+                        Data de Nascimento
+                      </Label>
+                      <Input
+                        id="register-birthdate"
+                        type="date"
+                        value={registerBirthDate}
+                        onChange={(e) => setRegisterBirthDate(e.target.value)}
+                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-start space-x-2">
+                        <Checkbox
+                          id="register-terms"
+                          checked={registerAcceptTerms}
+                          onCheckedChange={(checked) => setRegisterAcceptTerms(checked as boolean)}
+                          className="mt-0.5"
+                        />
+                        <div className="text-sm">
+                          <label htmlFor="register-terms" className="text-gray-700">
+                            Eu aceito os{" "}
+                            <TermsDialog>
+                              <button
+                                type="button"
+                                className="text-blue-600 hover:text-blue-800 underline"
+                              >
+                                termos de condições
+                              </button>
+                            </TermsDialog>
+                            {" "}*
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start space-x-2">
+                        <Checkbox
+                          id="register-newsletter"
+                          checked={registerAcceptNewsletter}
+                          onCheckedChange={(checked) => setRegisterAcceptNewsletter(checked as boolean)}
+                          className="mt-0.5"
+                        />
+                        <label htmlFor="register-newsletter" className="text-sm text-gray-700">
+                          Quero receber a newsletter do IA HUB com novidades e conteúdos sobre inteligência artificial
+                        </label>
+                      </div>
+                    </div>
+
                     <Captcha
                       onCaptchaChange={setRegisterCaptcha}
                       onValidationChange={setRegisterCaptchaValid}
