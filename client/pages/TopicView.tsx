@@ -391,10 +391,6 @@ export default function TopicView() {
                     </div>
                   </UserHoverCard>
                 </div>
-                <span>•</span>
-                <span>{topic.views.toLocaleString()} visualizações</span>
-                <span>•</span>
-                <span>{topic.replies} respostas</span>
               </div>
             </div>
           </div>
