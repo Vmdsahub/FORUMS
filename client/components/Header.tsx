@@ -276,7 +276,7 @@ export default function Header({ activeSection }: HeaderProps) {
                       <h3 className="font-semibold text-gray-900">
                         Notificações
                       </h3>
-                      {unreadCount > 0 && (
+                      {notifications.length > 0 && (
                         <button
                           onClick={clearNotifications}
                           className="text-sm text-gray-500 hover:text-gray-700"
