@@ -211,7 +211,7 @@ function CommentContent({
           {formatDate(comment.createdAt)}
         </div>
 
-        {/* Conteúdo do comentário */}
+        {/* Conte��do do comentário */}
         <div className="text-gray-700 mb-3 text-sm leading-relaxed">
           <MarkdownRenderer content={comment.content} />
         </div>
@@ -499,21 +499,8 @@ export default function CommentSystemNew({
           Comentários ({comments.length})
         </h3>
         <div className="flex items-center gap-2">
-          <div
-            className={`w-2 h-2 rounded-full ${
-              apiStatus === "online"
-                ? "bg-green-500"
-                : apiStatus === "offline"
-                  ? "bg-red-500"
-                  : "bg-yellow-500"
-            }`}
-          ></div>
           <span className="text-xs text-gray-500">
-            {apiStatus === "online"
-              ? "Online"
-              : apiStatus === "offline"
-                ? "Offline"
-                : "Conectando..."}
+            Sistema de comentários
           </span>
         </div>
       </div>
