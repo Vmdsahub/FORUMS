@@ -330,17 +330,14 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
           )}
 
           <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <textarea
+            <RichTextEditor
               value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Escreva seu comentário..."
-              className="w-full p-2 border border-gray-200 rounded-md focus:ring-2 focus:ring-black/20 focus:border-black/40 resize-none text-sm"
-              rows={3}
-              required
+              onChange={setNewComment}
+              placeholder="Escreva seu comentário... Você pode inserir imagens, vídeos e usar formatação rica!"
             />
             <div className="flex items-center justify-between mt-3">
               <span className="text-xs text-gray-500">
-                Suporte a Markdown disponível
+                Editor rico - suporte a imagens, vídeos, formatação e Markdown
               </span>
               <Button
                 type="submit"
