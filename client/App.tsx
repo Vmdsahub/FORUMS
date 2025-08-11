@@ -234,8 +234,9 @@ function App() {
   const currentNewsletter = newsletters[currentWeek] || null;
 
   return (
-    <BadgeNotificationProvider>
-      <BrowserRouter>
+    <NotificationProvider>
+      <BadgeNotificationProvider>
+        <BrowserRouter>
         <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
           <Header activeSection={activeSection} />
           <Routes>
@@ -269,8 +270,9 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
-      </BrowserRouter>
-    </BadgeNotificationProvider>
+        </BrowserRouter>
+      </BadgeNotificationProvider>
+    </NotificationProvider>
   );
 }
 
