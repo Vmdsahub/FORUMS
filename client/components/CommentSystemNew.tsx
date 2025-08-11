@@ -468,9 +468,11 @@ export default function CommentSystemNew({
 
       if (response.ok) {
         const data = await response.json();
+        console.log("[DEBUG] Like response:", data);
 
         // Verificar se o usuário ganhou um novo emblema
         if (data.newBadge) {
+          console.log("[DEBUG] New badge earned:", data.newBadge);
           showBadgeNotification(data.newBadge);
         }
 
