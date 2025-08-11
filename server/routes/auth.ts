@@ -233,7 +233,6 @@ export const handleRegister: RequestHandler = (req, res) => {
     res.status(201).json(response);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log("[REGISTER] Validation error:", error.errors);
       const firstError = error.errors[0]?.message || "Dados inválidos";
       return res.status(400).json({
         message: firstError,
