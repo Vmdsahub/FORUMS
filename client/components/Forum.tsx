@@ -346,8 +346,24 @@ export default function Forum() {
           >
             <CardHeader>
               <div className="flex items-center gap-3 mb-3">
-                <div className={`p-3 rounded-lg text-white ${category.color}`}>
-                  {category.icon}
+                <div
+                  className={`w-12 h-12 flex items-center justify-center ${
+                    customIcons[category.id]
+                      ? 'cursor-pointer'
+                      : `p-3 rounded-lg text-white ${category.color}`
+                  } ${user?.name === "Vitoca" && isAdmin ? 'hover:opacity-75 transition-opacity' : ''}`}
+                  onClick={(e) => handleIconClick(category.id, e)}
+                  title={user?.name === "Vitoca" && isAdmin ? "Clique para alterar o ícone" : undefined}
+                >
+                  {customIcons[category.id] ? (
+                    <img
+                      src={customIcons[category.id]}
+                      alt={category.name}
+                      className="w-12 h-12 object-contain"
+                    />
+                  ) : (
+                    category.icon
+                  )}
                 </div>
                 <CardTitle className="text-xl">{category.name}</CardTitle>
               </div>
