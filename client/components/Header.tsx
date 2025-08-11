@@ -285,7 +285,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         </button>
                       )}
                     </div>
-                    {unreadCount === 0 ? (
+                    {notifications.length === 0 ? (
                       <p className="text-gray-500 text-center py-4">
                         Nenhuma notificação
                       </p>
