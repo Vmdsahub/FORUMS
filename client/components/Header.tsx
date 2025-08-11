@@ -290,13 +290,25 @@ export default function Header({ activeSection }: HeaderProps) {
                             key={notification.id}
                             className="flex items-start justify-between p-2 border border-gray-100 rounded-lg hover:bg-gray-50"
                           >
-                            <div className="flex-1">
-                              <p className="text-sm text-gray-800">
-                                {notification.message}
-                              </p>
-                              <p className="text-xs text-gray-500 mt-1">
-                                {notification.time}
-                              </p>
+                            <div className="flex items-start gap-2 flex-1">
+                              {notification.type === 'badge' && (
+                                <div className="text-yellow-500 mt-0.5">
+                                  🏆
+                                </div>
+                              )}
+                              {notification.type === 'quote' && (
+                                <div className="text-blue-500 mt-0.5">
+                                  💬
+                                </div>
+                              )}
+                              <div className="flex-1">
+                                <p className="text-sm text-gray-800">
+                                  {notification.message}
+                                </p>
+                                <p className="text-xs text-gray-500 mt-1">
+                                  {notification.time}
+                                </p>
+                              </div>
                             </div>
                             <button
                               onClick={() =>
