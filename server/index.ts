@@ -111,6 +111,10 @@ export function createServer() {
   app.get("/api/badges", handleGetAllBadges);
   app.get("/api/user/profile/:userId", handleGetUserProfile);
 
+  // Badge selection routes
+  app.post("/api/user/badge-selection", authenticateToken, handleSaveBadgeSelection);
+  app.get("/api/user/badge-selection", authenticateToken, handleGetBadgeSelection);
+
   // Novo sistema de comentários - ANTES das rotas antigas para evitar conflito
   app.get("/api/comments/:topicId", getComments);
   app.post("/api/comments/:topicId", authenticateToken, createComment);
