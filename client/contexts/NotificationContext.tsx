@@ -15,6 +15,7 @@ interface NotificationContextType {
   addNotification: (message: string, type?: 'badge' | 'quote' | 'general', icon?: string) => void;
   removeNotification: (id: string) => void;
   clearNotifications: () => void;
+  markAllAsRead: () => void;
   unreadCount: number;
 }
 
