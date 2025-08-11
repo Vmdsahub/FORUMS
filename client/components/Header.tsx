@@ -571,11 +571,18 @@ export default function Header({ activeSection }: HeaderProps) {
                           );
                           return;
                         }
+                        if (!registerAcceptTerms) {
+                          toast.error(
+                            "Você deve aceitar os termos de condições",
+                          );
+                          return;
+                        }
 
                         console.log("Submitting registration form...", {
                           registerName,
                           registerEmail,
-                          registerCaptcha,
+                          registerPhone,
+                          registerBirthDate,
                         });
 
                         console.log("[FORM] Calling register function");
@@ -584,6 +591,10 @@ export default function Header({ activeSection }: HeaderProps) {
                           registerName,
                           registerEmail,
                           registerPassword,
+                          registerPhone,
+                          registerBirthDate,
+                          registerAcceptTerms,
+                          registerAcceptNewsletter,
                           registerCaptcha,
                         );
 
