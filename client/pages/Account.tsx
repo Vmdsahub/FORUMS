@@ -300,22 +300,24 @@ export default function Account() {
             />
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-semibold text-black">{user.name}</h2>
-            <p className="text-gray-600 mb-1">{user.email}</p>
-            <p className="text-sm text-gray-500 mb-2">
-              Membro desde{" "}
-              {new Date(memberSince).toLocaleDateString("pt-BR", {
-                month: "long",
-                year: "numeric",
-              })}
-            </p>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-1">
+              <h2 className="text-xl font-semibold text-black">{user.name}</h2>
               <UserPointsBadge
                 userId={user.id}
                 size="md"
                 showPoints={true}
-                showBadges={true}
+                showBadges={false}
               />
+            </div>
+            <p className="text-gray-600 mb-1">{user.email}</p>
+            <div className="flex items-center gap-3">
+              <p className="text-sm text-gray-500">
+                Membro desde{" "}
+                {new Date(memberSince).toLocaleDateString("pt-BR", {
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
               {user.role === "admin" && (
                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                   Administrador
