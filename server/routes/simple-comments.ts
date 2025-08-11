@@ -144,6 +144,21 @@ export const createComment: RequestHandler = (req, res) => {
       return res.status(400).json({ message: "Comentário pai não encontrado" });
     }
 
+    // Verificar se comentário quotado existe
+    let quotedComment = null;
+    if (data.quotedCommentId) {
+      const quoted = comments.get(data.quotedCommentId);
+      if (!quoted) {
+        return res.status(400).json({ message: "Comentário quotado não encontrado" });
+      }
+      quotedComment = {
+        id: quoted.id,
+        content: quoted.content,
+        author: quoted.author,
+        authorId: quoted.authorId,
+      };
+    }
+
     const commentId = generateId();
     const newComment: SimpleComment = {
       id: commentId,
@@ -156,6 +171,8 @@ export const createComment: RequestHandler = (req, res) => {
       createdAt: new Date().toISOString(),
       likes: 0,
       isLiked: false,
+      quotedCommentId: data.quotedCommentId || null,
+      quotedComment: quotedComment,
     };
 
     // Salvar comentário
