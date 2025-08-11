@@ -233,10 +233,11 @@ function App() {
   const currentNewsletter = newsletters[currentWeek] || null;
 
   return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
-        <Header activeSection={activeSection} />
-        <Routes>
+    <BadgeNotificationProvider>
+      <BrowserRouter>
+        <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
+          <Header activeSection={activeSection} />
+          <Routes>
           <Route
             path="/"
             element={
@@ -265,9 +266,10 @@ function App() {
           <Route path="/account" element={<Account />} />
           <Route path="/saved-topics" element={<SavedTopics />} />
           <Route path="*" element={<NotFound />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </BadgeNotificationProvider>
   );
 }
 
