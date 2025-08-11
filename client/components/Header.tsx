@@ -109,7 +109,7 @@ export default function Header({ activeSection }: HeaderProps) {
   }, []);
 
   const handleDeleteNotification = (notificationId: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+    removeNotification(notificationId);
   };
 
   const toggleCategory = (categoryId: string) => {
