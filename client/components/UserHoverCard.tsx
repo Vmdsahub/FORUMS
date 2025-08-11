@@ -37,6 +37,7 @@ export default function UserHoverCard({
   children,
 }: UserHoverCardProps) {
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
+  const [badgeSelection, setBadgeSelection] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCard, setShowCard] = useState(false);
 
