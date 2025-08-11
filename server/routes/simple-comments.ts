@@ -246,11 +246,17 @@ export const likeComment: RequestHandler = (req, res) => {
     if (!wasLiked) {
       // Só verifica quando adiciona like - APÓS a sincronização
       const currentLikes = getCommentLikesForUser(comment.authorId);
-      console.log(`[BADGES] Usuário ${comment.authorId}: ${previousLikes} -> ${currentLikes} likes`);
+      console.log(`[BADGES DEBUG] Usuário ${comment.authorId}: ${previousLikes} -> ${currentLikes} likes`);
+      console.log(`[BADGES DEBUG] Calling checkForNewBadge with:`, { previousLikes, currentLikes });
       newBadge = checkForNewBadge(previousLikes, currentLikes);
+      console.log(`[BADGES DEBUG] checkForNewBadge returned:`, newBadge);
       if (newBadge) {
-        console.log(`[BADGES] Novo emblema conquistado: ${newBadge.name}`);
+        console.log(`[BADGES DEBUG] ✅ Novo emblema conquistado: ${newBadge.name}`);
+      } else {
+        console.log(`[BADGES DEBUG] ❌ Nenhum novo emblema conquistado`);
       }
+    } else {
+      console.log(`[BADGES DEBUG] Like removido, não verifica emblemas`);
     }
 
     res.json({
