@@ -605,6 +605,10 @@ export default function Header({ activeSection }: HeaderProps) {
                           setRegisterName("");
                           setRegisterEmail("");
                           setRegisterPassword("");
+                          setRegisterPhone("");
+                          setRegisterBirthDate("");
+                          setRegisterAcceptTerms(false);
+                          setRegisterAcceptNewsletter(false);
                           setRegisterCaptcha("");
                           setRegisterCaptchaValid(false);
                         }
