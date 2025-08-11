@@ -408,13 +408,13 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
           ))}
 
           {/* Botão Ver mais */}
-          {comments.length > 6 && !showAllComments && (
+          {comments.length > 8 && !showAllComments && (
             <div className="text-center py-4">
               <button
                 onClick={() => setShowAllComments(true)}
                 className="flex items-center gap-2 mx-auto text-gray-600 hover:text-black transition-colors text-sm"
               >
-                Ver mais ({comments.length - 6} comentários restantes)
+                Ver mais ({comments.length - 8} comentários restantes)
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M7.41 8.84L12 13.42l4.59-4.58L18 10.25l-6 6-6-6z" />
                 </svg>
@@ -423,7 +423,7 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
           )}
 
           {/* Botão Ver menos */}
-          {showAllComments && comments.length > 6 && (
+          {showAllComments && comments.length > 8 && (
             <div className="text-center py-4">
               <button
                 onClick={() => setShowAllComments(false)}
