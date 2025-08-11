@@ -92,43 +92,10 @@ export default function UserPointsBadge({
     <div className={`flex items-center ${classes.gap}`}>
       {showPoints && (
         <span
-          className={`${classes.text} text-red-600 font-medium bg-red-50 px-2 py-0.5 rounded-full flex items-center gap-1`}
+          className={`${classes.text} text-red-600 font-medium bg-red-50 px-3 py-1 rounded-full flex items-center gap-1`}
         >
           ❤️ {userStats.points}
         </span>
-      )}
-
-      {showBadges && userStats.badges.length > 0 && (
-        <div className={`flex items-center ${classes.gap}`}>
-          {userStats.badges.slice(0, 2).map((badge) => (
-            <div
-              key={badge.id}
-              className="relative group"
-              title={`${badge.name}: ${badge.description}`}
-            >
-              {badge.icon.startsWith("http") ? (
-                <img
-                  src={badge.icon}
-                  alt={badge.name}
-                  className={`${classes.badge} object-contain`}
-                />
-              ) : (
-                <span className={`${classes.text}`}>{badge.icon}</span>
-              )}
-
-              {/* Tooltip */}
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-10">
-                {badge.name}
-              </div>
-            </div>
-          ))}
-
-          {userStats.badges.length > 2 && (
-            <span className={`${classes.text} text-gray-500`}>
-              +{userStats.badges.length - 2}
-            </span>
-          )}
-        </div>
       )}
     </div>
   );
