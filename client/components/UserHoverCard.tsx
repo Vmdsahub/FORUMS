@@ -112,8 +112,10 @@ export default function UserHoverCard({
     });
   };
 
-  // Só mostrar emblemas que o usuário realmente possui, máximo 9 (3x3)
-  const availableBadges = userProfile?.badges?.slice(0, 9) || [];
+  // Mostrar apenas emblemas selecionados pelo usuário, até 9 (3x3)
+  const availableBadges = userProfile?.badges?.filter(badge =>
+    badgeSelection.includes(badge.id)
+  ).slice(0, 9) || [];
 
   return (
     <div
