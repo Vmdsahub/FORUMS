@@ -462,7 +462,9 @@ export const handleCreateTopic: RequestHandler = (req, res) => {
   }
 
   try {
+    console.log("[FORUM] Dados recebidos para criar tópico:", req.body);
     const data = createTopicSchema.parse(req.body);
+    console.log("[FORUM] Dados validados:", data);
     const { date, time } = formatDate();
 
     const newTopic: Topic = {
