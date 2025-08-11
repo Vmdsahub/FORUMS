@@ -390,28 +390,32 @@ export default function Account() {
                   return (
                     <div
                       key={badge.id}
-                      className={`relative group transition-all cursor-pointer ${
+                      className={`relative group transition-all ${
                         !canSelect && !isSelected
-                          ? "opacity-50 cursor-not-allowed"
+                          ? "opacity-50"
                           : ""
                       }`}
-                      onClick={() => {
-                        if (!canSelect && !isSelected) return;
-
-                        if (isSelected) {
-                          setSelectedBadges((prev) =>
-                            prev.filter((id) => id !== badge.id),
-                          );
-                        } else {
-                          setSelectedBadges((prev) => [...prev, badge.id]);
-                        }
-                      }}
                     >
-                      <div className="relative inline-block">
+                      <div className="relative inline-block w-12 h-12">
                         <img
                           src={badge.icon}
                           alt={badge.name}
-                          className="w-12 h-12 object-contain hover:scale-110 transition-transform duration-300"
+                          className={`w-12 h-12 object-contain hover:scale-110 transition-transform duration-300 ${
+                            canSelect || isSelected
+                              ? "cursor-pointer"
+                              : "cursor-not-allowed"
+                          }`}
+                          onClick={() => {
+                            if (!canSelect && !isSelected) return;
+
+                            if (isSelected) {
+                              setSelectedBadges((prev) =>
+                                prev.filter((id) => id !== badge.id),
+                              );
+                            } else {
+                              setSelectedBadges((prev) => [...prev, badge.id]);
+                            }
+                          }}
                         />
 
                         {isSelected && (
