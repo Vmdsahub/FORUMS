@@ -572,20 +572,16 @@ export default function Header({ activeSection }: HeaderProps) {
                           registerCaptcha,
                         });
 
-                        console.log("[DEBUG] About to call register function");
+                        console.log("[FORM] Calling register function");
 
                         const success = await register(
                           registerName,
                           registerEmail,
                           registerPassword,
                           registerCaptcha,
-                        ).catch((err) => {
-                          console.error("[REGISTER FORM] Register call failed:", err);
-                          toast.error("Erro no cadastro. Tente novamente.");
-                          return false;
-                        });
+                        );
 
-                        console.log("[DEBUG] Register call completed, success:", success);
+                        console.log("[FORM] Register completed, success:", success);
 
                         if (success) {
                           setIsRegisterOpen(false);
