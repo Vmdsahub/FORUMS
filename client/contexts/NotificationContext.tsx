@@ -7,6 +7,7 @@ interface Notification {
   time: string;
   type: 'badge' | 'quote' | 'general';
   icon?: string;
+  read: boolean;
 }
 
 interface NotificationContextType {
