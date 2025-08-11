@@ -314,7 +314,7 @@ export default function Account() {
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="mb-4">
                 <h4 className="font-semibold text-black mb-2">
-                  Selecione até 6 emblemas para exibir nos comentários:
+                  Selecione até 9 emblemas para exibir nos comentários:
                 </h4>
                 <p className="text-sm text-gray-600 mb-4">
                   Estes emblemas aparecerão abaixo do seu avatar quando você
@@ -329,11 +329,11 @@ export default function Account() {
                 )}
               </div>
 
-              <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-6">
+              <div className="grid grid-cols-3 gap-4 mb-6">
                 {availableBadges.map((badge) => {
                   const isEarned = userBadges.some((userBadge) => userBadge.id === badge.id);
                   const isSelected = selectedBadges.includes(badge.id);
-                  const canSelect = (selectedBadges.length < 6 || isSelected) && isEarned;
+                  const canSelect = (selectedBadges.length < 9 || isSelected) && isEarned;
 
                   return (
                     <div
@@ -413,7 +413,7 @@ export default function Account() {
 
               <div className="text-center">
                 <p className="text-sm text-gray-600">
-                  {selectedBadges.length}/6 emblemas selecionados
+                  {selectedBadges.length}/9 emblemas selecionados
                 </p>
                 {userBadges.length > 0 && selectedBadges.length === 0 && (
                   <p className="text-xs text-amber-600 mt-1">
