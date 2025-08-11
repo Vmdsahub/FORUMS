@@ -51,12 +51,41 @@ export default function Account() {
   const [selectedBadges, setSelectedBadges] = useState<string[]>([]);
   const [memberSince] = useState("2024-01-15"); // Data real de cadastro
 
-  // Fetch user's topics
+  // Fetch user's topics and badges
   useEffect(() => {
     if (user) {
       fetchUserTopics();
+      fetchUserBadges();
     }
   }, [user]);
+
+  const fetchUserBadges = async () => {
+    try {
+      // Buscar badges do usuário
+      const userStatsResponse = await fetch("/api/user/stats", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
+
+      // Buscar todos os badges disponíveis
+      const allBadgesResponse = await fetch("/api/badges");
+
+      if (userStatsResponse.ok && allBadgesResponse.ok) {
+        const userStatsData = await userStatsResponse.json();
+        const allBadgesData = await allBadgesResponse.json();
+
+        setUserBadges(userStatsData.badges || []);
+        setAvailableBadges(allBadgesData.badges || []);
+
+        // Selecionar apenas os badges que o usuário possui
+        const earnedBadgeIds = (userStatsData.badges || []).map((badge: any) => badge.id);
+        setSelectedBadges(earnedBadgeIds);
+      }
+    } catch (error) {
+      console.error("Error fetching badges:", error);
+    }
+  };
 
   const fetchUserTopics = async () => {
     setIsLoadingTopics(true);
