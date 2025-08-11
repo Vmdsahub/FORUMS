@@ -188,6 +188,12 @@ export const createComment: RequestHandler = (req, res) => {
       `[COMMENTS] Comentário criado: ${commentId} por ${req.user.name} (parent: ${data.parentId || "null"})`,
     );
 
+    // Notificar usuário quotado (se houver)
+    if (quotedComment && quotedComment.authorId !== req.user.id) {
+      console.log(`[NOTIFICATIONS] Usuário ${quotedComment.author} (${quotedComment.authorId}) foi quotado por ${req.user.name}`);
+      // Aqui seria implementado o sistema de notificações (email, push, etc.)
+    }
+
     res.status(201).json(newComment);
   } catch (error) {
     console.error("[COMMENTS] Erro ao criar comentário:", error);
