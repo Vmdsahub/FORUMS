@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBadgeNotification } from "@/contexts/BadgeNotificationContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import UserHoverCard from "@/components/UserHoverCard";
@@ -324,7 +325,7 @@ export default function CommentSystemNew({
           `[COMMENTS] Carregados ${data.comments?.length || 0} comentários`,
         );
       } else {
-        console.error(`Erro na requisição: ${response.status}`);
+        console.error(`Erro na requisiç��o: ${response.status}`);
         if (retryCount < 2) {
           console.log(`[COMMENTS] Tentando novamente em 2s...`);
           setTimeout(() => loadComments(retryCount + 1), 2000);
