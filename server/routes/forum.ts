@@ -21,6 +21,7 @@ const createTopicSchema = z.object({
   description: z.string().min(1).max(200),
   content: z.string().min(1).max(2000),
   category: z.string().min(1),
+  avatarUrl: z.string().url().optional(),
 });
 
 const createCommentSchema = z.object({
