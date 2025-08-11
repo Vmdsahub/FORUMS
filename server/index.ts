@@ -31,6 +31,7 @@ import {
 import {
   handleSaveBadgeSelection,
   handleGetBadgeSelection,
+  handleGetUserBadgeSelection,
 } from "./routes/user-badge-selection";
 import {
   getComments,
