@@ -395,4 +395,8 @@ export function initializeDemo() {
   console.log(
     "[COMMENTS] Sistema inicializado com dados demo de múltiplos níveis e likes para pontos reais",
   );
+
+  // Debug: mostrar contagem de likes por usuário
+  console.log(`[COMMENTS] João (demo_user_123) tem ${getCommentLikesForUser("demo_user_123")} likes`);
+  console.log(`[COMMENTS] Admin (admin_vitoca_456) tem ${getCommentLikesForUser("admin_vitoca_456")} likes`);
 }
