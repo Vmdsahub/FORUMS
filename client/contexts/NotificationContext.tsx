@@ -1,17 +1,20 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Notification {
   id: string;
   message: string;
   time: string;
-  type?: 'badge' | 'quote' | 'general';
+  type: 'badge' | 'quote' | 'general';
+  icon?: string;
 }
 
 interface NotificationContextType {
   notifications: Notification[];
-  addNotification: (message: string, type?: 'badge' | 'quote' | 'general') => void;
+  addNotification: (message: string, type?: 'badge' | 'quote' | 'general', icon?: string) => void;
   removeNotification: (id: string) => void;
   clearNotifications: () => void;
+  unreadCount: number;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -29,16 +32,31 @@ interface NotificationProviderProps {
 }
 
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
-  const addNotification = (message: string, type: 'badge' | 'quote' | 'general' = 'general') => {
+  // Limpar notificações quando usuário faz logout
+  useEffect(() => {
+    if (!user) {
+      setNotifications([]);
+    }
+  }, [user]);
+
+  const addNotification = (message: string, type: 'badge' | 'quote' | 'general' = 'general', icon?: string) => {
+    if (!user) return; // Só adiciona se usuário logado
+
     const newNotification: Notification = {
-      id: Date.now().toString(),
+      id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       message,
       time: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
       type,
+      icon,
     };
+    
     setNotifications((prev) => [newNotification, ...prev]);
+    
+    // Log para debug
+    console.log(`[NOTIFICATION] Adicionada para ${user.name}: ${message}`);
   };
 
   const removeNotification = (id: string) => {
@@ -49,13 +67,16 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     setNotifications([]);
   };
 
+  const unreadCount = notifications.length;
+
   return (
     <NotificationContext.Provider 
       value={{ 
         notifications, 
         addNotification, 
         removeNotification, 
-        clearNotifications 
+        clearNotifications,
+        unreadCount
       }}
     >
       {children}
