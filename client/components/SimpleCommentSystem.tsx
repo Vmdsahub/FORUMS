@@ -343,7 +343,7 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
               </span>
               <Button
                 type="submit"
-                disabled={isSubmitting || !newComment.trim()}
+                disabled={isSubmitting || !newComment.replace(/<[^>]*>/g, '').trim()}
                 className="bg-black text-white hover:bg-black/90"
               >
                 {isSubmitting ? "Enviando..." : "Comentar"}
