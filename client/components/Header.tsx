@@ -41,7 +41,7 @@ export default function Header({ activeSection }: HeaderProps) {
     string[]
   >([]);
   const [showNotifications, setShowNotifications] = useState(false);
-  const { notifications, removeNotification, clearNotifications, unreadCount, addNotification } = useNotifications();
+  const { notifications, removeNotification, clearNotifications, markAllAsRead, unreadCount, addNotification } = useNotifications();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
 
