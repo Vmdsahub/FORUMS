@@ -272,7 +272,7 @@ export default function Header({ activeSection }: HeaderProps) {
                       </h3>
                       {notifications.length > 0 && (
                         <button
-                          onClick={() => setNotifications([])}
+                          onClick={clearNotifications}
                           className="text-sm text-gray-500 hover:text-gray-700"
                         >
                           Limpar todas
