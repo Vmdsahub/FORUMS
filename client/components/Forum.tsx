@@ -86,6 +86,9 @@ export default function Forum() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [topics, setTopics] = useState<Topic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [iconModalOpen, setIconModalOpen] = useState(false);
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
+  const [customIcons, setCustomIcons] = useState<Record<string, string>>({});
 
   const fetchTopics = async (category?: string) => {
     setIsLoading(true);
