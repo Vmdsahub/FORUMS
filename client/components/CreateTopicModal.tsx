@@ -90,10 +90,13 @@ export default function CreateTopicModal({
       return;
     }
 
+    // Validar conteúdo removendo HTML
+    const contentText = formData.content.replace(/<[^>]*>/g, '').trim();
+
     if (
       !formData.title.trim() ||
       !formData.description.trim() ||
-      !formData.content.trim()
+      !contentText
     ) {
       toast.error("Preencha todos os campos");
       return;
