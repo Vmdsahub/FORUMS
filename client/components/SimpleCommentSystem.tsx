@@ -395,8 +395,8 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
         </div>
       ) : (
         <div className="space-y-4">
-          {/* Mostrar apenas 8 comentários inicialmente */}
-          {(showAllComments ? comments : comments.slice(0, 8)).map((comment) => (
+          {/* Mostrar comentários de acordo com paginação */}
+          {comments.slice(0, commentsToShow).map((comment) => (
             <CommentItem
               key={comment.id}
               comment={comment}
@@ -408,13 +408,13 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
           ))}
 
           {/* Botão Ver mais */}
-          {comments.length > 8 && !showAllComments && (
+          {comments.length > commentsToShow && (
             <div className="text-center py-4">
               <button
-                onClick={() => setShowAllComments(true)}
+                onClick={() => setCommentsToShow(prev => prev + 8)}
                 className="flex items-center gap-2 mx-auto text-gray-600 hover:text-black transition-colors text-sm"
               >
-                Ver mais ({comments.length - 8} comentários restantes)
+                Ver mais ({Math.min(8, comments.length - commentsToShow)} próximos comentários)
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M7.41 8.84L12 13.42l4.59-4.58L18 10.25l-6 6-6-6z" />
                 </svg>
@@ -423,10 +423,10 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
           )}
 
           {/* Botão Ver menos */}
-          {showAllComments && comments.length > 8 && (
+          {commentsToShow > 8 && (
             <div className="text-center py-4">
               <button
-                onClick={() => setShowAllComments(false)}
+                onClick={() => setCommentsToShow(8)}
                 className="flex items-center gap-2 mx-auto text-gray-600 hover:text-black transition-colors text-sm"
               >
                 Ver menos
