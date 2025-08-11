@@ -412,16 +412,33 @@ export const handleGetTopic: RequestHandler = (req, res) => {
 
   // Check if user liked this topic
   const userId = req.user?.id;
-  if (userId) {
-    topic.isLiked = isLikedBy(topicId, userId);
-    topic.likes = getLikeCount(topicId);
+  try {
+    if (userId) {
+      topic.isLiked = isLikedBy(topicId, userId);
+      topic.likes = getLikeCount(topicId);
 
-    // Update comments with like status
-    topic.comments = topic.comments.map((comment) => ({
-      ...comment,
-      isLiked: isLikedBy(comment.id, userId),
-      likes: getLikeCount(comment.id),
-    }));
+      // Update comments with like status
+      topic.comments = topic.comments.map((comment) => ({
+        ...comment,
+        isLiked: isLikedBy(comment.id, userId),
+        likes: getLikeCount(comment.id),
+      }));
+    } else {
+      // Usuário não logado - apenas definir likes sem status de curtida
+      topic.isLiked = false;
+      topic.likes = getLikeCount(topicId);
+
+      topic.comments = topic.comments.map((comment) => ({
+        ...comment,
+        isLiked: false,
+        likes: getLikeCount(comment.id),
+      }));
+    }
+  } catch (likeError) {
+    console.error("[SERVER] Error processing likes:", likeError);
+    // Fallback - deixar os valores originais
+    topic.isLiked = false;
+    topic.likes = topic.likes || 0;
   }
 
   // Build comment tree
