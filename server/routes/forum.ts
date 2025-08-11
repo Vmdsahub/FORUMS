@@ -398,8 +398,10 @@ export const handleGetTopics: RequestHandler = (req, res) => {
 };
 
 export const handleGetTopic: RequestHandler = (req, res) => {
+  console.log("[SERVER] Getting topic with ID:", req.params.topicId);
   const { topicId } = req.params;
   const topic = topics.get(topicId);
+  console.log("[SERVER] Topic found:", !!topic);
 
   if (!topic) {
     return res.status(404).json({ message: "Tópico não encontrado" });
