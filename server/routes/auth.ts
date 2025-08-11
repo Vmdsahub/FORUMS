@@ -184,12 +184,9 @@ export const handleRegister: RequestHandler = (req, res) => {
       (u) => u.email === email,
     );
     if (existingEmailUser) {
-      console.log("[AUTH] Email já existe:", email);
-      const errorResponse = {
+      return res.status(409).json({
         message: "Essa conta já existe, faça login",
-      } as ErrorResponse;
-      console.log("[AUTH] Enviando resposta 409:", errorResponse);
-      return res.status(409).json(errorResponse);
+      } as ErrorResponse);
     }
 
     // Check if username already exists
