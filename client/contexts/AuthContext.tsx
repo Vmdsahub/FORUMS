@@ -161,11 +161,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return false;
       }
     } catch (error: any) {
-      console.error("Register error:", error);
+      console.error("[REGISTER] Register error:", error);
+      console.error("[REGISTER] Error name:", error?.name);
+      console.error("[REGISTER] Error message:", error?.message);
+      console.error("[REGISTER] Error stack:", error?.stack);
+
       if (error.name === "AbortError") {
         toast.error("Requisição expirou. Tente novamente.");
+      } else if (error.name === "TypeError" && error.message.includes("Failed to fetch")) {
+        toast.error("Erro de conexão. Verifique sua internet.");
       } else {
-        toast.error("Erro de conexão. Tente novamente.");
+        toast.error(`Erro inesperado: ${error?.message || "Tente novamente."}`);
       }
       return false;
     } finally {
