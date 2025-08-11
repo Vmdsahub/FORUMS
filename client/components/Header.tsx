@@ -19,6 +19,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/contexts/NotificationContext";
 import Captcha from "@/components/Captcha";
+import TermsDialog from "@/components/TermsDialog";
 import { toast } from "sonner";
 
 interface HeaderProps {
