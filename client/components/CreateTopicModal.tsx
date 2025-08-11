@@ -119,7 +119,7 @@ export default function CreateTopicModal({
       const topicData = {
         ...formData,
         category: currentCategory.id,
-        avatarUrl: avatarUrl || undefined,
+        ...(avatarUrl && { avatarUrl }),
       };
 
       console.log("[DEBUG] Dados do tópico:", topicData);
