@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { useCategoryStats } from "@/hooks/useCategoryStats";
-import { BadgeNotificationProvider } from "@/contexts/BadgeNotificationContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import TopicView from "@/pages/TopicView";
 import Index from "@/pages/Index";
