@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { useCategoryStats } from "@/hooks/useCategoryStats";
 import { BadgeNotificationProvider } from "@/contexts/BadgeNotificationContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import TopicView from "@/pages/TopicView";
 import Index from "@/pages/Index";
 import Account from "@/pages/Account";
@@ -80,7 +81,7 @@ let weeklyNewsletters: WeeklyNewsletter[] = [
         id: 3,
         title: "Segurança Pós-Quântica: Preparação para a Próxima Era Digital",
         content:
-          "2024 marca o início de uma era crítica para a segurança digital. O avanço dos computadores quânticos acelera a obsolescência de protocolos criptográficos tradicionais.\n\nEstratégias de preparação:\n\n• Implementação de criptografia resistente a quantum\n• Migração para autenticação biométrica avançada\n• Adoção de arquiteturas Zero Trust\n• Integração de IA para detecção proativa\n• Sistemas de backup imutáveis\n\nRecomendações imediatas:\n• Autenticação multifator obrigatória\n• Gerenciamento centralizado de credenciais\n• Monitoramento contínuo de vulnerabilidades\n• Programas de treinamento especializados\n• Testes regulares de recuperação de desastres\n\nOrganizações que não iniciarem essa transição imediatamente enfrentarão riscos exponencialmente crescentes de comprometimento de dados.",
+          "2024 marca o início de uma era crítica para a segurança digital. O avanço dos computadores quânticos acelera a obsolescência de protocolos criptográficos tradicionais.\n\nEstratégias de preparação:\n\n• Implementação de criptografia resistente a quantum\n• Migração para autenticação biométrica avançada\n• Adoção de arquiteturas Zero Trust\n• Integração de IA para detecção proativa\n• Sistemas de backup imutáveis\n\nRecomendações imediatas:\n• Autenticação multifator obrigat��ria\n• Gerenciamento centralizado de credenciais\n• Monitoramento contínuo de vulnerabilidades\n• Programas de treinamento especializados\n• Testes regulares de recuperação de desastres\n\nOrganizações que não iniciarem essa transição imediatamente enfrentarão riscos exponencialmente crescentes de comprometimento de dados.",
         readTime: "15 min",
       },
     ],
