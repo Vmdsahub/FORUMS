@@ -98,13 +98,13 @@ function CommentItem({
         </UserHoverCard>
 
         <div className="flex-1 min-w-0 relative">
-          {/* Data no canto superior esquerdo */}
-          <div className="text-xs text-gray-500 mb-2">
+          {/* Data no canto superior direito */}
+          <div className="absolute top-0 right-0 text-xs text-gray-500">
             {formatDate(comment.createdAt)}
           </div>
 
           {/* Conteúdo do comentário */}
-          <div className="text-gray-700 mb-8 text-sm leading-relaxed pr-4">
+          <div className="text-gray-700 mb-8 text-sm leading-relaxed pr-24 pt-6">
             <MarkdownRenderer content={comment.content} />
           </div>
 
