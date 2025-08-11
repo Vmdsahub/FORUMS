@@ -13,6 +13,13 @@ interface SimpleComment {
   createdAt: string;
   likes: number;
   isLiked: boolean;
+  quotedCommentId?: string | null;
+  quotedComment?: {
+    id: string;
+    content: string;
+    author: string;
+    authorId: string;
+  };
   replies?: SimpleComment[];
   repliesCount?: number;
 }
