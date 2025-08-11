@@ -45,6 +45,11 @@ import {
   handleGetArticles,
   handleDeleteArticle,
 } from "./routes/newsletter";
+import {
+  getCategoryIcons,
+  updateCategoryIcon,
+  removeCategoryIcon,
+} from "./routes/category-icons";
 
 export function createServer() {
   const app = express();
