@@ -145,5 +145,10 @@ export function createServer() {
     handleDeleteArticle,
   );
 
+  // Category icons routes
+  app.get("/api/category-icons", getCategoryIcons);
+  app.post("/api/category-icons", authenticateToken, updateCategoryIcon);
+  app.delete("/api/category-icons/:categoryId", authenticateToken, removeCategoryIcon);
+
   return app;
 }
