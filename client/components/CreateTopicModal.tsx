@@ -72,9 +72,13 @@ export default function CreateTopicModal({
       if (response.ok) {
         const result = await response.json();
         return result.url;
+      } else {
+        console.error('Erro no upload:', response.status, response.statusText);
+        toast.error("Erro ao fazer upload da imagem");
       }
     } catch (error) {
       console.error('Erro ao fazer upload do avatar:', error);
+      toast.error("Erro ao fazer upload da imagem");
     }
     return null;
   };
