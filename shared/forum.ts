@@ -45,6 +45,7 @@ export interface CreateTopicRequest {
   description: string;
   content: string;
   category: string;
+  avatarUrl?: string;
 }
 
 export interface CreateCommentRequest {
