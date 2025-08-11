@@ -174,6 +174,23 @@ export default function Forum() {
     }
   }, [selectedCategory]);
 
+  // Carregar ícones salvos ao montar componente
+  useEffect(() => {
+    loadSavedIcons();
+  }, []);
+
+  const loadSavedIcons = async () => {
+    try {
+      const response = await fetch('/api/category-icons');
+      if (response.ok) {
+        const data = await response.json();
+        setCustomIcons(data.icons || {});
+      }
+    } catch (error) {
+      console.error('Erro ao carregar ícones salvos:', error);
+    }
+  };
+
   // Função para lidar com upload de ícone
   const handleIconUpload = async (file: File, categoryId: string) => {
     const formData = new FormData();
