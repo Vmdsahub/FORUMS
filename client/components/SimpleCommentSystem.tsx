@@ -180,7 +180,35 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
 
   useEffect(() => {
     loadComments();
-  }, [topicId]);
+
+    // Verificar se usuário tem emblemas conquistados mas não notificados
+    if (user) {
+      checkUserBadges();
+    }
+  }, [topicId, user]);
+
+  // Verificar emblemas do usuário
+  const checkUserBadges = async () => {
+    try {
+      const response = await fetch(`/api/user/stats`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
+
+      if (response.ok) {
+        const userData = await response.json();
+        console.log('[BADGES] Dados do usuário:', userData);
+
+        // Se usuário tem emblemas mas nunca foi notificado, pode notificar agora
+        if (userData.badges && userData.badges.length > 0) {
+          console.log(`[BADGES] Usuário tem ${userData.badges.length} emblemas`);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao verificar emblemas do usuário:', error);
+    }
+  };
 
   // Curtir comentário
   const handleLike = async (commentId: string) => {
