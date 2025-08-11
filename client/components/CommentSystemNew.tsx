@@ -216,7 +216,7 @@ function CommentContent({
           <MarkdownRenderer content={comment.content} />
         </div>
 
-        {/* Bot��es de ação */}
+        {/* Botões de ação */}
         <div className="flex items-center gap-2 flex-wrap">
           {canReply && (
             <button
@@ -502,7 +502,7 @@ export default function CommentSystemNew({
     <div className="bg-white rounded-lg border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-black">
-          Comentários ({comments.length})
+          Comentários ({getTotalCommentsCount(comments)})
         </h3>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-500">
