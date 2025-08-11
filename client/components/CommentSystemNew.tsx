@@ -285,10 +285,14 @@ export default function CommentSystemNew({
     "unknown",
   );
 
-  // Função para contar total de comentários + respostas
+  // Função para contar total de comentários + respostas (recursivamente)
   const getTotalCommentsCount = (commentsList: Comment[]): number => {
     return commentsList.reduce((total, comment) => {
-      return total + 1 + (comment.replies ? comment.replies.length : 0);
+      let count = 1; // O comentário em si
+      if (comment.replies && comment.replies.length > 0) {
+        count += getTotalCommentsCount(comment.replies); // Recursão para respostas
+      }
+      return total + count;
     }, 0);
   };
 
