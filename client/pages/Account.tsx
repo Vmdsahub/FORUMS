@@ -320,6 +320,13 @@ export default function Account() {
                   Estes emblemas aparecerão abaixo do seu avatar quando você
                   comentar
                 </p>
+                {userBadges.length === 0 && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+                    <p className="text-sm text-amber-800">
+                      🏆 Você ainda não conquistou nenhum emblema. Receba likes nos seus comentários para ganhar o emblema "Iniciante"!
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-6">
