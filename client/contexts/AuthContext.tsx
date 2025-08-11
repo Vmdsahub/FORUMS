@@ -156,17 +156,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         let errorMessage = "Erro ao criar conta";
 
         try {
-          const responseText = await response.text();
-          console.log("[REGISTER] Response text:", responseText);
-          console.log("[REGISTER] Response headers:", response.headers.get('content-type'));
-
-          if (responseText) {
-            const errorData = JSON.parse(responseText);
-            console.log("[REGISTER] Error data:", errorData);
-            if (errorData && errorData.message) {
-              errorMessage = errorData.message;
-            }
-          }
+          const errorData = await response.json();
+          console.log("[REGISTER] Error data:", errorData);
+          errorMessage = errorData.message || errorMessage;
         } catch (parseError) {
           console.log("[REGISTER] Could not parse error response:", parseError);
           errorMessage = `Erro HTTP ${response.status}`;
