@@ -13,6 +13,13 @@ interface SimpleComment {
   createdAt: string;
   likes: number;
   isLiked: boolean;
+  quotedCommentId?: string | null;
+  quotedComment?: {
+    id: string;
+    content: string;
+    author: string;
+    authorId: string;
+  };
   replies?: SimpleComment[];
   repliesCount?: number;
 }
@@ -24,8 +31,9 @@ const commentLikes = new Map<string, Set<string>>(); // commentId -> userIds
 
 // Schema de validação
 const createCommentSchema = z.object({
-  content: z.string().min(1).max(1000),
+  content: z.string().min(1).max(10000), // Aumentado para suportar HTML rico
   parentId: z.string().nullable().optional(),
+  quotedCommentId: z.string().nullable().optional(),
 });
 
 // Helpers
@@ -136,6 +144,23 @@ export const createComment: RequestHandler = (req, res) => {
       return res.status(400).json({ message: "Comentário pai não encontrado" });
     }
 
+    // Verificar se comentário quotado existe
+    let quotedComment = null;
+    if (data.quotedCommentId) {
+      const quoted = comments.get(data.quotedCommentId);
+      if (!quoted) {
+        return res
+          .status(400)
+          .json({ message: "Comentário quotado não encontrado" });
+      }
+      quotedComment = {
+        id: quoted.id,
+        content: quoted.content,
+        author: quoted.author,
+        authorId: quoted.authorId,
+      };
+    }
+
     const commentId = generateId();
     const newComment: SimpleComment = {
       id: commentId,
@@ -148,6 +173,8 @@ export const createComment: RequestHandler = (req, res) => {
       createdAt: new Date().toISOString(),
       likes: 0,
       isLiked: false,
+      quotedCommentId: data.quotedCommentId || null,
+      quotedComment: quotedComment,
     };
 
     // Salvar comentário
@@ -162,6 +189,14 @@ export const createComment: RequestHandler = (req, res) => {
     console.log(
       `[COMMENTS] Comentário criado: ${commentId} por ${req.user.name} (parent: ${data.parentId || "null"})`,
     );
+
+    // Notificar usuário quotado (se houver)
+    if (quotedComment && quotedComment.authorId !== req.user.id) {
+      console.log(
+        `[NOTIFICATIONS] Usuário ${quotedComment.author} foi quotado por ${req.user.name}`,
+      );
+      // TODO: Implementar notificação em tempo real quando sistema de websocket for adicionado
+    }
 
     res.status(201).json(newComment);
   } catch (error) {
@@ -194,34 +229,55 @@ export const likeComment: RequestHandler = (req, res) => {
     const likes = commentLikes.get(commentId)!;
     const wasLiked = likes.has(userId);
 
+    // Sincronizar com sistema de stats
+    const comment = comments.get(commentId)!;
+    const { onLikeToggled, checkForNewBadge } = require("./user-stats-final");
+
+    // IMPORTANTE: Calcular likes anteriores ANTES de modificar o Set
+    const previousLikes = getCommentLikesForUser(comment.authorId);
+
     if (wasLiked) {
       likes.delete(userId);
     } else {
       likes.add(userId);
     }
 
-    // Sincronizar com sistema de stats
-    const comment = comments.get(commentId)!;
-    const { onLikeToggled, checkForNewBadge } = require("./user-stats-final");
-
-    // Verificar estado anterior dos emblemas
-    const previousLikes = getCommentLikesForUser(comment.authorId);
-
+    // Sincronizar primeiro ANTES de verificar emblemas
     onLikeToggled(commentId, comment.authorId, !wasLiked);
 
     // Verificar se o usuário ganhou um novo emblema
     let newBadge = null;
     if (!wasLiked) {
-      // Só verifica quando adiciona like
+      // Só verifica quando adiciona like - APÓS a sincronização
       const currentLikes = getCommentLikesForUser(comment.authorId);
+      console.log(
+        `[BADGES DEBUG] Usuário ${comment.authorId}: ${previousLikes} -> ${currentLikes} likes`,
+      );
+      console.log(`[BADGES DEBUG] Calling checkForNewBadge with:`, {
+        previousLikes,
+        currentLikes,
+      });
       newBadge = checkForNewBadge(previousLikes, currentLikes);
+      console.log(`[BADGES DEBUG] checkForNewBadge returned:`, newBadge);
+      if (newBadge) {
+        console.log(
+          `[BADGES DEBUG] ✅ Novo emblema conquistado: ${newBadge.name}`,
+        );
+      } else {
+        console.log(`[BADGES DEBUG] ❌ Nenhum novo emblema conquistado`);
+      }
+    } else {
+      console.log(`[BADGES DEBUG] Like removido, não verifica emblemas`);
     }
 
-    res.json({
+    const responseData = {
       likes: likes.size,
       isLiked: !wasLiked,
       newBadge: newBadge, // Incluir info do novo emblema se houver
-    });
+    };
+
+    console.log(`[BADGES DEBUG] Sending response:`, responseData);
+    res.json(responseData);
   } catch (error) {
     console.error("[COMMENTS] Erro ao curtir comentário:", error);
     res.status(500).json({ message: "Erro interno" });

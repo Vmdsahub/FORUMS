@@ -10,6 +10,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
   Brain,
   Image,
   Video,
@@ -81,11 +88,16 @@ const forumCategories: ForumCategory[] = [
 ];
 
 export default function Forum() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [topics, setTopics] = useState<Topic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [iconModalOpen, setIconModalOpen] = useState(false);
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
+    null,
+  );
+  const [customIcons, setCustomIcons] = useState<Record<string, string>>({});
 
   const fetchTopics = async (category?: string) => {
     setIsLoading(true);
@@ -163,6 +175,77 @@ export default function Forum() {
       fetchTopics(selectedCategory);
     }
   }, [selectedCategory]);
+
+  // Carregar ícones salvos ao montar componente
+  useEffect(() => {
+    loadSavedIcons();
+  }, []);
+
+  const loadSavedIcons = async () => {
+    try {
+      const response = await fetch("/api/category-icons");
+      if (response.ok) {
+        const data = await response.json();
+        setCustomIcons(data.icons || {});
+      }
+    } catch (error) {
+      console.error("Erro ao carregar ícones salvos:", error);
+    }
+  };
+
+  // Função para lidar com upload de ícone
+  const handleIconUpload = async (file: File, categoryId: string) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      // Primeiro, fazer upload da imagem
+      const uploadResponse = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+        body: formData,
+      });
+
+      if (uploadResponse.ok) {
+        const uploadResult = await uploadResponse.json();
+
+        // Depois, salvar o ícone na API
+        const saveResponse = await fetch("/api/category-icons", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+          },
+          body: JSON.stringify({
+            categoryId,
+            iconUrl: uploadResult.url,
+          }),
+        });
+
+        if (saveResponse.ok) {
+          setCustomIcons((prev) => ({
+            ...prev,
+            [categoryId]: uploadResult.url,
+          }));
+          setIconModalOpen(false);
+          setEditingCategoryId(null);
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao fazer upload do ícone:", error);
+    }
+  };
+
+  // Função para quando admin clica no ícone
+  const handleIconClick = (categoryId: string, event: React.MouseEvent) => {
+    if (user?.name === "Vitoca" && isAdmin) {
+      event.stopPropagation();
+      setEditingCategoryId(categoryId);
+      setIconModalOpen(true);
+    }
+  };
 
   if (selectedCategory) {
     const category = forumCategories.find((c) => c.id === selectedCategory);
@@ -306,8 +389,28 @@ export default function Forum() {
           >
             <CardHeader>
               <div className="flex items-center gap-3 mb-3">
-                <div className={`p-3 rounded-lg text-white ${category.color}`}>
-                  {category.icon}
+                <div
+                  className={`w-12 h-12 flex items-center justify-center ${
+                    customIcons[category.id]
+                      ? "cursor-pointer"
+                      : `p-3 rounded-lg text-white ${category.color}`
+                  } ${user?.name === "Vitoca" && isAdmin ? "hover:opacity-75 transition-opacity" : ""}`}
+                  onClick={(e) => handleIconClick(category.id, e)}
+                  title={
+                    user?.name === "Vitoca" && isAdmin
+                      ? "Clique para alterar o ícone"
+                      : undefined
+                  }
+                >
+                  {customIcons[category.id] ? (
+                    <img
+                      src={customIcons[category.id]}
+                      alt={category.name}
+                      className="w-12 h-12 object-contain"
+                    />
+                  ) : (
+                    category.icon
+                  )}
                 </div>
                 <CardTitle className="text-xl">{category.name}</CardTitle>
               </div>
@@ -330,6 +433,35 @@ export default function Forum() {
           </Card>
         ))}
       </div>
+
+      {/* Modal para upload de ícone */}
+      <Dialog open={iconModalOpen} onOpenChange={setIconModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Alterar Ícone da Categoria</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+              Selecione uma nova imagem para o ícone da categoria.
+            </p>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file && editingCategoryId) {
+                  handleIconUpload(file, editingCategoryId);
+                }
+              }}
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setIconModalOpen(false)}>
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -22,6 +22,7 @@ export interface Topic {
   author: string;
   authorId: string;
   authorAvatar: string;
+  topicAvatarUrl?: string;
   replies: number;
   views: number;
   likes: number;
@@ -44,6 +45,7 @@ export interface CreateTopicRequest {
   description: string;
   content: string;
   category: string;
+  avatarUrl?: string;
 }
 
 export interface CreateCommentRequest {

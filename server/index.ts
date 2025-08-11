@@ -45,6 +45,11 @@ import {
   handleGetArticles,
   handleDeleteArticle,
 } from "./routes/newsletter";
+import {
+  getCategoryIcons,
+  updateCategoryIcon,
+  removeCategoryIcon,
+} from "./routes/category-icons";
 
 export function createServer() {
   const app = express();
@@ -138,6 +143,15 @@ export function createServer() {
     "/api/newsletter/articles/:articleId",
     authenticateToken,
     handleDeleteArticle,
+  );
+
+  // Category icons routes
+  app.get("/api/category-icons", getCategoryIcons);
+  app.post("/api/category-icons", authenticateToken, updateCategoryIcon);
+  app.delete(
+    "/api/category-icons/:categoryId",
+    authenticateToken,
+    removeCategoryIcon,
   );
 
   return app;

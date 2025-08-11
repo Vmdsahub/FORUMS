@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
-import CommentSystemNew from "@/components/CommentSystemNew";
+import SimpleCommentSystem from "@/components/SimpleCommentSystem";
 import UserPointsBadge from "@/components/UserPointsBadge";
 import UserHoverCard from "@/components/UserHoverCard";
 
@@ -377,7 +377,7 @@ export default function TopicView() {
                     size="sm"
                   >
                     <div className="flex items-center gap-2 cursor-pointer">
-                      <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold hover:bg-gray-800 transition-colors">
+                      <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold hover:bg-gray-800 transition-colors overflow-hidden">
                         {topic.authorAvatar}
                       </div>
                       <div className="flex flex-col gap-1">
@@ -474,7 +474,10 @@ export default function TopicView() {
         </div>
 
         {/* Novo Sistema de Comentários */}
-        <CommentSystemNew topicId={topic.id} topicAuthorId={topic.authorId} />
+        <SimpleCommentSystem
+          topicId={topic.id}
+          topicAuthorId={topic.authorId}
+        />
       </div>
     </div>
   );

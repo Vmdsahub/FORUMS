@@ -39,6 +39,49 @@ export default function CreateTopicModal({
     description: "",
     content: "",
   });
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+
+      // Criar preview da imagem
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setAvatarPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadAvatar = async (file: File): Promise<string | null> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        return result.url;
+      } else {
+        console.error("Erro no upload:", response.status, response.statusText);
+        toast.error("Erro ao fazer upload da imagem");
+      }
+    } catch (error) {
+      console.error("Erro ao fazer upload do avatar:", error);
+      toast.error("Erro ao fazer upload da imagem");
+    }
+    return null;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,10 +90,13 @@ export default function CreateTopicModal({
       return;
     }
 
+    // Validar conteúdo removendo HTML
+    const contentText = formData.content.replace(/<[^>]*>/g, "").trim();
+
     if (
       !formData.title.trim() ||
       !formData.description.trim() ||
-      !formData.content.trim()
+      !contentText
     ) {
       toast.error("Preencha todos os campos");
       return;
@@ -58,10 +104,25 @@ export default function CreateTopicModal({
 
     setIsSubmitting(true);
     try {
+      let avatarUrl = null;
+
+      console.log("[DEBUG] Iniciando criação de tópico...");
+      console.log("[DEBUG] avatarFile:", avatarFile);
+
+      // Upload do avatar se foi selecionado
+      if (avatarFile) {
+        console.log("[DEBUG] Fazendo upload do avatar...");
+        avatarUrl = await uploadAvatar(avatarFile);
+        console.log("[DEBUG] Avatar uploadado:", avatarUrl);
+      }
+
       const topicData = {
         ...formData,
         category: currentCategory.id,
+        ...(avatarUrl && { avatarUrl }),
       };
+
+      console.log("[DEBUG] Dados do tópico:", topicData);
 
       const response = await fetch("/api/topics", {
         method: "POST",
@@ -77,6 +138,8 @@ export default function CreateTopicModal({
         console.log("Tópico criado:", newTopic);
         toast.success("Tópico criado com sucesso!");
         setFormData({ title: "", description: "", content: "" });
+        setAvatarFile(null);
+        setAvatarPreview(null);
         setIsOpen(false);
         onTopicCreated?.(newTopic);
         onStatsRefresh?.(); // Refresh category statistics
@@ -149,6 +212,48 @@ export default function CreateTopicModal({
             <p className="text-xs text-gray-500">
               {formData.title.length}/100 caracteres
             </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="avatar" className="text-gray-900 font-medium">
+              Avatar do Tópico (Opcional)
+            </Label>
+            <div className="flex items-center gap-4">
+              {avatarPreview ? (
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-gray-300">
+                  <img
+                    src={avatarPreview}
+                    alt="Preview do avatar"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-gray-200 border-2 border-gray-300 flex items-center justify-center">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="text-gray-400"
+                  >
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                  </svg>
+                </div>
+              )}
+              <div className="flex-1">
+                <Input
+                  id="avatar"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarChange}
+                  className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Selecione uma imagem para o avatar do tópico. Será exibida em
+                  formato circular.
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="space-y-2">

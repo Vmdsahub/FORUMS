@@ -11,13 +11,16 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNotifications } from "@/contexts/NotificationContext";
 import Captcha from "@/components/Captcha";
+import TermsDialog from "@/components/TermsDialog";
 import { toast } from "sonner";
 
 interface HeaderProps {
@@ -40,7 +43,14 @@ export default function Header({ activeSection }: HeaderProps) {
     string[]
   >([]);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [notifications, setNotifications] = useState([]);
+  const {
+    notifications,
+    removeNotification,
+    clearNotifications,
+    markAllAsRead,
+    unreadCount,
+    addNotification,
+  } = useNotifications();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
 
@@ -54,6 +64,11 @@ export default function Header({ activeSection }: HeaderProps) {
   const [registerName, setRegisterName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
+  const [registerPhone, setRegisterPhone] = useState("");
+  const [registerBirthDate, setRegisterBirthDate] = useState("");
+  const [registerAcceptTerms, setRegisterAcceptTerms] = useState(false);
+  const [registerAcceptNewsletter, setRegisterAcceptNewsletter] =
+    useState(false);
   const [registerCaptcha, setRegisterCaptcha] = useState("");
   const [registerCaptchaValid, setRegisterCaptchaValid] = useState(false);
 
@@ -108,7 +123,7 @@ export default function Header({ activeSection }: HeaderProps) {
   }, []);
 
   const handleDeleteNotification = (notificationId: string) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+    removeNotification(notificationId);
   };
 
   const toggleCategory = (categoryId: string) => {
@@ -242,7 +257,13 @@ export default function Header({ activeSection }: HeaderProps) {
           {user && (
             <div ref={notificationRef} className="relative">
               <button
-                onClick={() => setShowNotifications(!showNotifications)}
+                onClick={() => {
+                  const isOpening = !showNotifications;
+                  setShowNotifications(isOpening);
+                  if (isOpening && unreadCount > 0) {
+                    markAllAsRead();
+                  }
+                }}
                 className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors"
                 title="Notificações"
               >
@@ -255,9 +276,9 @@ export default function Header({ activeSection }: HeaderProps) {
                 >
                   <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
                 </svg>
-                {notifications.length > 0 && (
+                {unreadCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {notifications.length}
+                    {unreadCount}
                   </span>
                 )}
               </button>
@@ -271,7 +292,7 @@ export default function Header({ activeSection }: HeaderProps) {
                       </h3>
                       {notifications.length > 0 && (
                         <button
-                          onClick={() => setNotifications([])}
+                          onClick={clearNotifications}
                           className="text-sm text-gray-500 hover:text-gray-700"
                         >
                           Limpar todas
@@ -287,15 +308,46 @@ export default function Header({ activeSection }: HeaderProps) {
                         {notifications.map((notification) => (
                           <div
                             key={notification.id}
-                            className="flex items-start justify-between p-2 border border-gray-100 rounded-lg hover:bg-gray-50"
+                            className={`flex items-start justify-between p-2 border rounded-lg hover:bg-gray-50 ${
+                              notification.read
+                                ? "border-gray-100 bg-white"
+                                : "border-blue-200 bg-blue-50"
+                            }`}
                           >
-                            <div className="flex-1">
-                              <p className="text-sm text-gray-800">
-                                {notification.message}
-                              </p>
-                              <p className="text-xs text-gray-500 mt-1">
-                                {notification.time}
-                              </p>
+                            <div className="flex items-start gap-2 flex-1">
+                              {notification.type === "badge" && (
+                                <div className="flex-shrink-0 w-8 h-8 mt-0.5">
+                                  {notification.icon ? (
+                                    <img
+                                      src={notification.icon}
+                                      alt="Emblema"
+                                      className="w-full h-full object-contain"
+                                    />
+                                  ) : (
+                                    <div className="text-yellow-500">🏆</div>
+                                  )}
+                                </div>
+                              )}
+                              {notification.type === "quote" && (
+                                <div className="text-blue-500 mt-0.5">💬</div>
+                              )}
+                              <div className="flex-1">
+                                <div className="flex items-start gap-2">
+                                  {!notification.read && (
+                                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                                  )}
+                                  <div className="flex-1">
+                                    <p
+                                      className={`text-sm ${notification.read ? "text-gray-700" : "text-gray-900 font-medium"}`}
+                                    >
+                                      {notification.message}
+                                    </p>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                      {notification.time}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
                             <button
                               onClick={() =>
@@ -378,7 +430,7 @@ export default function Header({ activeSection }: HeaderProps) {
                       >
                         <path d="M8 7c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 1c-1.5 0-4 .8-4 2.5V12h8v-1.5c0-1.7-2.5-2.5-4-2.5z" />
                       </svg>
-                      <span className="text-gray-700">Central do Usuário</span>
+                      <span className="text-gray-700">Central do Usu��rio</span>
                     </button>
                     <hr className="my-2" />
                     <button
@@ -513,37 +565,72 @@ export default function Header({ activeSection }: HeaderProps) {
                   <form
                     onSubmit={async (e) => {
                       e.preventDefault();
-                      if (isLoading) {
-                        console.log(
-                          "Already loading, preventing duplicate submission",
-                        );
-                        return;
-                      }
-                      if (!registerCaptchaValid) {
-                        toast.error(
-                          "Por favor, complete a verificação de segurança",
-                        );
-                        return;
-                      }
 
-                      console.log("Submitting registration form...", {
-                        registerName,
-                        registerEmail,
-                        registerCaptcha,
-                      });
-                      const success = await register(
-                        registerName,
-                        registerEmail,
-                        registerPassword,
-                        registerCaptcha,
-                      );
-                      if (success) {
-                        setIsRegisterOpen(false);
-                        setRegisterName("");
-                        setRegisterEmail("");
-                        setRegisterPassword("");
-                        setRegisterCaptcha("");
-                        setRegisterCaptchaValid(false);
+                      try {
+                        if (isLoading) {
+                          console.log(
+                            "Already loading, preventing duplicate submission",
+                          );
+                          return;
+                        }
+                        if (!registerCaptchaValid) {
+                          toast.error(
+                            "Por favor, complete a verificação de segurança",
+                          );
+                          return;
+                        }
+                        if (!registerAcceptTerms) {
+                          toast.error(
+                            "Você deve aceitar os termos de condições",
+                          );
+                          return;
+                        }
+
+                        console.log("Submitting registration form...", {
+                          registerName,
+                          registerEmail,
+                          registerPhone,
+                          registerBirthDate,
+                        });
+
+                        console.log("[FORM] Calling register function");
+
+                        const success = await register(
+                          registerName,
+                          registerEmail,
+                          registerPassword,
+                          registerPhone,
+                          registerBirthDate,
+                          registerAcceptTerms,
+                          registerAcceptNewsletter,
+                          registerCaptcha,
+                        );
+
+                        console.log(
+                          "[FORM] Register completed, success:",
+                          success,
+                        );
+
+                        if (success) {
+                          setIsRegisterOpen(false);
+                          setRegisterName("");
+                          setRegisterEmail("");
+                          setRegisterPassword("");
+                          setRegisterPhone("");
+                          setRegisterBirthDate("");
+                          setRegisterAcceptTerms(false);
+                          setRegisterAcceptNewsletter(false);
+                          setRegisterCaptcha("");
+                          setRegisterCaptchaValid(false);
+                        }
+                      } catch (formError) {
+                        console.error(
+                          "[REGISTER FORM] Form submission error:",
+                          formError,
+                        );
+                        setTimeout(() => {
+                          toast.error("Erro no formulário. Tente novamente.");
+                        }, 0);
                       }
                     }}
                     className="space-y-4 py-4"
@@ -597,12 +684,99 @@ export default function Header({ activeSection }: HeaderProps) {
                         onChange={(e) => setRegisterPassword(e.target.value)}
                         className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
                         required
-                        minLength={6}
+                        minLength={8}
+                        pattern="(?=.*[A-Z]).*"
                       />
                       <p className="text-xs text-gray-500">
-                        Mínimo de 6 caracteres
+                        Mínimo de 8 caracteres com pelo menos uma letra
+                        maiúscula
                       </p>
                     </div>
+
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="register-phone"
+                        className="text-gray-900 font-medium"
+                      >
+                        Telefone
+                      </Label>
+                      <Input
+                        id="register-phone"
+                        type="tel"
+                        placeholder="(11) 99999-9999"
+                        value={registerPhone}
+                        onChange={(e) => setRegisterPhone(e.target.value)}
+                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        required
+                        minLength={10}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label
+                        htmlFor="register-birthdate"
+                        className="text-gray-900 font-medium"
+                      >
+                        Data de Nascimento
+                      </Label>
+                      <Input
+                        id="register-birthdate"
+                        type="date"
+                        value={registerBirthDate}
+                        onChange={(e) => setRegisterBirthDate(e.target.value)}
+                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        required
+                      />
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="flex items-start space-x-2">
+                        <Checkbox
+                          id="register-terms"
+                          checked={registerAcceptTerms}
+                          onCheckedChange={(checked) =>
+                            setRegisterAcceptTerms(checked as boolean)
+                          }
+                          className="mt-0.5"
+                        />
+                        <div className="text-sm">
+                          <label
+                            htmlFor="register-terms"
+                            className="text-gray-700"
+                          >
+                            Eu aceito os{" "}
+                            <TermsDialog>
+                              <button
+                                type="button"
+                                className="text-blue-600 hover:text-blue-800 underline"
+                              >
+                                termos de condições
+                              </button>
+                            </TermsDialog>{" "}
+                            *
+                          </label>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start space-x-2">
+                        <Checkbox
+                          id="register-newsletter"
+                          checked={registerAcceptNewsletter}
+                          onCheckedChange={(checked) =>
+                            setRegisterAcceptNewsletter(checked as boolean)
+                          }
+                          className="mt-0.5"
+                        />
+                        <label
+                          htmlFor="register-newsletter"
+                          className="text-sm text-gray-700"
+                        >
+                          Quero receber a newsletter do IA HUB com novidades e
+                          conteúdos sobre inteligência artificial
+                        </label>
+                      </div>
+                    </div>
+
                     <Captcha
                       onCaptchaChange={setRegisterCaptcha}
                       onValidationChange={setRegisterCaptchaValid}
@@ -610,7 +784,11 @@ export default function Header({ activeSection }: HeaderProps) {
                     <Button
                       type="submit"
                       className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium"
-                      disabled={isLoading || !registerCaptchaValid}
+                      disabled={
+                        isLoading ||
+                        !registerCaptchaValid ||
+                        !registerAcceptTerms
+                      }
                     >
                       {isLoading ? "Criando conta..." : "Criar Conta"}
                     </Button>

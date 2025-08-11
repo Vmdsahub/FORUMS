@@ -58,7 +58,16 @@ const loginSchema = z.object({
 const registerSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   email: z.string().email("Email inválido"),
-  password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+  password: z
+    .string()
+    .min(8, "Senha deve ter pelo menos 8 caracteres")
+    .regex(/[A-Z]/, "Senha deve conter pelo menos uma letra maiúscula"),
+  phone: z.string().min(10, "Telefone deve ter pelo menos 10 dígitos"),
+  birthDate: z.string().min(1, "Data de nascimento é obrigatória"),
+  acceptTerms: z
+    .boolean()
+    .refine((val) => val === true, "Você deve aceitar os termos de condições"),
+  acceptNewsletter: z.boolean().optional(),
   captcha: z.string().min(1, "Captcha é obrigatório"),
 });
 
@@ -116,6 +125,14 @@ export const handleLogin: RequestHandler = (req, res) => {
       } as ErrorResponse);
     }
 
+    // Check if email is confirmed
+    if (!user.emailConfirmed) {
+      return res.status(403).json({
+        message:
+          "Confirme seu email antes de fazer login. Verifique sua caixa de entrada.",
+      } as ErrorResponse);
+    }
+
     // Generate token
     const token = generateToken();
     tokens.set(token, user.id);
@@ -148,18 +165,37 @@ export const handleLogin: RequestHandler = (req, res) => {
 
 export const handleRegister: RequestHandler = (req, res) => {
   try {
-    const { name, email, password, captcha } = registerSchema.parse(req.body);
+    const {
+      name,
+      email,
+      password,
+      phone,
+      birthDate,
+      acceptTerms,
+      acceptNewsletter,
+      captcha,
+    } = registerSchema.parse(req.body);
 
     // For demo purposes, we don't validate captcha server-side
     // In production, you would validate the captcha here
 
-    // Check if user already exists
-    const existingUser = Array.from(users.values()).find(
+    // Check if email already exists
+    const existingEmailUser = Array.from(users.values()).find(
       (u) => u.email === email,
     );
-    if (existingUser) {
+    if (existingEmailUser) {
       return res.status(409).json({
-        message: "Email já está em uso",
+        message: "Essa conta já existe, faça login",
+      } as ErrorResponse);
+    }
+
+    // Check if username already exists
+    const existingNameUser = Array.from(users.values()).find(
+      (u) => u.name === name,
+    );
+    if (existingNameUser) {
+      return res.status(409).json({
+        message: "Nome de usuário já está em uso",
       } as ErrorResponse);
     }
 
@@ -170,8 +206,12 @@ export const handleRegister: RequestHandler = (req, res) => {
       id: userId,
       name,
       email,
+      phone,
+      birthDate,
       password: hashPassword(password),
       role: "user" as const,
+      emailConfirmed: false, // User needs to confirm email
+      acceptNewsletter: acceptNewsletter || false,
     };
 
     users.set(userId, newUser);

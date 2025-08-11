@@ -21,6 +21,7 @@ const createTopicSchema = z.object({
   description: z.string().min(1).max(200),
   content: z.string().min(1).max(2000),
   category: z.string().min(1),
+  avatarUrl: z.string().optional(),
 });
 
 const createCommentSchema = z.object({
@@ -461,7 +462,9 @@ export const handleCreateTopic: RequestHandler = (req, res) => {
   }
 
   try {
+    console.log("[FORUM] Dados recebidos para criar tópico:", req.body);
     const data = createTopicSchema.parse(req.body);
+    console.log("[FORUM] Dados validados:", data);
     const { date, time } = formatDate();
 
     const newTopic: Topic = {
@@ -472,6 +475,7 @@ export const handleCreateTopic: RequestHandler = (req, res) => {
       author: req.user.name,
       authorId: req.user.id,
       authorAvatar: getUserInitials(req.user.name),
+      topicAvatarUrl: data.avatarUrl || undefined,
       category: data.category,
       replies: 0,
       views: 0,

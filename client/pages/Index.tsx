@@ -106,6 +106,11 @@ export default function Index(props: IndexProps) {
 
   // Estados para modais admin
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [iconModalOpen, setIconModalOpen] = useState(false);
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
+    null,
+  );
+  const [customIcons, setCustomIcons] = useState<Record<string, string>>({});
   const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
   const [newCategory, setNewCategory] = useState({ name: "", description: "" });
   const [newNewsletter, setNewNewsletter] = useState({
@@ -120,6 +125,23 @@ export default function Index(props: IndexProps) {
       fetchTopics(selectedCategory);
     }
   }, [selectedCategory, activeSection]);
+
+  // Carregar ícones salvos ao montar componente
+  useEffect(() => {
+    loadSavedIcons();
+  }, []);
+
+  const loadSavedIcons = async () => {
+    try {
+      const response = await fetch("/api/category-icons");
+      if (response.ok) {
+        const data = await response.json();
+        setCustomIcons(data.icons || {});
+      }
+    } catch (error) {
+      console.error("Erro ao carregar ícones salvos:", error);
+    }
+  };
 
   const fetchTopics = async (category: string, retryCount = 0) => {
     setIsLoadingTopics(true);
@@ -261,6 +283,62 @@ export default function Index(props: IndexProps) {
     } catch (error) {
       console.error("Error deleting topic:", error);
       toast.error("Erro ao excluir tópico");
+    }
+  };
+
+  // Função para lidar com upload de ícone
+  const handleIconUpload = async (file: File, categoryId: string) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      // Primeiro, fazer upload da imagem
+      const uploadResponse = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+        body: formData,
+      });
+
+      if (uploadResponse.ok) {
+        const uploadResult = await uploadResponse.json();
+
+        // Depois, salvar o ícone na API
+        const saveResponse = await fetch("/api/category-icons", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+          },
+          body: JSON.stringify({
+            categoryId,
+            iconUrl: uploadResult.url,
+          }),
+        });
+
+        if (saveResponse.ok) {
+          setCustomIcons((prev) => ({
+            ...prev,
+            [categoryId]: uploadResult.url,
+          }));
+          setIconModalOpen(false);
+          setEditingCategoryId(null);
+          toast.success("Ícone atualizado com sucesso!");
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao fazer upload do ícone:", error);
+      toast.error("Erro ao fazer upload do ícone");
+    }
+  };
+
+  // Função para quando admin clica no ícone
+  const handleIconClick = (categoryId: string, event: React.MouseEvent) => {
+    if (user?.name === "Vitoca") {
+      event.stopPropagation();
+      setEditingCategoryId(categoryId);
+      setIconModalOpen(true);
     }
   };
 
@@ -718,9 +796,31 @@ export default function Index(props: IndexProps) {
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center font-semibold">
-                              {category.name.split(" ")[0][0]}
-                              {category.name.split(" ")[1]?.[0] || ""}
+                            <div
+                              className={`w-12 h-12 flex items-center justify-center ${
+                                customIcons[category.id]
+                                  ? "cursor-pointer hover:opacity-75 transition-opacity"
+                                  : "rounded-full bg-black text-white font-semibold"
+                              } ${user?.name === "Vitoca" ? "hover:ring-2 hover:ring-blue-500" : ""}`}
+                              onClick={(e) => handleIconClick(category.id, e)}
+                              title={
+                                user?.name === "Vitoca"
+                                  ? "Clique para alterar o ícone"
+                                  : undefined
+                              }
+                            >
+                              {customIcons[category.id] ? (
+                                <img
+                                  src={customIcons[category.id]}
+                                  alt={category.name}
+                                  className="w-12 h-12 object-contain"
+                                />
+                              ) : (
+                                <>
+                                  {category.name.split(" ")[0][0]}
+                                  {category.name.split(" ")[1]?.[0] || ""}
+                                </>
+                              )}
                             </div>
                             <div>
                               <h3 className="text-lg font-semibold text-black mb-1">
@@ -888,8 +988,17 @@ export default function Index(props: IndexProps) {
                       <div className="grid grid-cols-12 gap-4 items-center">
                         <div className="col-span-6">
                           <div className="flex items-start gap-4">
-                            <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
-                              {topic.authorAvatar}
+                            <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0 overflow-hidden">
+                              {topic.topicAvatarUrl &&
+                              topic.topicAvatarUrl.trim() !== "" ? (
+                                <img
+                                  src={topic.topicAvatarUrl}
+                                  alt={topic.author}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                topic.authorAvatar
+                              )}
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
@@ -995,6 +1104,35 @@ export default function Index(props: IndexProps) {
           </div>
         )}
       </div>
+
+      {/* Modal para upload de ícone */}
+      <Dialog open={iconModalOpen} onOpenChange={setIconModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Alterar Ícone da Categoria</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+              Selecione uma nova imagem para o ícone da categoria.
+            </p>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file && editingCategoryId) {
+                  handleIconUpload(file, editingCategoryId);
+                }
+              }}
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setIconModalOpen(false)}>
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

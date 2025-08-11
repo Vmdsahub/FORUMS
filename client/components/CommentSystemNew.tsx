@@ -14,23 +14,24 @@ interface Comment {
   authorId: string;
   authorAvatar: string;
   topicId: string;
-  parentId: string | null;
   createdAt: string;
   likes: number;
   isLiked: boolean;
-  replies?: Comment[];
-  repliesCount?: number;
+  quotedComment?: {
+    id: string;
+    content: string;
+    author: string;
+    authorId: string;
+  };
 }
 
 interface CommentItemProps {
   comment: Comment;
-  depth: number;
   topicId: string;
   topicAuthorId: string;
-  onReply: (parentId: string, content: string) => Promise<void>;
   onLike: (commentId: string) => Promise<void>;
   onDelete: (commentId: string) => Promise<void>;
-  onReloadComments: () => Promise<void>;
+  onQuote: (comment: Comment) => void;
 }
 
 // COMPONENTE INDIVIDUAL DE COMENTÁRIO
@@ -76,11 +77,20 @@ function CommentItem({
     : comment.repliesCount || 0;
 
   return (
-    <div className={`${indentationClass} ${depth > 0 ? "mt-4" : ""}`}>
+    <div className={`${indentationClass} ${depth > 0 ? "mt-4" : ""} relative`}>
+      {/* Indicador visual sutil para respostas */}
+      {depth > 0 && (
+        <div className="absolute -left-4 top-4 text-gray-400 z-10">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7.41 8.84L12 13.42l4.59-4.58L18 10.25l-6 6-6-6z" />
+          </svg>
+        </div>
+      )}
+
       {/* Linha vertical para mostrar hierarquia */}
       {depth > 0 && (
         <div className="border-l-2 border-gray-200 pl-4">
-          <div className="bg-white rounded-lg border border-gray-100 p-4 shadow-sm">
+          <div className="bg-gray-50/40 rounded-lg border border-gray-100 p-4 shadow-sm">
             <CommentContent
               comment={comment}
               topicAuthorId={topicAuthorId}
@@ -468,10 +478,16 @@ export default function CommentSystemNew({
 
       if (response.ok) {
         const data = await response.json();
+        console.log("[DEBUG] Like response:", data);
+        console.log("[DEBUG] newBadge field:", data.newBadge);
+        console.log("[DEBUG] typeof newBadge:", typeof data.newBadge);
 
         // Verificar se o usuário ganhou um novo emblema
         if (data.newBadge) {
+          console.log("[DEBUG] New badge earned:", data.newBadge);
           showBadgeNotification(data.newBadge);
+        } else {
+          console.log("[DEBUG] No new badge in response");
         }
 
         await loadComments();

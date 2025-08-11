@@ -11,6 +11,10 @@ interface AuthContextType {
     name: string,
     email: string,
     password: string,
+    phone: string,
+    birthDate: string,
+    acceptTerms: boolean,
+    acceptNewsletter: boolean,
     captcha: string,
   ) => Promise<boolean>;
   logout: () => void;
@@ -111,51 +115,67 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     name: string,
     email: string,
     password: string,
+    phone: string,
+    birthDate: string,
+    acceptTerms: boolean,
+    acceptNewsletter: boolean,
     captcha: string,
   ): Promise<boolean> => {
-    console.log("Starting registration request...", { name, email, captcha });
+    console.log("[REGISTER] Starting registration...", { name, email });
     setIsLoading(true);
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
+    try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password, captcha }),
-        signal: controller.signal,
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          phone,
+          birthDate,
+          acceptTerms,
+          acceptNewsletter,
+          captcha,
+        }),
       });
 
-      clearTimeout(timeoutId);
+      console.log("[REGISTER] Response received, status:", response.status);
 
       if (response.ok) {
-        const data: AuthResponse = await response.json();
+        console.log("[REGISTER] Success response");
+        const data = await response.json();
         localStorage.setItem("auth_token", data.token);
         setUser(data.user);
         toast.success("Conta criada com sucesso!");
         return true;
       } else {
+        console.log("[REGISTER] Error response");
         let errorMessage = "Erro ao criar conta";
+
         try {
-          const error: ErrorResponse = await response.json();
-          errorMessage = error.message || errorMessage;
-        } catch (jsonError) {
-          console.error("Error parsing error response:", jsonError);
+          const errorData = await response.json();
+          console.log("[REGISTER] Error data:", errorData);
+          if (errorData && errorData.message) {
+            errorMessage = errorData.message;
+          }
+        } catch (parseError) {
+          console.log("[REGISTER] Could not parse error response:", parseError);
+          errorMessage = `Erro HTTP ${response.status}`;
         }
+
+        console.log("[REGISTER] Showing error message:", errorMessage);
         toast.error(errorMessage);
         return false;
       }
-    } catch (error: any) {
-      console.error("Register error:", error);
-      if (error.name === "AbortError") {
-        toast.error("Requisição expirou. Tente novamente.");
-      } else {
-        toast.error("Erro de conexão. Tente novamente.");
-      }
+    } catch (networkError) {
+      console.error("[REGISTER] Network or other error:", networkError);
+      toast.error("Erro de conexão. Tente novamente.");
       return false;
     } finally {
+      console.log("[REGISTER] Setting loading to false");
       setIsLoading(false);
     }
   };
