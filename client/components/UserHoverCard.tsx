@@ -135,7 +135,7 @@ export default function UserHoverCard({
                     {availableBadges.map((badge) => (
                       <div
                         key={badge.id}
-                        className="group relative flex flex-col items-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                        className="group relative flex flex-col items-center p-2"
                         title={badge.description}
                       >
                         <div className="text-lg mb-1">
