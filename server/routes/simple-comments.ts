@@ -31,7 +31,7 @@ const commentLikes = new Map<string, Set<string>>(); // commentId -> userIds
 
 // Schema de validação
 const createCommentSchema = z.object({
-  content: z.string().min(1).max(1000),
+  content: z.string().min(1).max(10000), // Aumentado para suportar HTML rico
   parentId: z.string().nullable().optional(),
   quotedCommentId: z.string().nullable().optional(),
 });
