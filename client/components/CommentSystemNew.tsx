@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBadgeNotification } from "@/contexts/BadgeNotificationContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import UserHoverCard from "@/components/UserHoverCard";
@@ -211,7 +212,7 @@ function CommentContent({
           {formatDate(comment.createdAt)}
         </div>
 
-        {/* Conteúdo do comentário */}
+        {/* Conte��do do comentário */}
         <div className="text-gray-700 mb-3 text-sm leading-relaxed">
           <MarkdownRenderer content={comment.content} />
         </div>
@@ -232,8 +233,8 @@ function CommentContent({
               onClick={onToggleReplies}
               className="text-xs text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
             >
-              {showReplies ? "Ocultar" : "Ver"} {actualRepliesCount} resposta
-              {actualRepliesCount !== 1 ? "s" : ""}
+              {showReplies ? "Retrair discussão" : "Continuar discussão"} (
+              {actualRepliesCount})
             </button>
           )}
 
@@ -278,6 +279,7 @@ export default function CommentSystemNew({
   topicAuthorId,
 }: CommentSystemProps) {
   const { user } = useAuth();
+  const { showBadgeNotification } = useBadgeNotification();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -285,6 +287,17 @@ export default function CommentSystemNew({
   const [apiStatus, setApiStatus] = useState<"online" | "offline" | "unknown">(
     "unknown",
   );
+
+  // Função para contar total de comentários + respostas (recursivamente)
+  const getTotalCommentsCount = (commentsList: Comment[]): number => {
+    return commentsList.reduce((total, comment) => {
+      let count = 1; // O comentário em si
+      if (comment.replies && comment.replies.length > 0) {
+        count += getTotalCommentsCount(comment.replies); // Recursão para respostas
+      }
+      return total + count;
+    }, 0);
+  };
 
   // Carregar comentários com retry e fallback
   const loadComments = async (retryCount = 0) => {
@@ -454,6 +467,13 @@ export default function CommentSystemNew({
       });
 
       if (response.ok) {
+        const data = await response.json();
+
+        // Verificar se o usuário ganhou um novo emblema
+        if (data.newBadge) {
+          showBadgeNotification(data.newBadge);
+        }
+
         await loadComments();
       }
     } catch (error) {
@@ -496,25 +516,10 @@ export default function CommentSystemNew({
     <div className="bg-white rounded-lg border border-gray-200 p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-black">
-          Comentários ({comments.length})
+          Comentários ({getTotalCommentsCount(comments)})
         </h3>
         <div className="flex items-center gap-2">
-          <div
-            className={`w-2 h-2 rounded-full ${
-              apiStatus === "online"
-                ? "bg-green-500"
-                : apiStatus === "offline"
-                  ? "bg-red-500"
-                  : "bg-yellow-500"
-            }`}
-          ></div>
-          <span className="text-xs text-gray-500">
-            {apiStatus === "online"
-              ? "Online"
-              : apiStatus === "offline"
-                ? "Offline"
-                : "Conectando..."}
-          </span>
+          <span className="text-xs text-gray-500">Sistema de comentários</span>
         </div>
       </div>
 

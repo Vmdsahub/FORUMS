@@ -202,12 +202,25 @@ export const likeComment: RequestHandler = (req, res) => {
 
     // Sincronizar com sistema de stats
     const comment = comments.get(commentId)!;
-    const { onLikeToggled } = require("./user-stats-final");
+    const { onLikeToggled, checkForNewBadge } = require("./user-stats-final");
+
+    // Verificar estado anterior dos emblemas
+    const previousLikes = getCommentLikesForUser(comment.authorId);
+
     onLikeToggled(commentId, comment.authorId, !wasLiked);
+
+    // Verificar se o usuário ganhou um novo emblema
+    let newBadge = null;
+    if (!wasLiked) {
+      // Só verifica quando adiciona like
+      const currentLikes = getCommentLikesForUser(comment.authorId);
+      newBadge = checkForNewBadge(previousLikes, currentLikes);
+    }
 
     res.json({
       likes: likes.size,
       isLiked: !wasLiked,
+      newBadge: newBadge, // Incluir info do novo emblema se houver
     });
   } catch (error) {
     console.error("[COMMENTS] Erro ao curtir comentário:", error);
@@ -300,9 +313,9 @@ export function initializeDemo() {
     {
       id: "demo1",
       content: "Ótimo comparativo! Muito útil para escolher.",
-      author: "Ana",
-      authorId: "user_ana",
-      authorAvatar: "AN",
+      author: "João",
+      authorId: "demo_user_123",
+      authorAvatar: "JO",
       topicId: "1",
       parentId: null,
       createdAt: new Date(Date.now() - 7200000).toISOString(),
@@ -320,9 +333,9 @@ export function initializeDemo() {
     {
       id: "demo3",
       content: "Obrigado pelos comentários! Ajuda muito o feedback.",
-      author: "Bruno",
-      authorId: "user_bruno",
-      authorAvatar: "BR",
+      author: "Admin",
+      authorId: "admin_vitoca_456",
+      authorAvatar: "AD",
       topicId: "1",
       parentId: "demo2",
       createdAt: new Date(Date.now() - 6000000).toISOString(),
@@ -330,9 +343,9 @@ export function initializeDemo() {
     {
       id: "demo4",
       content: "Posso adicionar uma resposta aqui no nível 4?",
-      author: "Diana",
-      authorId: "user_diana",
-      authorAvatar: "DI",
+      author: "João",
+      authorId: "demo_user_123",
+      authorAvatar: "JO",
       topicId: "1",
       parentId: "demo3",
       createdAt: new Date(Date.now() - 5400000).toISOString(),
@@ -375,10 +388,10 @@ export function initializeDemo() {
       "user_pedro_101",
       "user_ana_202",
     ]),
-  ); // 4 likes
-  commentLikes.set("demo2", new Set(["demo_user_123", "user_pedro_101"])); // +2 likes para João = 6 total
+  ); // 4 likes para comentário do João (demo1)
+  commentLikes.set("demo4", new Set(["user_carlos", "user_pedro_101"])); // +2 likes para segundo comentário do João (demo4) = 6 total
 
-  // admin_vitoca_456 (Admin) recebe 8 likes total
+  // admin_vitoca_456 (Admin) recebe 4 likes total no comentário demo3
   commentLikes.set(
     "demo3",
     new Set([
@@ -387,21 +400,20 @@ export function initializeDemo() {
       "user_pedro_101",
       "user_ana_202",
     ]),
-  ); // 4 likes para Admin
-  commentLikes.set(
-    "demo4",
-    new Set([
-      "demo_user_123",
-      "user_maria_789",
-      "user_pedro_101",
-      "user_ana_202",
-    ]),
-  ); // +4 likes para Admin = 8 total
+  ); // 4 likes para comentário do Admin (demo3)
 
-  // user_maria_789 (Maria) recebe 2 likes
-  commentLikes.set("demo5", new Set(["demo_user_123", "admin_vitoca_456"])); // 2 likes para Maria
+  // user_eduardo recebe 2 likes no comentário demo5
+  commentLikes.set("demo5", new Set(["demo_user_123", "admin_vitoca_456"])); // 2 likes para Eduardo
 
   console.log(
     "[COMMENTS] Sistema inicializado com dados demo de múltiplos níveis e likes para pontos reais",
+  );
+
+  // Debug: mostrar contagem de likes por usuário
+  console.log(
+    `[COMMENTS] João (demo_user_123) tem ${getCommentLikesForUser("demo_user_123")} likes`,
+  );
+  console.log(
+    `[COMMENTS] Admin (admin_vitoca_456) tem ${getCommentLikesForUser("admin_vitoca_456")} likes`,
   );
 }

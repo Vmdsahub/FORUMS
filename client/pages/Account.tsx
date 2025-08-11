@@ -46,27 +46,88 @@ export default function Account() {
   });
 
   // Badge selection state
-  const [availableBadges] = useState([
-    {
-      id: "iniciante",
-      name: "Iniciante",
-      description: "Primeiros passos no fórum",
-      icon: "https://cdn.builder.io/api/v1/image/assets%2Feb4ab92cf61440af8e31a540e9165539%2F94f143c3d8d0424f901c1f5e6f7c61e5?format=webp&width=100",
-      requiredPoints: 5,
-      color: "purple",
-      isEarned: true,
-    },
-  ]);
+  const [availableBadges, setAvailableBadges] = useState<any[]>([]);
+  const [userBadges, setUserBadges] = useState<any[]>([]);
+  const [selectedBadges, setSelectedBadges] = useState<string[]>([]);
+  const [memberSince, setMemberSince] = useState<string>("");
 
-  const [selectedBadges, setSelectedBadges] = useState<string[]>(["iniciante"]);
-  const [memberSince] = useState("2024-01-15"); // Data real de cadastro
-
-  // Fetch user's topics
+  // Fetch user's topics and badges
   useEffect(() => {
     if (user) {
       fetchUserTopics();
+      fetchUserBadges();
     }
   }, [user]);
+
+  const fetchUserBadges = async () => {
+    try {
+      // Buscar badges do usuário
+      const userStatsResponse = await fetch("/api/user/stats", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
+
+      // Buscar todos os badges disponíveis
+      const allBadgesResponse = await fetch("/api/badges");
+
+      // Buscar seleção atual de badges
+      const selectionResponse = await fetch("/api/user/badge-selection", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
+
+      if (userStatsResponse.ok && allBadgesResponse.ok) {
+        const userStatsData = await userStatsResponse.json();
+        const allBadgesData = await allBadgesResponse.json();
+
+        setUserBadges(userStatsData.badges || []);
+        setAvailableBadges(allBadgesData.badges || []);
+
+        // Definir data real de criação da conta
+        if (userStatsData.createdAt) {
+          setMemberSince(userStatsData.createdAt);
+        }
+
+        // Usar seleção salva ou todos os badges conquistados como fallback
+        if (selectionResponse.ok) {
+          const selectionData = await selectionResponse.json();
+          setSelectedBadges(selectionData.selectedBadges || []);
+        } else {
+          const earnedBadgeIds = (userStatsData.badges || []).map(
+            (badge: any) => badge.id,
+          );
+          setSelectedBadges(earnedBadgeIds);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching badges:", error);
+    }
+  };
+
+  const saveBadgeSelection = async () => {
+    try {
+      const response = await fetch("/api/user/badge-selection", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+        body: JSON.stringify({ selectedBadges }),
+      });
+
+      if (response.ok) {
+        toast.success("Seleção de emblemas salva com sucesso!");
+      } else {
+        const errorData = await response.json();
+        toast.error(errorData.message || "Erro ao salvar seleção");
+      }
+    } catch (error) {
+      console.error("Error saving badge selection:", error);
+      toast.error("Erro ao salvar seleção");
+    }
+  };
 
   const fetchUserTopics = async () => {
     setIsLoadingTopics(true);
@@ -246,22 +307,24 @@ export default function Account() {
             />
           </div>
           <div className="flex-1">
-            <h2 className="text-xl font-semibold text-black">{user.name}</h2>
-            <p className="text-gray-600 mb-1">{user.email}</p>
-            <p className="text-sm text-gray-500 mb-2">
-              Membro desde{" "}
-              {new Date(memberSince).toLocaleDateString("pt-BR", {
-                month: "long",
-                year: "numeric",
-              })}
-            </p>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 mb-1">
+              <h2 className="text-xl font-semibold text-black">{user.name}</h2>
               <UserPointsBadge
                 userId={user.id}
                 size="md"
                 showPoints={true}
-                showBadges={true}
+                showBadges={false}
               />
+            </div>
+            <p className="text-gray-600 mb-1">{user.email}</p>
+            <div className="flex items-center gap-3">
+              <p className="text-sm text-gray-500">
+                Membro desde{" "}
+                {new Date(memberSince).toLocaleDateString("pt-BR", {
+                  month: "long",
+                  year: "numeric",
+                })}
+              </p>
               {user.role === "admin" && (
                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                   Administrador
@@ -295,28 +358,42 @@ export default function Account() {
             <div className="bg-white border border-gray-200 rounded-lg p-6">
               <div className="mb-4">
                 <h4 className="font-semibold text-black mb-2">
-                  Selecione até 6 emblemas para exibir nos comentários:
+                  Selecione até 9 emblemas para exibir nos comentários:
                 </h4>
                 <p className="text-sm text-gray-600 mb-4">
                   Estes emblemas aparecerão abaixo do seu avatar quando você
                   comentar
                 </p>
+                {userBadges.length === 0 && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+                    <p className="text-sm text-amber-800">
+                      🏆 Você ainda não conquistou nenhum emblema. Receba likes
+                      nos seus comentários para ganhar o emblema "Iniciante"!
+                    </p>
+                  </div>
+                )}
+                {userBadges.length > 0 && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                    <p className="text-sm text-blue-800">
+                      🎉 Emblemas conquistados: {userBadges.length}. Selecione
+                      até 9 para exibir nos comentários.
+                    </p>
+                  </div>
+                )}
               </div>
 
-              <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-6">
-                {availableBadges.map((badge) => {
+              <div className="grid grid-cols-3 gap-4 mb-6 min-h-[180px]">
+                {userBadges.slice(0, 9).map((badge) => {
                   const isSelected = selectedBadges.includes(badge.id);
-                  const canSelect = selectedBadges.length < 6 || isSelected;
+                  const canSelect = selectedBadges.length < 9 || isSelected;
 
                   return (
                     <div
                       key={badge.id}
-                      className={`relative group cursor-pointer p-2 rounded-lg border-2 transition-all ${
-                        isSelected
-                          ? "border-blue-500 bg-blue-50"
-                          : canSelect
-                            ? "border-gray-200 hover:border-gray-300"
-                            : "border-gray-100 opacity-50 cursor-not-allowed"
+                      className={`relative group transition-all cursor-pointer ${
+                        !canSelect && !isSelected
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
                       }`}
                       onClick={() => {
                         if (!canSelect && !isSelected) return;
@@ -330,15 +407,12 @@ export default function Account() {
                         }
                       }}
                     >
-                      <div className="text-center">
+                      <div className="relative inline-block">
                         <img
                           src={badge.icon}
                           alt={badge.name}
-                          className="w-12 h-12 object-contain mx-auto hover:scale-110 transition-transform duration-300"
+                          className="w-12 h-12 object-contain hover:scale-110 transition-transform duration-300"
                         />
-                        <div className="text-xs font-medium mt-1">
-                          {badge.name}
-                        </div>
 
                         {isSelected && (
                           <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
@@ -354,12 +428,12 @@ export default function Account() {
                         )}
                       </div>
 
-                      {/* Tooltip no hover */}
+                      {/* Tooltip no hover com nome, descrição e data */}
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 p-2 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
                         <div className="font-semibold">{badge.name}</div>
                         <div className="text-gray-300">{badge.description}</div>
-                        <div className="text-gray-400 mt-1">
-                          Obtido em:{" "}
+                        <div className="text-green-400 mt-1">
+                          ✓ Conquistado em{" "}
                           {new Date(memberSince).toLocaleDateString("pt-BR")}
                         </div>
 
@@ -369,16 +443,33 @@ export default function Account() {
                     </div>
                   );
                 })}
+
+                {/* Preencher espaços vazios para manter grid 3x3 quando há emblemas */}
+                {userBadges.length > 0 &&
+                  userBadges.length < 9 &&
+                  Array.from({ length: 9 - userBadges.length }).map(
+                    (_, index) => (
+                      <div key={`empty-${index}`} className="p-2"></div>
+                    ),
+                  )}
               </div>
 
               <div className="text-center">
-                <p className="text-sm text-gray-600">
-                  {selectedBadges.length}/6 emblemas selecionados
+                <p className="text-sm text-gray-600 mb-3">
+                  {selectedBadges.length}/9 emblemas selecionados
                 </p>
-                {selectedBadges.length === 0 && (
-                  <p className="text-xs text-amber-600 mt-1">
-                    Selecione pelo menos um emblema para exibir nos coment��rios
+                {userBadges.length > 0 && selectedBadges.length === 0 && (
+                  <p className="text-xs text-amber-600 mb-3">
+                    Selecione pelo menos um emblema para exibir nos comentários
                   </p>
+                )}
+                {userBadges.length > 0 && (
+                  <button
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                    onClick={saveBadgeSelection}
+                  >
+                    Salvar Seleção
+                  </button>
                 )}
               </div>
             </div>

@@ -15,6 +15,10 @@ interface UserProfileData {
   createdAt: string;
 }
 
+interface BadgeSelectionData {
+  selectedBadges: string[];
+}
+
 interface UserHoverCardProps {
   userId: string;
   userName: string;
@@ -33,6 +37,7 @@ export default function UserHoverCard({
   children,
 }: UserHoverCardProps) {
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
+  const [badgeSelection, setBadgeSelection] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCard, setShowCard] = useState(false);
 
@@ -46,10 +51,31 @@ export default function UserHoverCard({
         const response = await fetch(url);
         console.log(`[UserHoverCard] Status da resposta: ${response.status}`);
 
+        // Buscar seleção de badges do usuário específico
+        let userSelection: string[] = [];
+        try {
+          const selectionResponse = await fetch(
+            `/api/user/badge-selection/${userId}`,
+          );
+          if (selectionResponse.ok) {
+            const selectionData = await selectionResponse.json();
+            userSelection = selectionData.selectedBadges || [];
+            console.log(
+              `[UserHoverCard] Seleção de badges do usuário ${userId}:`,
+              userSelection,
+            );
+          }
+        } catch (error) {
+          console.log(
+            "Não foi possível buscar seleção de badges (usuário pode não ter seleção)",
+          );
+        }
+
         if (response.ok) {
           const data = await response.json();
           console.log(`[UserHoverCard] Dados recebidos:`, data);
           setUserProfile(data);
+          setBadgeSelection(userSelection);
         } else {
           const text = await response.text();
           console.error(
@@ -63,6 +89,7 @@ export default function UserHoverCard({
             badges: [],
             createdAt: new Date().toISOString(),
           });
+          setBadgeSelection([]);
         }
       } catch (error) {
         console.error("Erro ao buscar perfil do usuário:", error);
@@ -72,6 +99,7 @@ export default function UserHoverCard({
           badges: [],
           createdAt: new Date().toISOString(),
         });
+        setBadgeSelection([]);
       } finally {
         setIsLoading(false);
       }
@@ -91,8 +119,11 @@ export default function UserHoverCard({
     });
   };
 
-  // Só mostrar emblemas que o usuário realmente possui, máximo 9 (3x3)
-  const availableBadges = userProfile?.badges?.slice(0, 9) || [];
+  // Mostrar apenas emblemas selecionados pelo usuário, até 9 (3x3)
+  const availableBadges =
+    userProfile?.badges
+      ?.filter((badge) => badgeSelection.includes(badge.id))
+      .slice(0, 9) || [];
 
   return (
     <div
@@ -135,7 +166,7 @@ export default function UserHoverCard({
                     {availableBadges.map((badge) => (
                       <div
                         key={badge.id}
-                        className="group relative flex flex-col items-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                        className="group relative flex flex-col items-center p-2"
                         title={badge.description}
                       >
                         <div className="text-lg mb-1">

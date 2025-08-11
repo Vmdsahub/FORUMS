@@ -194,6 +194,20 @@ export function getUserData(userId: string) {
   return user;
 }
 
+// Função para verificar se o usuário ganhou um novo emblema
+export function checkForNewBadge(previousLikes: number, currentLikes: number) {
+  const previousBadges = calculateUserBadges(previousLikes);
+  const currentBadges = calculateUserBadges(currentLikes);
+
+  // Verificar se há novo emblema
+  if (currentBadges.length > previousBadges.length) {
+    // Retornar o novo emblema
+    return currentBadges[currentBadges.length - 1];
+  }
+
+  return null;
+}
+
 // Função para inicializar usuário se não existir
 export function ensureUserExists(userId: string, createdAt?: string) {
   if (!userData.has(userId)) {

@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { useCategoryStats } from "@/hooks/useCategoryStats";
+import { BadgeNotificationProvider } from "@/contexts/BadgeNotificationContext";
 import TopicView from "@/pages/TopicView";
 import Index from "@/pages/Index";
 import Account from "@/pages/Account";
@@ -232,41 +233,43 @@ function App() {
   const currentNewsletter = newsletters[currentWeek] || null;
 
   return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
-        <Header activeSection={activeSection} />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <Index
-                activeSection={activeSection}
-                setActiveSection={setActiveSection}
-                expandedNewsletter={expandedNewsletter}
-                setExpandedNewsletter={setExpandedNewsletter}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-                currentWeek={currentWeek}
-                setCurrentWeek={setCurrentWeek}
-                weeklyNewsletters={newsletters}
-                onNewsletterRefresh={loadNewsletters}
-                forumCategories={getDynamicCategories()}
-                toggleNewsletterTopic={toggleNewsletterTopic}
-                refreshCategoryStats={refreshStats}
-                handleCategoryClick={handleCategoryClick}
-                getSelectedCategoryData={getSelectedCategoryData}
-                navigateWeek={navigateWeek}
-                currentNewsletter={currentNewsletter}
-              />
-            }
-          />
-          <Route path="/topic/:topicId" element={<TopicView />} />
-          <Route path="/account" element={<Account />} />
-          <Route path="/saved-topics" element={<SavedTopics />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+    <BadgeNotificationProvider>
+      <BrowserRouter>
+        <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
+          <Header activeSection={activeSection} />
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Index
+                  activeSection={activeSection}
+                  setActiveSection={setActiveSection}
+                  expandedNewsletter={expandedNewsletter}
+                  setExpandedNewsletter={setExpandedNewsletter}
+                  selectedCategory={selectedCategory}
+                  setSelectedCategory={setSelectedCategory}
+                  currentWeek={currentWeek}
+                  setCurrentWeek={setCurrentWeek}
+                  weeklyNewsletters={newsletters}
+                  onNewsletterRefresh={loadNewsletters}
+                  forumCategories={getDynamicCategories()}
+                  toggleNewsletterTopic={toggleNewsletterTopic}
+                  refreshCategoryStats={refreshStats}
+                  handleCategoryClick={handleCategoryClick}
+                  getSelectedCategoryData={getSelectedCategoryData}
+                  navigateWeek={navigateWeek}
+                  currentNewsletter={currentNewsletter}
+                />
+              }
+            />
+            <Route path="/topic/:topicId" element={<TopicView />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/saved-topics" element={<SavedTopics />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </BadgeNotificationProvider>
   );
 }
 

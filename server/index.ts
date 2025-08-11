@@ -29,6 +29,11 @@ import {
   handleGetUserProfile,
 } from "./routes/user-stats-final";
 import {
+  handleSaveBadgeSelection,
+  handleGetBadgeSelection,
+  handleGetUserBadgeSelection,
+} from "./routes/user-badge-selection";
+import {
   getComments,
   createComment,
   likeComment,
@@ -106,6 +111,19 @@ export function createServer() {
   app.get("/api/user/stats", authenticateToken, handleGetUserStats);
   app.get("/api/badges", handleGetAllBadges);
   app.get("/api/user/profile/:userId", handleGetUserProfile);
+
+  // Badge selection routes
+  app.post(
+    "/api/user/badge-selection",
+    authenticateToken,
+    handleSaveBadgeSelection,
+  );
+  app.get(
+    "/api/user/badge-selection",
+    authenticateToken,
+    handleGetBadgeSelection,
+  );
+  app.get("/api/user/badge-selection/:userId", handleGetUserBadgeSelection);
 
   // Novo sistema de comentários - ANTES das rotas antigas para evitar conflito
   app.get("/api/comments/:topicId", getComments);
