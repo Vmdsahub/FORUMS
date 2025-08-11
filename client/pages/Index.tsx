@@ -267,6 +267,45 @@ export default function Index(props: IndexProps) {
     }
   };
 
+  // Função para lidar com upload de ícone
+  const handleIconUpload = async (file: File, categoryId: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setCustomIcons(prev => ({
+          ...prev,
+          [categoryId]: result.url
+        }));
+        setIconModalOpen(false);
+        setEditingCategoryId(null);
+        toast.success("Ícone atualizado com sucesso!");
+      }
+    } catch (error) {
+      console.error('Erro ao fazer upload do ícone:', error);
+      toast.error("Erro ao fazer upload do ícone");
+    }
+  };
+
+  // Função para quando admin clica no ícone
+  const handleIconClick = (categoryId: string, event: React.MouseEvent) => {
+    if (user?.name === "Vitoca") {
+      event.stopPropagation();
+      setEditingCategoryId(categoryId);
+      setIconModalOpen(true);
+    }
+  };
+
   return (
     <main className="container max-w-7xl mx-auto px-6 py-12">
       {/* Hero Section */}
