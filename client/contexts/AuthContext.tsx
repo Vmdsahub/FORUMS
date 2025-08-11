@@ -155,23 +155,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log("[REGISTER] Error response, status:", response.status);
         let errorMessage = "Erro ao criar conta";
 
-        // Log do content-type para debug
-        console.log("[REGISTER] Content-Type:", response.headers.get('content-type'));
-
-        try {
-          const errorData = await response.json();
-          console.log("[REGISTER] Parsed error data:", errorData);
-
-          if (errorData && typeof errorData === 'object' && errorData.message) {
-            errorMessage = errorData.message;
-            console.log("[REGISTER] Using server message:", errorMessage);
-          } else {
-            console.log("[REGISTER] No valid message in response, using default");
+        if (response.status === 409) {
+          // Para status 409, sabemos que é conflito de email/usuário
+          const responseClone = response.clone();
+          try {
+            const errorData = await responseClone.json();
+            if (errorData?.message) {
+              errorMessage = errorData.message;
+            } else {
+              errorMessage = "Esta conta já existe";
+            }
+          } catch {
+            errorMessage = "Esta conta já existe";
           }
-        } catch (parseError) {
-          console.log("[REGISTER] Parse error details:", parseError);
-          console.log("[REGISTER] Parse error type:", parseError.constructor.name);
-          errorMessage = `Erro HTTP ${response.status}`;
+        } else {
+          try {
+            const errorData = await response.json();
+            if (errorData?.message) {
+              errorMessage = errorData.message;
+            }
+          } catch {
+            errorMessage = `Erro HTTP ${response.status}`;
+          }
         }
 
         console.log("[REGISTER] Final error message:", errorMessage);
