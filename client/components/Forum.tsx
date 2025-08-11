@@ -393,6 +393,35 @@ export default function Forum() {
           </Card>
         ))}
       </div>
+
+      {/* Modal para upload de ícone */}
+      <Dialog open={iconModalOpen} onOpenChange={setIconModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Alterar Ícone da Categoria</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600">
+              Selecione uma nova imagem para o ícone da categoria.
+            </p>
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file && editingCategoryId) {
+                  handleIconUpload(file, editingCategoryId);
+                }
+              }}
+            />
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setIconModalOpen(false)}>
+                Cancelar
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
