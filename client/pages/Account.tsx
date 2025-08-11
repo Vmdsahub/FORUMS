@@ -408,13 +408,25 @@ export default function Account() {
               </div>
 
               <div className="text-center">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 mb-3">
                   {selectedBadges.length}/9 emblemas selecionados
                 </p>
                 {userBadges.length > 0 && selectedBadges.length === 0 && (
-                  <p className="text-xs text-amber-600 mt-1">
+                  <p className="text-xs text-amber-600 mb-3">
                     Selecione pelo menos um emblema para exibir nos comentários
                   </p>
+                )}
+                {userBadges.length > 0 && (
+                  <button
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                    onClick={() => {
+                      // TODO: Implementar salvamento da seleção no servidor
+                      console.log('Emblemas selecionados:', selectedBadges);
+                      alert('Seleção de emblemas salva! (função será implementada no servidor)');
+                    }}
+                  >
+                    Salvar Seleção
+                  </button>
                 )}
               </div>
             </div>
