@@ -84,15 +84,24 @@ export default function CommentThread({
     }
   };
 
-  // Calcular margem baseada na profundidade
-  const marginLeft = depth > 0 ? `${Math.min(depth * 2, 8)}rem` : "0";
+  // Calcular margem baseada na profundidade com indicadores visuais
+  const marginLeft = depth > 0 ? `${Math.min(depth * 1.5, 6)}rem` : "0";
   const showBorder = depth > 0;
+  const showArrow = depth > 0;
 
   return (
-    <div style={{ marginLeft }} className={`${depth > 0 ? "mt-4" : ""}`}>
+    <div style={{ marginLeft }} className={`${depth > 0 ? "mt-4" : ""} relative`}>
+      {/* Seta indicadora para respostas */}
+      {showArrow && (
+        <div className="absolute -left-4 top-6 text-gray-400">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z" />
+          </svg>
+        </div>
+      )}
       <div className={`${showBorder ? "border-l-2 border-gray-200 pl-4" : ""}`}>
         {/* Comment Content */}
-        <div className="bg-white rounded-lg border border-gray-100 p-4 shadow-sm">
+        <div className={`bg-white rounded-lg border border-gray-100 p-4 shadow-sm ${depth > 0 ? "bg-gray-50/50" : ""}`}>
           <div className="flex items-start gap-3">
             <UserHoverCard
               userId={comment.authorId}
