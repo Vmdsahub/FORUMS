@@ -159,7 +159,7 @@ export const handleRegister: RequestHandler = (req, res) => {
     );
     if (existingUser) {
       return res.status(409).json({
-        message: "Email já está em uso",
+        message: "Essa conta já existe, faça login",
       } as ErrorResponse);
     }
 
