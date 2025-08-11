@@ -670,10 +670,11 @@ export default function Header({ activeSection }: HeaderProps) {
                         onChange={(e) => setRegisterPassword(e.target.value)}
                         className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
                         required
-                        minLength={6}
+                        minLength={8}
+                        pattern="(?=.*[A-Z]).*"
                       />
                       <p className="text-xs text-gray-500">
-                        M��nimo de 6 caracteres
+                        Mínimo de 8 caracteres com pelo menos uma letra maiúscula
                       </p>
                     </div>
                     <Captcha
