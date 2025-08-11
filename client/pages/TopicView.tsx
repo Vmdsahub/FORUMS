@@ -374,25 +374,31 @@ export default function TopicView() {
 
           {/* Actions */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={handleLikeTopic}
-                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
-                  topic.isLiked
-                    ? "bg-red-50 text-red-600 hover:bg-red-100"
-                    : "bg-gray-50 text-gray-600 hover:bg-gray-100"
-                }`}
+            {/* Autor à esquerda */}
+            <div className="flex items-center gap-2">
+              <UserHoverCard
+                userId={topic.authorId}
+                userName={topic.author}
+                userAvatar={topic.authorAvatar}
+                isTopicAuthor={true}
+                size="sm"
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                >
-                  <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
-                </svg>
-                {topic.likes}
-              </button>
+                <div className="flex items-center gap-2 cursor-pointer">
+                  <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold hover:bg-gray-800 transition-colors overflow-hidden">
+                    {topic.authorAvatar}
+                  </div>
+                  <span className="text-sm text-gray-500">
+                    por{" "}
+                    <span className="font-medium text-black hover:text-gray-700 transition-colors">
+                      {topic.author}
+                    </span>
+                  </span>
+                </div>
+              </UserHoverCard>
+            </div>
+
+            {/* Ações à direita */}
+            <div className="flex items-center gap-3">
               {user && (
                 <button
                   onClick={handleSaveTopic}
@@ -424,24 +430,42 @@ export default function TopicView() {
                   {savedTopicIds.includes(topic.id) ? "Salvo" : "Salvar"}
                 </button>
               )}
-            </div>
-            {isAdmin && (
               <button
-                onClick={handleDeleteTopic}
-                className="flex items-center gap-2 px-3 py-2 rounded-md text-red-600 hover:bg-red-50 transition-colors"
-                title="Excluir tópico (Admin)"
+                onClick={handleLikeTopic}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                  topic.isLiked
+                    ? "bg-red-50 text-red-600 hover:bg-red-100"
+                    : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                }`}
               >
                 <svg
                   width="16"
                   height="16"
-                  viewBox="0 0 24 24"
+                  viewBox="0 0 16 16"
                   fill="currentColor"
                 >
-                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                  <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
                 </svg>
-                Excluir Tópico
+                {topic.likes}
               </button>
-            )}
+              {isAdmin && (
+                <button
+                  onClick={handleDeleteTopic}
+                  className="flex items-center gap-2 px-3 py-2 rounded-md text-red-600 hover:bg-red-50 transition-colors"
+                  title="Excluir tópico (Admin)"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                  </svg>
+                  Excluir Tópico
+                </button>
+              )}
+            </div>
           </div>
         </div>
 
