@@ -155,26 +155,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log("[REGISTER] Error response, status:", response.status);
         let errorMessage = "Erro ao criar conta";
 
-        if (response.status === 409) {
-          // Para status 409, sabemos que é conflito de email/usuário
-          const responseClone = response.clone();
-          try {
-            const errorData = await responseClone.json();
-            if (errorData?.message) {
-              errorMessage = errorData.message;
-            } else {
-              errorMessage = "Esta conta já existe";
-            }
-          } catch {
+        try {
+          const errorData = await response.json();
+          if (errorData?.message) {
+            errorMessage = errorData.message;
+          } else if (response.status === 409) {
             errorMessage = "Esta conta já existe";
+          } else if (response.status === 400) {
+            errorMessage = "Dados inválidos. Verifique os campos";
+          } else {
+            errorMessage = `Erro HTTP ${response.status}`;
           }
-        } else {
-          try {
-            const errorData = await response.json();
-            if (errorData?.message) {
-              errorMessage = errorData.message;
-            }
-          } catch {
+        } catch {
+          if (response.status === 409) {
+            errorMessage = "Esta conta já existe";
+          } else if (response.status === 400) {
+            errorMessage = "Dados inválidos. Verifique os campos";
+          } else {
             errorMessage = `Erro HTTP ${response.status}`;
           }
         }
