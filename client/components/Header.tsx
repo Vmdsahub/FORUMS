@@ -55,6 +55,10 @@ export default function Header({ activeSection }: HeaderProps) {
   const [registerName, setRegisterName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
+  const [registerPhone, setRegisterPhone] = useState("");
+  const [registerBirthDate, setRegisterBirthDate] = useState("");
+  const [registerAcceptTerms, setRegisterAcceptTerms] = useState(false);
+  const [registerAcceptNewsletter, setRegisterAcceptNewsletter] = useState(false);
   const [registerCaptcha, setRegisterCaptcha] = useState("");
   const [registerCaptchaValid, setRegisterCaptchaValid] = useState(false);
 
