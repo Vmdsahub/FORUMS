@@ -324,21 +324,24 @@ export default function Account() {
 
               <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-6">
                 {availableBadges.map((badge) => {
+                  const isEarned = userBadges.some((userBadge) => userBadge.id === badge.id);
                   const isSelected = selectedBadges.includes(badge.id);
-                  const canSelect = selectedBadges.length < 6 || isSelected;
+                  const canSelect = (selectedBadges.length < 6 || isSelected) && isEarned;
 
                   return (
                     <div
                       key={badge.id}
-                      className={`relative group cursor-pointer p-2 rounded-lg border-2 transition-all ${
-                        isSelected
-                          ? "border-blue-500 bg-blue-50"
-                          : canSelect
-                            ? "border-gray-200 hover:border-gray-300"
-                            : "border-gray-100 opacity-50 cursor-not-allowed"
+                      className={`relative group p-2 rounded-lg border-2 transition-all ${
+                        !isEarned
+                          ? "border-gray-100 opacity-30 cursor-not-allowed"
+                          : isSelected
+                            ? "border-blue-500 bg-blue-50 cursor-pointer"
+                            : canSelect
+                              ? "border-gray-200 hover:border-gray-300 cursor-pointer"
+                              : "border-gray-100 opacity-50 cursor-not-allowed"
                       }`}
                       onClick={() => {
-                        if (!canSelect && !isSelected) return;
+                        if (!isEarned || (!canSelect && !isSelected)) return;
 
                         if (isSelected) {
                           setSelectedBadges((prev) =>
@@ -359,7 +362,15 @@ export default function Account() {
                           {badge.name}
                         </div>
 
-                        {isSelected && (
+                        {!isEarned && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-80 rounded-lg">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-gray-400">
+                              <path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                            </svg>
+                          </div>
+                        )}
+
+                        {isSelected && isEarned && (
                           <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
                             <svg
                               width="10"
@@ -377,10 +388,13 @@ export default function Account() {
                       <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 p-2 bg-black text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
                         <div className="font-semibold">{badge.name}</div>
                         <div className="text-gray-300">{badge.description}</div>
-                        <div className="text-gray-400 mt-1">
-                          Obtido em:{" "}
-                          {new Date(memberSince).toLocaleDateString("pt-BR")}
-                        </div>
+                        {isEarned ? (
+                          <div className="text-green-400 mt-1">✓ Conquistado!</div>
+                        ) : (
+                          <div className="text-gray-400 mt-1">
+                            Precisa de {badge.requiredPoints} likes para conquistar
+                          </div>
+                        )}
 
                         {/* Seta do tooltip */}
                         <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-l-4 border-r-4 border-t-4 border-transparent border-t-black"></div>
