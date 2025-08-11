@@ -760,9 +760,27 @@ export default function Index(props: IndexProps) {
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center font-semibold">
-                              {category.name.split(" ")[0][0]}
-                              {category.name.split(" ")[1]?.[0] || ""}
+                            <div
+                              className={`w-12 h-12 flex items-center justify-center ${
+                                customIcons[category.id]
+                                  ? 'cursor-pointer hover:opacity-75 transition-opacity'
+                                  : 'rounded-full bg-black text-white font-semibold'
+                              } ${user?.name === "Vitoca" ? 'hover:ring-2 hover:ring-blue-500' : ''}`}
+                              onClick={(e) => handleIconClick(category.id, e)}
+                              title={user?.name === "Vitoca" ? "Clique para alterar o ícone" : undefined}
+                            >
+                              {customIcons[category.id] ? (
+                                <img
+                                  src={customIcons[category.id]}
+                                  alt={category.name}
+                                  className="w-12 h-12 object-contain"
+                                />
+                              ) : (
+                                <>
+                                  {category.name.split(" ")[0][0]}
+                                  {category.name.split(" ")[1]?.[0] || ""}
+                                </>
+                              )}
                             </div>
                             <div>
                               <h3 className="text-lg font-semibold text-black mb-1">
@@ -799,7 +817,7 @@ export default function Index(props: IndexProps) {
                                 <span className="font-medium">
                                   {category.lastPost.author}
                                 </span>{" "}
-                                • {category.lastPost.date} às{" "}
+                                �� {category.lastPost.date} às{" "}
                                 {category.lastPost.time}
                               </div>
                             )}
