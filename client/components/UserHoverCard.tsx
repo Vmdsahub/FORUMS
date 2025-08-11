@@ -54,14 +54,21 @@ export default function UserHoverCard({
         // Buscar seleção de badges do usuário específico
         let userSelection: string[] = [];
         try {
-          const selectionResponse = await fetch(`/api/user/badge-selection/${userId}`);
+          const selectionResponse = await fetch(
+            `/api/user/badge-selection/${userId}`,
+          );
           if (selectionResponse.ok) {
             const selectionData = await selectionResponse.json();
             userSelection = selectionData.selectedBadges || [];
-            console.log(`[UserHoverCard] Seleção de badges do usuário ${userId}:`, userSelection);
+            console.log(
+              `[UserHoverCard] Seleção de badges do usuário ${userId}:`,
+              userSelection,
+            );
           }
         } catch (error) {
-          console.log("Não foi possível buscar seleção de badges (usuário pode não ter seleção)");
+          console.log(
+            "Não foi possível buscar seleção de badges (usuário pode não ter seleção)",
+          );
         }
 
         if (response.ok) {
@@ -113,9 +120,10 @@ export default function UserHoverCard({
   };
 
   // Mostrar apenas emblemas selecionados pelo usuário, até 9 (3x3)
-  const availableBadges = userProfile?.badges?.filter(badge =>
-    badgeSelection.includes(badge.id)
-  ).slice(0, 9) || [];
+  const availableBadges =
+    userProfile?.badges
+      ?.filter((badge) => badgeSelection.includes(badge.id))
+      .slice(0, 9) || [];
 
   return (
     <div

@@ -12,12 +12,16 @@ interface BadgeNotificationContextType {
   showBadgeNotification: (badge: Badge) => void;
 }
 
-const BadgeNotificationContext = createContext<BadgeNotificationContextType | undefined>(undefined);
+const BadgeNotificationContext = createContext<
+  BadgeNotificationContextType | undefined
+>(undefined);
 
 export const useBadgeNotification = () => {
   const context = useContext(BadgeNotificationContext);
   if (!context) {
-    throw new Error("useBadgeNotification must be used within a BadgeNotificationProvider");
+    throw new Error(
+      "useBadgeNotification must be used within a BadgeNotificationProvider",
+    );
   }
   return context;
 };
@@ -26,7 +30,9 @@ interface BadgeNotificationProviderProps {
   children: ReactNode;
 }
 
-export const BadgeNotificationProvider: React.FC<BadgeNotificationProviderProps> = ({ children }) => {
+export const BadgeNotificationProvider: React.FC<
+  BadgeNotificationProviderProps
+> = ({ children }) => {
   const [currentBadge, setCurrentBadge] = useState<Badge | null>(null);
   const [isVisible, setIsVisible] = useState(false);
 

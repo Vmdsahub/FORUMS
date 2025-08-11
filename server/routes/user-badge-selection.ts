@@ -13,21 +13,28 @@ export const handleSaveBadgeSelection: RequestHandler = (req, res) => {
     const { selectedBadges } = req.body;
 
     if (!Array.isArray(selectedBadges)) {
-      return res.status(400).json({ message: "selectedBadges deve ser um array" });
+      return res
+        .status(400)
+        .json({ message: "selectedBadges deve ser um array" });
     }
 
     if (selectedBadges.length > 9) {
-      return res.status(400).json({ message: "Máximo de 9 emblemas permitidos" });
+      return res
+        .status(400)
+        .json({ message: "Máximo de 9 emblemas permitidos" });
     }
 
     const userId = req.user.id;
     userBadgeSelections.set(userId, selectedBadges);
 
-    console.log(`[BADGE-SELECTION] Usuário ${userId} salvou seleção:`, selectedBadges);
+    console.log(
+      `[BADGE-SELECTION] Usuário ${userId} salvou seleção:`,
+      selectedBadges,
+    );
 
-    res.json({ 
+    res.json({
       message: "Seleção de emblemas salva com sucesso",
-      selectedBadges: selectedBadges
+      selectedBadges: selectedBadges,
     });
   } catch (error) {
     console.error("[BADGE-SELECTION] Erro ao salvar seleção:", error);

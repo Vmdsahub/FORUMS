@@ -211,7 +211,8 @@ export const likeComment: RequestHandler = (req, res) => {
 
     // Verificar se o usuário ganhou um novo emblema
     let newBadge = null;
-    if (!wasLiked) { // Só verifica quando adiciona like
+    if (!wasLiked) {
+      // Só verifica quando adiciona like
       const currentLikes = getCommentLikesForUser(comment.authorId);
       newBadge = checkForNewBadge(previousLikes, currentLikes);
     }
@@ -409,6 +410,10 @@ export function initializeDemo() {
   );
 
   // Debug: mostrar contagem de likes por usuário
-  console.log(`[COMMENTS] João (demo_user_123) tem ${getCommentLikesForUser("demo_user_123")} likes`);
-  console.log(`[COMMENTS] Admin (admin_vitoca_456) tem ${getCommentLikesForUser("admin_vitoca_456")} likes`);
+  console.log(
+    `[COMMENTS] João (demo_user_123) tem ${getCommentLikesForUser("demo_user_123")} likes`,
+  );
+  console.log(
+    `[COMMENTS] Admin (admin_vitoca_456) tem ${getCommentLikesForUser("admin_vitoca_456")} likes`,
+  );
 }

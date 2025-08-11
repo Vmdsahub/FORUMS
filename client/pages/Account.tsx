@@ -95,7 +95,9 @@ export default function Account() {
           const selectionData = await selectionResponse.json();
           setSelectedBadges(selectionData.selectedBadges || []);
         } else {
-          const earnedBadgeIds = (userStatsData.badges || []).map((badge: any) => badge.id);
+          const earnedBadgeIds = (userStatsData.badges || []).map(
+            (badge: any) => badge.id,
+          );
           setSelectedBadges(earnedBadgeIds);
         }
       }
@@ -365,14 +367,16 @@ export default function Account() {
                 {userBadges.length === 0 && (
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
                     <p className="text-sm text-amber-800">
-                      🏆 Você ainda não conquistou nenhum emblema. Receba likes nos seus comentários para ganhar o emblema "Iniciante"!
+                      🏆 Você ainda não conquistou nenhum emblema. Receba likes
+                      nos seus comentários para ganhar o emblema "Iniciante"!
                     </p>
                   </div>
                 )}
                 {userBadges.length > 0 && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
                     <p className="text-sm text-blue-800">
-                      🎉 Emblemas conquistados: {userBadges.length}. Selecione até 9 para exibir nos comentários.
+                      🎉 Emblemas conquistados: {userBadges.length}. Selecione
+                      até 9 para exibir nos comentários.
                     </p>
                   </div>
                 )}
@@ -387,7 +391,9 @@ export default function Account() {
                     <div
                       key={badge.id}
                       className={`relative group transition-all cursor-pointer ${
-                        !canSelect && !isSelected ? "opacity-50 cursor-not-allowed" : ""
+                        !canSelect && !isSelected
+                          ? "opacity-50 cursor-not-allowed"
+                          : ""
                       }`}
                       onClick={() => {
                         if (!canSelect && !isSelected) return;
@@ -427,7 +433,8 @@ export default function Account() {
                         <div className="font-semibold">{badge.name}</div>
                         <div className="text-gray-300">{badge.description}</div>
                         <div className="text-green-400 mt-1">
-                          ✓ Conquistado em {new Date(memberSince).toLocaleDateString("pt-BR")}
+                          ✓ Conquistado em{" "}
+                          {new Date(memberSince).toLocaleDateString("pt-BR")}
                         </div>
 
                         {/* Seta do tooltip */}
@@ -438,11 +445,13 @@ export default function Account() {
                 })}
 
                 {/* Preencher espaços vazios para manter grid 3x3 quando há emblemas */}
-                {userBadges.length > 0 && userBadges.length < 9 &&
-                  Array.from({ length: 9 - userBadges.length }).map((_, index) => (
-                    <div key={`empty-${index}`} className="p-2"></div>
-                  ))
-                }
+                {userBadges.length > 0 &&
+                  userBadges.length < 9 &&
+                  Array.from({ length: 9 - userBadges.length }).map(
+                    (_, index) => (
+                      <div key={`empty-${index}`} className="p-2"></div>
+                    ),
+                  )}
               </div>
 
               <div className="text-center">

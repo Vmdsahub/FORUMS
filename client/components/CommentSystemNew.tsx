@@ -233,7 +233,8 @@ function CommentContent({
               onClick={onToggleReplies}
               className="text-xs text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
             >
-              {showReplies ? "Retrair discussão" : "Continuar discussão"} ({actualRepliesCount})
+              {showReplies ? "Retrair discussão" : "Continuar discussão"} (
+              {actualRepliesCount})
             </button>
           )}
 
@@ -518,9 +519,7 @@ export default function CommentSystemNew({
           Comentários ({getTotalCommentsCount(comments)})
         </h3>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500">
-            Sistema de comentários
-          </span>
+          <span className="text-xs text-gray-500">Sistema de comentários</span>
         </div>
       </div>
 
