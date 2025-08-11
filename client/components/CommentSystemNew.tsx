@@ -232,8 +232,7 @@ function CommentContent({
               onClick={onToggleReplies}
               className="text-xs text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
             >
-              {showReplies ? "Ocultar" : "Ver"} {actualRepliesCount} resposta
-              {actualRepliesCount !== 1 ? "s" : ""}
+              Continuar discussão ({actualRepliesCount})
             </button>
           )}
 
