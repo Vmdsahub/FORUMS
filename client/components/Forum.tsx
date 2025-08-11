@@ -81,7 +81,7 @@ const forumCategories: ForumCategory[] = [
 ];
 
 export default function Forum() {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [topics, setTopics] = useState<Topic[]>([]);
