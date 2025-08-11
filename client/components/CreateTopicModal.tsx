@@ -124,6 +124,8 @@ export default function CreateTopicModal({
         console.log("Tópico criado:", newTopic);
         toast.success("Tópico criado com sucesso!");
         setFormData({ title: "", description: "", content: "" });
+        setAvatarFile(null);
+        setAvatarPreview(null);
         setIsOpen(false);
         onTopicCreated?.(newTopic);
         onStatsRefresh?.(); // Refresh category statistics
