@@ -378,7 +378,7 @@ export function initializeDemo() {
   ); // 4 likes para comentário do João (demo1)
   commentLikes.set("demo4", new Set(["user_carlos", "user_pedro_101"])); // +2 likes para segundo comentário do João (demo4) = 6 total
 
-  // admin_vitoca_456 (Admin) recebe 4 likes total
+  // admin_vitoca_456 (Admin) recebe 4 likes total no comentário demo3
   commentLikes.set(
     "demo3",
     new Set([
@@ -388,18 +388,9 @@ export function initializeDemo() {
       "user_ana_202",
     ]),
   ); // 4 likes para comentário do Admin (demo3)
-  commentLikes.set(
-    "demo4",
-    new Set([
-      "demo_user_123",
-      "user_maria_789",
-      "user_pedro_101",
-      "user_ana_202",
-    ]),
-  ); // +4 likes para Admin = 8 total
 
-  // user_maria_789 (Maria) recebe 2 likes
-  commentLikes.set("demo5", new Set(["demo_user_123", "admin_vitoca_456"])); // 2 likes para Maria
+  // user_eduardo recebe 2 likes no comentário demo5
+  commentLikes.set("demo5", new Set(["demo_user_123", "admin_vitoca_456"])); // 2 likes para Eduardo
 
   console.log(
     "[COMMENTS] Sistema inicializado com dados demo de múltiplos níveis e likes para pontos reais",
