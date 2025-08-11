@@ -107,7 +107,7 @@ export default function CreateTopicModal({
       const topicData = {
         ...formData,
         category: currentCategory.id,
-        avatarUrl,
+        avatarUrl: avatarUrl || undefined,
       };
 
       const response = await fetch("/api/topics", {
