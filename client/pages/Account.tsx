@@ -49,7 +49,7 @@ export default function Account() {
   const [availableBadges, setAvailableBadges] = useState<any[]>([]);
   const [userBadges, setUserBadges] = useState<any[]>([]);
   const [selectedBadges, setSelectedBadges] = useState<string[]>([]);
-  const [memberSince] = useState("2024-01-15"); // Data real de cadastro
+  const [memberSince, setMemberSince] = useState<string>("");
 
   // Fetch user's topics and badges
   useEffect(() => {
