@@ -381,7 +381,7 @@ export default function Account() {
                   return (
                     <div
                       key={badge.id}
-                      className={`relative group p-2 transition-all cursor-pointer ${
+                      className={`relative group transition-all cursor-pointer ${
                         !canSelect && !isSelected ? "opacity-50 cursor-not-allowed" : ""
                       }`}
                       onClick={() => {
@@ -396,11 +396,11 @@ export default function Account() {
                         }
                       }}
                     >
-                      <div className="text-center">
+                      <div className="relative inline-block">
                         <img
                           src={badge.icon}
                           alt={badge.name}
-                          className="w-12 h-12 object-contain mx-auto hover:scale-110 transition-transform duration-300"
+                          className="w-12 h-12 object-contain hover:scale-110 transition-transform duration-300"
                         />
 
                         {isSelected && (
