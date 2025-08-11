@@ -106,9 +106,14 @@ export default function CreateTopicModal({
     try {
       let avatarUrl = null;
 
+      console.log("[DEBUG] Iniciando criação de tópico...");
+      console.log("[DEBUG] avatarFile:", avatarFile);
+
       // Upload do avatar se foi selecionado
       if (avatarFile) {
+        console.log("[DEBUG] Fazendo upload do avatar...");
         avatarUrl = await uploadAvatar(avatarFile);
+        console.log("[DEBUG] Avatar uploadado:", avatarUrl);
       }
 
       const topicData = {
@@ -116,6 +121,8 @@ export default function CreateTopicModal({
         category: currentCategory.id,
         avatarUrl: avatarUrl || undefined,
       };
+
+      console.log("[DEBUG] Dados do tópico:", topicData);
 
       const response = await fetch("/api/topics", {
         method: "POST",
