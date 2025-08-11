@@ -454,11 +454,7 @@ export default function Account() {
                 {userBadges.length > 0 && (
                   <button
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
-                    onClick={() => {
-                      // TODO: Implementar salvamento da seleção no servidor
-                      console.log('Emblemas selecionados:', selectedBadges);
-                      alert('Seleção de emblemas salva! (função será implementada no servidor)');
-                    }}
+                    onClick={saveBadgeSelection}
                   >
                     Salvar Seleção
                   </button>
