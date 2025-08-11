@@ -225,18 +225,18 @@ export const likeComment: RequestHandler = (req, res) => {
     const likes = commentLikes.get(commentId)!;
     const wasLiked = likes.has(userId);
 
+    // Sincronizar com sistema de stats
+    const comment = comments.get(commentId)!;
+    const { onLikeToggled, checkForNewBadge } = require("./user-stats-final");
+
+    // IMPORTANTE: Calcular likes anteriores ANTES de modificar o Set
+    const previousLikes = getCommentLikesForUser(comment.authorId);
+
     if (wasLiked) {
       likes.delete(userId);
     } else {
       likes.add(userId);
     }
-
-    // Sincronizar com sistema de stats
-    const comment = comments.get(commentId)!;
-    const { onLikeToggled, checkForNewBadge } = require("./user-stats-final");
-
-    // Verificar estado anterior dos emblemas
-    const previousLikes = getCommentLikesForUser(comment.authorId);
 
     // Sincronizar primeiro ANTES de verificar emblemas
     onLikeToggled(commentId, comment.authorId, !wasLiked);
