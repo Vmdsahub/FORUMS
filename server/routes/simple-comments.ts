@@ -207,12 +207,13 @@ export const likeComment: RequestHandler = (req, res) => {
     // Verificar estado anterior dos emblemas
     const previousLikes = getCommentLikesForUser(comment.authorId);
 
+    // Sincronizar primeiro ANTES de verificar emblemas
     onLikeToggled(commentId, comment.authorId, !wasLiked);
 
     // Verificar se o usuário ganhou um novo emblema
     let newBadge = null;
     if (!wasLiked) {
-      // Só verifica quando adiciona like
+      // Só verifica quando adiciona like - APÓS a sincronização
       const currentLikes = getCommentLikesForUser(comment.authorId);
       console.log(`[BADGES] Usuário ${comment.authorId}: ${previousLikes} -> ${currentLikes} likes`);
       newBadge = checkForNewBadge(previousLikes, currentLikes);
