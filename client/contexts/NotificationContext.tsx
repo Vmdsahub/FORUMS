@@ -77,12 +77,13 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <NotificationContext.Provider 
-      value={{ 
-        notifications, 
-        addNotification, 
-        removeNotification, 
+    <NotificationContext.Provider
+      value={{
+        notifications,
+        addNotification,
+        removeNotification,
         clearNotifications,
+        markAllAsRead,
         unreadCount
       }}
     >
