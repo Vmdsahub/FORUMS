@@ -113,90 +113,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     password: string,
     captcha: string,
   ): Promise<boolean> => {
+    console.log("[REGISTER] Starting registration...", { name, email });
+    setIsLoading(true);
+
     try {
-      console.log("Starting registration request...", { name, email, captcha });
-      setIsLoading(true);
-
-      try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
       const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ name, email, password, captcha }),
-        signal: controller.signal,
       });
 
-      clearTimeout(timeoutId);
+      console.log("[REGISTER] Response received, status:", response.status);
 
       if (response.ok) {
-        const data: AuthResponse = await response.json();
+        console.log("[REGISTER] Success response");
+        const data = await response.json();
         localStorage.setItem("auth_token", data.token);
         setUser(data.user);
         toast.success("Conta criada com sucesso!");
         return true;
       } else {
-        console.log("[REGISTER] Non-OK response received");
+        console.log("[REGISTER] Error response");
         let errorMessage = "Erro ao criar conta";
 
         try {
-          console.log("[REGISTER] Error response status:", response.status);
-          console.log("[REGISTER] Error response statusText:", response.statusText);
-
-          // Check if response has content
-          const contentType = response.headers.get('content-type');
-          console.log("[REGISTER] Content-Type:", contentType);
-
-          if (contentType && contentType.includes('application/json')) {
-            const errorData = await response.json();
-            console.log("[REGISTER] Error data:", errorData);
-            errorMessage = errorData?.message || `Erro HTTP ${response.status}`;
-          } else {
-            const errorText = await response.text();
-            console.log("[REGISTER] Error text:", errorText);
-            errorMessage = errorText || `Erro HTTP ${response.status}`;
+          const errorData = await response.json();
+          console.log("[REGISTER] Error data:", errorData);
+          if (errorData && errorData.message) {
+            errorMessage = errorData.message;
           }
-        } catch (responseError) {
-          console.error("[REGISTER] Error processing response:", responseError);
-          errorMessage = `Erro HTTP ${response.status}: ${response.statusText}`;
+        } catch (parseError) {
+          console.log("[REGISTER] Could not parse error response:", parseError);
+          errorMessage = `Erro HTTP ${response.status}`;
         }
 
-        console.log("[REGISTER] Showing toast with message:", errorMessage);
-
-        // Use setTimeout to ensure toast is called in next tick
-        setTimeout(() => {
-          toast.error(errorMessage);
-        }, 0);
-
+        console.log("[REGISTER] Showing error message:", errorMessage);
+        toast.error(errorMessage);
         return false;
       }
-    } catch (error: any) {
-      console.error("[REGISTER] Register error:", error);
-      console.error("[REGISTER] Error name:", error?.name);
-      console.error("[REGISTER] Error message:", error?.message);
-      console.error("[REGISTER] Error stack:", error?.stack);
-
-      if (error.name === "AbortError") {
-        toast.error("Requisição expirou. Tente novamente.");
-      } else if (error.name === "TypeError" && error.message.includes("Failed to fetch")) {
-        toast.error("Erro de conexão. Verifique sua internet.");
-      } else {
-        toast.error(`Erro inesperado: ${error?.message || "Tente novamente."}`);
-      }
+    } catch (networkError) {
+      console.error("[REGISTER] Network or other error:", networkError);
+      toast.error("Erro de conexão. Tente novamente.");
       return false;
-      } finally {
-        setIsLoading(false);
-      }
-    } catch (outerError: any) {
-      console.error("[REGISTER] Outer error wrapper caught:", outerError);
+    } finally {
+      console.log("[REGISTER] Setting loading to false");
       setIsLoading(false);
-      setTimeout(() => {
-        toast.error("Erro crítico no cadastro. Recarregue a página.");
-      }, 0);
-      return false;
     }
   };
 
