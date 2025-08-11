@@ -58,12 +58,15 @@ const loginSchema = z.object({
 const registerSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   email: z.string().email("Email inválido"),
-  password: z.string()
+  password: z
+    .string()
     .min(8, "Senha deve ter pelo menos 8 caracteres")
     .regex(/[A-Z]/, "Senha deve conter pelo menos uma letra maiúscula"),
   phone: z.string().min(10, "Telefone deve ter pelo menos 10 dígitos"),
   birthDate: z.string().min(1, "Data de nascimento é obrigatória"),
-  acceptTerms: z.boolean().refine((val) => val === true, "Você deve aceitar os termos de condições"),
+  acceptTerms: z
+    .boolean()
+    .refine((val) => val === true, "Você deve aceitar os termos de condições"),
   acceptNewsletter: z.boolean().optional(),
   captcha: z.string().min(1, "Captcha é obrigatório"),
 });
@@ -125,7 +128,8 @@ export const handleLogin: RequestHandler = (req, res) => {
     // Check if email is confirmed
     if (!user.emailConfirmed) {
       return res.status(403).json({
-        message: "Confirme seu email antes de fazer login. Verifique sua caixa de entrada.",
+        message:
+          "Confirme seu email antes de fazer login. Verifique sua caixa de entrada.",
       } as ErrorResponse);
     }
 
@@ -161,7 +165,16 @@ export const handleLogin: RequestHandler = (req, res) => {
 
 export const handleRegister: RequestHandler = (req, res) => {
   try {
-    const { name, email, password, phone, birthDate, acceptTerms, acceptNewsletter, captcha } = registerSchema.parse(req.body);
+    const {
+      name,
+      email,
+      password,
+      phone,
+      birthDate,
+      acceptTerms,
+      acceptNewsletter,
+      captcha,
+    } = registerSchema.parse(req.body);
 
     // For demo purposes, we don't validate captcha server-side
     // In production, you would validate the captcha here

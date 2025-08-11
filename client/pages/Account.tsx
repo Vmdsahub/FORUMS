@@ -391,9 +391,7 @@ export default function Account() {
                     <div
                       key={badge.id}
                       className={`relative group transition-all ${
-                        !canSelect && !isSelected
-                          ? "opacity-50"
-                          : ""
+                        !canSelect && !isSelected ? "opacity-50" : ""
                       }`}
                     >
                       <div className="relative inline-block w-12 h-12">

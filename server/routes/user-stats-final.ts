@@ -196,7 +196,9 @@ export function getUserData(userId: string) {
 
 // Função para verificar se o usuário ganhou um novo emblema
 export function checkForNewBadge(previousLikes: number, currentLikes: number) {
-  console.log(`[BADGES DEBUG] checkForNewBadge called with previousLikes=${previousLikes}, currentLikes=${currentLikes}`);
+  console.log(
+    `[BADGES DEBUG] checkForNewBadge called with previousLikes=${previousLikes}, currentLikes=${currentLikes}`,
+  );
 
   const previousBadges = calculateUserBadges(previousLikes);
   const currentBadges = calculateUserBadges(currentLikes);
@@ -208,11 +210,15 @@ export function checkForNewBadge(previousLikes: number, currentLikes: number) {
   // Verificar se há novo emblema
   if (currentBadges.length > previousBadges.length) {
     const newBadge = currentBadges[currentBadges.length - 1];
-    console.log(`[BADGES DEBUG] ✅ Usuário conquistou emblema: ${newBadge.name} (${previousLikes} -> ${currentLikes} likes)`);
+    console.log(
+      `[BADGES DEBUG] ✅ Usuário conquistou emblema: ${newBadge.name} (${previousLikes} -> ${currentLikes} likes)`,
+    );
     return newBadge;
   }
 
-  console.log(`[BADGES DEBUG] ❌ Nenhum novo emblema (${previousBadges.length} -> ${currentBadges.length})`);
+  console.log(
+    `[BADGES DEBUG] ❌ Nenhum novo emblema (${previousBadges.length} -> ${currentBadges.length})`,
+  );
   return null;
 }
 

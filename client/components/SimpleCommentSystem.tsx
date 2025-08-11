@@ -62,7 +62,11 @@ function CommentItem({
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("pt-BR") + " às " + date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    return (
+      date.toLocaleDateString("pt-BR") +
+      " às " +
+      date.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+    );
   };
 
   return (
@@ -119,7 +123,12 @@ function CommentItem({
               }`}
               title="Curtir comentário"
             >
-              <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+              >
                 <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
               </svg>
               {comment.likes}
@@ -141,7 +150,12 @@ function CommentItem({
                 className="flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors text-red-600 hover:bg-red-50"
                 title={`Excluir comentário ${isAdmin ? "(Admin)" : isTopicOwner ? "(Dono do post)" : "(Seu comentário)"}`}
               >
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
                 </svg>
               </button>
@@ -153,7 +167,10 @@ function CommentItem({
   );
 }
 
-export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCommentSystemProps) {
+export default function SimpleCommentSystem({
+  topicId,
+  topicAuthorId,
+}: SimpleCommentSystemProps) {
   const { user } = useAuth();
   const { addNotification } = useNotifications();
   const [comments, setComments] = useState<Comment[]>([]);
@@ -172,7 +189,10 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
         // Filtra apenas comentários raiz (sem parentId) e ordena por data
         const rootComments = data.comments
           .filter((comment: any) => !comment.parentId)
-          .sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          .sort(
+            (a: any, b: any) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+          );
         setComments(rootComments);
       }
     } catch (error) {
@@ -202,15 +222,17 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
 
       if (response.ok) {
         const userData = await response.json();
-        console.log('[BADGES] Dados do usuário:', userData);
+        console.log("[BADGES] Dados do usuário:", userData);
 
         // Se usuário tem emblemas mas nunca foi notificado, pode notificar agora
         if (userData.badges && userData.badges.length > 0) {
-          console.log(`[BADGES] Usuário tem ${userData.badges.length} emblemas`);
+          console.log(
+            `[BADGES] Usuário tem ${userData.badges.length} emblemas`,
+          );
         }
       }
     } catch (error) {
-      console.error('Erro ao verificar emblemas do usuário:', error);
+      console.error("Erro ao verificar emblemas do usuário:", error);
     }
   };
 
@@ -231,17 +253,20 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
 
       if (response.ok) {
         const data = await response.json();
-        console.log('[BADGE DEBUG] Like response data:', data);
-        console.log('[BADGE DEBUG] newBadge present:', !!data.newBadge);
-        console.log('[BADGE DEBUG] newBadge object:', data.newBadge);
+        console.log("[BADGE DEBUG] Like response data:", data);
+        console.log("[BADGE DEBUG] newBadge present:", !!data.newBadge);
+        console.log("[BADGE DEBUG] newBadge object:", data.newBadge);
 
         // Verificar se o usuário ganhou um novo emblema
         if (data.newBadge) {
-          console.log('[BADGE DEBUG] Triggering badge notification for:', data.newBadge.name);
+          console.log(
+            "[BADGE DEBUG] Triggering badge notification for:",
+            data.newBadge.name,
+          );
           addNotification(
             `Parabéns! Você conquistou o emblema "${data.newBadge.name}": ${data.newBadge.description}`,
-            'badge',
-            data.newBadge.icon
+            "badge",
+            data.newBadge.icon,
           );
         }
 
@@ -282,7 +307,7 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
     }
 
     // Verificar se há conteúdo real (remover HTML vazio)
-    const textContent = newComment.replace(/<[^>]*>/g, '').trim();
+    const textContent = newComment.replace(/<[^>]*>/g, "").trim();
     if (!textContent) {
       toast.error("Digite um comentário");
       return;
@@ -322,7 +347,9 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
   const handleQuote = (comment: Comment) => {
     setQuotedComment(comment);
     // Adicionar foco no campo de comentário
-    const textarea = document.querySelector('textarea[placeholder*="comentário"]') as HTMLTextAreaElement;
+    const textarea = document.querySelector(
+      'textarea[placeholder*="comentário"]',
+    ) as HTMLTextAreaElement;
     if (textarea) {
       textarea.focus();
     }
@@ -350,7 +377,9 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
           {quotedComment && (
             <div className="mb-3 p-3 bg-white border border-gray-200 rounded">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-gray-500">Citando @{quotedComment.author}:</span>
+                <span className="text-xs text-gray-500">
+                  Citando @{quotedComment.author}:
+                </span>
                 <button
                   type="button"
                   onClick={() => setQuotedComment(null)}
@@ -377,7 +406,9 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
               </span>
               <Button
                 type="submit"
-                disabled={isSubmitting || !newComment.replace(/<[^>]*>/g, '').trim()}
+                disabled={
+                  isSubmitting || !newComment.replace(/<[^>]*>/g, "").trim()
+                }
                 className="bg-black text-white hover:bg-black/90"
               >
                 {isSubmitting ? "Enviando..." : "Comentar"}
@@ -415,11 +446,17 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
           {comments.length > commentsToShow && (
             <div className="text-center py-4">
               <button
-                onClick={() => setCommentsToShow(prev => prev + 8)}
+                onClick={() => setCommentsToShow((prev) => prev + 8)}
                 className="flex items-center gap-2 mx-auto text-gray-600 hover:text-black transition-colors text-sm"
               >
-                Ver mais ({Math.min(8, comments.length - commentsToShow)} próximos comentários)
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                Ver mais ({Math.min(8, comments.length - commentsToShow)}{" "}
+                próximos comentários)
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <path d="M7.41 8.84L12 13.42l4.59-4.58L18 10.25l-6 6-6-6z" />
                 </svg>
               </button>
@@ -434,7 +471,12 @@ export default function SimpleCommentSystem({ topicId, topicAuthorId }: SimpleCo
                 className="flex items-center gap-2 mx-auto text-gray-600 hover:text-black transition-colors text-sm"
               >
                 Ver menos
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z" />
                 </svg>
               </button>

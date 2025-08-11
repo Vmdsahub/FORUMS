@@ -90,7 +90,10 @@ export default function CommentThread({
   const showArrow = depth > 0;
 
   return (
-    <div style={{ marginLeft }} className={`${depth > 0 ? "mt-4" : ""} relative`}>
+    <div
+      style={{ marginLeft }}
+      className={`${depth > 0 ? "mt-4" : ""} relative`}
+    >
       {/* Seta indicadora para respostas */}
       {showArrow && (
         <div className="absolute -left-4 top-6 text-gray-400">
@@ -101,7 +104,9 @@ export default function CommentThread({
       )}
       <div className={`${showBorder ? "border-l-2 border-gray-200 pl-4" : ""}`}>
         {/* Comment Content */}
-        <div className={`bg-white rounded-lg border border-gray-100 p-4 shadow-sm ${depth > 0 ? "bg-gray-50/50" : ""}`}>
+        <div
+          className={`bg-white rounded-lg border border-gray-100 p-4 shadow-sm ${depth > 0 ? "bg-gray-50/50" : ""}`}
+        >
           <div className="flex items-start gap-3">
             <UserHoverCard
               userId={comment.authorId}

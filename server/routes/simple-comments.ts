@@ -149,7 +149,9 @@ export const createComment: RequestHandler = (req, res) => {
     if (data.quotedCommentId) {
       const quoted = comments.get(data.quotedCommentId);
       if (!quoted) {
-        return res.status(400).json({ message: "Comentário quotado não encontrado" });
+        return res
+          .status(400)
+          .json({ message: "Comentário quotado não encontrado" });
       }
       quotedComment = {
         id: quoted.id,
@@ -190,7 +192,9 @@ export const createComment: RequestHandler = (req, res) => {
 
     // Notificar usuário quotado (se houver)
     if (quotedComment && quotedComment.authorId !== req.user.id) {
-      console.log(`[NOTIFICATIONS] Usuário ${quotedComment.author} foi quotado por ${req.user.name}`);
+      console.log(
+        `[NOTIFICATIONS] Usuário ${quotedComment.author} foi quotado por ${req.user.name}`,
+      );
       // TODO: Implementar notificação em tempo real quando sistema de websocket for adicionado
     }
 
@@ -246,12 +250,19 @@ export const likeComment: RequestHandler = (req, res) => {
     if (!wasLiked) {
       // Só verifica quando adiciona like - APÓS a sincronização
       const currentLikes = getCommentLikesForUser(comment.authorId);
-      console.log(`[BADGES DEBUG] Usuário ${comment.authorId}: ${previousLikes} -> ${currentLikes} likes`);
-      console.log(`[BADGES DEBUG] Calling checkForNewBadge with:`, { previousLikes, currentLikes });
+      console.log(
+        `[BADGES DEBUG] Usuário ${comment.authorId}: ${previousLikes} -> ${currentLikes} likes`,
+      );
+      console.log(`[BADGES DEBUG] Calling checkForNewBadge with:`, {
+        previousLikes,
+        currentLikes,
+      });
       newBadge = checkForNewBadge(previousLikes, currentLikes);
       console.log(`[BADGES DEBUG] checkForNewBadge returned:`, newBadge);
       if (newBadge) {
-        console.log(`[BADGES DEBUG] ✅ Novo emblema conquistado: ${newBadge.name}`);
+        console.log(
+          `[BADGES DEBUG] ✅ Novo emblema conquistado: ${newBadge.name}`,
+        );
       } else {
         console.log(`[BADGES DEBUG] ❌ Nenhum novo emblema conquistado`);
       }

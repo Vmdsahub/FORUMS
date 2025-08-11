@@ -130,7 +130,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email, password, phone, birthDate, acceptTerms, acceptNewsletter, captcha }),
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          phone,
+          birthDate,
+          acceptTerms,
+          acceptNewsletter,
+          captcha,
+        }),
       });
 
       console.log("[REGISTER] Response received, status:", response.status);

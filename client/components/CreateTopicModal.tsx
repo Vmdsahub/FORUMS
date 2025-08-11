@@ -58,11 +58,11 @@ export default function CreateTopicModal({
 
   const uploadAvatar = async (file: File): Promise<string | null> => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
+      const response = await fetch("/api/upload", {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
@@ -73,11 +73,11 @@ export default function CreateTopicModal({
         const result = await response.json();
         return result.url;
       } else {
-        console.error('Erro no upload:', response.status, response.statusText);
+        console.error("Erro no upload:", response.status, response.statusText);
         toast.error("Erro ao fazer upload da imagem");
       }
     } catch (error) {
-      console.error('Erro ao fazer upload do avatar:', error);
+      console.error("Erro ao fazer upload do avatar:", error);
       toast.error("Erro ao fazer upload da imagem");
     }
     return null;
@@ -91,7 +91,7 @@ export default function CreateTopicModal({
     }
 
     // Validar conteúdo removendo HTML
-    const contentText = formData.content.replace(/<[^>]*>/g, '').trim();
+    const contentText = formData.content.replace(/<[^>]*>/g, "").trim();
 
     if (
       !formData.title.trim() ||
@@ -229,8 +229,14 @@ export default function CreateTopicModal({
                 </div>
               ) : (
                 <div className="w-16 h-16 rounded-full bg-gray-200 border-2 border-gray-300 flex items-center justify-center">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="text-gray-400">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="text-gray-400"
+                  >
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                   </svg>
                 </div>
               )}
@@ -243,7 +249,8 @@ export default function CreateTopicModal({
                   className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Selecione uma imagem para o avatar do tópico. Será exibida em formato circular.
+                  Selecione uma imagem para o avatar do tópico. Será exibida em
+                  formato circular.
                 </p>
               </div>
             </div>

@@ -94,7 +94,9 @@ export default function Forum() {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [iconModalOpen, setIconModalOpen] = useState(false);
-  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
+    null,
+  );
   const [customIcons, setCustomIcons] = useState<Record<string, string>>({});
 
   const fetchTopics = async (category?: string) => {
@@ -181,25 +183,25 @@ export default function Forum() {
 
   const loadSavedIcons = async () => {
     try {
-      const response = await fetch('/api/category-icons');
+      const response = await fetch("/api/category-icons");
       if (response.ok) {
         const data = await response.json();
         setCustomIcons(data.icons || {});
       }
     } catch (error) {
-      console.error('Erro ao carregar ícones salvos:', error);
+      console.error("Erro ao carregar ícones salvos:", error);
     }
   };
 
   // Função para lidar com upload de ícone
   const handleIconUpload = async (file: File, categoryId: string) => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
       // Primeiro, fazer upload da imagem
-      const uploadResponse = await fetch('/api/upload', {
-        method: 'POST',
+      const uploadResponse = await fetch("/api/upload", {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
@@ -210,29 +212,29 @@ export default function Forum() {
         const uploadResult = await uploadResponse.json();
 
         // Depois, salvar o ícone na API
-        const saveResponse = await fetch('/api/category-icons', {
-          method: 'POST',
+        const saveResponse = await fetch("/api/category-icons", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
           },
           body: JSON.stringify({
             categoryId,
-            iconUrl: uploadResult.url
+            iconUrl: uploadResult.url,
           }),
         });
 
         if (saveResponse.ok) {
-          setCustomIcons(prev => ({
+          setCustomIcons((prev) => ({
             ...prev,
-            [categoryId]: uploadResult.url
+            [categoryId]: uploadResult.url,
           }));
           setIconModalOpen(false);
           setEditingCategoryId(null);
         }
       }
     } catch (error) {
-      console.error('Erro ao fazer upload do ícone:', error);
+      console.error("Erro ao fazer upload do ícone:", error);
     }
   };
 
@@ -390,11 +392,15 @@ export default function Forum() {
                 <div
                   className={`w-12 h-12 flex items-center justify-center ${
                     customIcons[category.id]
-                      ? 'cursor-pointer'
+                      ? "cursor-pointer"
                       : `p-3 rounded-lg text-white ${category.color}`
-                  } ${user?.name === "Vitoca" && isAdmin ? 'hover:opacity-75 transition-opacity' : ''}`}
+                  } ${user?.name === "Vitoca" && isAdmin ? "hover:opacity-75 transition-opacity" : ""}`}
                   onClick={(e) => handleIconClick(category.id, e)}
-                  title={user?.name === "Vitoca" && isAdmin ? "Clique para alterar o ícone" : undefined}
+                  title={
+                    user?.name === "Vitoca" && isAdmin
+                      ? "Clique para alterar o ícone"
+                      : undefined
+                  }
                 >
                   {customIcons[category.id] ? (
                     <img

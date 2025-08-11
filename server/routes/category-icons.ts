@@ -27,20 +27,24 @@ export const updateCategoryIcon: RequestHandler = (req, res) => {
   }
 
   if (req.user.name !== "Vitoca") {
-    return res.status(403).json({ message: "Apenas admin Vitoca pode alterar ícones" });
+    return res
+      .status(403)
+      .json({ message: "Apenas admin Vitoca pode alterar ícones" });
   }
 
   try {
     const data = updateIconSchema.parse(req.body);
-    
+
     categoryIcons.set(data.categoryId, data.iconUrl);
-    
-    console.log(`[CATEGORY-ICONS] Ícone da categoria ${data.categoryId} atualizado por ${req.user.name}`);
-    
-    res.json({ 
+
+    console.log(
+      `[CATEGORY-ICONS] Ícone da categoria ${data.categoryId} atualizado por ${req.user.name}`,
+    );
+
+    res.json({
       message: "Ícone atualizado com sucesso",
       categoryId: data.categoryId,
-      iconUrl: data.iconUrl
+      iconUrl: data.iconUrl,
     });
   } catch (error) {
     console.error("[CATEGORY-ICONS] Erro ao atualizar ícone:", error);
@@ -58,20 +62,24 @@ export const removeCategoryIcon: RequestHandler = (req, res) => {
   }
 
   if (req.user.name !== "Vitoca") {
-    return res.status(403).json({ message: "Apenas admin Vitoca pode alterar ícones" });
+    return res
+      .status(403)
+      .json({ message: "Apenas admin Vitoca pode alterar ícones" });
   }
 
   try {
     const { categoryId } = req.params;
-    
+
     if (categoryIcons.has(categoryId)) {
       categoryIcons.delete(categoryId);
-      console.log(`[CATEGORY-ICONS] Ícone da categoria ${categoryId} removido por ${req.user.name}`);
+      console.log(
+        `[CATEGORY-ICONS] Ícone da categoria ${categoryId} removido por ${req.user.name}`,
+      );
     }
-    
-    res.json({ 
+
+    res.json({
       message: "Ícone removido com sucesso",
-      categoryId
+      categoryId,
     });
   } catch (error) {
     console.error("[CATEGORY-ICONS] Erro ao remover ícone:", error);

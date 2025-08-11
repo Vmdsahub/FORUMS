@@ -107,7 +107,9 @@ export default function Index(props: IndexProps) {
   // Estados para modais admin
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [iconModalOpen, setIconModalOpen] = useState(false);
-  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
+    null,
+  );
   const [customIcons, setCustomIcons] = useState<Record<string, string>>({});
   const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
   const [newCategory, setNewCategory] = useState({ name: "", description: "" });
@@ -131,13 +133,13 @@ export default function Index(props: IndexProps) {
 
   const loadSavedIcons = async () => {
     try {
-      const response = await fetch('/api/category-icons');
+      const response = await fetch("/api/category-icons");
       if (response.ok) {
         const data = await response.json();
         setCustomIcons(data.icons || {});
       }
     } catch (error) {
-      console.error('Erro ao carregar ícones salvos:', error);
+      console.error("Erro ao carregar ícones salvos:", error);
     }
   };
 
@@ -287,12 +289,12 @@ export default function Index(props: IndexProps) {
   // Função para lidar com upload de ícone
   const handleIconUpload = async (file: File, categoryId: string) => {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
       // Primeiro, fazer upload da imagem
-      const uploadResponse = await fetch('/api/upload', {
-        method: 'POST',
+      const uploadResponse = await fetch("/api/upload", {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
@@ -303,22 +305,22 @@ export default function Index(props: IndexProps) {
         const uploadResult = await uploadResponse.json();
 
         // Depois, salvar o ícone na API
-        const saveResponse = await fetch('/api/category-icons', {
-          method: 'POST',
+        const saveResponse = await fetch("/api/category-icons", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
           },
           body: JSON.stringify({
             categoryId,
-            iconUrl: uploadResult.url
+            iconUrl: uploadResult.url,
           }),
         });
 
         if (saveResponse.ok) {
-          setCustomIcons(prev => ({
+          setCustomIcons((prev) => ({
             ...prev,
-            [categoryId]: uploadResult.url
+            [categoryId]: uploadResult.url,
           }));
           setIconModalOpen(false);
           setEditingCategoryId(null);
@@ -326,7 +328,7 @@ export default function Index(props: IndexProps) {
         }
       }
     } catch (error) {
-      console.error('Erro ao fazer upload do ícone:', error);
+      console.error("Erro ao fazer upload do ícone:", error);
       toast.error("Erro ao fazer upload do ícone");
     }
   };
@@ -797,11 +799,15 @@ export default function Index(props: IndexProps) {
                             <div
                               className={`w-12 h-12 flex items-center justify-center ${
                                 customIcons[category.id]
-                                  ? 'cursor-pointer hover:opacity-75 transition-opacity'
-                                  : 'rounded-full bg-black text-white font-semibold'
-                              } ${user?.name === "Vitoca" ? 'hover:ring-2 hover:ring-blue-500' : ''}`}
+                                  ? "cursor-pointer hover:opacity-75 transition-opacity"
+                                  : "rounded-full bg-black text-white font-semibold"
+                              } ${user?.name === "Vitoca" ? "hover:ring-2 hover:ring-blue-500" : ""}`}
                               onClick={(e) => handleIconClick(category.id, e)}
-                              title={user?.name === "Vitoca" ? "Clique para alterar o ícone" : undefined}
+                              title={
+                                user?.name === "Vitoca"
+                                  ? "Clique para alterar o ícone"
+                                  : undefined
+                              }
                             >
                               {customIcons[category.id] ? (
                                 <img
@@ -983,7 +989,8 @@ export default function Index(props: IndexProps) {
                         <div className="col-span-6">
                           <div className="flex items-start gap-4">
                             <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0 overflow-hidden">
-                              {topic.topicAvatarUrl && topic.topicAvatarUrl.trim() !== "" ? (
+                              {topic.topicAvatarUrl &&
+                              topic.topicAvatarUrl.trim() !== "" ? (
                                 <img
                                   src={topic.topicAvatarUrl}
                                   alt={topic.author}

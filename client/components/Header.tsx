@@ -43,7 +43,14 @@ export default function Header({ activeSection }: HeaderProps) {
     string[]
   >([]);
   const [showNotifications, setShowNotifications] = useState(false);
-  const { notifications, removeNotification, clearNotifications, markAllAsRead, unreadCount, addNotification } = useNotifications();
+  const {
+    notifications,
+    removeNotification,
+    clearNotifications,
+    markAllAsRead,
+    unreadCount,
+    addNotification,
+  } = useNotifications();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
 
@@ -60,7 +67,8 @@ export default function Header({ activeSection }: HeaderProps) {
   const [registerPhone, setRegisterPhone] = useState("");
   const [registerBirthDate, setRegisterBirthDate] = useState("");
   const [registerAcceptTerms, setRegisterAcceptTerms] = useState(false);
-  const [registerAcceptNewsletter, setRegisterAcceptNewsletter] = useState(false);
+  const [registerAcceptNewsletter, setRegisterAcceptNewsletter] =
+    useState(false);
   const [registerCaptcha, setRegisterCaptcha] = useState("");
   const [registerCaptchaValid, setRegisterCaptchaValid] = useState(false);
 
@@ -302,12 +310,12 @@ export default function Header({ activeSection }: HeaderProps) {
                             key={notification.id}
                             className={`flex items-start justify-between p-2 border rounded-lg hover:bg-gray-50 ${
                               notification.read
-                                ? 'border-gray-100 bg-white'
-                                : 'border-blue-200 bg-blue-50'
+                                ? "border-gray-100 bg-white"
+                                : "border-blue-200 bg-blue-50"
                             }`}
                           >
                             <div className="flex items-start gap-2 flex-1">
-                              {notification.type === 'badge' && (
+                              {notification.type === "badge" && (
                                 <div className="flex-shrink-0 w-8 h-8 mt-0.5">
                                   {notification.icon ? (
                                     <img
@@ -320,10 +328,8 @@ export default function Header({ activeSection }: HeaderProps) {
                                   )}
                                 </div>
                               )}
-                              {notification.type === 'quote' && (
-                                <div className="text-blue-500 mt-0.5">
-                                  💬
-                                </div>
+                              {notification.type === "quote" && (
+                                <div className="text-blue-500 mt-0.5">💬</div>
                               )}
                               <div className="flex-1">
                                 <div className="flex items-start gap-2">
@@ -331,7 +337,9 @@ export default function Header({ activeSection }: HeaderProps) {
                                     <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                                   )}
                                   <div className="flex-1">
-                                    <p className={`text-sm ${notification.read ? 'text-gray-700' : 'text-gray-900 font-medium'}`}>
+                                    <p
+                                      className={`text-sm ${notification.read ? "text-gray-700" : "text-gray-900 font-medium"}`}
+                                    >
                                       {notification.message}
                                     </p>
                                     <p className="text-xs text-gray-500 mt-1">
@@ -598,7 +606,10 @@ export default function Header({ activeSection }: HeaderProps) {
                           registerCaptcha,
                         );
 
-                        console.log("[FORM] Register completed, success:", success);
+                        console.log(
+                          "[FORM] Register completed, success:",
+                          success,
+                        );
 
                         if (success) {
                           setIsRegisterOpen(false);
@@ -613,7 +624,10 @@ export default function Header({ activeSection }: HeaderProps) {
                           setRegisterCaptchaValid(false);
                         }
                       } catch (formError) {
-                        console.error("[REGISTER FORM] Form submission error:", formError);
+                        console.error(
+                          "[REGISTER FORM] Form submission error:",
+                          formError,
+                        );
                         setTimeout(() => {
                           toast.error("Erro no formulário. Tente novamente.");
                         }, 0);
@@ -674,7 +688,8 @@ export default function Header({ activeSection }: HeaderProps) {
                         pattern="(?=.*[A-Z]).*"
                       />
                       <p className="text-xs text-gray-500">
-                        Mínimo de 8 caracteres com pelo menos uma letra maiúscula
+                        Mínimo de 8 caracteres com pelo menos uma letra
+                        maiúscula
                       </p>
                     </div>
 
@@ -719,11 +734,16 @@ export default function Header({ activeSection }: HeaderProps) {
                         <Checkbox
                           id="register-terms"
                           checked={registerAcceptTerms}
-                          onCheckedChange={(checked) => setRegisterAcceptTerms(checked as boolean)}
+                          onCheckedChange={(checked) =>
+                            setRegisterAcceptTerms(checked as boolean)
+                          }
                           className="mt-0.5"
                         />
                         <div className="text-sm">
-                          <label htmlFor="register-terms" className="text-gray-700">
+                          <label
+                            htmlFor="register-terms"
+                            className="text-gray-700"
+                          >
                             Eu aceito os{" "}
                             <TermsDialog>
                               <button
@@ -732,8 +752,8 @@ export default function Header({ activeSection }: HeaderProps) {
                               >
                                 termos de condições
                               </button>
-                            </TermsDialog>
-                            {" "}*
+                            </TermsDialog>{" "}
+                            *
                           </label>
                         </div>
                       </div>
@@ -742,11 +762,17 @@ export default function Header({ activeSection }: HeaderProps) {
                         <Checkbox
                           id="register-newsletter"
                           checked={registerAcceptNewsletter}
-                          onCheckedChange={(checked) => setRegisterAcceptNewsletter(checked as boolean)}
+                          onCheckedChange={(checked) =>
+                            setRegisterAcceptNewsletter(checked as boolean)
+                          }
                           className="mt-0.5"
                         />
-                        <label htmlFor="register-newsletter" className="text-sm text-gray-700">
-                          Quero receber a newsletter do IA HUB com novidades e conteúdos sobre inteligência artificial
+                        <label
+                          htmlFor="register-newsletter"
+                          className="text-sm text-gray-700"
+                        >
+                          Quero receber a newsletter do IA HUB com novidades e
+                          conteúdos sobre inteligência artificial
                         </label>
                       </div>
                     </div>
@@ -758,7 +784,11 @@ export default function Header({ activeSection }: HeaderProps) {
                     <Button
                       type="submit"
                       className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium"
-                      disabled={isLoading || !registerCaptchaValid || !registerAcceptTerms}
+                      disabled={
+                        isLoading ||
+                        !registerCaptchaValid ||
+                        !registerAcceptTerms
+                      }
                     >
                       {isLoading ? "Criando conta..." : "Criar Conta"}
                     </Button>
