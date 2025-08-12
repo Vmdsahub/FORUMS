@@ -57,8 +57,11 @@ export const getUserLikes: RequestHandler = (req, res) => {
       return res.status(401).json({ message: "Usuário não autenticado" });
     }
 
-    const totalLikes = userLikes[userId] || 0;
-    res.json({ totalLikes });
+    const earnedLikes = calculateUserLikes(userId);
+    const spentLikes = userSpentLikes[userId] || 0;
+    const totalLikes = earnedLikes - spentLikes;
+
+    res.json({ totalLikes: Math.max(0, totalLikes) });
   } catch (error) {
     console.error("Error getting user likes:", error);
     res.status(500).json({ message: "Erro interno do servidor" });
