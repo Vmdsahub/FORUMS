@@ -65,22 +65,31 @@ export default function Account() {
 
   const fetchUserBadges = async () => {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
       // Buscar badges do usuário
       const userStatsResponse = await fetch("/api/user/stats", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
+        signal: controller.signal,
       });
 
       // Buscar todos os badges disponíveis
-      const allBadgesResponse = await fetch("/api/badges");
+      const allBadgesResponse = await fetch("/api/badges", {
+        signal: controller.signal,
+      });
 
       // Buscar seleção atual de badges
       const selectionResponse = await fetch("/api/user/badge-selection", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (userStatsResponse.ok && allBadgesResponse.ok) {
         const userStatsData = await userStatsResponse.json();
@@ -92,6 +101,8 @@ export default function Account() {
         // Definir data real de criação da conta
         if (userStatsData.createdAt) {
           setMemberSince(userStatsData.createdAt);
+        } else {
+          setMemberSince(new Date().toISOString()); // Fallback to current date
         }
 
         // Usar seleção salva ou todos os badges conquistados como fallback
@@ -104,9 +115,21 @@ export default function Account() {
           );
           setSelectedBadges(earnedBadgeIds);
         }
+      } else {
+        console.warn("Badge services unavailable, using defaults");
+        setUserBadges([]);
+        setAvailableBadges([]);
+        setSelectedBadges([]);
+        setMemberSince(new Date().toISOString());
       }
     } catch (error) {
-      console.error("Error fetching badges:", error);
+      if (error.name !== "AbortError") {
+        console.warn("Badge services unavailable, using defaults");
+      }
+      setUserBadges([]);
+      setAvailableBadges([]);
+      setSelectedBadges([]);
+      setMemberSince(new Date().toISOString());
     }
   };
 
