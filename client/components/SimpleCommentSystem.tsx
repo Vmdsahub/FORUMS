@@ -426,7 +426,7 @@ export default function SimpleCommentSystem({
             <RichTextEditor
               value={newComment}
               onChange={setNewComment}
-              placeholder="Escreva seu comentário... Você pode inserir imagens, vídeos e usar formatação rica!"
+              placeholder="Escreva seu coment��rio... Você pode inserir imagens, vídeos e usar formatação rica!"
             />
             <div className="flex items-center justify-between mt-3">
               <span className="text-xs text-gray-500">
@@ -495,7 +495,10 @@ export default function SimpleCommentSystem({
           {commentsToShow > 8 && (
             <div className="text-center py-4">
               <button
-                onClick={() => setCommentsToShow(8)}
+                onClick={() => {
+                  setCommentsToShow(8);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 className="flex items-center gap-2 mx-auto text-gray-600 hover:text-black transition-colors text-sm"
               >
                 Retrair e voltar ao topo
@@ -511,6 +514,17 @@ export default function SimpleCommentSystem({
             </div>
           )}
         </div>
+      )}
+
+      {/* Modal de Denúncia */}
+      {reportingComment && (
+        <ReportModal
+          isOpen={showReportModal}
+          onClose={handleCloseReportModal}
+          contentType="comment"
+          contentId={reportingComment.id}
+          contentAuthor={reportingComment.author}
+        />
       )}
     </div>
   );
