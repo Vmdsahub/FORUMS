@@ -628,7 +628,11 @@ export const handleCreateComment: RequestHandler = (req, res) => {
 
     comments.set(newComment.id, newComment);
     topic.comments.push(newComment);
-    topic.replies += 1;
+
+    // Update replies count to match actual comments count
+    const topicCommentsCount = Array.from(comments.values()).filter(c => c.topicId === topicId).length;
+    topic.replies = topicCommentsCount;
+
     topic.lastPost = {
       author: req.user.name,
       date,
