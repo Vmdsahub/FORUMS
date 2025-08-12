@@ -279,4 +279,94 @@
     border: 1px solid hsl(220 13% 18%);
     color: hsl(220 14% 93%);
   }
+
+  /* Badges e tags */
+  .theme-dark .bg-gray-50 {
+    background-color: hsl(220 13% 14%);
+  }
+
+  .theme-dark .bg-gray-100 {
+    background-color: hsl(220 13% 16%);
+  }
+
+  .theme-dark .bg-gray-200 {
+    background-color: hsl(220 13% 18%);
+  }
+
+  .theme-dark .text-gray-500 {
+    color: hsl(220 9% 60%);
+  }
+
+  .theme-dark .text-gray-600 {
+    color: hsl(220 9% 65%);
+  }
+
+  .theme-dark .text-gray-700 {
+    color: hsl(220 14% 75%);
+  }
+
+  .theme-dark .text-gray-800 {
+    color: hsl(220 14% 85%);
+  }
+
+  .theme-dark .text-gray-900 {
+    color: hsl(220 14% 93%);
+  }
+
+  .theme-dark .text-black {
+    color: hsl(220 14% 93%);
+  }
+
+  /* Bordas específicas */
+  .theme-dark .border-gray-100 {
+    border-color: hsl(220 13% 16%);
+  }
+
+  .theme-dark .border-gray-200 {
+    border-color: hsl(220 13% 18%);
+  }
+
+  .theme-dark .border-gray-300 {
+    border-color: hsl(220 13% 22%);
+  }
+
+  /* Estados de hover para tema escuro */
+  .theme-dark .hover\\:bg-gray-50:hover {
+    background-color: hsl(220 13% 16%);
+  }
+
+  .theme-dark .hover\\:bg-gray-100:hover {
+    background-color: hsl(220 13% 18%);
+  }
+
+  /* Cores especiais para elementos específicos */
+  .theme-dark .bg-blue-50 {
+    background-color: hsl(220 91% 8%);
+  }
+
+  .theme-dark .border-blue-200 {
+    border-color: hsl(220 91% 15%);
+  }
+
+  .theme-dark .text-blue-800 {
+    color: hsl(220 91% 75%);
+  }
+
+  .theme-dark .text-blue-900 {
+    color: hsl(220 91% 85%);
+  }
+
+  /* Elementos verdes para seção Open-Source */
+  .theme-dark .bg-green-600 {
+    background-color: hsl(142 76% 36%);
+  }
+
+  /* Estados de focus */
+  .theme-dark .focus\\:border-gray-500:focus {
+    border-color: hsl(220 13% 30%);
+  }
+
+  .theme-dark .focus\\:ring-gray-500:focus {
+    --tw-ring-color: hsl(220 13% 30%);
+  }
 }
