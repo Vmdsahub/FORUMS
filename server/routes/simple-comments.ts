@@ -186,6 +186,29 @@ export const createComment: RequestHandler = (req, res) => {
     }
     topicComments.get(topicId)!.push(commentId);
 
+    // Atualizar lastPost do tópico no sistema de fórum
+    try {
+      const forumModule = require("./forum");
+      if (forumModule.updateTopicLastPost) {
+        const now = new Date();
+        const time = now.toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "America/Sao_Paulo"
+        });
+        const date = now.toLocaleDateString("pt-BR", {
+          timeZone: "America/Sao_Paulo"
+        });
+        forumModule.updateTopicLastPost(topicId, {
+          author: req.user.name,
+          date,
+          time
+        });
+      }
+    } catch (error) {
+      console.log("[COMMENTS] Aviso: Não foi possível atualizar lastPost do tópico", error.message);
+    }
+
     console.log(
       `[COMMENTS] Comentário criado: ${commentId} por ${req.user.name} (parent: ${data.parentId || "null"})`,
     );
