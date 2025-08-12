@@ -467,6 +467,7 @@ export default function SimpleCommentSystem({
               onLike={handleLike}
               onDelete={handleDelete}
               onQuote={handleQuote}
+              onReport={handleReport}
             />
           ))}
 
@@ -477,8 +478,7 @@ export default function SimpleCommentSystem({
                 onClick={() => setCommentsToShow((prev) => prev + 8)}
                 className="flex items-center gap-2 mx-auto text-gray-600 hover:text-black transition-colors text-sm"
               >
-                Ver mais ({Math.min(8, comments.length - commentsToShow)}{" "}
-                próximos comentários)
+                Ver mais
                 <svg
                   width="16"
                   height="16"
@@ -498,7 +498,7 @@ export default function SimpleCommentSystem({
                 onClick={() => setCommentsToShow(8)}
                 className="flex items-center gap-2 mx-auto text-gray-600 hover:text-black transition-colors text-sm"
               >
-                Ver menos
+                Retrair e voltar ao topo
                 <svg
                   width="16"
                   height="16"
