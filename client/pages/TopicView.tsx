@@ -506,6 +506,17 @@ export default function TopicView() {
           topicAuthorId={topic.authorId}
         />
       </div>
+
+      {/* Modal de Denúncia */}
+      {topic && (
+        <ReportModal
+          isOpen={showReportModal}
+          onClose={() => setShowReportModal(false)}
+          contentType="topic"
+          contentId={topic.id}
+          contentAuthor={topic.author}
+        />
+      )}
     </div>
   );
 }
