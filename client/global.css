@@ -538,4 +538,77 @@
     color: var(--dark-text-primary) !important;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
   }
+
+  /* === ENHANCED RESPONSIVE DESIGN === */
+  @media (max-width: 640px) {
+    .theme-dark {
+      --radius: 0.5rem;
+    }
+
+    .theme-dark .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .theme-dark .hover-lift:hover {
+      transform: translateY(-2px) scale(1.01);
+    }
+
+    .theme-dark .glass-minimal {
+      backdrop-filter: blur(8px);
+    }
+
+    .theme-dark .shadow-lg {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .theme-dark .rounded-lg {
+      border-radius: 0.75rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .theme-dark .hover-lift:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+    }
+  }
+
+  /* === MOTION PREFERENCES === */
+  @media (prefers-reduced-motion: reduce) {
+    .theme-dark * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .theme-dark .hover-lift:hover {
+      transform: none;
+    }
+  }
+
+  /* === HIGH CONTRAST MODE === */
+  @media (prefers-contrast: high) {
+    .theme-dark {
+      --dark-bg-primary: #000000;
+      --dark-text-primary: #ffffff;
+      --dark-border-primary: #ffffff;
+    }
+  }
+
+  /* === PRINT STYLES === */
+  @media print {
+    .theme-dark {
+      background: white !important;
+      color: black !important;
+    }
+
+    .theme-dark * {
+      background: transparent !important;
+      color: black !important;
+      box-shadow: none !important;
+    }
+  }
 }
