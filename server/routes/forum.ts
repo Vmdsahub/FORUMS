@@ -7,6 +7,7 @@ import {
   CreateCommentRequest,
   LikeResponse,
 } from "@shared/forum";
+import { getTopicCommentStats } from "./simple-comments";
 // Temporariamente removido para evitar problemas de importação
 
 // Simple in-memory storage for demo purposes
@@ -388,49 +389,17 @@ export const handleGetTopics: RequestHandler = (req, res) => {
 
   const topicsForList = paginatedTopics.map(
     ({ content, comments: topicCommentsArray, ...topic }) => {
-      // Get all comments for this topic from the global comments Map
-      const topicComments = Array.from(comments.values()).filter(c => c.topicId === topic.id);
+      // Get actual comment stats from the active comment system
+      const commentStats = getTopicCommentStats(topic.id);
 
-      // Calculate total comments count (including replies)
-      const getTotalCommentsCount = (commentsList: Comment[]): number => {
-        let count = commentsList.length;
-        commentsList.forEach(comment => {
-          if (comment.replies && comment.replies.length > 0) {
-            count += getTotalCommentsCount(comment.replies);
-          }
-        });
-        return count;
-      };
-
-      const totalComments = topicComments.length; // Use simple count from comments Map
-
-      // Calculate total likes (topic + all comment likes)
-      let totalLikes = getLikeCount(topic.id);
-      topicComments.forEach(comment => {
-        totalLikes += getLikeCount(comment.id);
-      });
-
-      // Find the most recent comment for lastPost
-      let lastPostData = topic.lastPost;
-      if (topicComments.length > 0) {
-        const sortedComments = topicComments.sort((a, b) => {
-          const aTime = new Date(`${a.date} ${a.time}`).getTime();
-          const bTime = new Date(`${b.date} ${b.time}`).getTime();
-          return bTime - aTime;
-        });
-        const lastComment = sortedComments[0];
-        lastPostData = {
-          author: lastComment.author,
-          date: lastComment.date,
-          time: lastComment.time
-        };
-      }
+      // Calculate total likes (topic likes + comment likes)
+      const topicLikes = getLikeCount(topic.id);
+      const totalLikes = topicLikes + commentStats.totalLikes;
 
       return {
         ...topic,
-        replies: totalComments,
-        likes: totalLikes,
-        lastPost: lastPostData
+        replies: commentStats.commentsCount,
+        likes: totalLikes
       };
     },
   );
@@ -804,7 +773,7 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
     });
   }
 
-  // Função para deletar comentário e todas suas respostas
+  // Fun��ão para deletar comentário e todas suas respostas
   function deleteCommentAndReplies(commentId: string): number {
     let deletedCount = 0;
 
