@@ -59,8 +59,9 @@ export default function Account() {
     if (user) {
       fetchUserTopics();
       fetchUserBadges();
+      fetchUserThemes();
     }
-  }, [user]);
+  }, [user, fetchUserThemes]);
 
   const fetchUserBadges = async () => {
     try {
@@ -654,7 +655,7 @@ export default function Account() {
                             </span>
                             <span>•</span>
                             <span>{topic.views} visualizações</span>
-                            <span>��</span>
+                            <span>•</span>
                             <span>{topic.replies} respostas</span>
                             <span>•</span>
                             <span>{topic.likes} curtidas</span>
