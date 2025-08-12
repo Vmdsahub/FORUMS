@@ -64,8 +64,11 @@ function calculateUserLikes(userId: string): number {
     if (forumModule.getTopicLikesForUser) {
       totalLikes += forumModule.getTopicLikesForUser(userId);
     }
-    if (forumModule.getForumCommentLikesForUser) {
-      totalLikes += forumModule.getForumCommentLikesForUser(userId);
+
+    // Importar likes do sistema de comentários ativo (simple-comments.ts)
+    const commentsModule = require("./simple-comments");
+    if (commentsModule.getCommentLikesForUser) {
+      totalLikes += commentsModule.getCommentLikesForUser(userId);
     }
   } catch (error) {
     console.error("[USER-STATS] Erro ao calcular likes:", error);
