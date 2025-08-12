@@ -284,6 +284,22 @@ export const likeComment: RequestHandler = (req, res) => {
   }
 };
 
+// Função para obter estatísticas de comentários de um tópico
+export function getTopicCommentStats(topicId: string): { commentsCount: number; totalLikes: number } {
+  const commentIds = topicComments.get(topicId) || [];
+
+  let totalLikes = 0;
+  commentIds.forEach(commentId => {
+    const likesCount = commentLikes.get(commentId)?.size || 0;
+    totalLikes += likesCount;
+  });
+
+  return {
+    commentsCount: commentIds.length,
+    totalLikes
+  };
+}
+
 // Função para calcular total de likes recebidos por um usuário nos comentários
 export function getCommentLikesForUser(userId: string): number {
   let totalLikes = 0;
@@ -320,7 +336,7 @@ export const deleteComment: RequestHandler = (req, res) => {
     const comment = comments.get(commentId);
 
     if (!comment) {
-      return res.status(404).json({ message: "Comentário não encontrado" });
+      return res.status(404).json({ message: "Coment��rio não encontrado" });
     }
 
     // Verificar permissões
