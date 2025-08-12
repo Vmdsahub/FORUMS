@@ -52,7 +52,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Carregar tema salvo do localStorage
   useEffect(() => {
     const savedTheme = localStorage.getItem("selected_theme");
-    if (savedTheme) {
+    if (savedTheme && savedTheme !== "default") {
       setCurrentTheme(savedTheme);
       applyThemeToDom(savedTheme);
     }
