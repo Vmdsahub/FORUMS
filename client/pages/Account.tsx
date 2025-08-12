@@ -57,9 +57,16 @@ export default function Account() {
   // Fetch user's topics and badges
   useEffect(() => {
     if (user) {
-      fetchUserTopics();
-      fetchUserBadges();
-      fetchUserThemes();
+      // Stagger requests to prevent simultaneous calls
+      const timer1 = setTimeout(() => fetchUserTopics(), 100);
+      const timer2 = setTimeout(() => fetchUserBadges(), 200);
+      const timer3 = setTimeout(() => fetchUserThemes(), 300);
+
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+        clearTimeout(timer3);
+      };
     }
   }, [user, fetchUserThemes]);
 
