@@ -53,8 +53,8 @@ export default function ReportModal({
     setIsSubmitting(true);
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       toast.success("Denúncia enviada com sucesso! Nossa equipe irá analisar.");
       setSelectedReason("");
       setDescription("");
@@ -80,7 +80,7 @@ export default function ReportModal({
             Denunciar {contentType === "topic" ? "Tópico" : "Comentário"}
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-4 py-4">
           <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
             <strong>Denunciando conteúdo de:</strong> {contentAuthor}

@@ -195,7 +195,9 @@ export default function SimpleCommentSystem({
   const [quotedComment, setQuotedComment] = useState<Comment | null>(null);
   const [commentsToShow, setCommentsToShow] = useState(8);
   const [showReportModal, setShowReportModal] = useState(false);
-  const [reportingComment, setReportingComment] = useState<Comment | null>(null);
+  const [reportingComment, setReportingComment] = useState<Comment | null>(
+    null,
+  );
 
   // Carregar comentários
   const loadComments = async () => {
@@ -497,7 +499,7 @@ export default function SimpleCommentSystem({
               <button
                 onClick={() => {
                   setCommentsToShow(8);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
                 className="flex items-center gap-2 mx-auto text-gray-600 hover:text-black transition-colors text-sm"
               >

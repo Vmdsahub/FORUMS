@@ -194,19 +194,22 @@ export const createComment: RequestHandler = (req, res) => {
         const time = now.toLocaleTimeString("pt-BR", {
           hour: "2-digit",
           minute: "2-digit",
-          timeZone: "America/Sao_Paulo"
+          timeZone: "America/Sao_Paulo",
         });
         const date = now.toLocaleDateString("pt-BR", {
-          timeZone: "America/Sao_Paulo"
+          timeZone: "America/Sao_Paulo",
         });
         forumModule.updateTopicLastPost(topicId, {
           author: req.user.name,
           date,
-          time
+          time,
         });
       }
     } catch (error) {
-      console.log("[COMMENTS] Aviso: Não foi possível atualizar lastPost do tópico", error.message);
+      console.log(
+        "[COMMENTS] Aviso: Não foi possível atualizar lastPost do tópico",
+        error.message,
+      );
     }
 
     console.log(
@@ -308,18 +311,21 @@ export const likeComment: RequestHandler = (req, res) => {
 };
 
 // Função para obter estatísticas de comentários de um tópico
-export function getTopicCommentStats(topicId: string): { commentsCount: number; totalLikes: number } {
+export function getTopicCommentStats(topicId: string): {
+  commentsCount: number;
+  totalLikes: number;
+} {
   const commentIds = topicComments.get(topicId) || [];
 
   let totalLikes = 0;
-  commentIds.forEach(commentId => {
+  commentIds.forEach((commentId) => {
     const likesCount = commentLikes.get(commentId)?.size || 0;
     totalLikes += likesCount;
   });
 
   return {
     commentsCount: commentIds.length,
-    totalLikes
+    totalLikes,
   };
 }
 

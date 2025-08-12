@@ -40,10 +40,10 @@ function formatDate(): { date: string; time: string } {
   const time = now.toLocaleTimeString("pt-BR", {
     hour: "2-digit",
     minute: "2-digit",
-    timeZone: "America/Sao_Paulo"
+    timeZone: "America/Sao_Paulo",
   });
   const date = now.toLocaleDateString("pt-BR", {
-    timeZone: "America/Sao_Paulo"
+    timeZone: "America/Sao_Paulo",
   });
   return { date, time };
 }
@@ -399,7 +399,7 @@ export const handleGetTopics: RequestHandler = (req, res) => {
       return {
         ...topic,
         replies: commentStats.commentsCount,
-        likes: totalLikes
+        likes: totalLikes,
       };
     },
   );
@@ -599,7 +599,9 @@ export const handleCreateComment: RequestHandler = (req, res) => {
     topic.comments.push(newComment);
 
     // Update replies count to match actual comments count
-    const topicCommentsCount = Array.from(comments.values()).filter(c => c.topicId === topicId).length;
+    const topicCommentsCount = Array.from(comments.values()).filter(
+      (c) => c.topicId === topicId,
+    ).length;
     topic.replies = topicCommentsCount;
 
     topic.lastPost = {
@@ -795,7 +797,9 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
   const deletedCount = deleteCommentAndReplies(commentId);
 
   // Update replies count to match actual remaining comments
-  const remainingComments = Array.from(comments.values()).filter(c => c.topicId === comment.topicId);
+  const remainingComments = Array.from(comments.values()).filter(
+    (c) => c.topicId === comment.topicId,
+  );
   topic.replies = remainingComments.length;
   topic.comments = topic.comments.filter((c) => {
     return !isCommentOrReply(c.id, commentId);
@@ -862,15 +866,16 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
           title: lastTopic.title,
           author: lastTopic.author,
           date:
-            lastTopic.lastPost?.date || new Date().toLocaleDateString("pt-BR", {
-              timeZone: "America/Sao_Paulo"
+            lastTopic.lastPost?.date ||
+            new Date().toLocaleDateString("pt-BR", {
+              timeZone: "America/Sao_Paulo",
             }),
           time:
             lastTopic.lastPost?.time ||
             new Date().toLocaleTimeString("pt-BR", {
               hour: "2-digit",
               minute: "2-digit",
-              timeZone: "America/Sao_Paulo"
+              timeZone: "America/Sao_Paulo",
             }),
         };
       }
@@ -884,12 +889,17 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
 };
 
 // Função para atualizar lastPost de um tópico (usada pelo sistema de comentários)
-export function updateTopicLastPost(topicId: string, lastPostData: { author: string; date: string; time: string }) {
+export function updateTopicLastPost(
+  topicId: string,
+  lastPostData: { author: string; date: string; time: string },
+) {
   const topic = topics.get(topicId);
   if (topic) {
     topic.lastPost = lastPostData;
     topic.updatedAt = new Date().toISOString();
-    console.log(`[FORUM] LastPost atualizado para tópico ${topicId}: ${lastPostData.author} em ${lastPostData.date} às ${lastPostData.time}`);
+    console.log(
+      `[FORUM] LastPost atualizado para tópico ${topicId}: ${lastPostData.author} em ${lastPostData.date} às ${lastPostData.time}`,
+    );
   }
 }
 

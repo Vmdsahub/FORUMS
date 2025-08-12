@@ -93,10 +93,7 @@ export default function CreateTopicModal({
     // Validar conteúdo removendo HTML
     const contentText = formData.content.replace(/<[^>]*>/g, "").trim();
 
-    if (
-      !formData.title.trim() ||
-      !contentText
-    ) {
+    if (!formData.title.trim() || !contentText) {
       toast.error("Preencha todos os campos");
       return;
     }
@@ -255,7 +252,6 @@ export default function CreateTopicModal({
               </div>
             </div>
           </div>
-
 
           <div className="space-y-2">
             <Label className="text-gray-900 font-medium">Conteúdo</Label>
