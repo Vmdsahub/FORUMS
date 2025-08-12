@@ -122,7 +122,7 @@ export default function Account() {
       });
 
       if (response.ok) {
-        toast.success("Sele��ão de emblemas salva com sucesso!");
+        toast.success("Seleção de emblemas salva com sucesso!");
       } else {
         const errorData = await response.json();
         toast.error(errorData.message || "Erro ao salvar seleção");
@@ -482,6 +482,134 @@ export default function Account() {
           )}
         </div>
 
+        {/* Collapsible Cosmetics Section */}
+        <div className="mb-8">
+          <button
+            onClick={() => toggleSection("cosmetics")}
+            className="w-full flex items-center justify-between text-lg font-semibold text-black border-b border-gray-200 pb-2 mb-4 hover:text-gray-700 transition-colors"
+          >
+            <span className="flex items-center gap-2">🎨 Cosméticos</span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className={`transform transition-transform ${
+                sectionsExpanded.cosmetics ? "rotate-180" : ""
+              }`}
+            >
+              <path d="M4 6l4 4 4-4H4z" />
+            </svg>
+          </button>
+
+          {sectionsExpanded.cosmetics && (
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="mb-4">
+                <h4 className="font-semibold text-black mb-2">
+                  Seus Temas Comprados:
+                </h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Clique em um tema para aplicá-lo em todo o site
+                </p>
+                {userThemes.length === 0 && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <p className="text-sm text-blue-800 mb-2">
+                      🛒 Você ainda não comprou nenhum tema.
+                    </p>
+                    <button
+                      onClick={() => navigate("/shop")}
+                      className="text-blue-600 hover:text-blue-800 underline font-medium"
+                    >
+                      Visite a Loja de Likes para ver os temas disponíveis
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {userThemes.length > 0 && (
+                <>
+                  {/* Default Theme */}
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                    <div
+                      className={`border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
+                        currentTheme === "default"
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                      onClick={() => {
+                        applyTheme("default");
+                        toast.success("Tema padrão aplicado!");
+                      }}
+                    >
+                      <div className="w-full h-16 bg-gray-100 rounded-lg mb-3 flex items-center justify-center text-2xl">
+                        ☀️
+                      </div>
+                      <div className="text-center">
+                        <h5 className="font-medium text-black text-sm">Tema Padrão</h5>
+                        <p className="text-xs text-gray-500">Gratuito</p>
+                        {currentTheme === "default" && (
+                          <div className="mt-2 text-blue-600 text-xs font-medium">
+                            ✓ Ativo
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* User Themes */}
+                    {userThemes.map((userTheme) => {
+                      const theme = availableThemes.find(t => t.id === userTheme.themeId);
+                      if (!theme) return null;
+
+                      const isActive = currentTheme === theme.id;
+
+                      return (
+                        <div
+                          key={theme.id}
+                          className={`border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
+                            isActive
+                              ? "border-blue-500 bg-blue-50"
+                              : "border-gray-200 hover:border-gray-300"
+                          }`}
+                          onClick={() => {
+                            applyTheme(theme.id);
+                            toast.success(`Tema "${theme.name}" aplicado!`);
+                          }}
+                        >
+                          <div className={`w-full h-16 rounded-lg mb-3 flex items-center justify-center text-2xl ${
+                            theme.id === "dark" ? "bg-gray-900 text-white" : "bg-gray-100"
+                          }`}>
+                            {theme.icon}
+                          </div>
+                          <div className="text-center">
+                            <h5 className="font-medium text-black text-sm">{theme.name}</h5>
+                            <p className="text-xs text-gray-500">
+                              Comprado em {new Date(userTheme.purchasedAt).toLocaleDateString("pt-BR")}
+                            </p>
+                            {isActive && (
+                              <div className="mt-2 text-blue-600 text-xs font-medium">
+                                ✓ Ativo
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  <div className="text-center pt-4 border-t border-gray-200">
+                    <button
+                      onClick={() => navigate("/shop")}
+                      className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
+                    >
+                      Comprar mais temas na Loja de Likes
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Collapsible Account Information */}
         <div className="mb-8">
           <button
@@ -655,7 +783,7 @@ export default function Account() {
                             </span>
                             <span>•</span>
                             <span>{topic.views} visualizações</span>
-                            <span>��</span>
+                            <span>•</span>
                             <span>{topic.replies} respostas</span>
                             <span>•</span>
                             <span>{topic.likes} curtidas</span>
