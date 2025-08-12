@@ -253,9 +253,10 @@ function App() {
   const currentNewsletter = newsletters[currentWeek] || null;
 
   return (
-    <NotificationProvider>
-      <ThemeProvider>
-        <BrowserRouter>
+    <ErrorBoundary>
+      <NotificationProvider>
+        <ThemeProvider>
+          <BrowserRouter>
           <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
             <Header activeSection={activeSection} />
             <Routes>
@@ -290,9 +291,10 @@ function App() {
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
-        </BrowserRouter>
-      </ThemeProvider>
-    </NotificationProvider>
+          </BrowserRouter>
+        </ThemeProvider>
+      </NotificationProvider>
+    </ErrorBoundary>
   );
 }
 
