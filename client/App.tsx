@@ -209,7 +209,12 @@ function App() {
   };
 
   useEffect(() => {
-    loadNewsletters();
+    // Add small delay to prevent simultaneous requests on initial load
+    const timer = setTimeout(() => {
+      loadNewsletters();
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const toggleNewsletterTopic = (id: number | string) => {
