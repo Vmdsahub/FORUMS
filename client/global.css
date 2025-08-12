@@ -159,6 +159,33 @@
     }
   }
 
+  @keyframes bounceSubtle {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  @keyframes glow {
+    from {
+      text-shadow: 0 0 5px rgba(79, 143, 247, 0.3);
+    }
+    to {
+      text-shadow: 0 0 20px rgba(79, 143, 247, 0.6), 0 0 30px rgba(79, 143, 247, 0.4);
+    }
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
   .text-balance {
     text-wrap: balance;
   }
