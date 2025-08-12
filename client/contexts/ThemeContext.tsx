@@ -139,6 +139,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+
       const response = await fetch("/api/user/themes/purchase", {
         method: "POST",
         headers: {
@@ -146,7 +149,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
         body: JSON.stringify({ themeId }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json();
@@ -155,7 +161,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         return true;
       }
     } catch (error) {
-      console.error("Error purchasing theme:", error);
+      if (error.name === "AbortError") {
+        console.error("Purchase request timeout");
+      } else {
+        console.error("Error purchasing theme:", error);
+      }
     }
 
     return false;
