@@ -122,7 +122,7 @@ export default function Account() {
       });
 
       if (response.ok) {
-        toast.success("Seleção de emblemas salva com sucesso!");
+        toast.success("Sele��ão de emblemas salva com sucesso!");
       } else {
         const errorData = await response.json();
         toast.error(errorData.message || "Erro ao salvar seleção");
@@ -211,7 +211,7 @@ export default function Account() {
     }
   };
 
-  const toggleSection = (section: "account" | "badges" | "topics") => {
+  const toggleSection = (section: "account" | "badges" | "topics" | "cosmetics") => {
     setSectionsExpanded((prev) => ({
       ...prev,
       [section]: !prev[section],
@@ -655,7 +655,7 @@ export default function Account() {
                             </span>
                             <span>•</span>
                             <span>{topic.views} visualizações</span>
-                            <span>•</span>
+                            <span>��</span>
                             <span>{topic.replies} respostas</span>
                             <span>•</span>
                             <span>{topic.likes} curtidas</span>
