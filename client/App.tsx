@@ -182,15 +182,27 @@ function App() {
   const loadNewsletters = async () => {
     setIsLoadingNewsletters(true);
     try {
-      const response = await fetch("/api/newsletter/articles");
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+      const response = await fetch("/api/newsletter/articles", {
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
       if (response.ok) {
         const data = await response.json();
         setNewsletters(data.weeklyNewsletters || []);
       } else {
-        console.error("Failed to load newsletters");
+        console.warn("Newsletter service unavailable, using fallback data");
+        setNewsletters(weeklyNewsletters); // Use local fallback data
       }
     } catch (error) {
-      console.error("Error loading newsletters:", error);
+      if (error.name !== "AbortError") {
+        console.warn("Newsletter service unavailable, using fallback data");
+      }
+      setNewsletters(weeklyNewsletters); // Use local fallback data
     } finally {
       setIsLoadingNewsletters(false);
     }
