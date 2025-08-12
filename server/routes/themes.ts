@@ -95,16 +95,19 @@ export const purchaseTheme: RequestHandler = (req, res) => {
     // Verificar preço do tema
     const themesPrices = { dark: 20 };
     const themePrice = themesPrices[themeId as keyof typeof themesPrices];
-    const currentLikes = userLikes[userId] || 0;
 
-    if (currentLikes < themePrice) {
-      return res.status(400).json({ 
-        message: `Likes insuficientes. Necessário: ${themePrice}, disponível: ${currentLikes}` 
+    const earnedLikes = calculateUserLikes(userId);
+    const spentLikes = userSpentLikes[userId] || 0;
+    const availableLikes = earnedLikes - spentLikes;
+
+    if (availableLikes < themePrice) {
+      return res.status(400).json({
+        message: `Likes insuficientes. Necessário: ${themePrice}, disponível: ${availableLikes}`
       });
     }
 
     // Realizar a compra
-    userLikes[userId] = currentLikes - themePrice;
+    userSpentLikes[userId] = spentLikes + themePrice;
     if (!userThemes[userId]) {
       userThemes[userId] = [];
     }
@@ -113,9 +116,11 @@ export const purchaseTheme: RequestHandler = (req, res) => {
       purchasedAt: new Date().toISOString()
     });
 
-    res.json({ 
-      success: true, 
-      remainingLikes: userLikes[userId],
+    const remainingLikes = earnedLikes - userSpentLikes[userId];
+
+    res.json({
+      success: true,
+      remainingLikes: Math.max(0, remainingLikes),
       message: "Tema comprado com sucesso"
     });
   } catch (error) {
