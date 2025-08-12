@@ -236,41 +236,44 @@ function App() {
 
   return (
     <NotificationProvider>
-      <BrowserRouter>
-        <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
-          <Header activeSection={activeSection} />
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <Index
-                  activeSection={activeSection}
-                  setActiveSection={setActiveSection}
-                  expandedNewsletter={expandedNewsletter}
-                  setExpandedNewsletter={setExpandedNewsletter}
-                  selectedCategory={selectedCategory}
-                  setSelectedCategory={setSelectedCategory}
-                  currentWeek={currentWeek}
-                  setCurrentWeek={setCurrentWeek}
-                  weeklyNewsletters={newsletters}
-                  onNewsletterRefresh={loadNewsletters}
-                  forumCategories={getDynamicCategories()}
-                  toggleNewsletterTopic={toggleNewsletterTopic}
-                  refreshCategoryStats={refreshStats}
-                  handleCategoryClick={handleCategoryClick}
-                  getSelectedCategoryData={getSelectedCategoryData}
-                  navigateWeek={navigateWeek}
-                  currentNewsletter={currentNewsletter}
-                />
-              }
-            />
-            <Route path="/topic/:topicId" element={<TopicView />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/saved-topics" element={<SavedTopics />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-      </BrowserRouter>
+      <ThemeProvider>
+        <BrowserRouter>
+          <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
+            <Header activeSection={activeSection} />
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Index
+                    activeSection={activeSection}
+                    setActiveSection={setActiveSection}
+                    expandedNewsletter={expandedNewsletter}
+                    setExpandedNewsletter={setExpandedNewsletter}
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={setSelectedCategory}
+                    currentWeek={currentWeek}
+                    setCurrentWeek={setCurrentWeek}
+                    weeklyNewsletters={newsletters}
+                    onNewsletterRefresh={loadNewsletters}
+                    forumCategories={getDynamicCategories()}
+                    toggleNewsletterTopic={toggleNewsletterTopic}
+                    refreshCategoryStats={refreshStats}
+                    handleCategoryClick={handleCategoryClick}
+                    getSelectedCategoryData={getSelectedCategoryData}
+                    navigateWeek={navigateWeek}
+                    currentNewsletter={currentNewsletter}
+                  />
+                }
+              />
+              <Route path="/topic/:topicId" element={<TopicView />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/saved-topics" element={<SavedTopics />} />
+              <Route path="/shop" element={<Shop />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </ThemeProvider>
     </NotificationProvider>
   );
 }
