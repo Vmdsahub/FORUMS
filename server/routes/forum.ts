@@ -387,8 +387,8 @@ export const handleGetTopics: RequestHandler = (req, res) => {
   const paginatedTopics = filteredTopics.slice(startIndex, endIndex);
 
   const topicsForList = paginatedTopics.map(
-    ({ content, comments, ...topic }) => {
-      // Get all comments for this topic from the comments Map
+    ({ content, comments: topicCommentsArray, ...topic }) => {
+      // Get all comments for this topic from the global comments Map
       const topicComments = Array.from(comments.values()).filter(c => c.topicId === topic.id);
 
       // Calculate total comments count (including replies)
