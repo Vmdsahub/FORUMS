@@ -159,22 +159,29 @@ export default function Account() {
   const fetchUserTopics = async () => {
     setIsLoadingTopics(true);
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
       const response = await fetch("/api/topics/user", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json();
         setUserTopics(data.topics || []);
       } else {
-        const errorData = await response.json();
-        console.error("Failed to fetch user topics:", errorData.message);
+        console.warn("User topics service unavailable");
         setUserTopics([]);
       }
     } catch (error) {
-      console.error("Error fetching user topics:", error);
+      if (error.name !== "AbortError") {
+        console.warn("User topics service unavailable");
+      }
       setUserTopics([]);
     } finally {
       setIsLoadingTopics(false);
