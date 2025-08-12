@@ -155,5 +155,10 @@ export function createServer() {
     removeCategoryIcon,
   );
 
+  // Theme routes
+  app.get("/api/user/themes", authenticateToken, getUserThemes);
+  app.get("/api/user/likes", authenticateToken, getUserLikes);
+  app.post("/api/user/themes/purchase", authenticateToken, purchaseTheme);
+
   return app;
 }
