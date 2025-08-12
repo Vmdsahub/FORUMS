@@ -182,7 +182,7 @@ export default function CreateTopicModal({
           Criar Tópico
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl bg-white border border-gray-200 shadow-lg">
+      <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto bg-white border border-gray-200 shadow-lg">
         <DialogHeader>
           <DialogTitle className="text-gray-900 text-xl font-semibold">
             Criar Novo Tópico em {currentCategory.name}
