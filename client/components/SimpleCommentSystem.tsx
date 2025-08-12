@@ -194,6 +194,8 @@ export default function SimpleCommentSystem({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [quotedComment, setQuotedComment] = useState<Comment | null>(null);
   const [commentsToShow, setCommentsToShow] = useState(8);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportingComment, setReportingComment] = useState<Comment | null>(null);
 
   // Carregar comentários
   const loadComments = async () => {
@@ -368,6 +370,17 @@ export default function SimpleCommentSystem({
     if (textarea) {
       textarea.focus();
     }
+  };
+
+  // Denunciar comentário
+  const handleReport = (comment: Comment) => {
+    setReportingComment(comment);
+    setShowReportModal(true);
+  };
+
+  const handleCloseReportModal = () => {
+    setShowReportModal(false);
+    setReportingComment(null);
   };
 
   if (isLoading) {
