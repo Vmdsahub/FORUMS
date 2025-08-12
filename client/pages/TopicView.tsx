@@ -9,6 +9,7 @@ import MarkdownRenderer from "@/components/MarkdownRenderer";
 import SimpleCommentSystem from "@/components/SimpleCommentSystem";
 import UserPointsBadge from "@/components/UserPointsBadge";
 import UserHoverCard from "@/components/UserHoverCard";
+import ReportModal from "@/components/ReportModal";
 
 interface Comment {
   id: string;
@@ -57,6 +58,7 @@ export default function TopicView() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [savedTopicIds, setSavedTopicIds] = useState<string[]>([]);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   useEffect(() => {
     fetchTopic();
@@ -438,6 +440,27 @@ export default function TopicView() {
                   {savedTopicIds.includes(topic.id) ? "Salvo" : "Salvar"}
                 </button>
               )}
+
+              {/* Botão de denúncia */}
+              {user && user.id !== topic.authorId && (
+                <button
+                  onClick={() => setShowReportModal(true)}
+                  className="flex items-center gap-1 px-2 py-2 rounded-md bg-gray-50 text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
+                  title="Denunciar tópico"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    <path d="M12 7c.55 0 1 .45 1 1v4c0 .55-.45 1-1 1s-1-.45-1-1V8c0-.55.45-1 1-1zm0 8c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"/>
+                  </svg>
+                  !
+                </button>
+              )}
+
               <button
                 onClick={handleLikeTopic}
                 className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
