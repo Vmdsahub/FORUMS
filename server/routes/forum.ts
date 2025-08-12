@@ -773,7 +773,7 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
     });
   }
 
-  // Fun��ão para deletar comentário e todas suas respostas
+  // Função para deletar comentário e todas suas respostas
   function deleteCommentAndReplies(commentId: string): number {
     let deletedCount = 0;
 
@@ -882,6 +882,16 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
     res.status(500).json({ error: "Error fetching category statistics" });
   }
 };
+
+// Função para atualizar lastPost de um tópico (usada pelo sistema de comentários)
+export function updateTopicLastPost(topicId: string, lastPostData: { author: string; date: string; time: string }) {
+  const topic = topics.get(topicId);
+  if (topic) {
+    topic.lastPost = lastPostData;
+    topic.updatedAt = new Date().toISOString();
+    console.log(`[FORUM] LastPost atualizado para tópico ${topicId}: ${lastPostData.author} em ${lastPostData.date} às ${lastPostData.time}`);
+  }
+}
 
 export const handleGetUserTopics: RequestHandler = (req, res) => {
   if (!req.user) {
