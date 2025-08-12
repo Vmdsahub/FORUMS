@@ -26,6 +26,7 @@ interface Topic {
 
 export default function Account() {
   const { user, logout } = useAuth();
+  const { availableThemes, userThemes, currentTheme, applyTheme, fetchUserThemes } = useTheme();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -44,6 +45,7 @@ export default function Account() {
     account: false,
     badges: false,
     topics: false,
+    cosmetics: false,
   });
 
   // Badge selection state
@@ -652,7 +654,7 @@ export default function Account() {
                             </span>
                             <span>•</span>
                             <span>{topic.views} visualizações</span>
-                            <span>•</span>
+                            <span>��</span>
                             <span>{topic.replies} respostas</span>
                             <span>•</span>
                             <span>{topic.likes} curtidas</span>
