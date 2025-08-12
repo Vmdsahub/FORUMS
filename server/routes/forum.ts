@@ -398,62 +398,84 @@ export const handleGetTopics: RequestHandler = (req, res) => {
 };
 
 export const handleGetTopic: RequestHandler = (req, res) => {
-  const { topicId } = req.params;
-  const topic = topics.get(topicId);
+  try {
+    const { topicId } = req.params;
+    const topic = topics.get(topicId);
 
-  if (!topic) {
-    return res.status(404).json({ message: "Tópico não encontrado" });
-  }
+    if (!topic) {
+      return res.status(404).json({ message: "Tópico não encontrado" });
+    }
 
-  // Increment views
-  topic.views += 1;
+    // Increment views
+    topic.views += 1;
 
-  // Check if user liked this topic
-  const userId = req.user?.id;
-  if (userId) {
-    topic.isLiked = isLikedBy(topicId, userId);
-    topic.likes = getLikeCount(topicId);
+    // Check if user liked this topic
+    const userId = req.user?.id;
+    try {
+      if (userId) {
+        topic.isLiked = isLikedBy(topicId, userId);
+        topic.likes = getLikeCount(topicId);
 
-    // Update comments with like status
-    topic.comments = topic.comments.map((comment) => ({
-      ...comment,
-      isLiked: isLikedBy(comment.id, userId),
-      likes: getLikeCount(comment.id),
-    }));
-  }
+        // Update comments with like status
+        topic.comments = topic.comments.map((comment) => ({
+          ...comment,
+          isLiked: isLikedBy(comment.id, userId),
+          likes: getLikeCount(comment.id),
+        }));
+      } else {
+        // Usuário não logado - apenas definir likes sem status de curtida
+        topic.isLiked = false;
+        topic.likes = getLikeCount(topicId);
 
-  // Build comment tree
-  console.log(
-    "DEBUG - Comentários antes da organização:",
-    topic.comments.map((c) => ({
-      id: c.id,
-      author: c.author,
-      parentId: c.parentId,
-    })),
-  );
-  const organizedComments = buildCommentTree(topic.comments);
-  console.log(
-    "DEBUG - Comentários após organização:",
-    JSON.stringify(
-      organizedComments.map((c) => ({
+        topic.comments = topic.comments.map((comment) => ({
+          ...comment,
+          isLiked: false,
+          likes: getLikeCount(comment.id),
+        }));
+      }
+    } catch (likeError) {
+      console.error("[SERVER] Error processing likes:", likeError);
+      // Fallback - deixar os valores originais
+      topic.isLiked = false;
+      topic.likes = topic.likes || 0;
+    }
+
+    // Build comment tree
+    console.log(
+      "DEBUG - Comentários antes da organização:",
+      topic.comments.map((c) => ({
         id: c.id,
         author: c.author,
         parentId: c.parentId,
-        repliesCount: c.replies?.length || 0,
-        replies:
-          c.replies?.map((r) => ({
-            id: r.id,
-            author: r.author,
-            parentId: r.parentId,
-          })) || [],
       })),
-      null,
-      2,
-    ),
-  );
-  topic.comments = organizedComments;
+    );
+    const organizedComments = buildCommentTree(topic.comments);
+    console.log(
+      "DEBUG - Comentários após organização:",
+      JSON.stringify(
+        organizedComments.map((c) => ({
+          id: c.id,
+          author: c.author,
+          parentId: c.parentId,
+          repliesCount: c.replies?.length || 0,
+          replies:
+            c.replies?.map((r) => ({
+              id: r.id,
+              author: r.author,
+              parentId: r.parentId,
+            })) || [],
+        })),
+        null,
+        2,
+      ),
+    );
+    topic.comments = organizedComments;
 
-  res.json(topic);
+    res.json(topic);
+  } catch (error) {
+    console.error("[SERVER] Error in handleGetTopic:", error);
+    res.status(500).json({ message: "Erro interno do servidor" });
+  }
 };
 
 export const handleCreateTopic: RequestHandler = (req, res) => {

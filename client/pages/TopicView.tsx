@@ -77,8 +77,16 @@ export default function TopicView() {
   }, [user]);
 
   const fetchTopic = async () => {
+    if (!topicId) {
+      toast.error("ID do tópico não encontrado");
+      navigate("/");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await fetch(`/api/topics/${topicId}`);
+
       if (response.ok) {
         const data = await response.json();
         setTopic(data);
@@ -346,53 +354,25 @@ export default function TopicView() {
 
         {/* Topic Header */}
         <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6">
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-3">
-                {topic.isPinned && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                    Fixado
-                  </span>
-                )}
-                {topic.isHot && (
-                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                    🔥 Quente
-                  </span>
-                )}
-                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                  {topic.category}
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-3">
+              {topic.isPinned && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                  Fixado
                 </span>
-              </div>
-              <h1 className="text-2xl font-bold text-black mb-2">
-                {topic.title}
-              </h1>
-              <p className="text-gray-600 mb-4">{topic.description}</p>
-              <div className="flex items-center gap-4 text-sm text-gray-500 flex-wrap">
-                <div className="flex items-center gap-2">
-                  <UserHoverCard
-                    userId={topic.authorId}
-                    userName={topic.author}
-                    userAvatar={topic.authorAvatar}
-                    isTopicAuthor={true}
-                    size="sm"
-                  >
-                    <div className="flex items-center gap-2 cursor-pointer">
-                      <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold hover:bg-gray-800 transition-colors overflow-hidden">
-                        {topic.authorAvatar}
-                      </div>
-                      <div className="flex flex-col gap-1">
-                        <span>
-                          por{" "}
-                          <span className="font-medium text-black hover:text-gray-700 transition-colors">
-                            {topic.author}
-                          </span>
-                        </span>
-                      </div>
-                    </div>
-                  </UserHoverCard>
-                </div>
-              </div>
+              )}
+              {topic.isHot && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                  🔥 Quente
+                </span>
+              )}
+              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                {topic.category}
+              </span>
             </div>
+            <h1 className="text-2xl font-bold text-black mb-4">
+              {topic.title}
+            </h1>
           </div>
 
           {/* Topic Content */}
@@ -402,25 +382,31 @@ export default function TopicView() {
 
           {/* Actions */}
           <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={handleLikeTopic}
-                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
-                  topic.isLiked
-                    ? "bg-red-50 text-red-600 hover:bg-red-100"
-                    : "bg-gray-50 text-gray-600 hover:bg-gray-100"
-                }`}
+            {/* Autor à esquerda */}
+            <div className="flex items-center gap-2">
+              <UserHoverCard
+                userId={topic.authorId}
+                userName={topic.author}
+                userAvatar={topic.authorAvatar}
+                isTopicAuthor={true}
+                size="sm"
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                >
-                  <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
-                </svg>
-                {topic.likes}
-              </button>
+                <div className="flex items-center gap-2 cursor-pointer">
+                  <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold hover:bg-gray-800 transition-colors overflow-hidden">
+                    {topic.authorAvatar}
+                  </div>
+                  <span className="text-sm text-gray-500">
+                    por{" "}
+                    <span className="font-medium text-black hover:text-gray-700 transition-colors">
+                      {topic.author}
+                    </span>
+                  </span>
+                </div>
+              </UserHoverCard>
+            </div>
+
+            {/* Ações à direita */}
+            <div className="flex items-center gap-3">
               {user && (
                 <button
                   onClick={handleSaveTopic}
@@ -452,24 +438,42 @@ export default function TopicView() {
                   {savedTopicIds.includes(topic.id) ? "Salvo" : "Salvar"}
                 </button>
               )}
-            </div>
-            {isAdmin && (
               <button
-                onClick={handleDeleteTopic}
-                className="flex items-center gap-2 px-3 py-2 rounded-md text-red-600 hover:bg-red-50 transition-colors"
-                title="Excluir tópico (Admin)"
+                onClick={handleLikeTopic}
+                className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                  topic.isLiked
+                    ? "bg-red-50 text-red-600 hover:bg-red-100"
+                    : "bg-gray-50 text-gray-600 hover:bg-gray-100"
+                }`}
               >
                 <svg
                   width="16"
                   height="16"
-                  viewBox="0 0 24 24"
+                  viewBox="0 0 16 16"
                   fill="currentColor"
                 >
-                  <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                  <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
                 </svg>
-                Excluir Tópico
+                {topic.likes}
               </button>
-            )}
+              {isAdmin && (
+                <button
+                  onClick={handleDeleteTopic}
+                  className="flex items-center gap-2 px-3 py-2 rounded-md text-red-600 hover:bg-red-50 transition-colors"
+                  title="Excluir tópico (Admin)"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                  </svg>
+                  Excluir Tópico
+                </button>
+              )}
+            </div>
           </div>
         </div>
 

@@ -200,7 +200,6 @@ export default function Index(props: IndexProps) {
       console.log("Tópicos atualizados:", updated);
       return updated;
     });
-    toast.success("Tópico criado com sucesso!");
   };
 
   const handleCreateCategory = () => {

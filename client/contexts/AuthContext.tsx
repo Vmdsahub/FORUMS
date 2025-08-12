@@ -152,21 +152,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.success("Conta criada com sucesso!");
         return true;
       } else {
-        console.log("[REGISTER] Error response");
+        console.log("[REGISTER] Error response, status:", response.status);
         let errorMessage = "Erro ao criar conta";
 
         try {
           const errorData = await response.json();
-          console.log("[REGISTER] Error data:", errorData);
-          if (errorData && errorData.message) {
+          if (errorData?.message) {
             errorMessage = errorData.message;
+          } else if (response.status === 409) {
+            errorMessage = "Esta conta já existe";
+          } else if (response.status === 400) {
+            errorMessage = "Dados inválidos. Verifique os campos";
+          } else {
+            errorMessage = `Erro HTTP ${response.status}`;
           }
-        } catch (parseError) {
-          console.log("[REGISTER] Could not parse error response:", parseError);
-          errorMessage = `Erro HTTP ${response.status}`;
+        } catch {
+          if (response.status === 409) {
+            errorMessage = "Esta conta já existe";
+          } else if (response.status === 400) {
+            errorMessage = "Dados inválidos. Verifique os campos";
+          } else {
+            errorMessage = `Erro HTTP ${response.status}`;
+          }
         }
 
-        console.log("[REGISTER] Showing error message:", errorMessage);
+        console.log("[REGISTER] Final error message:", errorMessage);
         toast.error(errorMessage);
         return false;
       }
