@@ -157,216 +157,345 @@
     background-size: 50px 50px;
   }
 
-  /* Dark Theme Styles - Inspirado em Discord, GitHub Dark, VS Code */
+  /* 🌙 DARK THEME - Sistema Completo e Moderno */
   .theme-dark {
-    /* Cores principais */
-    --background: 220 13% 9%;           /* #16181D - Fundo principal escuro */
-    --foreground: 220 14% 93%;          /* #EDEEF0 - Texto principal */
+    /* === PALETA DE CORES BASE === */
+    --dark-bg-primary: #0a0b0f;      /* Fundo principal - quase preto */
+    --dark-bg-secondary: #1a1d23;    /* Cards e containers */
+    --dark-bg-tertiary: #2a2e35;     /* Elementos interativos */
+    --dark-bg-quaternary: #34394a;   /* Hover states */
 
-    /* Cards e containers */
-    --card: 220 13% 11%;                /* #1C1F26 - Cards e containers */
-    --card-foreground: 220 14% 93%;     /* #EDEEF0 - Texto em cards */
+    --dark-text-primary: #ffffff;    /* Texto principal */
+    --dark-text-secondary: #b8bcc8;  /* Texto secundário */
+    --dark-text-tertiary: #8b929b;   /* Texto sutil */
+    --dark-text-quaternary: #5a6069; /* Texto muito sutil */
 
-    /* Popovers e tooltips */
-    --popover: 220 13% 8%;              /* #141619 - Popovers mais escuros */
-    --popover-foreground: 220 14% 93%;  /* #EDEEF0 - Texto em popovers */
+    --dark-accent-blue: #4f8ff7;     /* Azul principal */
+    --dark-accent-purple: #8b5cf6;   /* Roxo */
+    --dark-accent-green: #22c55e;    /* Verde */
+    --dark-accent-red: #ef4444;      /* Vermelho */
+    --dark-accent-orange: #f97316;   /* Laranja */
 
-    /* Cores primárias */
-    --primary: 220 91% 65%;             /* #5865F2 - Azul Discord-like */
-    --primary-foreground: 0 0% 100%;    /* #FFFFFF - Texto em primary */
+    --dark-border-primary: #3a3f4a;  /* Bordas principais */
+    --dark-border-secondary: #2a2e35; /* Bordas sutis */
+    --dark-border-accent: #4f8ff7;   /* Bordas de destaque */
 
-    /* Cores secundárias */
-    --secondary: 220 13% 14%;           /* #23262F - Backgrounds secundários */
-    --secondary-foreground: 220 14% 93%; /* #EDEEF0 - Texto secundário */
-
-    /* Cores mutadas */
-    --muted: 220 13% 14%;               /* #23262F - Elementos sutis */
-    --muted-foreground: 220 9% 60%;     /* #8B8D98 - Texto sutil */
-
-    /* Cores de destaque */
-    --accent: 220 13% 16%;              /* #272A34 - Hover states */
-    --accent-foreground: 220 14% 93%;   /* #EDEEF0 - Texto em accent */
-
-    /* Cores destrutivas */
-    --destructive: 359 82% 59%;         /* #ED4245 - Vermelho Discord */
-    --destructive-foreground: 0 0% 100%; /* #FFFFFF - Texto destrutivo */
-
-    /* Bordas e inputs */
-    --border: 220 13% 18%;              /* #2F3136 - Bordas */
-    --input: 220 13% 14%;               /* #23262F - Background de inputs */
-    --ring: 220 91% 65%;                /* #5865F2 - Focus ring */
-
-    /* Sidebar (se aplicável) */
-    --sidebar-background: 220 13% 11%;  /* #1C1F26 - Sidebar background */
-    --sidebar-foreground: 220 14% 93%;  /* #EDEEF0 - Sidebar text */
-    --sidebar-primary: 220 91% 65%;     /* #5865F2 - Sidebar primary */
-    --sidebar-primary-foreground: 0 0% 100%; /* #FFFFFF */
-    --sidebar-accent: 220 13% 14%;      /* #23262F - Sidebar accent */
-    --sidebar-accent-foreground: 220 14% 93%; /* #EDEEF0 */
-    --sidebar-border: 220 13% 18%;      /* #2F3136 - Sidebar border */
-    --sidebar-ring: 220 91% 65%;        /* #5865F2 - Sidebar ring */
+    /* === VARIÁVEIS CSS CUSTOMIZADAS === */
+    --background: 240 10% 4%;
+    --foreground: 0 0% 100%;
+    --card: 240 10% 10%;
+    --card-foreground: 0 0% 100%;
+    --popover: 240 10% 6%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 213 94% 68%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 240 5% 16%;
+    --muted-foreground: 240 4% 58%;
+    --accent: 240 4% 20%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 6% 23%;
+    --input: 240 4% 16%;
+    --ring: 213 94% 68%;
+    --radius: 0.75rem;
   }
 
-  /* Glass effects para tema escuro */
-  .theme-dark .glass-minimal {
-    background: rgba(28, 31, 38, 0.85);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(47, 49, 54, 0.8);
+  /* === APLICAÇÃO GLOBAL DO TEMA === */
+  .theme-dark {
+    color-scheme: dark;
+    background: var(--dark-bg-primary);
+    color: var(--dark-text-primary);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .theme-dark .glass-subtle {
-    background: rgba(28, 31, 38, 0.6);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(47, 49, 54, 0.6);
+  /* === TIPOGRAFIA === */
+  .theme-dark h1,
+  .theme-dark h2,
+  .theme-dark h3,
+  .theme-dark h4,
+  .theme-dark h5,
+  .theme-dark h6 {
+    color: var(--dark-text-primary);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 
-  /* Grid pattern para tema escuro */
-  .theme-dark .bg-grid {
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 50px 50px;
-  }
-
-  /* Scrollbar personalizada para tema escuro */
-  .theme-dark::-webkit-scrollbar {
-    width: 12px;
-  }
-
-  .theme-dark::-webkit-scrollbar-track {
-    background: hsl(220 13% 11%);
-  }
-
-  .theme-dark::-webkit-scrollbar-thumb {
-    background: hsl(220 13% 18%);
-    border-radius: 6px;
-    border: 2px solid hsl(220 13% 11%);
-  }
-
-  .theme-dark::-webkit-scrollbar-thumb:hover {
-    background: hsl(220 13% 22%);
-  }
-
-  /* Hover effects específicos para tema escuro */
-  .theme-dark .hover-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  }
-
-  /* Sombras personalizadas para tema escuro */
-  .theme-dark .shadow-lg {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
-  }
-
-  .theme-dark .shadow-md {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-  }
-
-  /* Links e botões no tema escuro */
-  .theme-dark a:hover {
-    color: hsl(220 91% 75%);
-  }
-
-  /* Específico para inputs e forms */
-  .theme-dark input::placeholder,
-  .theme-dark textarea::placeholder {
-    color: hsl(220 9% 45%);
-  }
-
-  /* Toasts e notificações */
-  .theme-dark .sonner-toast {
-    background: hsl(220 13% 14%);
-    border: 1px solid hsl(220 13% 18%);
-    color: hsl(220 14% 93%);
-  }
-
-  /* Badges e tags */
-  .theme-dark .bg-gray-50 {
-    background-color: hsl(220 13% 14%);
-  }
-
-  .theme-dark .bg-gray-100 {
-    background-color: hsl(220 13% 16%);
-  }
-
-  .theme-dark .bg-gray-200 {
-    background-color: hsl(220 13% 18%);
-  }
-
-  .theme-dark .text-gray-500 {
-    color: hsl(220 9% 60%);
-  }
-
-  .theme-dark .text-gray-600 {
-    color: hsl(220 9% 65%);
-  }
-
-  .theme-dark .text-gray-700 {
-    color: hsl(220 14% 75%);
-  }
-
-  .theme-dark .text-gray-800 {
-    color: hsl(220 14% 85%);
-  }
-
-  .theme-dark .text-gray-900 {
-    color: hsl(220 14% 93%);
+  .theme-dark p,
+  .theme-dark span,
+  .theme-dark div {
+    color: var(--dark-text-secondary);
   }
 
   .theme-dark .text-black {
-    color: hsl(220 14% 93%);
+    color: var(--dark-text-primary) !important;
   }
 
-  /* Bordas específicas */
+  /* === BACKGROUNDS === */
+  .theme-dark .bg-white {
+    background-color: var(--dark-bg-secondary) !important;
+    border: 1px solid var(--dark-border-secondary);
+  }
+
+  .theme-dark .bg-gray-50 {
+    background-color: var(--dark-bg-tertiary) !important;
+  }
+
+  .theme-dark .bg-gray-100 {
+    background-color: var(--dark-bg-quaternary) !important;
+  }
+
+  /* === TEXTO === */
+  .theme-dark .text-gray-500 {
+    color: var(--dark-text-tertiary) !important;
+  }
+
+  .theme-dark .text-gray-600 {
+    color: var(--dark-text-secondary) !important;
+  }
+
+  .theme-dark .text-gray-700 {
+    color: var(--dark-text-secondary) !important;
+  }
+
+  .theme-dark .text-gray-800 {
+    color: var(--dark-text-primary) !important;
+  }
+
+  .theme-dark .text-gray-900 {
+    color: var(--dark-text-primary) !important;
+  }
+
+  /* === BORDAS === */
   .theme-dark .border-gray-100 {
-    border-color: hsl(220 13% 16%);
+    border-color: var(--dark-border-secondary) !important;
   }
 
   .theme-dark .border-gray-200 {
-    border-color: hsl(220 13% 18%);
+    border-color: var(--dark-border-primary) !important;
   }
 
   .theme-dark .border-gray-300 {
-    border-color: hsl(220 13% 22%);
+    border-color: var(--dark-border-primary) !important;
   }
 
-  /* Estados de hover para tema escuro */
+  /* === HOVER STATES === */
   .theme-dark .hover\\:bg-gray-50:hover {
-    background-color: hsl(220 13% 16%);
+    background-color: var(--dark-bg-quaternary) !important;
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
   }
 
   .theme-dark .hover\\:bg-gray-100:hover {
-    background-color: hsl(220 13% 18%);
+    background-color: var(--dark-bg-quaternary) !important;
   }
 
-  /* Cores especiais para elementos específicos */
+  .theme-dark .hover\\:text-black:hover {
+    color: var(--dark-accent-blue) !important;
+  }
+
+  /* === INPUTS E FORMS === */
+  .theme-dark input,
+  .theme-dark textarea,
+  .theme-dark select {
+    background-color: var(--dark-bg-tertiary) !important;
+    border-color: var(--dark-border-primary) !important;
+    color: var(--dark-text-primary) !important;
+  }
+
+  .theme-dark input::placeholder,
+  .theme-dark textarea::placeholder {
+    color: var(--dark-text-quaternary) !important;
+  }
+
+  .theme-dark input:focus,
+  .theme-dark textarea:focus {
+    border-color: var(--dark-accent-blue) !important;
+    box-shadow: 0 0 0 3px rgba(79, 143, 247, 0.1) !important;
+  }
+
+  /* === BUTTONS === */
+  .theme-dark .bg-black {
+    background-color: var(--dark-accent-blue) !important;
+    color: white !important;
+    border: none;
+    box-shadow: 0 4px 14px 0 rgba(79, 143, 247, 0.25);
+  }
+
+  .theme-dark .bg-black:hover {
+    background-color: #3b7dd8 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px 0 rgba(79, 143, 247, 0.35);
+  }
+
+  .theme-dark .bg-gray-900 {
+    background-color: var(--dark-accent-blue) !important;
+  }
+
+  .theme-dark .bg-gray-900:hover {
+    background-color: #3b7dd8 !important;
+  }
+
+  /* === CARDS E CONTAINERS === */
+  .theme-dark .border {
+    border-color: var(--dark-border-primary) !important;
+  }
+
+  .theme-dark .rounded-lg {
+    background: linear-gradient(145deg, var(--dark-bg-secondary), #1e2129);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--dark-border-primary);
+  }
+
+  /* === NAVIGATION === */
+  .theme-dark .glass-minimal {
+    background: rgba(10, 11, 15, 0.95) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid var(--dark-border-primary) !important;
+  }
+
+  /* === SHADOWS === */
+  .theme-dark .shadow-sm {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  .theme-dark .shadow-md {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  .theme-dark .shadow-lg {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+  }
+
+  /* === SPECIAL ELEMENTS === */
   .theme-dark .bg-blue-50 {
-    background-color: hsl(220 91% 8%);
-  }
-
-  .theme-dark .border-blue-200 {
-    border-color: hsl(220 91% 15%);
+    background: linear-gradient(135deg, rgba(79, 143, 247, 0.1), rgba(139, 92, 246, 0.05)) !important;
+    border-color: rgba(79, 143, 247, 0.2) !important;
   }
 
   .theme-dark .text-blue-800 {
-    color: hsl(220 91% 75%);
+    color: var(--dark-accent-blue) !important;
   }
 
-  .theme-dark .text-blue-900 {
-    color: hsl(220 91% 85%);
-  }
-
-  /* Elementos verdes para seção Open-Source */
   .theme-dark .bg-green-600 {
-    background-color: hsl(142 76% 36%);
+    background-color: var(--dark-accent-green) !important;
   }
 
-  /* Estados de focus */
-  .theme-dark .focus\\:border-gray-500:focus {
-    border-color: hsl(220 13% 30%);
+  /* === SCROLLBARS === */
+  .theme-dark *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
   }
 
-  .theme-dark .focus\\:ring-gray-500:focus {
-    --tw-ring-color: hsl(220 13% 30%);
+  .theme-dark *::-webkit-scrollbar-track {
+    background: var(--dark-bg-primary);
+    border-radius: 4px;
+  }
+
+  .theme-dark *::-webkit-scrollbar-thumb {
+    background: var(--dark-bg-quaternary);
+    border-radius: 4px;
+    border: 2px solid var(--dark-bg-primary);
+  }
+
+  .theme-dark *::-webkit-scrollbar-thumb:hover {
+    background: var(--dark-accent-blue);
+  }
+
+  /* === RESPONSIVE ANIMATIONS === */
+  .theme-dark .animate-fade-in {
+    animation: darkFadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .theme-dark .animate-slide-up {
+    animation: darkSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .theme-dark .hover-lift:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* === KEYFRAMES === */
+  @keyframes darkFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes darkSlideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* === RESPONSIVE DESIGN === */
+  @media (max-width: 768px) {
+    .theme-dark .rounded-lg {
+      margin: 0 8px;
+      border-radius: 12px;
+    }
+
+    .theme-dark .glass-minimal {
+      backdrop-filter: blur(10px);
+    }
+  }
+
+  /* === SELECTION === */
+  .theme-dark ::selection {
+    background: rgba(79, 143, 247, 0.3);
+    color: var(--dark-text-primary);
+  }
+
+  /* === FOCUS VISIBLE === */
+  .theme-dark *:focus-visible {
+    outline: 2px solid var(--dark-accent-blue);
+    outline-offset: 2px;
+  }
+
+  /* === LINKS === */
+  .theme-dark a {
+    color: var(--dark-accent-blue);
+    transition: color 0.2s ease;
+  }
+
+  .theme-dark a:hover {
+    color: #6ba3f8;
+  }
+
+  /* === BADGES E TAGS === */
+  .theme-dark .bg-yellow-100 {
+    background: rgba(251, 191, 36, 0.15) !important;
+    color: #fbbf24 !important;
+  }
+
+  .theme-dark .bg-red-100 {
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #ef4444 !important;
+  }
+
+  .theme-dark .bg-green-100 {
+    background: rgba(34, 197, 94, 0.15) !important;
+    color: #22c55e !important;
+  }
+
+  /* === TOAST NOTIFICATIONS === */
+  .theme-dark .sonner-toast {
+    background: var(--dark-bg-secondary) !important;
+    border: 1px solid var(--dark-border-primary) !important;
+    color: var(--dark-text-primary) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
   }
 }
