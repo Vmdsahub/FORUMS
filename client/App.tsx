@@ -325,7 +325,8 @@ function App() {
                     setCurrentWeek={setCurrentWeek}
                     weeklyNewsletters={newsletters}
                     onNewsletterRefresh={loadNewsletters}
-                    forumCategories={getDynamicCategories()}
+                    toolsCategories={getDynamicToolsCategories()}
+                    openSourceCategories={getDynamicOpenSourceCategories()}
                     toggleNewsletterTopic={toggleNewsletterTopic}
                     refreshCategoryStats={refreshStats}
                     handleCategoryClick={handleCategoryClick}
