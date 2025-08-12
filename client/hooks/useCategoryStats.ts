@@ -28,17 +28,28 @@ export function useCategoryStats() {
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch("/api/categories/stats");
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+      const response = await fetch("/api/categories/stats", {
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json();
         setCategoryStats(data);
       } else {
-        throw new Error("Failed to fetch category stats");
+        console.warn("Category stats service unavailable, using defaults");
+        setCategoryStats({ categories: {} }); // Use empty stats as fallback
       }
     } catch (err) {
-      console.error("Error fetching category stats:", err);
-      setError(err instanceof Error ? err.message : "Unknown error");
+      if (err.name !== "AbortError") {
+        console.warn("Category stats service unavailable, using defaults");
+      }
+      setCategoryStats({ categories: {} }); // Use empty stats as fallback
+      setError(null); // Don't show error to user for optional feature
     } finally {
       setIsLoading(false);
     }
