@@ -133,7 +133,15 @@ export default function Index(props: IndexProps) {
 
   const loadSavedIcons = async () => {
     try {
-      const response = await fetch("/api/category-icons");
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+      const response = await fetch("/api/category-icons", {
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
       if (response.ok) {
         const data = await response.json();
         setCustomIcons(data.icons || {});
@@ -145,8 +153,11 @@ export default function Index(props: IndexProps) {
         );
       }
     } catch (error) {
-      console.error("Erro ao carregar ícones salvos:", error);
       // Fail silently - icons are optional feature
+      if (error.name !== "AbortError") {
+        console.warn("Icons service unavailable, using defaults");
+      }
+      setCustomIcons({}); // Set empty object as fallback
     }
   };
 
