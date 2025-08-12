@@ -387,7 +387,38 @@ export const handleGetTopics: RequestHandler = (req, res) => {
   const paginatedTopics = filteredTopics.slice(startIndex, endIndex);
 
   const topicsForList = paginatedTopics.map(
-    ({ content, comments, ...topic }) => topic,
+    ({ content, comments, ...topic }) => {
+      // Calculate total comments count (including replies)
+      const getTotalCommentsCount = (commentsList: Comment[]): number => {
+        let count = commentsList.length;
+        commentsList.forEach(comment => {
+          if (comment.replies && comment.replies.length > 0) {
+            count += getTotalCommentsCount(comment.replies);
+          }
+        });
+        return count;
+      };
+
+      const totalComments = getTotalCommentsCount(comments);
+
+      // Calculate total likes (topic + all comment likes)
+      let totalLikes = getLikeCount(topic.id);
+      const addCommentLikes = (commentsList: Comment[]) => {
+        commentsList.forEach(comment => {
+          totalLikes += getLikeCount(comment.id);
+          if (comment.replies && comment.replies.length > 0) {
+            addCommentLikes(comment.replies);
+          }
+        });
+      };
+      addCommentLikes(comments);
+
+      return {
+        ...topic,
+        replies: totalComments,
+        likes: totalLikes
+      };
+    },
   );
 
   res.json({
