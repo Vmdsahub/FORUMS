@@ -56,7 +56,12 @@ export function useCategoryStats() {
   };
 
   useEffect(() => {
-    fetchCategoryStats();
+    // Add small delay to prevent simultaneous requests on initial load
+    const timer = setTimeout(() => {
+      fetchCategoryStats();
+    }, 300);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const refreshStats = () => {
