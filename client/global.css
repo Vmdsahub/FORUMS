@@ -157,45 +157,126 @@
     background-size: 50px 50px;
   }
 
-  /* Dark Theme Styles */
+  /* Dark Theme Styles - Inspirado em Discord, GitHub Dark, VS Code */
   .theme-dark {
-    --background: 0 0% 9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14%;
-    --muted-foreground: 0 0% 63%;
-    --accent: 0 0% 14%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14%;
-    --input: 0 0% 14%;
-    --ring: 0 0% 83%;
+    /* Cores principais */
+    --background: 220 13% 9%;           /* #16181D - Fundo principal escuro */
+    --foreground: 220 14% 93%;          /* #EDEEF0 - Texto principal */
+
+    /* Cards e containers */
+    --card: 220 13% 11%;                /* #1C1F26 - Cards e containers */
+    --card-foreground: 220 14% 93%;     /* #EDEEF0 - Texto em cards */
+
+    /* Popovers e tooltips */
+    --popover: 220 13% 8%;              /* #141619 - Popovers mais escuros */
+    --popover-foreground: 220 14% 93%;  /* #EDEEF0 - Texto em popovers */
+
+    /* Cores primárias */
+    --primary: 220 91% 65%;             /* #5865F2 - Azul Discord-like */
+    --primary-foreground: 0 0% 100%;    /* #FFFFFF - Texto em primary */
+
+    /* Cores secundárias */
+    --secondary: 220 13% 14%;           /* #23262F - Backgrounds secundários */
+    --secondary-foreground: 220 14% 93%; /* #EDEEF0 - Texto secundário */
+
+    /* Cores mutadas */
+    --muted: 220 13% 14%;               /* #23262F - Elementos sutis */
+    --muted-foreground: 220 9% 60%;     /* #8B8D98 - Texto sutil */
+
+    /* Cores de destaque */
+    --accent: 220 13% 16%;              /* #272A34 - Hover states */
+    --accent-foreground: 220 14% 93%;   /* #EDEEF0 - Texto em accent */
+
+    /* Cores destrutivas */
+    --destructive: 359 82% 59%;         /* #ED4245 - Vermelho Discord */
+    --destructive-foreground: 0 0% 100%; /* #FFFFFF - Texto destrutivo */
+
+    /* Bordas e inputs */
+    --border: 220 13% 18%;              /* #2F3136 - Bordas */
+    --input: 220 13% 14%;               /* #23262F - Background de inputs */
+    --ring: 220 91% 65%;                /* #5865F2 - Focus ring */
+
+    /* Sidebar (se aplicável) */
+    --sidebar-background: 220 13% 11%;  /* #1C1F26 - Sidebar background */
+    --sidebar-foreground: 220 14% 93%;  /* #EDEEF0 - Sidebar text */
+    --sidebar-primary: 220 91% 65%;     /* #5865F2 - Sidebar primary */
+    --sidebar-primary-foreground: 0 0% 100%; /* #FFFFFF */
+    --sidebar-accent: 220 13% 14%;      /* #23262F - Sidebar accent */
+    --sidebar-accent-foreground: 220 14% 93%; /* #EDEEF0 */
+    --sidebar-border: 220 13% 18%;      /* #2F3136 - Sidebar border */
+    --sidebar-ring: 220 91% 65%;        /* #5865F2 - Sidebar ring */
   }
 
+  /* Glass effects para tema escuro */
   .theme-dark .glass-minimal {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(28, 31, 38, 0.85);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(47, 49, 54, 0.8);
   }
 
   .theme-dark .glass-subtle {
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(28, 31, 38, 0.6);
     backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(47, 49, 54, 0.6);
   }
 
+  /* Grid pattern para tema escuro */
   .theme-dark .bg-grid {
     background-image:
-      linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     background-size: 50px 50px;
+  }
+
+  /* Scrollbar personalizada para tema escuro */
+  .theme-dark::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  .theme-dark::-webkit-scrollbar-track {
+    background: hsl(220 13% 11%);
+  }
+
+  .theme-dark::-webkit-scrollbar-thumb {
+    background: hsl(220 13% 18%);
+    border-radius: 6px;
+    border: 2px solid hsl(220 13% 11%);
+  }
+
+  .theme-dark::-webkit-scrollbar-thumb:hover {
+    background: hsl(220 13% 22%);
+  }
+
+  /* Hover effects específicos para tema escuro */
+  .theme-dark .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Sombras personalizadas para tema escuro */
+  .theme-dark .shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  }
+
+  .theme-dark .shadow-md {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Links e botões no tema escuro */
+  .theme-dark a:hover {
+    color: hsl(220 91% 75%);
+  }
+
+  /* Específico para inputs e forms */
+  .theme-dark input::placeholder,
+  .theme-dark textarea::placeholder {
+    color: hsl(220 9% 45%);
+  }
+
+  /* Toasts e notificações */
+  .theme-dark .sonner-toast {
+    background: hsl(220 13% 14%);
+    border: 1px solid hsl(220 13% 18%);
+    color: hsl(220 14% 93%);
   }
 }
