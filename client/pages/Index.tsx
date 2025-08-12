@@ -423,9 +423,7 @@ export default function Index(props: IndexProps) {
                   </h2>
                   {currentNewsletter && (
                     <p className="text-lg text-gray-600 mt-2">
-                      Semana {currentNewsletter.week} •{" "}
-                      {currentNewsletter.startDate} -{" "}
-                      {currentNewsletter.endDate}
+                      Semana {currentNewsletter.week} - Atualizado todos os domingos
                     </p>
                   )}
                 </div>
