@@ -808,7 +808,7 @@ export default function Index(props: IndexProps) {
               </div>
 
               <div className="divide-y divide-gray-100">
-                {forumCategories.map((category) => (
+                {toolsCategories.map((category) => (
                   <div
                     key={category.id}
                     className="hover:bg-gray-50 transition-all duration-300 ease-in-out cursor-pointer hover:-translate-y-0.5"
@@ -1009,7 +1009,7 @@ export default function Index(props: IndexProps) {
               </div>
 
               <div className="divide-y divide-gray-100">
-                {forumCategories.map((category) => (
+                {openSourceCategories.map((category) => (
                   <div
                     key={`opensource-${category.id}`}
                     className="hover:bg-gray-50 transition-all duration-300 ease-in-out cursor-pointer hover:-translate-y-0.5"
