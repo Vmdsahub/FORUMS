@@ -450,7 +450,7 @@ export default function Index(props: IndexProps) {
                 </button>
               </div>
               <p className="text-md text-gray-500">
-                Insights técnicos e análises do mercado de IA
+                Seleção de notícias sobre as principais tecnologias e ferramentas de Inteligência Artificial
               </p>
             </div>
 
