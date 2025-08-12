@@ -720,7 +720,7 @@ export default function Index(props: IndexProps) {
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
               <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-black">
-                  Categorias do Fórum
+                  Ferramentas
                 </h2>
                 {isAdmin && (
                   <Dialog
