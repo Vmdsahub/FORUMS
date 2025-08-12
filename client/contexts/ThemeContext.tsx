@@ -68,20 +68,32 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUserThemes = async () => {
     if (!user) return;
-    
+
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
       const response = await fetch("/api/user/themes", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json();
         setUserThemes(data.themes || []);
+      } else {
+        console.warn("User themes service unavailable");
+        setUserThemes([]); // Set empty array as fallback
       }
     } catch (error) {
-      console.error("Error fetching user themes:", error);
+      if (error.name !== "AbortError") {
+        console.warn("User themes service unavailable");
+      }
+      setUserThemes([]); // Set empty array as fallback
     }
   };
 
