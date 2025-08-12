@@ -95,7 +95,6 @@ export default function CreateTopicModal({
 
     if (
       !formData.title.trim() ||
-      !formData.description.trim() ||
       !contentText
     ) {
       toast.error("Preencha todos os campos");
@@ -118,6 +117,7 @@ export default function CreateTopicModal({
 
       const topicData = {
         ...formData,
+        description: formData.title, // Use title as description for backend compatibility
         category: currentCategory.id,
         ...(avatarUrl && { avatarUrl }),
       };
@@ -256,23 +256,6 @@ export default function CreateTopicModal({
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="description" className="text-gray-900 font-medium">
-              Descrição
-            </Label>
-            <Input
-              id="description"
-              placeholder="Breve descrição do tópico"
-              value={formData.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
-              className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
-              required
-              maxLength={200}
-            />
-            <p className="text-xs text-gray-500">
-              {formData.description.length}/200 caracteres
-            </p>
-          </div>
 
           <div className="space-y-2">
             <Label className="text-gray-900 font-medium">Conteúdo</Label>
