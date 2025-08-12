@@ -267,9 +267,19 @@ function App() {
     setSelectedCategory(selectedCategory === categoryId ? null : categoryId);
   };
 
-  // Create dynamic categories with real stats
-  const getDynamicCategories = (): ForumCategory[] => {
-    return forumCategories.map((category) => ({
+  // Create dynamic categories with real stats for tools
+  const getDynamicToolsCategories = (): ForumCategory[] => {
+    return toolsCategories.map((category) => ({
+      ...category,
+      totalTopics: categoryStats[category.id]?.totalTopics || 0,
+      totalPosts: categoryStats[category.id]?.totalPosts || 0,
+      lastPost: categoryStats[category.id]?.lastPost || undefined,
+    }));
+  };
+
+  // Create dynamic categories with real stats for open-source
+  const getDynamicOpenSourceCategories = (): ForumCategory[] => {
+    return openSourceCategories.map((category) => ({
       ...category,
       totalTopics: categoryStats[category.id]?.totalTopics || 0,
       totalPosts: categoryStats[category.id]?.totalPosts || 0,
@@ -278,8 +288,8 @@ function App() {
   };
 
   const getSelectedCategoryData = () => {
-    const dynamicCategories = getDynamicCategories();
-    return dynamicCategories.find((cat) => cat.id === selectedCategory);
+    const allCategories = [...getDynamicToolsCategories(), ...getDynamicOpenSourceCategories()];
+    return allCategories.find((cat) => cat.id === selectedCategory);
   };
 
   const navigateWeek = (direction: "prev" | "next") => {
