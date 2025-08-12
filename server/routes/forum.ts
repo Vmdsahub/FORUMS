@@ -388,6 +388,9 @@ export const handleGetTopics: RequestHandler = (req, res) => {
 
   const topicsForList = paginatedTopics.map(
     ({ content, comments, ...topic }) => {
+      // Get all comments for this topic from the comments Map
+      const topicComments = Array.from(comments.values()).filter(c => c.topicId === topic.id);
+
       // Calculate total comments count (including replies)
       const getTotalCommentsCount = (commentsList: Comment[]): number => {
         let count = commentsList.length;
@@ -399,24 +402,35 @@ export const handleGetTopics: RequestHandler = (req, res) => {
         return count;
       };
 
-      const totalComments = getTotalCommentsCount(comments);
+      const totalComments = topicComments.length; // Use simple count from comments Map
 
       // Calculate total likes (topic + all comment likes)
       let totalLikes = getLikeCount(topic.id);
-      const addCommentLikes = (commentsList: Comment[]) => {
-        commentsList.forEach(comment => {
-          totalLikes += getLikeCount(comment.id);
-          if (comment.replies && comment.replies.length > 0) {
-            addCommentLikes(comment.replies);
-          }
+      topicComments.forEach(comment => {
+        totalLikes += getLikeCount(comment.id);
+      });
+
+      // Find the most recent comment for lastPost
+      let lastPostData = topic.lastPost;
+      if (topicComments.length > 0) {
+        const sortedComments = topicComments.sort((a, b) => {
+          const aTime = new Date(`${a.date} ${a.time}`).getTime();
+          const bTime = new Date(`${b.date} ${b.time}`).getTime();
+          return bTime - aTime;
         });
-      };
-      addCommentLikes(comments);
+        const lastComment = sortedComments[0];
+        lastPostData = {
+          author: lastComment.author,
+          date: lastComment.date,
+          time: lastComment.time
+        };
+      }
 
       return {
         ...topic,
         replies: totalComments,
-        likes: totalLikes
+        likes: totalLikes,
+        lastPost: lastPostData
       };
     },
   );
