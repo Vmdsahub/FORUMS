@@ -125,7 +125,8 @@ let weeklyNewsletters: WeeklyNewsletter[] = [
   },
 ];
 
-const forumCategories: ForumCategory[] = [
+// Categorias da seção Ferramentas
+const toolsCategories: ForumCategory[] = [
   {
     id: "imagem",
     name: "Imagem",
@@ -157,6 +158,46 @@ const forumCategories: ForumCategory[] = [
     id: "vibe-coding",
     name: "Vibe Coding",
     description: "Ferramentas de desenvolvimento, IDEs e produtividade",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
+];
+
+// Categorias da seção Open-Source
+const openSourceCategories: ForumCategory[] = [
+  {
+    id: "llama",
+    name: "LLaMA",
+    description: "Modelos de linguagem LLaMA da Meta e suas variações",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
+  {
+    id: "mistral",
+    name: "Mistral",
+    description: "Modelos Mistral AI e implementações open-source",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
+  {
+    id: "stable-diffusion",
+    name: "Stable Diffusion",
+    description: "Modelos de geração de imagem open-source",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
+  {
+    id: "ollama",
+    name: "Ollama",
+    description: "Executar modelos de IA localmente com facilidade",
     totalTopics: 0,
     totalPosts: 0,
     lastPost: undefined,
