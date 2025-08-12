@@ -137,9 +137,12 @@ export default function Index(props: IndexProps) {
       if (response.ok) {
         const data = await response.json();
         setCustomIcons(data.icons || {});
+      } else {
+        console.warn("Failed to load category icons:", response.status, response.statusText);
       }
     } catch (error) {
       console.error("Erro ao carregar ícones salvos:", error);
+      // Fail silently - icons are optional feature
     }
   };
 
