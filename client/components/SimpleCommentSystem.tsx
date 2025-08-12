@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import UserHoverCard from "@/components/UserHoverCard";
 import RichTextEditor from "@/components/RichTextEditor";
+import ReportModal from "@/components/ReportModal";
 
 interface Comment {
   id: string;
@@ -37,12 +38,14 @@ function CommentItem({
   onLike,
   onDelete,
   onQuote,
+  onReport,
 }: {
   comment: Comment;
   topicAuthorId: string;
   onLike: (commentId: string) => Promise<void>;
   onDelete: (commentId: string) => Promise<void>;
   onQuote: (comment: Comment) => void;
+  onReport: (comment: Comment) => void;
 }) {
   const { user, isAdmin } = useAuth();
 
@@ -135,13 +138,25 @@ function CommentItem({
             </button>
 
             {user && (
-              <button
-                onClick={() => onQuote(comment)}
-                className="text-xs text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
-                title="Citar comentário"
-              >
-                Citar
-              </button>
+              <>
+                <button
+                  onClick={() => onQuote(comment)}
+                  className="text-xs text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
+                  title="Citar comentário"
+                >
+                  Citar
+                </button>
+
+                {user.id !== comment.authorId && (
+                  <button
+                    onClick={() => onReport(comment)}
+                    className="text-xs text-gray-500 hover:text-red-600 px-2 py-1 rounded transition-colors"
+                    title="Denunciar comentário"
+                  >
+                    !
+                  </button>
+                )}
+              </>
             )}
 
             {canDelete && (
@@ -179,6 +194,10 @@ export default function SimpleCommentSystem({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [quotedComment, setQuotedComment] = useState<Comment | null>(null);
   const [commentsToShow, setCommentsToShow] = useState(8);
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportingComment, setReportingComment] = useState<Comment | null>(
+    null,
+  );
 
   // Carregar comentários
   const loadComments = async () => {
@@ -355,6 +374,17 @@ export default function SimpleCommentSystem({
     }
   };
 
+  // Denunciar comentário
+  const handleReport = (comment: Comment) => {
+    setReportingComment(comment);
+    setShowReportModal(true);
+  };
+
+  const handleCloseReportModal = () => {
+    setShowReportModal(false);
+    setReportingComment(null);
+  };
+
   if (isLoading) {
     return (
       <div className="p-6 text-center">
@@ -398,7 +428,7 @@ export default function SimpleCommentSystem({
             <RichTextEditor
               value={newComment}
               onChange={setNewComment}
-              placeholder="Escreva seu comentário... Você pode inserir imagens, vídeos e usar formatação rica!"
+              placeholder="Escreva seu coment��rio... Você pode inserir imagens, vídeos e usar formatação rica!"
             />
             <div className="flex items-center justify-between mt-3">
               <span className="text-xs text-gray-500">
@@ -439,6 +469,7 @@ export default function SimpleCommentSystem({
               onLike={handleLike}
               onDelete={handleDelete}
               onQuote={handleQuote}
+              onReport={handleReport}
             />
           ))}
 
@@ -449,8 +480,7 @@ export default function SimpleCommentSystem({
                 onClick={() => setCommentsToShow((prev) => prev + 8)}
                 className="flex items-center gap-2 mx-auto text-gray-600 hover:text-black transition-colors text-sm"
               >
-                Ver mais ({Math.min(8, comments.length - commentsToShow)}{" "}
-                próximos comentários)
+                Ver mais
                 <svg
                   width="16"
                   height="16"
@@ -467,10 +497,13 @@ export default function SimpleCommentSystem({
           {commentsToShow > 8 && (
             <div className="text-center py-4">
               <button
-                onClick={() => setCommentsToShow(8)}
+                onClick={() => {
+                  setCommentsToShow(8);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
                 className="flex items-center gap-2 mx-auto text-gray-600 hover:text-black transition-colors text-sm"
               >
-                Ver menos
+                Retrair e voltar ao topo
                 <svg
                   width="16"
                   height="16"
@@ -483,6 +516,17 @@ export default function SimpleCommentSystem({
             </div>
           )}
         </div>
+      )}
+
+      {/* Modal de Denúncia */}
+      {reportingComment && (
+        <ReportModal
+          isOpen={showReportModal}
+          onClose={handleCloseReportModal}
+          contentType="comment"
+          contentId={reportingComment.id}
+          contentAuthor={reportingComment.author}
+        />
       )}
     </div>
   );

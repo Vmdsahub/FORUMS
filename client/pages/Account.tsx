@@ -642,9 +642,6 @@ export default function Account() {
                               {topic.category}
                             </span>
                           </div>
-                          <p className="text-gray-600 text-sm mb-3">
-                            {topic.description}
-                          </p>
                           <div className="flex items-center gap-4 text-sm text-gray-500">
                             <span>
                               Criado em{" "}

@@ -7,6 +7,7 @@ import {
   CreateCommentRequest,
   LikeResponse,
 } from "@shared/forum";
+import { getTopicCommentStats } from "./simple-comments";
 // Temporariamente removido para evitar problemas de importação
 
 // Simple in-memory storage for demo purposes
@@ -39,8 +40,11 @@ function formatDate(): { date: string; time: string } {
   const time = now.toLocaleTimeString("pt-BR", {
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "America/Sao_Paulo",
   });
-  const date = now.toLocaleDateString("pt-BR");
+  const date = now.toLocaleDateString("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+  });
   return { date, time };
 }
 
@@ -384,7 +388,20 @@ export const handleGetTopics: RequestHandler = (req, res) => {
   const paginatedTopics = filteredTopics.slice(startIndex, endIndex);
 
   const topicsForList = paginatedTopics.map(
-    ({ content, comments, ...topic }) => topic,
+    ({ content, comments: topicCommentsArray, ...topic }) => {
+      // Get actual comment stats from the active comment system
+      const commentStats = getTopicCommentStats(topic.id);
+
+      // Calculate total likes (topic likes + comment likes)
+      const topicLikes = getLikeCount(topic.id);
+      const totalLikes = topicLikes + commentStats.totalLikes;
+
+      return {
+        ...topic,
+        replies: commentStats.commentsCount,
+        likes: totalLikes,
+      };
+    },
   );
 
   res.json({
@@ -580,7 +597,13 @@ export const handleCreateComment: RequestHandler = (req, res) => {
 
     comments.set(newComment.id, newComment);
     topic.comments.push(newComment);
-    topic.replies += 1;
+
+    // Update replies count to match actual comments count
+    const topicCommentsCount = Array.from(comments.values()).filter(
+      (c) => c.topicId === topicId,
+    ).length;
+    topic.replies = topicCommentsCount;
+
     topic.lastPost = {
       author: req.user.name,
       date,
@@ -773,8 +796,11 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
 
   const deletedCount = deleteCommentAndReplies(commentId);
 
-  // Atualizar contador de replies no t��pico
-  topic.replies = Math.max(0, topic.replies - deletedCount);
+  // Update replies count to match actual remaining comments
+  const remainingComments = Array.from(comments.values()).filter(
+    (c) => c.topicId === comment.topicId,
+  );
+  topic.replies = remainingComments.length;
   topic.comments = topic.comments.filter((c) => {
     return !isCommentOrReply(c.id, commentId);
   });
@@ -840,12 +866,16 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
           title: lastTopic.title,
           author: lastTopic.author,
           date:
-            lastTopic.lastPost?.date || new Date().toLocaleDateString("pt-BR"),
+            lastTopic.lastPost?.date ||
+            new Date().toLocaleDateString("pt-BR", {
+              timeZone: "America/Sao_Paulo",
+            }),
           time:
             lastTopic.lastPost?.time ||
             new Date().toLocaleTimeString("pt-BR", {
               hour: "2-digit",
               minute: "2-digit",
+              timeZone: "America/Sao_Paulo",
             }),
         };
       }
@@ -857,6 +887,21 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
     res.status(500).json({ error: "Error fetching category statistics" });
   }
 };
+
+// Função para atualizar lastPost de um tópico (usada pelo sistema de comentários)
+export function updateTopicLastPost(
+  topicId: string,
+  lastPostData: { author: string; date: string; time: string },
+) {
+  const topic = topics.get(topicId);
+  if (topic) {
+    topic.lastPost = lastPostData;
+    topic.updatedAt = new Date().toISOString();
+    console.log(
+      `[FORUM] LastPost atualizado para tópico ${topicId}: ${lastPostData.author} em ${lastPostData.date} às ${lastPostData.time}`,
+    );
+  }
+}
 
 export const handleGetUserTopics: RequestHandler = (req, res) => {
   if (!req.user) {

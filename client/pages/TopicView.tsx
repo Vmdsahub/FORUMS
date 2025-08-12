@@ -9,6 +9,7 @@ import MarkdownRenderer from "@/components/MarkdownRenderer";
 import SimpleCommentSystem from "@/components/SimpleCommentSystem";
 import UserPointsBadge from "@/components/UserPointsBadge";
 import UserHoverCard from "@/components/UserHoverCard";
+import ReportModal from "@/components/ReportModal";
 
 interface Comment {
   id: string;
@@ -57,6 +58,7 @@ export default function TopicView() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [savedTopicIds, setSavedTopicIds] = useState<string[]>([]);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   useEffect(() => {
     fetchTopic();
@@ -438,6 +440,26 @@ export default function TopicView() {
                   {savedTopicIds.includes(topic.id) ? "Salvo" : "Salvar"}
                 </button>
               )}
+
+              {/* Botão de denúncia */}
+              {user && user.id !== topic.authorId && (
+                <button
+                  onClick={() => setShowReportModal(true)}
+                  className="flex items-center gap-1 px-2 py-2 rounded-md bg-gray-50 text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
+                  title="Denunciar tópico"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                  </svg>
+                  !
+                </button>
+              )}
+
               <button
                 onClick={handleLikeTopic}
                 className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
@@ -483,6 +505,17 @@ export default function TopicView() {
           topicAuthorId={topic.authorId}
         />
       </div>
+
+      {/* Modal de Denúncia */}
+      {topic && (
+        <ReportModal
+          isOpen={showReportModal}
+          onClose={() => setShowReportModal(false)}
+          contentType="topic"
+          contentId={topic.id}
+          contentAuthor={topic.author}
+        />
+      )}
     </div>
   );
 }

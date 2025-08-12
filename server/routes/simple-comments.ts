@@ -186,6 +186,32 @@ export const createComment: RequestHandler = (req, res) => {
     }
     topicComments.get(topicId)!.push(commentId);
 
+    // Atualizar lastPost do tópico no sistema de fórum
+    try {
+      const forumModule = require("./forum");
+      if (forumModule.updateTopicLastPost) {
+        const now = new Date();
+        const time = now.toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          timeZone: "America/Sao_Paulo",
+        });
+        const date = now.toLocaleDateString("pt-BR", {
+          timeZone: "America/Sao_Paulo",
+        });
+        forumModule.updateTopicLastPost(topicId, {
+          author: req.user.name,
+          date,
+          time,
+        });
+      }
+    } catch (error) {
+      console.log(
+        "[COMMENTS] Aviso: Não foi possível atualizar lastPost do tópico",
+        error.message,
+      );
+    }
+
     console.log(
       `[COMMENTS] Comentário criado: ${commentId} por ${req.user.name} (parent: ${data.parentId || "null"})`,
     );
@@ -284,6 +310,25 @@ export const likeComment: RequestHandler = (req, res) => {
   }
 };
 
+// Função para obter estatísticas de comentários de um tópico
+export function getTopicCommentStats(topicId: string): {
+  commentsCount: number;
+  totalLikes: number;
+} {
+  const commentIds = topicComments.get(topicId) || [];
+
+  let totalLikes = 0;
+  commentIds.forEach((commentId) => {
+    const likesCount = commentLikes.get(commentId)?.size || 0;
+    totalLikes += likesCount;
+  });
+
+  return {
+    commentsCount: commentIds.length,
+    totalLikes,
+  };
+}
+
 // Função para calcular total de likes recebidos por um usuário nos comentários
 export function getCommentLikesForUser(userId: string): number {
   let totalLikes = 0;
@@ -320,7 +365,7 @@ export const deleteComment: RequestHandler = (req, res) => {
     const comment = comments.get(commentId);
 
     if (!comment) {
-      return res.status(404).json({ message: "Comentário não encontrado" });
+      return res.status(404).json({ message: "Coment��rio não encontrado" });
     }
 
     // Verificar permissões

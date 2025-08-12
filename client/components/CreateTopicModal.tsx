@@ -93,11 +93,7 @@ export default function CreateTopicModal({
     // Validar conteúdo removendo HTML
     const contentText = formData.content.replace(/<[^>]*>/g, "").trim();
 
-    if (
-      !formData.title.trim() ||
-      !formData.description.trim() ||
-      !contentText
-    ) {
+    if (!formData.title.trim() || !contentText) {
       toast.error("Preencha todos os campos");
       return;
     }
@@ -118,6 +114,7 @@ export default function CreateTopicModal({
 
       const topicData = {
         ...formData,
+        description: formData.title, // Use title as description for backend compatibility
         category: currentCategory.id,
         ...(avatarUrl && { avatarUrl }),
       };
@@ -182,7 +179,7 @@ export default function CreateTopicModal({
           Criar Tópico
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl bg-white border border-gray-200 shadow-lg">
+      <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto bg-white border border-gray-200 shadow-lg">
         <DialogHeader>
           <DialogTitle className="text-gray-900 text-xl font-semibold">
             Criar Novo Tópico em {currentCategory.name}
@@ -254,24 +251,6 @@ export default function CreateTopicModal({
                 </p>
               </div>
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="description" className="text-gray-900 font-medium">
-              Descrição
-            </Label>
-            <Input
-              id="description"
-              placeholder="Breve descrição do tópico"
-              value={formData.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
-              className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
-              required
-              maxLength={200}
-            />
-            <p className="text-xs text-gray-500">
-              {formData.description.length}/200 caracteres
-            </p>
           </div>
 
           <div className="space-y-2">
