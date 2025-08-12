@@ -3,10 +3,12 @@ import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { useCategoryStats } from "@/hooks/useCategoryStats";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import TopicView from "@/pages/TopicView";
 import Index from "@/pages/Index";
 import Account from "@/pages/Account";
 import SavedTopics from "@/pages/SavedTopics";
+import Shop from "@/pages/Shop";
 import NotFound from "@/pages/NotFound";
 
 interface NewsletterTopic {
