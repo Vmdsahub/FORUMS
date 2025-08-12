@@ -128,7 +128,12 @@ export default function Index(props: IndexProps) {
 
   // Carregar ícones salvos ao montar componente
   useEffect(() => {
-    loadSavedIcons();
+    // Add small delay to prevent simultaneous requests on initial load
+    const timer = setTimeout(() => {
+      loadSavedIcons();
+    }, 200);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const loadSavedIcons = async () => {
