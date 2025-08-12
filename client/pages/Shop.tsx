@@ -176,26 +176,6 @@ export default function Shop() {
           </div>
         </div>
 
-        {/* How to earn likes */}
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-amber-900 mb-3">
-            💡 Como ganhar mais likes?
-          </h3>
-          <ul className="space-y-2 text-amber-800">
-            <li className="flex items-center gap-2">
-              <span>•</span>
-              <span>Receba likes em seus comentários no fórum</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <span>•</span>
-              <span>Crie tópicos interessantes que geram discussão</span>
-            </li>
-            <li className="flex items-center gap-2">
-              <span>•</span>
-              <span>Participe ativamente das conversas da comunidade</span>
-            </li>
-          </ul>
-        </div>
       </div>
     </main>
   );
