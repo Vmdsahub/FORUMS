@@ -825,8 +825,9 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
 
   const deletedCount = deleteCommentAndReplies(commentId);
 
-  // Atualizar contador de replies no t��pico
-  topic.replies = Math.max(0, topic.replies - deletedCount);
+  // Update replies count to match actual remaining comments
+  const remainingComments = Array.from(comments.values()).filter(c => c.topicId === comment.topicId);
+  topic.replies = remainingComments.length;
   topic.comments = topic.comments.filter((c) => {
     return !isCommentOrReply(c.id, commentId);
   });
