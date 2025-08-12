@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import UserHoverCard from "@/components/UserHoverCard";
 import RichTextEditor from "@/components/RichTextEditor";
+import ReportModal from "@/components/ReportModal";
 
 interface Comment {
   id: string;
@@ -37,12 +38,14 @@ function CommentItem({
   onLike,
   onDelete,
   onQuote,
+  onReport,
 }: {
   comment: Comment;
   topicAuthorId: string;
   onLike: (commentId: string) => Promise<void>;
   onDelete: (commentId: string) => Promise<void>;
   onQuote: (comment: Comment) => void;
+  onReport: (comment: Comment) => void;
 }) {
   const { user, isAdmin } = useAuth();
 
@@ -135,13 +138,25 @@ function CommentItem({
             </button>
 
             {user && (
-              <button
-                onClick={() => onQuote(comment)}
-                className="text-xs text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
-                title="Citar comentário"
-              >
-                Citar
-              </button>
+              <>
+                <button
+                  onClick={() => onQuote(comment)}
+                  className="text-xs text-gray-500 hover:text-black px-2 py-1 rounded transition-colors"
+                  title="Citar comentário"
+                >
+                  Citar
+                </button>
+
+                {user.id !== comment.authorId && (
+                  <button
+                    onClick={() => onReport(comment)}
+                    className="text-xs text-gray-500 hover:text-red-600 px-2 py-1 rounded transition-colors"
+                    title="Denunciar comentário"
+                  >
+                    !
+                  </button>
+                )}
+              </>
             )}
 
             {canDelete && (
