@@ -39,8 +39,11 @@ function formatDate(): { date: string; time: string } {
   const time = now.toLocaleTimeString("pt-BR", {
     hour: "2-digit",
     minute: "2-digit",
+    timeZone: "America/Sao_Paulo"
   });
-  const date = now.toLocaleDateString("pt-BR");
+  const date = now.toLocaleDateString("pt-BR", {
+    timeZone: "America/Sao_Paulo"
+  });
   return { date, time };
 }
 
