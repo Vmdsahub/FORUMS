@@ -2,11 +2,38 @@ import { RequestHandler } from "express";
 
 // Mock data - em produção seria um banco de dados
 const userThemes: Record<string, Array<{ themeId: string; purchasedAt: string }>> = {};
-const userLikes: Record<string, number> = {
-  // Demo users com likes iniciais
-  "demo_user_123": 25,
-  "admin_vitoca_456": 50,
-};
+
+// Função para calcular likes reais de um usuário
+function calculateUserLikes(userId: string): number {
+  let totalLikes = 0;
+
+  try {
+    // Importar likes do sistema de comentários (simple-comments.ts)
+    const simpleCommentsModule = require("./simple-comments");
+    if (simpleCommentsModule.getCommentLikesForUser) {
+      totalLikes += simpleCommentsModule.getCommentLikesForUser(userId);
+    }
+
+    // Importar likes do sistema de fórum (forum.ts)
+    const forumModule = require("./forum");
+    if (forumModule.getTopicLikesForUser) {
+      totalLikes += forumModule.getTopicLikesForUser(userId);
+    }
+
+    // Importar likes dos comentários do fórum (forum.ts)
+    if (forumModule.getForumCommentLikesForUser) {
+      totalLikes += forumModule.getForumCommentLikesForUser(userId);
+    }
+  } catch (error) {
+    console.error("[THEMES] Erro ao calcular likes:", error);
+    return 0;
+  }
+
+  return totalLikes;
+}
+
+// Storage para likes gastos em compras
+const userSpentLikes: Record<string, number> = {};
 
 export const getUserThemes: RequestHandler = (req, res) => {
   try {
