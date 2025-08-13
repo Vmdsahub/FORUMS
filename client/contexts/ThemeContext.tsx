@@ -43,7 +43,8 @@ const AVAILABLE_THEMES: Theme[] = [
   {
     id: "glassmorphism-liquid",
     name: "Glassmorphism Liquid",
-    description: "Tema avançado com efeitos de vidro líquido, refração e distorção",
+    description:
+      "Tema avançado com efeitos de vidro líquido, refração e distorção",
     price: 1,
     preview: "/api/images/theme-glass-preview.jpg",
     cssClass: "theme-glassmorphism-liquid",
@@ -61,10 +62,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       return AVAILABLE_THEMES; // Admin vê todos os temas
     }
     // Usuários normais não veem o glassmorphism-liquid
-    return AVAILABLE_THEMES.filter(theme => theme.id !== "glassmorphism-liquid");
+    return AVAILABLE_THEMES.filter(
+      (theme) => theme.id !== "glassmorphism-liquid",
+    );
   };
 
-  const [availableThemes, setAvailableThemes] = useState<Theme[]>(getAvailableThemes());
+  const [availableThemes, setAvailableThemes] =
+    useState<Theme[]>(getAvailableThemes());
   const [userThemes, setUserThemes] = useState<UserTheme[]>([]);
   const [currentTheme, setCurrentTheme] = useState<string>("default");
   const [userLikes, setUserLikes] = useState<number>(0);
@@ -89,7 +93,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const savedTheme = localStorage.getItem("selected_theme");
       if (savedTheme && savedTheme !== "default") {
         // Verificar se o tema ainda está disponível para o usuário
-        const availableThemeIds = getAvailableThemes().map(t => t.id);
+        const availableThemeIds = getAvailableThemes().map((t) => t.id);
         if (availableThemeIds.includes(savedTheme)) {
           setCurrentTheme(savedTheme);
           if (savedTheme === "dark") {
@@ -100,14 +104,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         } else {
           // Tema não disponível para este usuário, voltar ao padrão
           setCurrentTheme("default");
-          document.body.classList.remove("theme-dark", "theme-glassmorphism-liquid");
+          document.body.classList.remove(
+            "theme-dark",
+            "theme-glassmorphism-liquid",
+          );
           localStorage.removeItem("selected_theme");
         }
       }
     } else {
       // Usuário deslogado: limpar tudo
       setCurrentTheme("default");
-      document.body.classList.remove("theme-dark", "theme-glassmorphism-liquid");
+      document.body.classList.remove(
+        "theme-dark",
+        "theme-glassmorphism-liquid",
+      );
       localStorage.removeItem("selected_theme");
     }
   }, [user, isAdmin]);
@@ -195,7 +205,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
-        controller.abort(new DOMException("Purchase request timeout", "TimeoutError"));
+        controller.abort(
+          new DOMException("Purchase request timeout", "TimeoutError"),
+        );
       }, 10000);
 
       const response = await fetch("/api/user/themes/purchase", {

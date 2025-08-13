@@ -7,7 +7,10 @@ import {
   CreateCommentRequest,
   LikeResponse,
 } from "@shared/forum";
-import { getTopicCommentStats, getTopicMostRecentCommentDate } from "./simple-comments";
+import {
+  getTopicCommentStats,
+  getTopicMostRecentCommentDate,
+} from "./simple-comments";
 // Temporariamente removido para evitar problemas de importação
 
 // Simple in-memory storage for demo purposes
@@ -73,15 +76,15 @@ function getMostRecentActivity(topic: Topic): number {
   if (topic.lastPost && topic.lastPost.date && topic.lastPost.time) {
     try {
       // Parse Brazilian date format: DD/MM/YYYY
-      const [day, month, year] = topic.lastPost.date.split('/');
-      const [hours, minutes] = topic.lastPost.time.split(':');
+      const [day, month, year] = topic.lastPost.date.split("/");
+      const [hours, minutes] = topic.lastPost.time.split(":");
 
       const lastPostDate = new Date(
         parseInt(year),
         parseInt(month) - 1, // Month is 0-indexed
         parseInt(day),
         parseInt(hours),
-        parseInt(minutes)
+        parseInt(minutes),
       );
 
       const lastPostTime = lastPostDate.getTime();
@@ -89,7 +92,10 @@ function getMostRecentActivity(topic: Topic): number {
         mostRecentTime = Math.max(mostRecentTime, lastPostTime);
       }
     } catch (error) {
-      console.warn(`[SORT] Error parsing lastPost date for topic "${topic.title}":`, error);
+      console.warn(
+        `[SORT] Error parsing lastPost date for topic "${topic.title}":`,
+        error,
+      );
     }
   }
 
@@ -432,7 +438,6 @@ export const handleGetTopics: RequestHandler = (req, res) => {
     }
   }
 
-
   if (search) {
     filteredTopics.sort((a, b) => b.likes - a.likes);
   } else {
@@ -444,7 +449,9 @@ export const handleGetTopics: RequestHandler = (req, res) => {
       const aActivity = getMostRecentActivity(a);
       const bActivity = getMostRecentActivity(b);
 
-      console.log(`[SORT] Comparing "${a.title}" (${new Date(aActivity).toLocaleString()}) vs "${b.title}" (${new Date(bActivity).toLocaleString()}) - Result: ${bActivity - aActivity}`);
+      console.log(
+        `[SORT] Comparing "${a.title}" (${new Date(aActivity).toLocaleString()}) vs "${b.title}" (${new Date(bActivity).toLocaleString()}) - Result: ${bActivity - aActivity}`,
+      );
 
       return bActivity - aActivity;
     });
@@ -896,13 +903,13 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
       "opensource-musica-audio",
       "opensource-vibe-coding",
       "opensource-duvidas-erros",
-      "opensource-outros"
+      "opensource-outros",
     ];
 
     // Calculate stats for each category
     const categoryStats: any = {};
 
-    allCategoryIds.forEach(categoryId => {
+    allCategoryIds.forEach((categoryId) => {
       categoryStats[categoryId] = {
         totalTopics: allTopics.filter((t) => t.category === categoryId).length,
         totalPosts: allComments.filter((c) => {
@@ -918,26 +925,32 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
       const categoryTopics = allTopics.filter((t) => t.category === categoryId);
       if (categoryTopics.length > 0) {
         // Get the topic with the most recent activity using same logic as topic list
-        const topicsWithActivity = categoryTopics.map(topic => {
+        const topicsWithActivity = categoryTopics.map((topic) => {
           const activityTime = getMostRecentActivity(topic);
-          console.log(`[STATS] Category ${categoryId} - Topic "${topic.title}" activity: ${new Date(activityTime).toLocaleString()}`);
+          console.log(
+            `[STATS] Category ${categoryId} - Topic "${topic.title}" activity: ${new Date(activityTime).toLocaleString()}`,
+          );
           return {
             topic,
-            mostRecentTime: activityTime
+            mostRecentTime: activityTime,
           };
         });
 
         // Sort by most recent activity and get the first one
         const mostRecentTopicData = topicsWithActivity.sort(
-          (a, b) => b.mostRecentTime - a.mostRecentTime
+          (a, b) => b.mostRecentTime - a.mostRecentTime,
         )[0];
 
-        console.log(`[STATS] Category ${categoryId} - Most recent topic: "${mostRecentTopicData.topic.title}" at ${new Date(mostRecentTopicData.mostRecentTime).toLocaleString()}`);
+        console.log(
+          `[STATS] Category ${categoryId} - Most recent topic: "${mostRecentTopicData.topic.title}" at ${new Date(mostRecentTopicData.mostRecentTime).toLocaleString()}`,
+        );
 
         const lastTopic = mostRecentTopicData.topic;
 
         // Determine if this is from a comment or the original post
-        const isFromComment = lastTopic.lastPost?.author && lastTopic.lastPost.author !== lastTopic.author;
+        const isFromComment =
+          lastTopic.lastPost?.author &&
+          lastTopic.lastPost.author !== lastTopic.author;
 
         // Use the lastPost data if available, otherwise fall back to current time
         categoryStats[categoryId].lastPost = {

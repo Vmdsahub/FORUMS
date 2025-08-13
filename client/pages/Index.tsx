@@ -113,7 +113,8 @@ export default function Index(props: IndexProps) {
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
     null,
   );
-  const [editingCategoryDescription, setEditingCategoryDescription] = useState("");
+  const [editingCategoryDescription, setEditingCategoryDescription] =
+    useState("");
   const [customIcons, setCustomIcons] = useState<Record<string, string>>({});
   const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
   const [newCategory, setNewCategory] = useState({ name: "", description: "" });
@@ -144,7 +145,9 @@ export default function Index(props: IndexProps) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
-        controller.abort(new DOMException("Category icons request timeout", "TimeoutError"));
+        controller.abort(
+          new DOMException("Category icons request timeout", "TimeoutError"),
+        );
       }, 5000); // 5s timeout
 
       const response = await fetch("/api/category-icons", {
@@ -169,7 +172,10 @@ export default function Index(props: IndexProps) {
       if (error.name === "AbortError" || error.name === "TimeoutError") {
         console.warn("Category icons request timed out");
       } else {
-        console.warn("Icons service unavailable, using defaults:", error.message);
+        console.warn(
+          "Icons service unavailable, using defaults:",
+          error.message,
+        );
       }
       setCustomIcons({}); // Set empty object as fallback
     }
@@ -325,7 +331,9 @@ export default function Index(props: IndexProps) {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
-        controller.abort(new DOMException("Upload request timeout", "TimeoutError"));
+        controller.abort(
+          new DOMException("Upload request timeout", "TimeoutError"),
+        );
       }, 30000); // 30s timeout for upload
 
       // Primeiro, fazer upload da imagem
@@ -390,7 +398,7 @@ export default function Index(props: IndexProps) {
 
       // Encontrar a categoria e carregar sua descrição
       const allCategories = [...toolsCategories, ...openSourceCategories];
-      const category = allCategories.find(cat => cat.id === categoryId);
+      const category = allCategories.find((cat) => cat.id === categoryId);
       setEditingCategoryDescription(category?.description || "");
 
       setIconModalOpen(true);
@@ -902,7 +910,10 @@ export default function Index(props: IndexProps) {
                                   {category.lastPost.title}
                                 </span>
                                 <br />
-                                {category.lastPost.isComment ? "Comentado" : "Postado"} por{" "}
+                                {category.lastPost.isComment
+                                  ? "Comentado"
+                                  : "Postado"}{" "}
+                                por{" "}
                                 <span className="font-medium">
                                   {category.lastPost.author}
                                 </span>{" "}
@@ -1096,7 +1107,10 @@ export default function Index(props: IndexProps) {
                                   {category.lastPost.title}
                                 </span>
                                 <br />
-                                {category.lastPost.isComment ? "Comentado" : "Postado"} por{" "}
+                                {category.lastPost.isComment
+                                  ? "Comentado"
+                                  : "Postado"}{" "}
+                                por{" "}
                                 <span className="font-medium">
                                   {category.lastPost.author}
                                 </span>{" "}
@@ -1352,7 +1366,10 @@ export default function Index(props: IndexProps) {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="category-description" className="text-sm font-medium">
+              <Label
+                htmlFor="category-description"
+                className="text-sm font-medium"
+              >
                 Descrição da Categoria
               </Label>
               <textarea
@@ -1391,7 +1408,9 @@ export default function Index(props: IndexProps) {
                 onClick={() => {
                   if (editingCategoryId) {
                     // Salvar descrição (por enquanto apenas mostrar toast)
-                    toast.success(`Descrição da categoria atualizada! (Demo - não persistente)`);
+                    toast.success(
+                      `Descrição da categoria atualizada! (Demo - não persistente)`,
+                    );
                     setIconModalOpen(false);
                     setEditingCategoryId(null);
                     setEditingCategoryDescription("");

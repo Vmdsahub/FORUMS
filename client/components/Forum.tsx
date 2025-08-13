@@ -185,7 +185,9 @@ export default function Forum() {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
-        controller.abort(new DOMException("Category icons request timeout", "TimeoutError"));
+        controller.abort(
+          new DOMException("Category icons request timeout", "TimeoutError"),
+        );
       }, 5000);
 
       const response = await fetch("/api/category-icons", {
@@ -205,7 +207,10 @@ export default function Forum() {
       if (error.name === "AbortError" || error.name === "TimeoutError") {
         console.warn("Category icons request timed out");
       } else {
-        console.warn("Icons service unavailable, using defaults:", error.message);
+        console.warn(
+          "Icons service unavailable, using defaults:",
+          error.message,
+        );
       }
       setCustomIcons({});
     }
@@ -219,7 +224,9 @@ export default function Forum() {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
-        controller.abort(new DOMException("Upload request timeout", "TimeoutError"));
+        controller.abort(
+          new DOMException("Upload request timeout", "TimeoutError"),
+        );
       }, 30000); // 30s timeout for upload
 
       // Primeiro, fazer upload da imagem

@@ -227,7 +227,8 @@ const openSourceCategories: ForumCategory[] = [
   {
     id: "opensource-duvidas-erros",
     name: "Dúvidas/Erros",
-    description: "Tire suas dúvidas e relate problemas com ferramentas open-source",
+    description:
+      "Tire suas dúvidas e relate problemas com ferramentas open-source",
     totalTopics: 0,
     totalPosts: 0,
     lastPost: undefined,
@@ -236,7 +237,8 @@ const openSourceCategories: ForumCategory[] = [
   {
     id: "opensource-outros",
     name: "Outros",
-    description: "Discussões gerais sobre projetos open-source de IA não categorizados",
+    description:
+      "Discussões gerais sobre projetos open-source de IA não categorizados",
     totalTopics: 0,
     totalPosts: 0,
     lastPost: undefined,
@@ -265,9 +267,9 @@ function App() {
       refreshStats();
     };
 
-    window.addEventListener('refreshCategoryStats', handleRefreshStats);
+    window.addEventListener("refreshCategoryStats", handleRefreshStats);
     return () => {
-      window.removeEventListener('refreshCategoryStats', handleRefreshStats);
+      window.removeEventListener("refreshCategoryStats", handleRefreshStats);
     };
   }, [refreshStats]);
 
@@ -277,7 +279,9 @@ function App() {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
-        controller.abort(new DOMException("Newsletter request timeout", "TimeoutError"));
+        controller.abort(
+          new DOMException("Newsletter request timeout", "TimeoutError"),
+        );
       }, 5000); // 5s timeout
 
       const response = await fetch("/api/newsletter/articles", {
@@ -297,7 +301,10 @@ function App() {
       if (error.name === "AbortError" || error.name === "TimeoutError") {
         console.warn("Newsletter request timed out");
       } else {
-        console.warn("Newsletter service unavailable, using fallback data:", error.message);
+        console.warn(
+          "Newsletter service unavailable, using fallback data:",
+          error.message,
+        );
       }
       setNewsletters(weeklyNewsletters); // Use local fallback data
     } finally {

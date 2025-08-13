@@ -309,7 +309,7 @@ export default function SimpleCommentSystem({
       if (response.ok) {
         await loadComments();
         // Trigger global category stats refresh
-        window.dispatchEvent(new CustomEvent('refreshCategoryStats'));
+        window.dispatchEvent(new CustomEvent("refreshCategoryStats"));
       } else {
         const data = await response.json();
         toast.error(data.message || "Erro ao excluir");
@@ -354,7 +354,7 @@ export default function SimpleCommentSystem({
         await loadComments();
 
         // Trigger global category stats refresh
-        window.dispatchEvent(new CustomEvent('refreshCategoryStats'));
+        window.dispatchEvent(new CustomEvent("refreshCategoryStats"));
 
         toast.success("Comentário adicionado!");
       } else {
