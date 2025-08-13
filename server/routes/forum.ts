@@ -396,22 +396,51 @@ export const handleGetTopics: RequestHandler = (req, res) => {
   // Helper function to get most recent activity date (topic creation or last comment)
   const getMostRecentActivity = (topic: Topic): number => {
     const topicDate = new Date(topic.createdAt).getTime();
-    const topicComments = Array.from(comments.values()).filter(c => c.topicId === topic.id);
 
-    if (topicComments.length === 0) {
+    // Get comments from both the forum system and the active comment system
+    const forumComments = Array.from(comments.values()).filter(c => c.topicId === topic.id);
+
+    // Also get comments from the active comment system if available
+    let activeSystemComments: any[] = [];
+    try {
+      const { getTopicComments } = require('./simple-comments');
+      if (getTopicComments) {
+        activeSystemComments = getTopicComments(topic.id) || [];
+      }
+    } catch (error) {
+      // Simple comments system not available, continue with forum comments only
+    }
+
+    const allComments = [...forumComments, ...activeSystemComments];
+
+    if (allComments.length === 0) {
       return topicDate;
     }
 
     // Find the most recent comment date
-    const mostRecentCommentDate = Math.max(
-      ...topicComments.map(comment => {
-        // Parse comment date and time
+    const commentDates = allComments.map(comment => {
+      // Handle different comment formats
+      if (comment.createdAt) {
+        // Active comment system format
+        return new Date(comment.createdAt).getTime();
+      } else if (comment.date && comment.time) {
+        // Forum comment system format
         const [day, month, year] = comment.date.split('/');
         const [hours, minutes] = comment.time.split(':');
         const commentDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hours), parseInt(minutes));
         return commentDate.getTime();
-      })
-    );
+      }
+      return 0;
+    }).filter(date => date > 0);
+
+    if (commentDates.length === 0) {
+      return topicDate;
+    }
+
+    const mostRecentCommentDate = Math.max(...commentDates);
+
+    // Debug log
+    console.log(`[SORT DEBUG] Topic "${topic.title}" - Created: ${new Date(topicDate).toLocaleString()}, Most recent comment: ${new Date(mostRecentCommentDate).toLocaleString()}, Comments: ${allComments.length}`);
 
     return Math.max(topicDate, mostRecentCommentDate);
   };
