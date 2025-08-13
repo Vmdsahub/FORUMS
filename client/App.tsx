@@ -228,7 +228,9 @@ function App() {
     setIsLoadingNewsletters(true);
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+      const timeoutId = setTimeout(() => {
+        controller.abort(new DOMException("Newsletter request timeout", "TimeoutError"));
+      }, 5000); // 5s timeout
 
       const response = await fetch("/api/newsletter/articles", {
         signal: controller.signal,
@@ -243,9 +245,11 @@ function App() {
         console.warn("Newsletter service unavailable, using fallback data");
         setNewsletters(weeklyNewsletters); // Use local fallback data
       }
-    } catch (error) {
-      if (error.name !== "AbortError") {
-        console.warn("Newsletter service unavailable, using fallback data");
+    } catch (error: any) {
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        console.warn("Newsletter request timed out");
+      } else {
+        console.warn("Newsletter service unavailable, using fallback data:", error.message);
       }
       setNewsletters(weeklyNewsletters); // Use local fallback data
     } finally {
