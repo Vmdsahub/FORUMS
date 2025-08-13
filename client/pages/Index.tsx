@@ -59,6 +59,7 @@ interface ForumCategory {
     author: string;
     date: string;
     time: string;
+    isComment?: boolean;
   };
 }
 
@@ -112,6 +113,8 @@ export default function Index(props: IndexProps) {
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
     null,
   );
+  const [editingCategoryDescription, setEditingCategoryDescription] =
+    useState("");
   const [customIcons, setCustomIcons] = useState<Record<string, string>>({});
   const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
   const [newCategory, setNewCategory] = useState({ name: "", description: "" });
@@ -141,7 +144,11 @@ export default function Index(props: IndexProps) {
   const loadSavedIcons = async () => {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+      const timeoutId = setTimeout(() => {
+        controller.abort(
+          new DOMException("Category icons request timeout", "TimeoutError"),
+        );
+      }, 5000); // 5s timeout
 
       const response = await fetch("/api/category-icons", {
         signal: controller.signal,
@@ -158,11 +165,17 @@ export default function Index(props: IndexProps) {
           response.status,
           response.statusText,
         );
+        setCustomIcons({}); // Set empty object as fallback
       }
-    } catch (error) {
+    } catch (error: any) {
       // Fail silently - icons are optional feature
-      if (error.name !== "AbortError") {
-        console.warn("Icons service unavailable, using defaults");
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        console.warn("Category icons request timed out");
+      } else {
+        console.warn(
+          "Icons service unavailable, using defaults:",
+          error.message,
+        );
       }
       setCustomIcons({}); // Set empty object as fallback
     }
@@ -316,6 +329,13 @@ export default function Index(props: IndexProps) {
     formData.append("file", file);
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        controller.abort(
+          new DOMException("Upload request timeout", "TimeoutError"),
+        );
+      }, 30000); // 30s timeout for upload
+
       // Primeiro, fazer upload da imagem
       const uploadResponse = await fetch("/api/upload", {
         method: "POST",
@@ -323,6 +343,7 @@ export default function Index(props: IndexProps) {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
         body: formData,
+        signal: controller.signal,
       });
 
       if (uploadResponse.ok) {
@@ -339,7 +360,10 @@ export default function Index(props: IndexProps) {
             categoryId,
             iconUrl: uploadResult.url,
           }),
+          signal: controller.signal,
         });
+
+        clearTimeout(timeoutId);
 
         if (saveResponse.ok) {
           setCustomIcons((prev) => ({
@@ -349,11 +373,20 @@ export default function Index(props: IndexProps) {
           setIconModalOpen(false);
           setEditingCategoryId(null);
           toast.success("Ícone atualizado com sucesso!");
+        } else {
+          toast.error("Erro ao salvar ícone");
         }
+      } else {
+        clearTimeout(timeoutId);
+        toast.error("Erro ao fazer upload da imagem");
       }
-    } catch (error) {
-      console.error("Erro ao fazer upload do ícone:", error);
-      toast.error("Erro ao fazer upload do ícone");
+    } catch (error: any) {
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        toast.error("Upload cancelado ou demorou muito para responder");
+      } else {
+        console.error("Erro ao fazer upload do ícone:", error.message);
+        toast.error("Erro ao fazer upload do ícone");
+      }
     }
   };
 
@@ -362,6 +395,12 @@ export default function Index(props: IndexProps) {
     if (user?.name === "Vitoca") {
       event.stopPropagation();
       setEditingCategoryId(categoryId);
+
+      // Encontrar a categoria e carregar sua descrição
+      const allCategories = [...toolsCategories, ...openSourceCategories];
+      const category = allCategories.find((cat) => cat.id === categoryId);
+      setEditingCategoryDescription(category?.description || "");
+
       setIconModalOpen(true);
     }
   };
@@ -864,25 +903,21 @@ export default function Index(props: IndexProps) {
                                 {category.totalTopics}
                               </span>{" "}
                               tópicos
-                              <span className="mx-2">•</span>
-                              <span className="font-medium text-black">
-                                {category.totalPosts}
-                              </span>{" "}
-                              posts
                             </div>
                             {category.lastPost && (
                               <div className="text-xs">
-                                Último:{" "}
                                 <span className="font-medium">
                                   {category.lastPost.title}
                                 </span>
                                 <br />
+                                {category.lastPost.isComment
+                                  ? "Comentado"
+                                  : "Postado"}{" "}
                                 por{" "}
                                 <span className="font-medium">
                                   {category.lastPost.author}
                                 </span>{" "}
-                                • {category.lastPost.date} às{" "}
-                                {category.lastPost.time}
+                                às {category.lastPost.time}
                               </div>
                             )}
                           </div>
@@ -1065,25 +1100,21 @@ export default function Index(props: IndexProps) {
                                 {category.totalTopics}
                               </span>{" "}
                               tópicos
-                              <span className="mx-2">•</span>
-                              <span className="font-medium text-black">
-                                {category.totalPosts}
-                              </span>{" "}
-                              posts
                             </div>
                             {category.lastPost && (
                               <div className="text-xs">
-                                Último:{" "}
                                 <span className="font-medium">
                                   {category.lastPost.title}
                                 </span>
                                 <br />
+                                {category.lastPost.isComment
+                                  ? "Comentado"
+                                  : "Postado"}{" "}
                                 por{" "}
                                 <span className="font-medium">
                                   {category.lastPost.author}
                                 </span>{" "}
-                                • {category.lastPost.date} às{" "}
-                                {category.lastPost.time}
+                                às {category.lastPost.time}
                               </div>
                             )}
                           </div>
@@ -1331,25 +1362,63 @@ export default function Index(props: IndexProps) {
       <Dialog open={iconModalOpen} onOpenChange={setIconModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Alterar Ícone da Categoria</DialogTitle>
+            <DialogTitle>Editar Categoria</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
-              Selecione uma nova imagem para o ícone da categoria.
-            </p>
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file && editingCategoryId) {
-                  handleIconUpload(file, editingCategoryId);
-                }
-              }}
-            />
+            <div>
+              <Label
+                htmlFor="category-description"
+                className="text-sm font-medium"
+              >
+                Descrição da Categoria
+              </Label>
+              <textarea
+                id="category-description"
+                value={editingCategoryDescription}
+                onChange={(e) => setEditingCategoryDescription(e.target.value)}
+                className="w-full mt-1 p-2 border border-gray-300 rounded-md resize-none"
+                rows={3}
+                placeholder="Digite a descrição da categoria..."
+              />
+            </div>
+            <div>
+              <Label htmlFor="category-icon" className="text-sm font-medium">
+                Ícone da Categoria
+              </Label>
+              <p className="text-sm text-gray-600 mb-2">
+                Selecione uma nova imagem para o ícone da categoria.
+              </p>
+              <Input
+                id="category-icon"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file && editingCategoryId) {
+                    handleIconUpload(file, editingCategoryId);
+                  }
+                }}
+              />
+            </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setIconModalOpen(false)}>
                 Cancelar
+              </Button>
+              <Button
+                onClick={() => {
+                  if (editingCategoryId) {
+                    // Salvar descrição (por enquanto apenas mostrar toast)
+                    toast.success(
+                      `Descrição da categoria atualizada! (Demo - não persistente)`,
+                    );
+                    setIconModalOpen(false);
+                    setEditingCategoryId(null);
+                    setEditingCategoryDescription("");
+                  }
+                }}
+                className="bg-blue-600 text-white hover:bg-blue-700"
+              >
+                Salvar Alterações
               </Button>
             </div>
           </div>

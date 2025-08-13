@@ -7,7 +7,10 @@ import {
   CreateCommentRequest,
   LikeResponse,
 } from "@shared/forum";
-import { getTopicCommentStats } from "./simple-comments";
+import {
+  getTopicCommentStats,
+  getTopicMostRecentCommentDate,
+} from "./simple-comments";
 // Temporariamente removido para evitar problemas de importação
 
 // Simple in-memory storage for demo purposes
@@ -62,6 +65,48 @@ function getUserStats(userId: string) {
     userStats.set(userId, { points: 0, badges: [] });
   }
   return userStats.get(userId)!;
+}
+
+// Helper function to get most recent activity date (topic creation or last comment)
+function getMostRecentActivity(topic: Topic): number {
+  const topicDate = new Date(topic.createdAt).getTime();
+  let mostRecentTime = topicDate;
+
+  // Check lastPost from topic (this is updated when there are comments)
+  if (topic.lastPost && topic.lastPost.date && topic.lastPost.time) {
+    try {
+      // Parse Brazilian date format: DD/MM/YYYY
+      const [day, month, year] = topic.lastPost.date.split("/");
+      const [hours, minutes] = topic.lastPost.time.split(":");
+
+      const lastPostDate = new Date(
+        parseInt(year),
+        parseInt(month) - 1, // Month is 0-indexed
+        parseInt(day),
+        parseInt(hours),
+        parseInt(minutes),
+      );
+
+      const lastPostTime = lastPostDate.getTime();
+      if (!isNaN(lastPostTime)) {
+        mostRecentTime = Math.max(mostRecentTime, lastPostTime);
+      }
+    } catch (error) {
+      console.warn(
+        `[SORT] Error parsing lastPost date for topic "${topic.title}":`,
+        error,
+      );
+    }
+  }
+
+  // Also get the most recent comment date from the active comment system
+  const mostRecentCommentDate = getTopicMostRecentCommentDate(topic.id);
+  if (mostRecentCommentDate) {
+    const commentTime = mostRecentCommentDate.getTime();
+    mostRecentTime = Math.max(mostRecentTime, commentTime);
+  }
+
+  return mostRecentTime;
 }
 
 function addPoints(userId: string, points: number) {
@@ -227,7 +272,7 @@ function initializeDemoData() {
       title: "Stable Diffusion XL: Novidades e melhorias",
       description: "Análise das novas funcionalidades do SDXL",
       content:
-        "O Stable Diffusion XL trouxe várias melhorias significativas:\n\n1. **Resolução nativa 1024x1024**: Muito melhor que os 512x512 do modelo original\n2. **Modelo de refino**: Permite melhorar os detalhes das imagens geradas\n3. **Melhor compreensão de texto**: Prompts mais complexos funcionam melhor\n4. **Controle de aspectos**: Diferentes proporções funcionam melhor\n\nTestei bastante e os resultados são impressionantes. Alguém mais teve experiências similares?",
+        "O Stable Diffusion XL trouxe várias melhorias significativas:\n\n1. **Resolução nativa 1024x1024**: Muito melhor que os 512x512 do modelo original\n2. **Modelo de refino**: Permite melhorar os detalhes das imagens geradas\n3. **Melhor compreensão de texto**: Prompts mais complexos funcionam melhor\n4. **Controle de aspectos**: Diferentes proporções funcionam melhor\n\nTestei bastante e os resultados são impressionantes. Algu��m mais teve experiências similares?",
       author: "ImageGen",
       authorId: "user_image_gen",
       authorAvatar: "IG",
@@ -238,6 +283,26 @@ function initializeDemoData() {
       isLiked: false,
       lastPost: { author: "AIArtist", date: "Hoje", time: "10:30" },
       isPinned: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      comments: [],
+    },
+    {
+      id: "3",
+      title: "Como resolver erro de VRAM insuficiente no Stable Diffusion?",
+      description: "Dicas para otimizar o uso de memória da GPU",
+      content:
+        "Pessoal, estou tentando rodar o Stable Diffusion localmente mas sempre recebo erro de VRAM insuficiente. Minha GPU tem 8GB mas mesmo assim não consegui gerar imagens em alta resolução.\n\nJá tentei:\n- Reduzir o batch size\n- Usar o parâmetro --lowvram\n- Gerar em resolução menor\n\nAlguém tem mais dicas? É normal precisar de mais de 8GB para funcionar bem?",
+      author: "TechNewbie",
+      authorId: "user_tech_newbie",
+      authorAvatar: "TN",
+      category: "duvidas-erros",
+      replies: 7,
+      views: 156,
+      likes: 12,
+      isLiked: false,
+      lastPost: { author: "AIExpert", date: "Hoje", time: "15:22" },
+      isHot: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       comments: [],
@@ -379,7 +444,16 @@ export const handleGetTopics: RequestHandler = (req, res) => {
     filteredTopics.sort((a, b) => {
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+
+      // Sort by most recent activity (creation date or last comment)
+      const aActivity = getMostRecentActivity(a);
+      const bActivity = getMostRecentActivity(b);
+
+      console.log(
+        `[SORT] Comparing "${a.title}" (${new Date(aActivity).toLocaleString()}) vs "${b.title}" (${new Date(bActivity).toLocaleString()}) - Result: ${bActivity - aActivity}`,
+      );
+
+      return bActivity - aActivity;
     });
   }
 
@@ -814,57 +888,74 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
     const allTopics = Array.from(topics.values());
     const allComments = Array.from(comments.values());
 
+    // Lista de todas as categorias
+    const allCategoryIds = [
+      // Ferramentas
+      "imagem",
+      "video",
+      "musica-audio",
+      "vibe-coding",
+      "duvidas-erros",
+      "outros",
+      // Open-Source
+      "opensource-imagem",
+      "opensource-video",
+      "opensource-musica-audio",
+      "opensource-vibe-coding",
+      "opensource-duvidas-erros",
+      "opensource-outros",
+    ];
+
     // Calculate stats for each category
-    const categoryStats = {
-      imagem: {
-        totalTopics: allTopics.filter((t) => t.category === "imagem").length,
+    const categoryStats: any = {};
+
+    allCategoryIds.forEach((categoryId) => {
+      categoryStats[categoryId] = {
+        totalTopics: allTopics.filter((t) => t.category === categoryId).length,
         totalPosts: allComments.filter((c) => {
           const topic = allTopics.find((t) => t.id === c.topicId);
-          return topic?.category === "imagem";
+          return topic?.category === categoryId;
         }).length,
         lastPost: null as any,
-      },
-      video: {
-        totalTopics: allTopics.filter((t) => t.category === "video").length,
-        totalPosts: allComments.filter((c) => {
-          const topic = allTopics.find((t) => t.id === c.topicId);
-          return topic?.category === "video";
-        }).length,
-        lastPost: null as any,
-      },
-      "musica-audio": {
-        totalTopics: allTopics.filter((t) => t.category === "musica-audio")
-          .length,
-        totalPosts: allComments.filter((c) => {
-          const topic = allTopics.find((t) => t.id === c.topicId);
-          return topic?.category === "musica-audio";
-        }).length,
-        lastPost: null as any,
-      },
-      "vibe-coding": {
-        totalTopics: allTopics.filter((t) => t.category === "vibe-coding")
-          .length,
-        totalPosts: allComments.filter((c) => {
-          const topic = allTopics.find((t) => t.id === c.topicId);
-          return topic?.category === "vibe-coding";
-        }).length,
-        lastPost: null as any,
-      },
-    };
+      };
+    });
 
     // Find last post for each category
     Object.keys(categoryStats).forEach((categoryId) => {
       const categoryTopics = allTopics.filter((t) => t.category === categoryId);
       if (categoryTopics.length > 0) {
-        // Get the most recent topic
-        const lastTopic = categoryTopics.sort(
-          (a, b) =>
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        // Get the topic with the most recent activity using same logic as topic list
+        const topicsWithActivity = categoryTopics.map((topic) => {
+          const activityTime = getMostRecentActivity(topic);
+          console.log(
+            `[STATS] Category ${categoryId} - Topic "${topic.title}" activity: ${new Date(activityTime).toLocaleString()}`,
+          );
+          return {
+            topic,
+            mostRecentTime: activityTime,
+          };
+        });
+
+        // Sort by most recent activity and get the first one
+        const mostRecentTopicData = topicsWithActivity.sort(
+          (a, b) => b.mostRecentTime - a.mostRecentTime,
         )[0];
 
+        console.log(
+          `[STATS] Category ${categoryId} - Most recent topic: "${mostRecentTopicData.topic.title}" at ${new Date(mostRecentTopicData.mostRecentTime).toLocaleString()}`,
+        );
+
+        const lastTopic = mostRecentTopicData.topic;
+
+        // Determine if this is from a comment or the original post
+        const isFromComment =
+          lastTopic.lastPost?.author &&
+          lastTopic.lastPost.author !== lastTopic.author;
+
+        // Use the lastPost data if available, otherwise fall back to current time
         categoryStats[categoryId].lastPost = {
           title: lastTopic.title,
-          author: lastTopic.author,
+          author: lastTopic.lastPost?.author || lastTopic.author,
           date:
             lastTopic.lastPost?.date ||
             new Date().toLocaleDateString("pt-BR", {
@@ -877,6 +968,7 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
               minute: "2-digit",
               timeZone: "America/Sao_Paulo",
             }),
+          isComment: isFromComment,
         };
       }
     });

@@ -5,6 +5,7 @@ import { useCategoryStats } from "@/hooks/useCategoryStats";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import GlassmorphismBackground from "@/components/GlassmorphismBackground";
 import TopicView from "@/pages/TopicView";
 import Index from "@/pages/Index";
 import Account from "@/pages/Account";
@@ -163,6 +164,24 @@ const toolsCategories: ForumCategory[] = [
     lastPost: undefined,
     posts: [],
   },
+  {
+    id: "duvidas-erros",
+    name: "Dúvidas/Erros",
+    description: "Tire suas dúvidas e relate problemas com ferramentas de IA",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
+  {
+    id: "outros",
+    name: "Outros",
+    description: "Discussões gerais sobre ferramentas de IA não categorizadas",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
 ];
 
 // Categorias da seção Open-Source
@@ -205,6 +224,26 @@ const openSourceCategories: ForumCategory[] = [
     lastPost: undefined,
     posts: [],
   },
+  {
+    id: "opensource-duvidas-erros",
+    name: "Dúvidas/Erros",
+    description:
+      "Tire suas dúvidas e relate problemas com ferramentas open-source",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
+  {
+    id: "opensource-outros",
+    name: "Outros",
+    description:
+      "Discussões gerais sobre projetos open-source de IA não categorizados",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
 ];
 
 function App() {
@@ -222,12 +261,28 @@ function App() {
   // Get dynamic category statistics
   const { categoryStats, refreshStats } = useCategoryStats();
 
+  // Listen for global category stats refresh events
+  useEffect(() => {
+    const handleRefreshStats = () => {
+      refreshStats();
+    };
+
+    window.addEventListener("refreshCategoryStats", handleRefreshStats);
+    return () => {
+      window.removeEventListener("refreshCategoryStats", handleRefreshStats);
+    };
+  }, [refreshStats]);
+
   // Load newsletters from API
   const loadNewsletters = async () => {
     setIsLoadingNewsletters(true);
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+      const timeoutId = setTimeout(() => {
+        controller.abort(
+          new DOMException("Newsletter request timeout", "TimeoutError"),
+        );
+      }, 5000); // 5s timeout
 
       const response = await fetch("/api/newsletter/articles", {
         signal: controller.signal,
@@ -242,9 +297,14 @@ function App() {
         console.warn("Newsletter service unavailable, using fallback data");
         setNewsletters(weeklyNewsletters); // Use local fallback data
       }
-    } catch (error) {
-      if (error.name !== "AbortError") {
-        console.warn("Newsletter service unavailable, using fallback data");
+    } catch (error: any) {
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        console.warn("Newsletter request timed out");
+      } else {
+        console.warn(
+          "Newsletter service unavailable, using fallback data:",
+          error.message,
+        );
       }
       setNewsletters(weeklyNewsletters); // Use local fallback data
     } finally {
@@ -314,6 +374,7 @@ function App() {
         <ThemeProvider>
           <BrowserRouter>
             <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
+              <GlassmorphismBackground />
               <Header activeSection={activeSection} />
               <Routes>
                 <Route

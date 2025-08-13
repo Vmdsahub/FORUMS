@@ -40,20 +40,48 @@ const AVAILABLE_THEMES: Theme[] = [
     cssClass: "theme-dark",
     icon: "🌙",
   },
+  {
+    id: "glassmorphism-liquid",
+    name: "Glassmorphism Liquid",
+    description:
+      "Tema avançado com efeitos de vidro líquido, refração e distorção",
+    price: 1,
+    preview: "/api/images/theme-glass-preview.jpg",
+    cssClass: "theme-glassmorphism-liquid",
+    icon: "💎",
+  },
   // Futuros temas podem ser adicionados aqui
 ];
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
-  const [availableThemes] = useState<Theme[]>(AVAILABLE_THEMES);
+  const { user, isAdmin } = useAuth();
+
+  // Filtrar temas baseado no status de admin
+  const getAvailableThemes = (): Theme[] => {
+    if (isAdmin) {
+      return AVAILABLE_THEMES; // Admin vê todos os temas
+    }
+    // Usuários normais não veem o glassmorphism-liquid
+    return AVAILABLE_THEMES.filter(
+      (theme) => theme.id !== "glassmorphism-liquid",
+    );
+  };
+
+  const [availableThemes, setAvailableThemes] =
+    useState<Theme[]>(getAvailableThemes());
   const [userThemes, setUserThemes] = useState<UserTheme[]>([]);
   const [currentTheme, setCurrentTheme] = useState<string>("default");
   const [userLikes, setUserLikes] = useState<number>(0);
 
   // Garantir que nunca haja tema aplicado inicialmente
   useEffect(() => {
-    document.body.classList.remove("theme-dark");
+    document.body.classList.remove("theme-dark", "theme-glassmorphism-liquid");
   }, []);
+
+  // Atualizar temas disponíveis quando status admin mudar
+  useEffect(() => {
+    setAvailableThemes(getAvailableThemes());
+  }, [isAdmin]);
 
   // Carregar dados do usuário quando logado
   useEffect(() => {
@@ -64,23 +92,44 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       // Carregar tema salvo apenas se existir e for válido
       const savedTheme = localStorage.getItem("selected_theme");
       if (savedTheme && savedTheme !== "default") {
-        setCurrentTheme(savedTheme);
-        document.body.classList.add("theme-dark");
+        // Verificar se o tema ainda está disponível para o usuário
+        const availableThemeIds = getAvailableThemes().map((t) => t.id);
+        if (availableThemeIds.includes(savedTheme)) {
+          setCurrentTheme(savedTheme);
+          if (savedTheme === "dark") {
+            document.body.classList.add("theme-dark");
+          } else if (savedTheme === "glassmorphism-liquid") {
+            document.body.classList.add("theme-glassmorphism-liquid");
+          }
+        } else {
+          // Tema não disponível para este usuário, voltar ao padrão
+          setCurrentTheme("default");
+          document.body.classList.remove(
+            "theme-dark",
+            "theme-glassmorphism-liquid",
+          );
+          localStorage.removeItem("selected_theme");
+        }
       }
     } else {
       // Usuário deslogado: limpar tudo
       setCurrentTheme("default");
-      document.body.classList.remove("theme-dark");
+      document.body.classList.remove(
+        "theme-dark",
+        "theme-glassmorphism-liquid",
+      );
       localStorage.removeItem("selected_theme");
     }
-  }, [user]);
+  }, [user, isAdmin]);
 
   const fetchUserThemes = async () => {
     if (!user) return;
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      const timeoutId = setTimeout(() => {
+        controller.abort(new DOMException("Request timeout", "TimeoutError"));
+      }, 5000);
 
       const response = await fetch("/api/user/themes", {
         headers: {
@@ -98,9 +147,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         console.warn("User themes service unavailable");
         setUserThemes([]); // Set empty array as fallback
       }
-    } catch (error) {
-      if (error.name !== "AbortError") {
-        console.warn("User themes service unavailable");
+    } catch (error: any) {
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        console.warn("User themes request timed out");
+      } else {
+        console.warn("User themes service unavailable:", error.message);
       }
       setUserThemes([]); // Set empty array as fallback
     }
@@ -111,7 +162,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      const timeoutId = setTimeout(() => {
+        controller.abort(new DOMException("Request timeout", "TimeoutError"));
+      }, 5000);
 
       const response = await fetch("/api/user/likes", {
         headers: {
@@ -129,9 +182,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         console.warn("User likes service unavailable");
         setUserLikes(0); // Set 0 as fallback
       }
-    } catch (error) {
-      if (error.name !== "AbortError") {
-        console.warn("User likes service unavailable");
+    } catch (error: any) {
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        console.warn("User likes request timed out");
+      } else {
+        console.warn("User likes service unavailable:", error.message);
       }
       setUserLikes(0); // Set 0 as fallback
     }
@@ -149,7 +204,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const timeoutId = setTimeout(() => {
+        controller.abort(
+          new DOMException("Purchase request timeout", "TimeoutError"),
+        );
+      }, 10000);
 
       const response = await fetch("/api/user/themes/purchase", {
         method: "POST",
@@ -172,11 +231,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         ]);
         return true;
       }
-    } catch (error) {
-      if (error.name === "AbortError") {
-        console.error("Purchase request timeout");
+    } catch (error: any) {
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        console.error("Purchase request timeout:", error.message);
       } else {
-        console.error("Error purchasing theme:", error);
+        console.error("Error purchasing theme:", error.message);
       }
     }
 
@@ -189,7 +248,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setCurrentTheme(themeId);
 
     // Remover qualquer classe de tema
-    document.body.classList.remove("theme-dark");
+    document.body.classList.remove("theme-dark", "theme-glassmorphism-liquid");
 
     if (themeId === "default") {
       // Tema padrão: remover do localStorage
@@ -197,7 +256,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } else {
       // Tema específico: salvar e aplicar
       localStorage.setItem("selected_theme", themeId);
-      document.body.classList.add("theme-dark");
+      if (themeId === "dark") {
+        document.body.classList.add("theme-dark");
+      } else if (themeId === "glassmorphism-liquid") {
+        document.body.classList.add("theme-glassmorphism-liquid");
+      }
     }
   };
 

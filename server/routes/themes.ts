@@ -84,7 +84,7 @@ export const purchaseTheme: RequestHandler = (req, res) => {
     }
 
     // Verificar se o tema existe
-    const availableThemes = ["dark"]; // Lista de temas disponíveis
+    const availableThemes = ["dark", "glassmorphism-liquid"]; // Lista de temas disponíveis
     if (!availableThemes.includes(themeId)) {
       return res.status(404).json({ message: "Tema não encontrado" });
     }
@@ -96,7 +96,7 @@ export const purchaseTheme: RequestHandler = (req, res) => {
     }
 
     // Verificar preço do tema
-    const themesPrices = { dark: 1 };
+    const themesPrices = { dark: 1, "glassmorphism-liquid": 1 };
     const themePrice = themesPrices[themeId as keyof typeof themesPrices];
 
     const earnedLikes = calculateUserLikes(userId);

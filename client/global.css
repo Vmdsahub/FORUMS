@@ -663,4 +663,303 @@
     width: fit-content !important;
     max-width: 400px !important;
   }
+
+  /* 💎 GLASSMORPHISM LIQUID THEME - Estilo iOS Minimalista */
+  .theme-glassmorphism-liquid {
+    /* === PALETA MINIMALISTA === */
+    --glass-bg-primary: rgba(255, 255, 255, 0.05);
+    --glass-bg-secondary: rgba(255, 255, 255, 0.08);
+    --glass-bg-tertiary: rgba(255, 255, 255, 0.12);
+
+    --glass-text-primary: rgba(255, 255, 255, 0.98);
+    --glass-text-secondary: rgba(255, 255, 255, 0.85);
+    --glass-text-tertiary: rgba(255, 255, 255, 0.7);
+
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-border-light: rgba(255, 255, 255, 0.08);
+
+    /* === VARIÁVEIS CSS === */
+    --background: 0 0% 5%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 0 0% 20%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 0 0% 83%;
+    --radius: 1rem;
+
+    color-scheme: dark;
+    background: transparent;
+    min-height: 100vh;
+  }
+
+  /* === ANIMAÇÕES SIMPLES === */
+  @keyframes subtleFloat {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-1px);
+    }
+  }
+
+  /* === APLICAÇÃO GLOBAL === */
+  .theme-glassmorphism-liquid {
+    color: var(--glass-text-primary);
+  }
+
+  /* === TIPOGRAFIA === */
+  .theme-glassmorphism-liquid h1,
+  .theme-glassmorphism-liquid h2,
+  .theme-glassmorphism-liquid h3,
+  .theme-glassmorphism-liquid h4,
+  .theme-glassmorphism-liquid h5,
+  .theme-glassmorphism-liquid h6 {
+    color: var(--glass-text-primary);
+  }
+
+  .theme-glassmorphism-liquid p,
+  .theme-glassmorphism-liquid span,
+  .theme-glassmorphism-liquid div {
+    color: var(--glass-text-secondary);
+  }
+
+  .theme-glassmorphism-liquid .text-black {
+    color: var(--glass-text-primary) !important;
+  }
+
+  /* === BACKGROUNDS === */
+  .theme-glassmorphism-liquid .bg-white {
+    background: var(--glass-bg-secondary) !important;
+    backdrop-filter: blur(25px) saturate(130%);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  .theme-glassmorphism-liquid .bg-gray-50 {
+    background: var(--glass-bg-primary) !important;
+    backdrop-filter: blur(20px) saturate(120%);
+    border: 1px solid var(--glass-border-light);
+  }
+
+  .theme-glassmorphism-liquid .bg-gray-100 {
+    background: var(--glass-bg-tertiary) !important;
+    backdrop-filter: blur(15px) saturate(120%);
+  }
+
+  /* === TEXTO === */
+  .theme-glassmorphism-liquid .text-gray-500 {
+    color: var(--glass-text-tertiary) !important;
+  }
+
+  .theme-glassmorphism-liquid .text-gray-600 {
+    color: var(--glass-text-secondary) !important;
+  }
+
+  .theme-glassmorphism-liquid .text-gray-700 {
+    color: var(--glass-text-secondary) !important;
+  }
+
+  .theme-glassmorphism-liquid .text-gray-800 {
+    color: var(--glass-text-primary) !important;
+  }
+
+  .theme-glassmorphism-liquid .text-gray-900 {
+    color: var(--glass-text-primary) !important;
+  }
+
+  /* === BORDAS === */
+  .theme-glassmorphism-liquid .border-gray-100 {
+    border-color: var(--glass-border-light) !important;
+  }
+
+  .theme-glassmorphism-liquid .border-gray-200 {
+    border-color: var(--glass-border) !important;
+  }
+
+  .theme-glassmorphism-liquid .border-gray-300 {
+    border-color: var(--glass-border) !important;
+  }
+
+  /* === HOVER STATES === */
+  .theme-glassmorphism-liquid .hover\\:bg-gray-50:hover {
+    background: var(--glass-bg-tertiary) !important;
+    backdrop-filter: blur(30px) saturate(140%);
+    transform: translateY(-1px);
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition: all 0.3s ease;
+  }
+
+  .theme-glassmorphism-liquid .hover\\:bg-gray-100:hover {
+    background: var(--glass-bg-tertiary) !important;
+    backdrop-filter: blur(25px) saturate(130%);
+  }
+
+  .theme-glassmorphism-liquid .hover\\:text-black:hover {
+    color: var(--glass-text-primary) !important;
+    transition: all 0.2s ease;
+  }
+
+  /* === INPUTS === */
+  .theme-glassmorphism-liquid input,
+  .theme-glassmorphism-liquid textarea,
+  .theme-glassmorphism-liquid select {
+    background: var(--glass-bg-primary) !important;
+    backdrop-filter: blur(25px) saturate(130%);
+    border: 1px solid var(--glass-border) !important;
+    color: var(--glass-text-primary) !important;
+    transition: all 0.3s ease;
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+
+  .theme-glassmorphism-liquid input::placeholder,
+  .theme-glassmorphism-liquid textarea::placeholder {
+    color: var(--glass-text-tertiary) !important;
+  }
+
+  .theme-glassmorphism-liquid input:focus,
+  .theme-glassmorphism-liquid textarea:focus {
+    backdrop-filter: blur(30px) saturate(140%);
+    border-color: var(--glass-border) !important;
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  /* === BUTTONS === */
+  .theme-glassmorphism-liquid .bg-black {
+    background: var(--glass-bg-secondary) !important;
+    backdrop-filter: blur(25px) saturate(130%);
+    color: var(--glass-text-primary) !important;
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transition: all 0.3s ease;
+  }
+
+  .theme-glassmorphism-liquid .bg-black:hover {
+    background: var(--glass-bg-tertiary) !important;
+    backdrop-filter: blur(30px) saturate(140%);
+    transform: translateY(-2px);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+
+  .theme-glassmorphism-liquid .bg-gray-900 {
+    background: var(--glass-bg-primary) !important;
+    backdrop-filter: blur(15px) saturate(110%);
+    border: 1px solid var(--glass-border);
+  }
+
+  .theme-glassmorphism-liquid .bg-gray-900:hover {
+    background: var(--glass-bg-secondary) !important;
+    backdrop-filter: blur(20px) saturate(120%);
+  }
+
+  /* === CARDS E CONTAINERS === */
+  .theme-glassmorphism-liquid .border {
+    border-color: var(--glass-border) !important;
+  }
+
+  .theme-glassmorphism-liquid .rounded-lg {
+    background: var(--glass-bg-secondary) !important;
+    backdrop-filter: blur(25px) saturate(130%);
+    border: 1px solid var(--glass-border);
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  /* === NAVIGATION === */
+  .theme-glassmorphism-liquid .glass-minimal {
+    background: var(--glass-bg-primary) !important;
+    backdrop-filter: blur(30px) saturate(140%);
+    border-bottom: 1px solid var(--glass-border) !important;
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  }
+
+  /* === SHADOWS === */
+  .theme-glassmorphism-liquid .shadow-sm {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .theme-glassmorphism-liquid .shadow-md {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .theme-glassmorphism-liquid .shadow-lg {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  /* === ELEMENTOS ESPECIAIS === */
+  .theme-glassmorphism-liquid .bg-blue-50 {
+    background: var(--glass-bg-primary) !important;
+    backdrop-filter: blur(15px) saturate(110%);
+    border: 1px solid var(--glass-border) !important;
+  }
+
+  .theme-glassmorphism-liquid .text-blue-800 {
+    color: var(--glass-text-primary) !important;
+  }
+
+  .theme-glassmorphism-liquid .bg-green-600 {
+    background: var(--glass-bg-secondary) !important;
+    backdrop-filter: blur(15px) saturate(110%);
+  }
+
+  /* === SCROLLBARS === */
+  .theme-glassmorphism-liquid *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  .theme-glassmorphism-liquid *::-webkit-scrollbar-track {
+    background: var(--glass-bg-primary);
+    border-radius: 3px;
+  }
+
+  .theme-glassmorphism-liquid *::-webkit-scrollbar-thumb {
+    background: var(--glass-bg-tertiary);
+    border-radius: 3px;
+  }
+
+  .theme-glassmorphism-liquid *::-webkit-scrollbar-thumb:hover {
+    background: var(--glass-border);
+  }
+
+  /* === HOVER EFEITOS === */
+  .theme-glassmorphism-liquid .hover-lift:hover {
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
+  }
+
+  /* === RESPONSIVE === */
+  @media (max-width: 640px) {
+    .theme-glassmorphism-liquid {
+      --radius: 0.75rem;
+    }
+  }
 }
