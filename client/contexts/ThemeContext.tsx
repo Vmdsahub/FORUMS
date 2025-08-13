@@ -174,29 +174,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     return false;
   };
 
-  const applyThemeToDom = (themeId: string) => {
-    // Remover todas as classes de tema existentes
-    document.body.classList.remove("theme-dark");
-    
-    // Aplicar nova classe de tema se não for o padrão
-    if (themeId !== "default") {
-      const theme = availableThemes.find(t => t.id === themeId);
-      if (theme) {
-        document.body.classList.add(theme.cssClass);
-      }
-    }
-  };
-
   const applyTheme = (themeId: string) => {
-    // Só permitir aplicação de temas se o usuário estiver logado
-    if (!user) {
-      console.warn("Usuário deve estar logado para aplicar temas");
-      return;
-    }
+    if (!user) return;
 
     setCurrentTheme(themeId);
-    localStorage.setItem("selected_theme", themeId);
-    applyThemeToDom(themeId);
+
+    // Remover qualquer classe de tema
+    document.body.classList.remove("theme-dark");
+
+    if (themeId === "default") {
+      // Tema padrão: remover do localStorage
+      localStorage.removeItem("selected_theme");
+    } else {
+      // Tema específico: salvar e aplicar
+      localStorage.setItem("selected_theme", themeId);
+      document.body.classList.add("theme-dark");
+    }
   };
 
   return (
