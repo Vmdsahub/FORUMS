@@ -117,6 +117,7 @@ export const authenticateToken: RequestHandler = (req, res, next) => {
 
 export const handleLogin: RequestHandler = (req, res) => {
   try {
+    console.log("[LOGIN] Request received:", { email: req.body.email });
     const { email, password, captcha } = loginSchema.parse(req.body);
 
     // For demo purposes, we don't validate captcha server-side
@@ -124,8 +125,10 @@ export const handleLogin: RequestHandler = (req, res) => {
 
     // Find user by email
     const user = Array.from(users.values()).find((u) => u.email === email);
+    console.log("[LOGIN] User found:", !!user);
 
     if (!user) {
+      console.log("[LOGIN] User not found, sending error message");
       return res.status(401).json({
         message: "Ops, parece que essa conta não existe!",
       } as ErrorResponse);
@@ -197,7 +200,7 @@ export const handleRegister: RequestHandler = (req, res) => {
     );
     if (existingEmailUser) {
       return res.status(409).json({
-        message: "Essa conta já existe, faça login",
+        message: "Essa conta j�� existe, faça login",
       } as ErrorResponse);
     }
 
