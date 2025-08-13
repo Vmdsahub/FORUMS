@@ -224,6 +224,24 @@ const openSourceCategories: ForumCategory[] = [
     lastPost: undefined,
     posts: [],
   },
+  {
+    id: "opensource-duvidas-erros",
+    name: "Dúvidas/Erros",
+    description: "Tire suas dúvidas e relate problemas com ferramentas open-source",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
+  {
+    id: "opensource-outros",
+    name: "Outros",
+    description: "Discussões gerais sobre projetos open-source de IA não categorizados",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
 ];
 
 function App() {
