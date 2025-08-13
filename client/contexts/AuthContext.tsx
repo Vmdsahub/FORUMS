@@ -79,15 +79,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ email, password, captcha }),
       });
 
+      // Read response once and handle both success and error cases
+      const responseText = await response.text();
+
       if (response.ok) {
-        const data: AuthResponse = await response.json();
-        localStorage.setItem("auth_token", data.token);
-        setUser(data.user);
-        toast.success("Login realizado com sucesso!");
-        return true;
+        try {
+          const data: AuthResponse = JSON.parse(responseText);
+          localStorage.setItem("auth_token", data.token);
+          setUser(data.user);
+          toast.success("Login realizado com sucesso!");
+          return true;
+        } catch (parseError) {
+          console.error("Error parsing success response:", parseError);
+          toast.error("Erro inesperado. Tente novamente.");
+          return false;
+        }
       } else {
-        const errorData = await response.json();
-        toast.error(errorData?.message || "Erro ao fazer login");
+        try {
+          const errorData = JSON.parse(responseText);
+          toast.error(errorData?.message || "Erro ao fazer login");
+        } catch (parseError) {
+          console.error("Error parsing error response:", parseError);
+          console.log("Raw response:", responseText);
+          toast.error("Erro ao fazer login");
+        }
         return false;
       }
     } catch (error: any) {
