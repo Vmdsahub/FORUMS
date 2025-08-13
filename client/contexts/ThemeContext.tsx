@@ -83,7 +83,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } else {
       // Usuário deslogado: limpar tudo
       setCurrentTheme("default");
-      document.body.classList.remove("theme-dark");
+      document.body.classList.remove("theme-dark", "theme-glassmorphism-liquid");
       localStorage.removeItem("selected_theme");
     }
   }, [user]);
