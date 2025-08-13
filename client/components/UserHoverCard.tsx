@@ -47,9 +47,11 @@ export default function UserHoverCard({
       try {
         console.log(`[UserHoverCard] Buscando perfil para usuário: ${userId}`);
 
-        // Buscar likes atualizados do usuário (mesma API que UserPointsBadge)
-        const likesResponse = await fetch(`/api/user-stats/profile/${userId}`);
+        // Buscar dados do perfil do usuário
         const profileResponse = await fetch(`/api/user/profile/${userId}`);
+
+        console.log(`[UserHoverCard] URL da requisição: /api/user/profile/${userId}`);
+        console.log(`[UserHoverCard] Status da resposta: ${profileResponse.status}`);
 
         // Buscar seleção de badges do usuário específico
         let userSelection: string[] = [];
@@ -71,16 +73,14 @@ export default function UserHoverCard({
           );
         }
 
-        if (likesResponse.ok && profileResponse.ok) {
-          const likesData = await likesResponse.json();
+        if (profileResponse.ok) {
           const profileData = await profileResponse.json();
 
-          console.log(`[UserHoverCard] Likes reais:`, likesData.points);
           console.log(`[UserHoverCard] Dados do perfil:`, profileData);
 
-          setRealLikes(likesData.points);
+          setRealLikes(profileData.points);
           setUserProfile({
-            points: likesData.points, // Usar likes reais calculados
+            points: profileData.points, // Usar pontos do perfil
             badges: profileData.badges,
             createdAt: profileData.createdAt
           });
