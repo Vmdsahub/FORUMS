@@ -1,5 +1,4 @@
 import { RequestHandler } from "express";
-import { RequestHandler } from "express";
 import { z } from "zod";
 
 // Storage simples em memória para ícones das categorias
