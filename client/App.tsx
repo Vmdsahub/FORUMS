@@ -164,6 +164,24 @@ const toolsCategories: ForumCategory[] = [
     lastPost: undefined,
     posts: [],
   },
+  {
+    id: "duvidas-erros",
+    name: "Dúvidas/Erros",
+    description: "Tire suas dúvidas e relate problemas com ferramentas de IA",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
+  {
+    id: "outros",
+    name: "Outros",
+    description: "Discussões gerais sobre ferramentas de IA não categorizadas",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
 ];
 
 // Categorias da seção Open-Source
