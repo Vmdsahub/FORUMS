@@ -794,14 +794,17 @@
   /* === HOVER STATES === */
   .theme-glassmorphism-liquid .hover\\:bg-gray-50:hover {
     background: var(--glass-bg-tertiary) !important;
-    backdrop-filter: blur(25px) saturate(120%);
+    backdrop-filter: blur(30px) saturate(140%);
     transform: translateY(-1px);
-    transition: all 0.2s ease;
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition: all 0.3s ease;
   }
 
   .theme-glassmorphism-liquid .hover\\:bg-gray-100:hover {
     background: var(--glass-bg-tertiary) !important;
-    backdrop-filter: blur(20px) saturate(120%);
+    backdrop-filter: blur(25px) saturate(130%);
   }
 
   .theme-glassmorphism-liquid .hover\\:text-black:hover {
