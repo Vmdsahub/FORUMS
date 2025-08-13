@@ -901,7 +901,7 @@ export default function Index(props: IndexProps) {
                                   {category.lastPost.title}
                                 </span>
                                 <br />
-                                Comentado por{" "}
+                                {category.lastPost.isComment ? "Comentado" : "Postado"} por{" "}
                                 <span className="font-medium">
                                   {category.lastPost.author}
                                 </span>{" "}
@@ -1095,7 +1095,7 @@ export default function Index(props: IndexProps) {
                                   {category.lastPost.title}
                                 </span>
                                 <br />
-                                Comentado por{" "}
+                                {category.lastPost.isComment ? "Comentado" : "Postado"} por{" "}
                                 <span className="font-medium">
                                   {category.lastPost.author}
                                 </span>{" "}
