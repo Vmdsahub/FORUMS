@@ -705,70 +705,10 @@
     min-height: 100vh;
   }
 
-  /* === ANIMAÇÕES LIQUID === */
-  @keyframes liquidFlow {
-    0%, 100% {
-      background: linear-gradient(
-        135deg,
-        rgba(0, 212, 255, 0.08) 0%,
-        rgba(168, 85, 247, 0.06) 25%,
-        rgba(236, 72, 153, 0.04) 50%,
-        rgba(16, 185, 129, 0.06) 75%,
-        rgba(59, 130, 246, 0.08) 100%
-      );
-      transform: scale(1) rotate(0deg);
-    }
-    33% {
-      background: linear-gradient(
-        225deg,
-        rgba(168, 85, 247, 0.1) 0%,
-        rgba(236, 72, 153, 0.08) 25%,
-        rgba(16, 185, 129, 0.06) 50%,
-        rgba(59, 130, 246, 0.08) 75%,
-        rgba(0, 212, 255, 0.1) 100%
-      );
-      transform: scale(1.02) rotate(1deg);
-    }
-    66% {
-      background: linear-gradient(
-        315deg,
-        rgba(236, 72, 153, 0.06) 0%,
-        rgba(16, 185, 129, 0.08) 25%,
-        rgba(59, 130, 246, 0.1) 50%,
-        rgba(0, 212, 255, 0.06) 75%,
-        rgba(168, 85, 247, 0.08) 100%
-      );
-      transform: scale(0.98) rotate(-1deg);
-    }
-  }
-
-  @keyframes glassFloat {
-    0%, 100% { transform: translateY(0px) scale(1); }
-    50% { transform: translateY(-2px) scale(1.01); }
-  }
-
-  @keyframes liquidShimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-
-  @keyframes refractionWave {
-    0%, 100% {
-      filter: blur(0px) hue-rotate(0deg) brightness(1);
-      transform: skew(0deg);
-    }
-    25% {
-      filter: blur(0.5px) hue-rotate(10deg) brightness(1.05);
-      transform: skew(0.5deg);
-    }
-    50% {
-      filter: blur(1px) hue-rotate(20deg) brightness(1.1);
-      transform: skew(1deg);
-    }
-    75% {
-      filter: blur(0.5px) hue-rotate(10deg) brightness(1.05);
-      transform: skew(0.5deg);
-    }
+  /* === ANIMAÇÕES SIMPLES === */
+  @keyframes subtleFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-1px); }
   }
 
   /* === APLICAÇÃO GLOBAL DO TEMA === */
