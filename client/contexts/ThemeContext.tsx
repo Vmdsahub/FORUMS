@@ -49,20 +49,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [currentTheme, setCurrentTheme] = useState<string>("default");
   const [userLikes, setUserLikes] = useState<number>(0);
 
-  // Carregar tema salvo do localStorage
-  useEffect(() => {
-    const savedTheme = localStorage.getItem("selected_theme");
-    if (savedTheme && savedTheme !== "default") {
-      setCurrentTheme(savedTheme);
-      applyThemeToDom(savedTheme);
-    }
-  }, []);
-
   // Carregar dados do usuário quando logado
   useEffect(() => {
     if (user) {
       fetchUserThemes();
       fetchUserLikes();
+
+      // Só carregar tema salvo se o usuário estiver logado
+      const savedTheme = localStorage.getItem("selected_theme");
+      if (savedTheme && savedTheme !== "default") {
+        setCurrentTheme(savedTheme);
+        applyThemeToDom(savedTheme);
+      }
+    } else {
+      // Se não estiver logado, garantir que o tema seja o padrão
+      setCurrentTheme("default");
+      applyThemeToDom("default");
+      // Limpar tema salvo quando deslogar
+      localStorage.removeItem("selected_theme");
     }
   }, [user]);
 
