@@ -92,12 +92,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.success("Login realizado com sucesso!");
         return true;
       } else {
+        // Clone the response before trying to parse it
+        const responseClone = response.clone();
         try {
           const errorData = await response.json();
-          const errorMessage = errorData?.message || "Erro ao fazer login";
-          toast.error(errorMessage);
+          console.log("Error data:", errorData);
+          toast.error(errorData?.message || "Erro ao fazer login");
         } catch (jsonError) {
-          console.error("Error parsing JSON:", jsonError);
+          console.error("JSON parse error:", jsonError);
+          try {
+            const textData = await responseClone.text();
+            console.log("Response as text:", textData);
+          } catch (textError) {
+            console.error("Text parse error:", textError);
+          }
           toast.error("Erro ao fazer login");
         }
         return false;
