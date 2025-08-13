@@ -37,6 +37,7 @@ export default function UserHoverCard({
   children,
 }: UserHoverCardProps) {
   const [userProfile, setUserProfile] = useState<UserProfileData | null>(null);
+  const [realLikes, setRealLikes] = useState<number>(0);
   const [badgeSelection, setBadgeSelection] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCard, setShowCard] = useState(false);
@@ -45,11 +46,16 @@ export default function UserHoverCard({
     const fetchUserProfile = async () => {
       try {
         console.log(`[UserHoverCard] Buscando perfil para usuário: ${userId}`);
-        const url = `/api/user/profile/${userId}`;
-        console.log(`[UserHoverCard] URL da requisição: ${url}`);
 
-        const response = await fetch(url);
-        console.log(`[UserHoverCard] Status da resposta: ${response.status}`);
+        // Buscar dados do perfil do usuário
+        const profileResponse = await fetch(`/api/user/profile/${userId}`);
+
+        console.log(
+          `[UserHoverCard] URL da requisição: /api/user/profile/${userId}`,
+        );
+        console.log(
+          `[UserHoverCard] Status da resposta: ${profileResponse.status}`,
+        );
 
         // Buscar seleção de badges do usuário específico
         let userSelection: string[] = [];
@@ -71,24 +77,27 @@ export default function UserHoverCard({
           );
         }
 
-        if (response.ok) {
-          const data = await response.json();
-          console.log(`[UserHoverCard] Dados recebidos:`, data);
-          setUserProfile(data);
+        if (profileResponse.ok) {
+          const profileData = await profileResponse.json();
+
+          console.log(`[UserHoverCard] Dados do perfil:`, profileData);
+
+          setRealLikes(profileData.points);
+          setUserProfile({
+            points: profileData.points, // Usar pontos do perfil
+            badges: profileData.badges,
+            createdAt: profileData.createdAt,
+          });
           setBadgeSelection(userSelection);
         } else {
-          const text = await response.text();
-          console.error(
-            "Erro ao buscar perfil do usuário:",
-            response.status,
-            text,
-          );
+          console.error("Erro ao buscar dados do usuário");
           // Fallback para dados básicos em caso de erro
           setUserProfile({
             points: 0,
             badges: [],
             createdAt: new Date().toISOString(),
           });
+          setRealLikes(0);
           setBadgeSelection([]);
         }
       } catch (error) {
@@ -99,6 +108,7 @@ export default function UserHoverCard({
           badges: [],
           createdAt: new Date().toISOString(),
         });
+        setRealLikes(0);
         setBadgeSelection([]);
       } finally {
         setIsLoading(false);
@@ -147,10 +157,11 @@ export default function UserHoverCard({
                   {userAvatar}
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
                     <h3 className="font-semibold text-gray-900">{userName}</h3>
-                    <span className="text-sm font-medium text-red-600 bg-red-50 px-2 py-1 rounded-full flex items-center gap-1">
-                      ❤️ {userProfile.points}
+                    <span className="text-base font-medium text-gray-700 px-2 py-1 rounded-full flex items-center gap-1">
+                      <span className="text-lg">❤️</span>{" "}
+                      <span className="text-base">{userProfile.points}</span>
                     </span>
                   </div>
                 </div>

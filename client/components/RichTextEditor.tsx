@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import ImageModal from "@/components/ImageModal";
 
 interface RichTextEditorProps {
   value: string;
@@ -17,6 +18,11 @@ export default function RichTextEditor({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [modalImage, setModalImage] = useState<{
+    src: string;
+    alt: string;
+    isVideo: boolean;
+  } | null>(null);
 
   // Sincronizar o conteúdo do editor com o value
   useEffect(() => {
@@ -24,6 +30,21 @@ export default function RichTextEditor({
       editorRef.current.innerHTML = value;
     }
   }, [value]);
+
+  // Configurar função global para abrir modal
+  useEffect(() => {
+    (window as any).openImageModal = (
+      src: string,
+      alt: string,
+      isVideo: boolean,
+    ) => {
+      setModalImage({ src, alt, isVideo });
+    };
+
+    return () => {
+      delete (window as any).openImageModal;
+    };
+  }, []);
 
   // Gerenciar placeholder manualmente
   useEffect(() => {
@@ -89,12 +110,12 @@ export default function RichTextEditor({
   };
 
   const insertImageHtml = (src: string, alt: string) => {
-    const img = `<div style="margin: 16px 0;"><img src="${src}" alt="${alt}" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e5e7eb;" /></div>`;
+    const img = `<div style="margin: 16px 0; text-align: center;"><img src="${src}" alt="${alt}" style="max-width: 300px; height: auto; border-radius: 8px; border: 1px solid #e5e7eb; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'" onclick="window.openImageModal('${src}', '${alt}', false)" /></div>`;
     execCommand("insertHTML", img);
   };
 
   const insertVideoHtml = (src: string, name: string) => {
-    const video = `<div style="margin: 16px 0;"><video controls style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e5e7eb;"><source src="${src}" type="video/mp4"><source src="${src}" type="video/webm">Seu navegador não suporta vídeo HTML5.</video><p style="font-size: 14px; color: #6b7280; margin-top: 8px;">📹 ${name}</p></div>`;
+    const video = `<div style="margin: 16px 0; text-align: center;"><video controls style="max-width: 300px; height: auto; border-radius: 8px; border: 1px solid #e5e7eb; cursor: pointer;" onclick="window.openImageModal('${src}', '${name}', true)"><source src="${src}" type="video/mp4"><source src="${src}" type="video/webm">Seu navegador não suporta vídeo HTML5.</video><p style="font-size: 14px; color: #6b7280; margin-top: 8px;">📹 ${name}</p></div>`;
     execCommand("insertHTML", video);
   };
 
@@ -359,6 +380,15 @@ export default function RichTextEditor({
           real. Suporte para imagens (até 10MB) e vídeos (até 500MB).
         </p>
       </div>
+
+      {/* Modal de imagem/vídeo */}
+      <ImageModal
+        isOpen={!!modalImage}
+        onClose={() => setModalImage(null)}
+        src={modalImage?.src || ""}
+        alt={modalImage?.alt || ""}
+        isVideo={modalImage?.isVideo || false}
+      />
     </div>
   );
 }

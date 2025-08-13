@@ -116,7 +116,7 @@ function CommentItem({
           </div>
 
           {/* Ações no canto inferior direito */}
-          <div className="absolute bottom-0 right-0 flex items-center gap-2">
+          <div className="absolute bottom-0 right-4 flex items-center gap-2">
             <button
               onClick={() => onLike(comment.id)}
               className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${

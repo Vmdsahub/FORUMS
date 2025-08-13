@@ -141,15 +141,42 @@ export default function CreateTopicModal({
         onTopicCreated?.(newTopic);
         onStatsRefresh?.(); // Refresh category statistics
       } else {
-        const errorData = await response
-          .json()
-          .catch(() => ({ message: "Erro desconhecido" }));
+        console.log("Response status:", response.status);
+        console.log(
+          "Response headers:",
+          Object.fromEntries(response.headers.entries()),
+        );
+
+        let errorData;
+        try {
+          const responseText = await response.text();
+          console.log("Response text:", responseText);
+          errorData = responseText
+            ? JSON.parse(responseText)
+            : { message: "Erro desconhecido" };
+        } catch (parseError) {
+          console.error("Error parsing response:", parseError);
+          errorData = { message: "Erro ao processar resposta do servidor" };
+        }
+
         console.error("Erro ao criar tópico:", errorData);
-        toast.error(errorData.message || "Erro ao criar tópico");
+        toast.error(errorData?.message || "Erro ao criar tópico");
       }
     } catch (error) {
       console.error("Error creating topic:", error);
-      toast.error("Erro ao criar tópico");
+      console.error("Error type:", typeof error);
+      console.error("Error constructor:", error?.constructor?.name);
+
+      let errorMessage = "Erro ao criar tópico";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === "string") {
+        errorMessage = error;
+      } else if (error && typeof error === "object" && "message" in error) {
+        errorMessage = String(error.message);
+      }
+
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
