@@ -329,6 +329,29 @@ export function getTopicCommentStats(topicId: string): {
   };
 }
 
+// Função para obter a data do comentário mais recente de um tópico
+export function getTopicMostRecentCommentDate(topicId: string): Date | null {
+  const commentIds = topicComments.get(topicId) || [];
+
+  if (commentIds.length === 0) {
+    return null;
+  }
+
+  let mostRecentDate: Date | null = null;
+
+  commentIds.forEach((commentId) => {
+    const comment = comments.get(commentId);
+    if (comment) {
+      const commentDate = new Date(comment.createdAt);
+      if (!mostRecentDate || commentDate > mostRecentDate) {
+        mostRecentDate = commentDate;
+      }
+    }
+  });
+
+  return mostRecentDate;
+}
+
 // Função para calcular total de likes recebidos por um usuário nos comentários
 export function getCommentLikesForUser(userId: string): number {
   let totalLikes = 0;
