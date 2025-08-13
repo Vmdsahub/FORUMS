@@ -61,37 +61,40 @@ export default function Shop() {
   return (
     <main className="container max-w-6xl mx-auto px-6 py-12">
       <div className="bg-white rounded-lg border border-gray-200 p-8">
-        {/* Header */}
+        {/* Header with likes balance on the right */}
         <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-black mb-2">
-              🛒 Loja de Likes
-            </h1>
-            <p className="text-gray-600">
-              Personalize sua experiência com temas exclusivos
-            </p>
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate("/")}
+              className="flex items-center gap-2 text-gray-600 hover:text-black transition-colors"
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path
+                  d="M8 0L6.6 1.4 12.2 7H0v2h12.2L6.6 14.6 8 16l8-8-8-8z"
+                  transform="rotate(180 8 8)"
+                />
+              </svg>
+              Voltar
+            </button>
+            <div>
+              <h1 className="text-3xl font-bold text-black mb-2">
+                🛒 Loja de Likes
+              </h1>
+              <p className="text-gray-600">
+                Personalize sua experiência com temas exclusivos
+              </p>
+            </div>
           </div>
-          <button
-            onClick={() => navigate("/")}
-            className="flex items-center gap-2 text-gray-600 hover:text-black transition-colors"
-          >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-              <path
-                d="M8 0L6.6 1.4 12.2 7H0v2h12.2L6.6 14.6 8 16l8-8-8-8z"
-                transform="rotate(180 8 8)"
-              />
-            </svg>
-            Voltar
-          </button>
-        </div>
-
-        {/* User Likes Balance - Simplified */}
-        <div className="flex items-center justify-center mb-8">
-          <div className="flex items-center gap-2 bg-white rounded-full px-6 py-3 border border-gray-200 shadow-sm">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="#ef4444">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-            </svg>
-            <span className="text-lg font-bold text-gray-900">{userLikes}</span>
+          
+          {/* Likes balance - right side, bigger and cleaner */}
+          <div className="flex items-center gap-3 bg-gray-50 px-6 py-4 border border-gray-200">
+            <span className="text-gray-700 font-medium">Seus likes:</span>
+            <div className="flex items-center gap-2">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="#ef4444">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+              <span className="text-2xl font-bold text-gray-900">{userLikes}</span>
+            </div>
           </div>
         </div>
 
@@ -121,15 +124,14 @@ export default function Shop() {
                     {theme.icon}
                   </div>
 
-                  {/* Theme Info */}
+                  {/* Theme Info - Simplified */}
                   <div className="mb-4">
-                    <h3 className="text-lg font-semibold text-black mb-2">
+                    <h3 className="text-lg font-semibold text-black mb-3">
                       {theme.name}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-3">
-                      {theme.description}
-                    </p>
-                    <div className="flex items-center justify-between">
+                    
+                    {/* Price and Status */}
+                    <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-1">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="#ef4444">
                           <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
@@ -145,7 +147,7 @@ export default function Shop() {
                     </div>
                   </div>
 
-                  {/* Purchase Button */}
+                  {/* Purchase Button - Simplified */}
                   <Button
                     onClick={() => handlePurchase(theme)}
                     disabled={isLoading || purchased || !affordable}
@@ -165,7 +167,7 @@ export default function Shop() {
                     ) : purchased ? (
                       "Já possui"
                     ) : affordable ? (
-                      `Comprar por ${theme.price} likes`
+                      "Comprar"
                     ) : (
                       `Precisa de ${theme.price - userLikes} likes a mais`
                     )}

@@ -33,8 +33,8 @@ const AVAILABLE_THEMES: Theme[] = [
   {
     id: "dark",
     name: "Tema Noturno",
-    description: "Interface escura elegante para uma experiência suave",
-    price: 20,
+    description: "",
+    price: 1,
     preview: "/api/images/theme-dark-preview.jpg",
     cssClass: "theme-dark",
     icon: "🌙"
