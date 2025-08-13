@@ -61,7 +61,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Garantir que nunca haja tema aplicado inicialmente
   useEffect(() => {
-    document.body.classList.remove("theme-dark");
+    document.body.classList.remove("theme-dark", "theme-glassmorphism-liquid");
   }, []);
 
   // Carregar dados do usuário quando logado
