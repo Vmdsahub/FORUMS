@@ -936,6 +936,9 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
 
         const lastTopic = mostRecentTopicData.topic;
 
+        // Determine if this is from a comment or the original post
+        const isFromComment = lastTopic.lastPost?.author && lastTopic.lastPost.author !== lastTopic.author;
+
         // Use the lastPost data if available, otherwise fall back to current time
         categoryStats[categoryId].lastPost = {
           title: lastTopic.title,
@@ -952,6 +955,7 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
               minute: "2-digit",
               timeZone: "America/Sao_Paulo",
             }),
+          isComment: isFromComment,
         };
       }
     });
