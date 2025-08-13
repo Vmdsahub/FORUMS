@@ -227,7 +227,7 @@ function initializeDemoData() {
       title: "Stable Diffusion XL: Novidades e melhorias",
       description: "Análise das novas funcionalidades do SDXL",
       content:
-        "O Stable Diffusion XL trouxe várias melhorias significativas:\n\n1. **Resoluç��o nativa 1024x1024**: Muito melhor que os 512x512 do modelo original\n2. **Modelo de refino**: Permite melhorar os detalhes das imagens geradas\n3. **Melhor compreensão de texto**: Prompts mais complexos funcionam melhor\n4. **Controle de aspectos**: Diferentes proporções funcionam melhor\n\nTestei bastante e os resultados são impressionantes. Alguém mais teve experiências similares?",
+        "O Stable Diffusion XL trouxe várias melhorias significativas:\n\n1. **Resolução nativa 1024x1024**: Muito melhor que os 512x512 do modelo original\n2. **Modelo de refino**: Permite melhorar os detalhes das imagens geradas\n3. **Melhor compreensão de texto**: Prompts mais complexos funcionam melhor\n4. **Controle de aspectos**: Diferentes proporções funcionam melhor\n\nTestei bastante e os resultados são impressionantes. Alguém mais teve experiências similares?",
       author: "ImageGen",
       authorId: "user_image_gen",
       authorAvatar: "IG",
@@ -247,7 +247,7 @@ function initializeDemoData() {
       title: "Como resolver erro de VRAM insuficiente no Stable Diffusion?",
       description: "Dicas para otimizar o uso de memória da GPU",
       content:
-        "Pessoal, estou tentando rodar o Stable Diffusion localmente mas sempre recebo erro de VRAM insuficiente. Minha GPU tem 8GB mas mesmo assim não consegui gerar imagens em alta resolução.\n\nJá tentei:\n- Reduzir o batch size\n- Usar o parâmetro --lowvram\n- Gerar em resolução menor\n\nAlguém tem mais dicas? �� normal precisar de mais de 8GB para funcionar bem?",
+        "Pessoal, estou tentando rodar o Stable Diffusion localmente mas sempre recebo erro de VRAM insuficiente. Minha GPU tem 8GB mas mesmo assim não consegui gerar imagens em alta resolução.\n\nJá tentei:\n- Reduzir o batch size\n- Usar o parâmetro --lowvram\n- Gerar em resolução menor\n\nAlguém tem mais dicas? É normal precisar de mais de 8GB para funcionar bem?",
       author: "TechNewbie",
       authorId: "user_tech_newbie",
       authorAvatar: "TN",
@@ -359,8 +359,8 @@ function initializeDemoData() {
   });
 }
 
-// Initialize demo data - disabled to use real data only
-// initializeDemoData();
+// Initialize demo data
+initializeDemoData();
 
 // Route handlers
 export const handleGetTopics: RequestHandler = (req, res) => {
