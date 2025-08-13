@@ -141,7 +141,9 @@ export default function Shop() {
                     className={`w-full h-32 rounded-lg mb-4 flex items-center justify-center text-4xl ${
                       theme.id === "dark"
                         ? "bg-gray-900 text-white"
-                        : "bg-gray-100"
+                        : theme.id === "glassmorphism-liquid"
+                          ? "bg-gradient-to-br from-blue-200/30 via-purple-200/30 to-pink-200/30 backdrop-blur-md border border-white/20 shadow-xl"
+                          : "bg-gray-100"
                     }`}
                   >
                     {theme.icon}
