@@ -780,37 +780,33 @@
 
   /* === BORDAS === */
   .theme-glassmorphism-liquid .border-gray-100 {
-    border-color: var(--glass-border-secondary) !important;
+    border-color: var(--glass-border-light) !important;
   }
 
   .theme-glassmorphism-liquid .border-gray-200 {
-    border-color: var(--glass-border-primary) !important;
+    border-color: var(--glass-border) !important;
   }
 
   .theme-glassmorphism-liquid .border-gray-300 {
-    border-color: var(--glass-border-primary) !important;
+    border-color: var(--glass-border) !important;
   }
 
-  /* === HOVER STATES AVANÇADOS === */
+  /* === HOVER STATES === */
   .theme-glassmorphism-liquid .hover\\:bg-gray-50:hover {
-    background: var(--glass-bg-quaternary) !important;
-    backdrop-filter: blur(25px) saturate(200%);
-    transform: translateY(-2px) scale(1.02);
-    box-shadow:
-      0 12px 40px rgba(0, 0, 0, 0.4),
-      0 0 20px rgba(0, 212, 255, 0.2);
-    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    background: var(--glass-bg-tertiary) !important;
+    backdrop-filter: blur(25px) saturate(120%);
+    transform: translateY(-1px);
+    transition: all 0.2s ease;
   }
 
   .theme-glassmorphism-liquid .hover\\:bg-gray-100:hover {
-    background: var(--glass-bg-quaternary) !important;
-    backdrop-filter: blur(20px) saturate(180%);
+    background: var(--glass-bg-tertiary) !important;
+    backdrop-filter: blur(20px) saturate(120%);
   }
 
   .theme-glassmorphism-liquid .hover\\:text-black:hover {
-    color: var(--glass-accent-cyan) !important;
-    text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
-    transition: all 0.3s ease;
+    color: var(--glass-text-primary) !important;
+    transition: all 0.2s ease;
   }
 
   /* === INPUTS E FORMS LÍQUIDOS === */
