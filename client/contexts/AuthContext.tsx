@@ -95,10 +95,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         let errorMessage = "Erro ao fazer login";
         try {
           const error: ErrorResponse = await response.json();
+          console.log("Login error response:", error);
           errorMessage = error.message || errorMessage;
         } catch (jsonError) {
           console.error("Error parsing error response:", jsonError);
         }
+        console.log("Final error message:", errorMessage);
         toast.error(errorMessage);
         return false;
       }

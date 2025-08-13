@@ -13,8 +13,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         position="bottom-right"
         toastOptions={{
           style: {
-            marginRight: '16px',
-            marginBottom: '16px'
+            marginRight: '8px',
+            marginBottom: '8px'
           }
         }}
       />
