@@ -363,6 +363,12 @@ export default function Index(props: IndexProps) {
     if (user?.name === "Vitoca") {
       event.stopPropagation();
       setEditingCategoryId(categoryId);
+
+      // Encontrar a categoria e carregar sua descrição
+      const allCategories = [...toolsCategories, ...openSourceCategories];
+      const category = allCategories.find(cat => cat.id === categoryId);
+      setEditingCategoryDescription(category?.description || "");
+
       setIconModalOpen(true);
     }
   };
