@@ -817,10 +817,13 @@
   .theme-glassmorphism-liquid textarea,
   .theme-glassmorphism-liquid select {
     background: var(--glass-bg-primary) !important;
-    backdrop-filter: blur(20px) saturate(120%);
+    backdrop-filter: blur(25px) saturate(130%);
     border: 1px solid var(--glass-border) !important;
     color: var(--glass-text-primary) !important;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
   }
 
   .theme-glassmorphism-liquid input::placeholder,
@@ -830,23 +833,32 @@
 
   .theme-glassmorphism-liquid input:focus,
   .theme-glassmorphism-liquid textarea:focus {
-    backdrop-filter: blur(25px) saturate(130%);
+    backdrop-filter: blur(30px) saturate(140%);
     border-color: var(--glass-border) !important;
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
 
   /* === BUTTONS === */
   .theme-glassmorphism-liquid .bg-black {
     background: var(--glass-bg-secondary) !important;
-    backdrop-filter: blur(20px) saturate(120%);
+    backdrop-filter: blur(25px) saturate(130%);
     color: var(--glass-text-primary) !important;
     border: 1px solid var(--glass-border);
-    transition: all 0.2s ease;
+    box-shadow:
+      0 4px 16px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transition: all 0.3s ease;
   }
 
   .theme-glassmorphism-liquid .bg-black:hover {
     background: var(--glass-bg-tertiary) !important;
-    backdrop-filter: blur(25px) saturate(130%);
-    transform: translateY(-1px);
+    backdrop-filter: blur(30px) saturate(140%);
+    transform: translateY(-2px);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
   }
 
   .theme-glassmorphism-liquid .bg-gray-900 {
