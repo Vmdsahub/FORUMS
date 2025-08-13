@@ -40,6 +40,15 @@ const AVAILABLE_THEMES: Theme[] = [
     cssClass: "theme-dark",
     icon: "🌙",
   },
+  {
+    id: "glassmorphism-liquid",
+    name: "Glassmorphism Liquid",
+    description: "Tema avançado com efeitos de vidro líquido, refração e distorção",
+    price: 1,
+    preview: "/api/images/theme-glass-preview.jpg",
+    cssClass: "theme-glassmorphism-liquid",
+    icon: "💎",
+  },
   // Futuros temas podem ser adicionados aqui
 ];
 
