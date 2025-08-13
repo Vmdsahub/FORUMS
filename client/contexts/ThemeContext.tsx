@@ -53,8 +53,18 @@ const AVAILABLE_THEMES: Theme[] = [
 ];
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
-  const [availableThemes] = useState<Theme[]>(AVAILABLE_THEMES);
+  const { user, isAdmin } = useAuth();
+
+  // Filtrar temas baseado no status de admin
+  const getAvailableThemes = (): Theme[] => {
+    if (isAdmin) {
+      return AVAILABLE_THEMES; // Admin vê todos os temas
+    }
+    // Usuários normais não veem o glassmorphism-liquid
+    return AVAILABLE_THEMES.filter(theme => theme.id !== "glassmorphism-liquid");
+  };
+
+  const [availableThemes, setAvailableThemes] = useState<Theme[]>(getAvailableThemes());
   const [userThemes, setUserThemes] = useState<UserTheme[]>([]);
   const [currentTheme, setCurrentTheme] = useState<string>("default");
   const [userLikes, setUserLikes] = useState<number>(0);
