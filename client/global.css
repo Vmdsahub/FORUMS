@@ -664,67 +664,45 @@
     max-width: 400px !important;
   }
 
-  /* 💎 GLASSMORPHISM LIQUID THEME - Sistema Avançado de Vidro Líquido */
+  /* 💎 GLASSMORPHISM LIQUID THEME - Estilo iOS Minimalista */
   .theme-glassmorphism-liquid {
-    /* === PALETA DE CORES GLASSMORPHISM === */
-    --glass-bg-primary: rgba(255, 255, 255, 0.05);
-    --glass-bg-secondary: rgba(255, 255, 255, 0.08);
-    --glass-bg-tertiary: rgba(255, 255, 255, 0.12);
-    --glass-bg-quaternary: rgba(255, 255, 255, 0.18);
+    /* === PALETA MINIMALISTA === */
+    --glass-bg-primary: rgba(255, 255, 255, 0.1);
+    --glass-bg-secondary: rgba(255, 255, 255, 0.15);
+    --glass-bg-tertiary: rgba(255, 255, 255, 0.2);
 
     --glass-text-primary: rgba(255, 255, 255, 0.95);
     --glass-text-secondary: rgba(255, 255, 255, 0.8);
     --glass-text-tertiary: rgba(255, 255, 255, 0.65);
-    --glass-text-quaternary: rgba(255, 255, 255, 0.45);
 
-    --glass-accent-cyan: #00d4ff;
-    --glass-accent-purple: #a855f7;
-    --glass-accent-pink: #ec4899;
-    --glass-accent-blue: #3b82f6;
-    --glass-accent-emerald: #10b981;
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --glass-border-light: rgba(255, 255, 255, 0.1);
 
-    --glass-border-primary: rgba(255, 255, 255, 0.2);
-    --glass-border-secondary: rgba(255, 255, 255, 0.15);
-    --glass-border-accent: rgba(0, 212, 255, 0.5);
-
-    /* === VARIÁVEIS CSS CUSTOMIZADAS === */
-    --background: 220 15% 8%;
-    --foreground: 0 0% 100%;
-    --card: 220 15% 10%;
-    --card-foreground: 0 0% 100%;
-    --popover: 220 15% 6%;
-    --popover-foreground: 0 0% 100%;
-    --primary: 195 100% 50%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 220 15% 15%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 220 15% 15%;
+    /* === VARIÁVEIS CSS === */
+    --background: 0 0% 5%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 15%;
     --muted-foreground: 0 0% 70%;
-    --accent: 195 100% 50%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 348 83% 47%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 220 15% 20%;
-    --input: 220 15% 15%;
-    --ring: 195 100% 50%;
+    --accent: 0 0% 20%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 0 0% 83%;
     --radius: 1rem;
 
     color-scheme: dark;
-    position: relative;
+    background: transparent;
     min-height: 100vh;
-    transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-  }
-
-  /* === BACKGROUND BASE === */
-  .theme-glassmorphism-liquid {
-    background: linear-gradient(
-      135deg,
-      rgba(13, 16, 31, 0.95) 0%,
-      rgba(20, 25, 45, 0.92) 25%,
-      rgba(15, 20, 35, 0.94) 50%,
-      rgba(18, 23, 40, 0.93) 75%,
-      rgba(12, 15, 28, 0.96) 100%
-    );
   }
 
   /* === ANIMAÇÕES LIQUID === */
