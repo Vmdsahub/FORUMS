@@ -153,7 +153,7 @@ export default function UserHoverCard({
                   {userAvatar}
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
                     <h3 className="font-semibold text-gray-900">{userName}</h3>
                     <span className="text-sm font-medium text-gray-700 px-2 py-1 rounded-full flex items-center gap-1">
                       ❤️ {userProfile.points}
