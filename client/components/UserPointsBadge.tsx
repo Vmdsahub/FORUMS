@@ -35,14 +35,8 @@ export default function UserPointsBadge({
       try {
         console.log(`[UserPointsBadge] Buscando stats para usuário: ${userId}`);
 
-        // Buscar saldo disponível de likes (mesma fonte da loja)
-        const likesResponse = await fetch("/api/user/likes", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-          },
-        });
-
-        // Buscar badges do perfil
+        // Buscar likes reais do usuário (mesma API que UserHoverCard)
+        const likesResponse = await fetch(`/api/user-stats/profile/${userId}`);
         const profileResponse = await fetch(`/api/user/profile/${userId}`);
 
         if (likesResponse.ok && profileResponse.ok) {
@@ -50,13 +44,13 @@ export default function UserPointsBadge({
           const profileData = await profileResponse.json();
 
           console.log(
-            `[UserPointsBadge] Saldo de likes:`,
-            likesData.totalLikes,
+            `[UserPointsBadge] Likes reais:`,
+            likesData.points,
           );
           console.log(`[UserPointsBadge] Badges:`, profileData.badges);
 
           setUserStats({
-            points: likesData.totalLikes, // Usar saldo disponível (já descontando gastos)
+            points: likesData.points, // Usar likes reais calculados
             badges: profileData.badges,
           });
         } else {
@@ -107,7 +101,7 @@ export default function UserPointsBadge({
     <div className={`flex items-center ${classes.gap}`}>
       {showPoints && (
         <span
-          className={`${classes.text} text-red-600 font-medium bg-red-50 px-3 py-1 rounded-full flex items-center gap-1`}
+          className={`${classes.text} text-gray-700 font-medium px-3 py-1 rounded-full flex items-center gap-1`}
         >
           ❤️ {userStats.points}
         </span>
