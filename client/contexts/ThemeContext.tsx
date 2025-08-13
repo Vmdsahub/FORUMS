@@ -202,7 +202,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setCurrentTheme(themeId);
 
     // Remover qualquer classe de tema
-    document.body.classList.remove("theme-dark");
+    document.body.classList.remove("theme-dark", "theme-glassmorphism-liquid");
 
     if (themeId === "default") {
       // Tema padrão: remover do localStorage
@@ -210,7 +210,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     } else {
       // Tema específico: salvar e aplicar
       localStorage.setItem("selected_theme", themeId);
-      document.body.classList.add("theme-dark");
+      if (themeId === "dark") {
+        document.body.classList.add("theme-dark");
+      } else if (themeId === "glassmorphism-liquid") {
+        document.body.classList.add("theme-glassmorphism-liquid");
+      }
     }
   };
 
