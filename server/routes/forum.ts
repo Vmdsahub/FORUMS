@@ -814,43 +814,37 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
     const allTopics = Array.from(topics.values());
     const allComments = Array.from(comments.values());
 
+    // Lista de todas as categorias
+    const allCategoryIds = [
+      // Ferramentas
+      "imagem",
+      "video",
+      "musica-audio",
+      "vibe-coding",
+      "duvidas-erros",
+      "outros",
+      // Open-Source
+      "opensource-imagem",
+      "opensource-video",
+      "opensource-musica-audio",
+      "opensource-vibe-coding",
+      "opensource-duvidas-erros",
+      "opensource-outros"
+    ];
+
     // Calculate stats for each category
-    const categoryStats = {
-      imagem: {
-        totalTopics: allTopics.filter((t) => t.category === "imagem").length,
+    const categoryStats: any = {};
+
+    allCategoryIds.forEach(categoryId => {
+      categoryStats[categoryId] = {
+        totalTopics: allTopics.filter((t) => t.category === categoryId).length,
         totalPosts: allComments.filter((c) => {
           const topic = allTopics.find((t) => t.id === c.topicId);
-          return topic?.category === "imagem";
+          return topic?.category === categoryId;
         }).length,
         lastPost: null as any,
-      },
-      video: {
-        totalTopics: allTopics.filter((t) => t.category === "video").length,
-        totalPosts: allComments.filter((c) => {
-          const topic = allTopics.find((t) => t.id === c.topicId);
-          return topic?.category === "video";
-        }).length,
-        lastPost: null as any,
-      },
-      "musica-audio": {
-        totalTopics: allTopics.filter((t) => t.category === "musica-audio")
-          .length,
-        totalPosts: allComments.filter((c) => {
-          const topic = allTopics.find((t) => t.id === c.topicId);
-          return topic?.category === "musica-audio";
-        }).length,
-        lastPost: null as any,
-      },
-      "vibe-coding": {
-        totalTopics: allTopics.filter((t) => t.category === "vibe-coding")
-          .length,
-        totalPosts: allComments.filter((c) => {
-          const topic = allTopics.find((t) => t.id === c.topicId);
-          return topic?.category === "vibe-coding";
-        }).length,
-        lastPost: null as any,
-      },
-    };
+      };
+    });
 
     // Find last post for each category
     Object.keys(categoryStats).forEach((categoryId) => {
