@@ -24,6 +24,10 @@ const users: Map<
     email: string;
     password: string;
     role?: "admin" | "user";
+    emailConfirmed?: boolean;
+    phone?: string;
+    birthDate?: string;
+    acceptNewsletter?: boolean;
   }
 > = new Map();
 const tokens: Map<string, string> = new Map(); // token -> userId
