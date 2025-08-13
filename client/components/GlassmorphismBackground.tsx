@@ -8,15 +8,16 @@ export default function GlassmorphismBackground() {
   }
 
   return (
-    <div className="fixed inset-0 z-[-1] overflow-hidden">
+    <div className="fixed inset-0 z-[-10] overflow-hidden pointer-events-none">
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-60"
+        className="absolute inset-0 w-full h-full object-cover opacity-30"
         style={{
-          filter: "blur(1px) saturate(1.2) contrast(1.1)",
+          filter: "blur(2px)",
+          position: "fixed",
         }}
       >
         <source
@@ -24,53 +25,6 @@ export default function GlassmorphismBackground() {
           type="video/mp4"
         />
       </video>
-      
-      {/* Gradient overlay */}
-      <div 
-        className="absolute inset-0 animate-pulse"
-        style={{
-          background: `linear-gradient(
-            135deg,
-            rgba(0, 212, 255, 0.08) 0%,
-            rgba(168, 85, 247, 0.06) 25%,
-            rgba(236, 72, 153, 0.04) 50%,
-            rgba(16, 185, 129, 0.06) 75%,
-            rgba(59, 130, 246, 0.08) 100%
-          )`,
-          animation: "liquidFlow 20s ease-in-out infinite",
-        }}
-      />
-      
-      {/* Additional liquid effects */}
-      <div className="absolute inset-0 opacity-30">
-        <div 
-          className="absolute w-96 h-96 rounded-full blur-3xl animate-pulse"
-          style={{
-            background: "radial-gradient(circle, rgba(0, 212, 255, 0.3), transparent)",
-            top: "10%",
-            left: "10%",
-            animation: "glassFloat 8s ease-in-out infinite",
-          }}
-        />
-        <div 
-          className="absolute w-80 h-80 rounded-full blur-3xl animate-pulse"
-          style={{
-            background: "radial-gradient(circle, rgba(168, 85, 247, 0.3), transparent)",
-            top: "60%",
-            right: "10%",
-            animation: "glassFloat 10s ease-in-out infinite reverse",
-          }}
-        />
-        <div 
-          className="absolute w-72 h-72 rounded-full blur-3xl animate-pulse"
-          style={{
-            background: "radial-gradient(circle, rgba(236, 72, 153, 0.3), transparent)",
-            bottom: "10%",
-            left: "30%",
-            animation: "glassFloat 12s ease-in-out infinite",
-          }}
-        />
-      </div>
     </div>
   );
 }
