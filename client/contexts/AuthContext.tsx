@@ -71,19 +71,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   ): Promise<boolean> => {
     setIsLoading(true);
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password, captcha }),
-        signal: controller.signal,
       });
-
-      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data: AuthResponse = await response.json();
@@ -92,31 +86,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.success("Login realizado com sucesso!");
         return true;
       } else {
-        // Clone the response before trying to parse it
-        const responseClone = response.clone();
-        try {
-          const errorData = await response.json();
-          console.log("Error data:", errorData);
-          toast.error(errorData?.message || "Erro ao fazer login");
-        } catch (jsonError) {
-          console.error("JSON parse error:", jsonError);
-          try {
-            const textData = await responseClone.text();
-            console.log("Response as text:", textData);
-          } catch (textError) {
-            console.error("Text parse error:", textError);
-          }
-          toast.error("Erro ao fazer login");
-        }
+        const errorData = await response.json();
+        toast.error(errorData?.message || "Erro ao fazer login");
         return false;
       }
     } catch (error: any) {
       console.error("Login error:", error);
-      if (error.name === "AbortError") {
-        toast.error("Requisição expirou. Tente novamente.");
-      } else {
-        toast.error("Erro de conexão. Tente novamente.");
-      }
+      toast.error("Erro de conexão. Tente novamente.");
       return false;
     } finally {
       setIsLoading(false);
