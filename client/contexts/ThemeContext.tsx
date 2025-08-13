@@ -49,6 +49,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [currentTheme, setCurrentTheme] = useState<string>("default");
   const [userLikes, setUserLikes] = useState<number>(0);
 
+  // Garantir que nunca haja tema aplicado inicialmente
+  useEffect(() => {
+    document.body.classList.remove("theme-dark");
+  }, []);
+
   // Carregar dados do usuário quando logado
   useEffect(() => {
     if (user) {
