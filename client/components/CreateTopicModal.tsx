@@ -145,7 +145,7 @@ export default function CreateTopicModal({
           .json()
           .catch(() => ({ message: "Erro desconhecido" }));
         console.error("Erro ao criar tópico:", errorData);
-        toast.error(errorData.message || "Erro ao criar tópico");
+        toast.error(errorData?.message || "Erro ao criar tópico");
       }
     } catch (error) {
       console.error("Error creating topic:", error);
