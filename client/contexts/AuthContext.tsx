@@ -50,11 +50,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const userData: User = await response.json();
         setUser(userData);
       } else {
+        // Token is invalid, remove it
+        console.log("Token validation failed, status:", response.status);
         localStorage.removeItem("auth_token");
+        setUser(null);
       }
     } catch (error) {
       console.error("Error fetching user info:", error);
       localStorage.removeItem("auth_token");
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
