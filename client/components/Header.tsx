@@ -455,7 +455,7 @@ export default function Header({ activeSection }: HeaderProps) {
                     <hr className="my-2" />
                     <button
                       className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-red-50 transition-colors text-left"
-                      onClick={logout}
+                      onClick={() => logout()}
                     >
                       <svg
                         width="16"
@@ -699,7 +699,7 @@ export default function Header({ activeSection }: HeaderProps) {
                       <Input
                         id="register-password"
                         type="password"
-                        placeholder="••••••••"
+                        placeholder="••��•••••"
                         value={registerPassword}
                         onChange={(e) => setRegisterPassword(e.target.value)}
                         className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"

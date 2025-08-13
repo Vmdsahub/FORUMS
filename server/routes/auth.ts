@@ -24,6 +24,10 @@ const users: Map<
     email: string;
     password: string;
     role?: "admin" | "user";
+    emailConfirmed?: boolean;
+    phone?: string;
+    birthDate?: string;
+    acceptNewsletter?: boolean;
   }
 > = new Map();
 const tokens: Map<string, string> = new Map(); // token -> userId
@@ -36,6 +40,7 @@ users.set(demoUserId, {
   email: "demo@exemplo.com",
   password: hashPassword("123456"), // password: 123456
   role: "user",
+  emailConfirmed: true, // Demo user has confirmed email
 });
 
 // Add admin user Vitoca
@@ -46,6 +51,7 @@ users.set(adminUserId, {
   email: "vitoca@admin.com",
   password: hashPassword("admin123"), // password: admin123
   role: "admin",
+  emailConfirmed: true, // Admin has confirmed email
 });
 
 // Validation schemas
@@ -125,8 +131,8 @@ export const handleLogin: RequestHandler = (req, res) => {
       } as ErrorResponse);
     }
 
-    // Check if email is confirmed
-    if (!user.emailConfirmed) {
+    // Check if email is confirmed (only for new users, demo users are automatically confirmed)
+    if (user.emailConfirmed === false) {
       return res.status(403).json({
         message:
           "Confirme seu email antes de fazer login. Verifique sua caixa de entrada.",
@@ -210,7 +216,7 @@ export const handleRegister: RequestHandler = (req, res) => {
       birthDate,
       password: hashPassword(password),
       role: "user" as const,
-      emailConfirmed: false, // User needs to confirm email
+      emailConfirmed: true, // For demo purposes, auto-confirm email
       acceptNewsletter: acceptNewsletter || false,
     };
 
