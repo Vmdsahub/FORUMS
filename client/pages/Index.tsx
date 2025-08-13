@@ -59,6 +59,7 @@ interface ForumCategory {
     author: string;
     date: string;
     time: string;
+    isComment?: boolean;
   };
 }
 
