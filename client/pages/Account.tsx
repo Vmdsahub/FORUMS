@@ -362,11 +362,10 @@ export default function Account() {
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-1">
               <h2 className="text-xl font-semibold text-black">{user.name}</h2>
-              <div className="flex items-center gap-2 bg-red-50 px-3 py-1 rounded-full">
-                <span className="text-red-600 font-medium text-base">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full">
+                <span className="text-gray-700 font-medium text-2xl">
                   ❤️ {userLikes}
                 </span>
-                <span className="text-sm text-gray-500">likes</span>
               </div>
             </div>
             <p className="text-gray-600 mb-1">{user.email}</p>
