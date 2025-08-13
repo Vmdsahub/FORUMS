@@ -871,58 +871,40 @@
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
   }
 
-  /* === NAVIGATION LÍQUIDA === */
+  /* === NAVIGATION === */
   .theme-glassmorphism-liquid .glass-minimal {
     background: var(--glass-bg-primary) !important;
-    backdrop-filter: blur(30px) saturate(200%);
-    border-bottom: 1px solid var(--glass-border-primary) !important;
-    box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px) saturate(120%);
+    border-bottom: 1px solid var(--glass-border) !important;
   }
 
-  /* === SHADOWS LÍQUIDAS === */
+  /* === SHADOWS === */
   .theme-glassmorphism-liquid .shadow-sm {
-    box-shadow:
-      0 4px 15px rgba(0, 0, 0, 0.3),
-      0 0 10px rgba(0, 212, 255, 0.1) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
   }
 
   .theme-glassmorphism-liquid .shadow-md {
-    box-shadow:
-      0 8px 30px rgba(0, 0, 0, 0.4),
-      0 0 20px rgba(0, 212, 255, 0.15) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15) !important;
   }
 
   .theme-glassmorphism-liquid .shadow-lg {
-    box-shadow:
-      0 15px 50px rgba(0, 0, 0, 0.5),
-      0 0 30px rgba(0, 212, 255, 0.2) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
   }
 
-  /* === ELEMENTS ESPECIAIS === */
+  /* === ELEMENTOS ESPECIAIS === */
   .theme-glassmorphism-liquid .bg-blue-50 {
-    background: linear-gradient(
-      135deg,
-      rgba(0, 212, 255, 0.15),
-      rgba(168, 85, 247, 0.1)
-    ) !important;
-    backdrop-filter: blur(15px) saturate(150%);
-    border: 1px solid rgba(0, 212, 255, 0.3) !important;
+    background: var(--glass-bg-primary) !important;
+    backdrop-filter: blur(15px) saturate(110%);
+    border: 1px solid var(--glass-border) !important;
   }
 
   .theme-glassmorphism-liquid .text-blue-800 {
-    color: var(--glass-accent-cyan) !important;
-    text-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    color: var(--glass-text-primary) !important;
   }
 
   .theme-glassmorphism-liquid .bg-green-600 {
-    background: linear-gradient(
-      135deg,
-      var(--glass-accent-emerald),
-      #059669
-    ) !important;
-    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
+    background: var(--glass-bg-secondary) !important;
+    backdrop-filter: blur(15px) saturate(110%);
   }
 
   /* === SCROLLBARS LÍQUIDAS === */
