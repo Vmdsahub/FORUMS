@@ -11,21 +11,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <App />
       <Toaster
         position="bottom-right"
-        expand={false}
-        richColors
-        closeButton
         toastOptions={{
-          duration: 4000,
           style: {
-            width: 'fit-content !important',
-            maxWidth: '400px !important',
-            minWidth: '200px !important',
-            padding: '12px 16px !important',
-            margin: '0 !important',
-            marginRight: '16px !important',
-            marginBottom: '16px !important'
-          },
-          className: 'custom-toast'
+            width: 'fit-content',
+            maxWidth: '400px'
+          }
         }}
       />
     </AuthProvider>
