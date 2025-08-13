@@ -919,9 +919,11 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
       if (categoryTopics.length > 0) {
         // Get the topic with the most recent activity using same logic as topic list
         const topicsWithActivity = categoryTopics.map(topic => {
+          const activityTime = getMostRecentActivity(topic);
+          console.log(`[STATS] Category ${categoryId} - Topic "${topic.title}" activity: ${new Date(activityTime).toLocaleString()}`);
           return {
             topic,
-            mostRecentTime: getMostRecentActivity(topic)
+            mostRecentTime: activityTime
           };
         });
 
@@ -929,6 +931,8 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
         const mostRecentTopicData = topicsWithActivity.sort(
           (a, b) => b.mostRecentTime - a.mostRecentTime
         )[0];
+
+        console.log(`[STATS] Category ${categoryId} - Most recent topic: "${mostRecentTopicData.topic.title}" at ${new Date(mostRecentTopicData.mostRecentTime).toLocaleString()}`);
 
         const lastTopic = mostRecentTopicData.topic;
 
