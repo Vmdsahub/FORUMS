@@ -864,25 +864,18 @@ export default function Index(props: IndexProps) {
                                 {category.totalTopics}
                               </span>{" "}
                               tópicos
-                              <span className="mx-2">•</span>
-                              <span className="font-medium text-black">
-                                {category.totalPosts}
-                              </span>{" "}
-                              posts
                             </div>
                             {category.lastPost && (
                               <div className="text-xs">
-                                Último:{" "}
                                 <span className="font-medium">
                                   {category.lastPost.title}
                                 </span>
                                 <br />
-                                por{" "}
+                                Comentado por{" "}
                                 <span className="font-medium">
                                   {category.lastPost.author}
                                 </span>{" "}
-                                • {category.lastPost.date} às{" "}
-                                {category.lastPost.time}
+                                às {category.lastPost.time}
                               </div>
                             )}
                           </div>
@@ -1065,25 +1058,18 @@ export default function Index(props: IndexProps) {
                                 {category.totalTopics}
                               </span>{" "}
                               tópicos
-                              <span className="mx-2">•</span>
-                              <span className="font-medium text-black">
-                                {category.totalPosts}
-                              </span>{" "}
-                              posts
                             </div>
                             {category.lastPost && (
                               <div className="text-xs">
-                                Último:{" "}
                                 <span className="font-medium">
                                   {category.lastPost.title}
                                 </span>
                                 <br />
-                                por{" "}
+                                Comentado por{" "}
                                 <span className="font-medium">
                                   {category.lastPost.author}
                                 </span>{" "}
-                                • {category.lastPost.date} às{" "}
-                                {category.lastPost.time}
+                                às {category.lastPost.time}
                               </div>
                             )}
                           </div>
