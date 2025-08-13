@@ -739,22 +739,22 @@
   /* === BACKGROUNDS === */
   .theme-glassmorphism-liquid .bg-white {
     background: var(--glass-bg-secondary) !important;
-    backdrop-filter: blur(20px) saturate(120%);
+    backdrop-filter: blur(25px) saturate(130%);
     border: 1px solid var(--glass-border);
     box-shadow:
-      0 4px 16px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      0 8px 32px rgba(0, 0, 0, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
   }
 
   .theme-glassmorphism-liquid .bg-gray-50 {
     background: var(--glass-bg-primary) !important;
-    backdrop-filter: blur(15px) saturate(110%);
+    backdrop-filter: blur(20px) saturate(120%);
     border: 1px solid var(--glass-border-light);
   }
 
   .theme-glassmorphism-liquid .bg-gray-100 {
     background: var(--glass-bg-tertiary) !important;
-    backdrop-filter: blur(10px) saturate(110%);
+    backdrop-filter: blur(15px) saturate(120%);
   }
 
   /* === TEXTO === */
