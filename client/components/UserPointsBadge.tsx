@@ -49,7 +49,10 @@ export default function UserPointsBadge({
           const likesData = await likesResponse.json();
           const profileData = await profileResponse.json();
 
-          console.log(`[UserPointsBadge] Saldo de likes:`, likesData.totalLikes);
+          console.log(
+            `[UserPointsBadge] Saldo de likes:`,
+            likesData.totalLikes,
+          );
           console.log(`[UserPointsBadge] Badges:`, profileData.badges);
 
           setUserStats({

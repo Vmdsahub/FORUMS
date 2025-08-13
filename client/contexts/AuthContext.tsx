@@ -103,13 +103,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       return false;
-
     } catch (networkError: any) {
       console.error("Network error:", networkError);
 
       // If it's a network error and we're dealing with login attempt,
       // check if it's likely a 401 response that failed to parse
-      if (networkError.message?.includes("JSON") || networkError.message?.includes("stream")) {
+      if (
+        networkError.message?.includes("JSON") ||
+        networkError.message?.includes("stream")
+      ) {
         toast.error("Ops, parece que essa conta não existe!");
       } else {
         toast.error("Erro de conexão. Tente novamente.");

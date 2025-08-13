@@ -13,9 +13,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         position="bottom-right"
         toastOptions={{
           style: {
-            width: 'fit-content',
-            maxWidth: '400px'
-          }
+            width: "fit-content",
+            maxWidth: "400px",
+          },
         }}
       />
     </AuthProvider>
