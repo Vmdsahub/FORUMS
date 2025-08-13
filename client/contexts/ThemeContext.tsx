@@ -189,6 +189,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const applyTheme = (themeId: string) => {
+    // Só permitir aplicação de temas se o usuário estiver logado
+    if (!user) {
+      console.warn("Usuário deve estar logado para aplicar temas");
+      return;
+    }
+
     setCurrentTheme(themeId);
     localStorage.setItem("selected_theme", themeId);
     applyThemeToDom(themeId);
