@@ -35,22 +35,20 @@ export default function UserPointsBadge({
       try {
         console.log(`[UserPointsBadge] Buscando stats para usuário: ${userId}`);
 
-        // Buscar likes reais do usuário (mesma API que UserHoverCard)
-        const likesResponse = await fetch(`/api/user-stats/profile/${userId}`);
+        // Buscar dados do perfil do usuário
         const profileResponse = await fetch(`/api/user/profile/${userId}`);
 
-        if (likesResponse.ok && profileResponse.ok) {
-          const likesData = await likesResponse.json();
+        if (profileResponse.ok) {
           const profileData = await profileResponse.json();
 
           console.log(
-            `[UserPointsBadge] Likes reais:`,
-            likesData.points,
+            `[UserPointsBadge] Pontos do perfil:`,
+            profileData.points,
           );
           console.log(`[UserPointsBadge] Badges:`, profileData.badges);
 
           setUserStats({
-            points: likesData.points, // Usar likes reais calculados
+            points: profileData.points, // Usar pontos do perfil
             badges: profileData.badges,
           });
         } else {
