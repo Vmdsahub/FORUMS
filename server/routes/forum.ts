@@ -64,6 +64,45 @@ function getUserStats(userId: string) {
   return userStats.get(userId)!;
 }
 
+// Helper function to get most recent activity date (topic creation or last comment)
+function getMostRecentActivity(topic: Topic): number {
+  const topicDate = new Date(topic.createdAt).getTime();
+  let mostRecentTime = topicDate;
+
+  // Check lastPost from topic (this is updated when there are comments)
+  if (topic.lastPost && topic.lastPost.date && topic.lastPost.time) {
+    try {
+      // Parse Brazilian date format: DD/MM/YYYY
+      const [day, month, year] = topic.lastPost.date.split('/');
+      const [hours, minutes] = topic.lastPost.time.split(':');
+
+      const lastPostDate = new Date(
+        parseInt(year),
+        parseInt(month) - 1, // Month is 0-indexed
+        parseInt(day),
+        parseInt(hours),
+        parseInt(minutes)
+      );
+
+      const lastPostTime = lastPostDate.getTime();
+      if (!isNaN(lastPostTime)) {
+        mostRecentTime = Math.max(mostRecentTime, lastPostTime);
+      }
+    } catch (error) {
+      console.warn(`[SORT] Error parsing lastPost date for topic "${topic.title}":`, error);
+    }
+  }
+
+  // Also get the most recent comment date from the active comment system
+  const mostRecentCommentDate = getTopicMostRecentCommentDate(topic.id);
+  if (mostRecentCommentDate) {
+    const commentTime = mostRecentCommentDate.getTime();
+    mostRecentTime = Math.max(mostRecentTime, commentTime);
+  }
+
+  return mostRecentTime;
+}
+
 function addPoints(userId: string, points: number) {
   const stats = getUserStats(userId);
   stats.points += points;
