@@ -149,7 +149,8 @@ export default function CreateTopicModal({
       }
     } catch (error) {
       console.error("Error creating topic:", error);
-      toast.error("Erro ao criar tópico");
+      const errorMessage = error instanceof Error ? error.message : "Erro ao criar tópico";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
