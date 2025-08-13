@@ -322,6 +322,11 @@ export default function Index(props: IndexProps) {
     formData.append("file", file);
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        controller.abort(new DOMException("Upload request timeout", "TimeoutError"));
+      }, 30000); // 30s timeout for upload
+
       // Primeiro, fazer upload da imagem
       const uploadResponse = await fetch("/api/upload", {
         method: "POST",
@@ -329,6 +334,7 @@ export default function Index(props: IndexProps) {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
         body: formData,
+        signal: controller.signal,
       });
 
       if (uploadResponse.ok) {
@@ -345,7 +351,10 @@ export default function Index(props: IndexProps) {
             categoryId,
             iconUrl: uploadResult.url,
           }),
+          signal: controller.signal,
         });
+
+        clearTimeout(timeoutId);
 
         if (saveResponse.ok) {
           setCustomIcons((prev) => ({
@@ -355,11 +364,20 @@ export default function Index(props: IndexProps) {
           setIconModalOpen(false);
           setEditingCategoryId(null);
           toast.success("Ícone atualizado com sucesso!");
+        } else {
+          toast.error("Erro ao salvar ícone");
         }
+      } else {
+        clearTimeout(timeoutId);
+        toast.error("Erro ao fazer upload da imagem");
       }
-    } catch (error) {
-      console.error("Erro ao fazer upload do ícone:", error);
-      toast.error("Erro ao fazer upload do ícone");
+    } catch (error: any) {
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        toast.error("Upload cancelado ou demorou muito para responder");
+      } else {
+        console.error("Erro ao fazer upload do ícone:", error.message);
+        toast.error("Erro ao fazer upload do ícone");
+      }
     }
   };
 
