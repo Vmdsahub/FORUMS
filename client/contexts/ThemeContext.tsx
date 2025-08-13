@@ -93,7 +93,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      const timeoutId = setTimeout(() => {
+        controller.abort(new DOMException("Request timeout", "TimeoutError"));
+      }, 5000);
 
       const response = await fetch("/api/user/themes", {
         headers: {
@@ -111,9 +113,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         console.warn("User themes service unavailable");
         setUserThemes([]); // Set empty array as fallback
       }
-    } catch (error) {
-      if (error.name !== "AbortError") {
-        console.warn("User themes service unavailable");
+    } catch (error: any) {
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        console.warn("User themes request timed out");
+      } else {
+        console.warn("User themes service unavailable:", error.message);
       }
       setUserThemes([]); // Set empty array as fallback
     }
@@ -124,7 +128,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
+      const timeoutId = setTimeout(() => {
+        controller.abort(new DOMException("Request timeout", "TimeoutError"));
+      }, 5000);
 
       const response = await fetch("/api/user/likes", {
         headers: {
@@ -142,9 +148,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         console.warn("User likes service unavailable");
         setUserLikes(0); // Set 0 as fallback
       }
-    } catch (error) {
-      if (error.name !== "AbortError") {
-        console.warn("User likes service unavailable");
+    } catch (error: any) {
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        console.warn("User likes request timed out");
+      } else {
+        console.warn("User likes service unavailable:", error.message);
       }
       setUserLikes(0); // Set 0 as fallback
     }
@@ -162,7 +170,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const timeoutId = setTimeout(() => {
+        controller.abort(new DOMException("Purchase request timeout", "TimeoutError"));
+      }, 10000);
 
       const response = await fetch("/api/user/themes/purchase", {
         method: "POST",
@@ -185,11 +195,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         ]);
         return true;
       }
-    } catch (error) {
-      if (error.name === "AbortError") {
-        console.error("Purchase request timeout");
+    } catch (error: any) {
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        console.error("Purchase request timeout:", error.message);
       } else {
-        console.error("Error purchasing theme:", error);
+        console.error("Error purchasing theme:", error.message);
       }
     }
 
