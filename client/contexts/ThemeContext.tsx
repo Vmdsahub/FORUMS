@@ -74,6 +74,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     document.body.classList.remove("theme-dark", "theme-glassmorphism-liquid");
   }, []);
 
+  // Atualizar temas disponíveis quando status admin mudar
+  useEffect(() => {
+    setAvailableThemes(getAvailableThemes());
+  }, [isAdmin]);
+
   // Carregar dados do usuário quando logado
   useEffect(() => {
     if (user) {
@@ -83,11 +88,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       // Carregar tema salvo apenas se existir e for válido
       const savedTheme = localStorage.getItem("selected_theme");
       if (savedTheme && savedTheme !== "default") {
-        setCurrentTheme(savedTheme);
-        if (savedTheme === "dark") {
-          document.body.classList.add("theme-dark");
-        } else if (savedTheme === "glassmorphism-liquid") {
-          document.body.classList.add("theme-glassmorphism-liquid");
+        // Verificar se o tema ainda está disponível para o usuário
+        const availableThemeIds = getAvailableThemes().map(t => t.id);
+        if (availableThemeIds.includes(savedTheme)) {
+          setCurrentTheme(savedTheme);
+          if (savedTheme === "dark") {
+            document.body.classList.add("theme-dark");
+          } else if (savedTheme === "glassmorphism-liquid") {
+            document.body.classList.add("theme-glassmorphism-liquid");
+          }
+        } else {
+          // Tema não disponível para este usuário, voltar ao padrão
+          setCurrentTheme("default");
+          document.body.classList.remove("theme-dark", "theme-glassmorphism-liquid");
+          localStorage.removeItem("selected_theme");
         }
       }
     } else {
@@ -96,7 +110,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       document.body.classList.remove("theme-dark", "theme-glassmorphism-liquid");
       localStorage.removeItem("selected_theme");
     }
-  }, [user]);
+  }, [user, isAdmin]);
 
   const fetchUserThemes = async () => {
     if (!user) return;
