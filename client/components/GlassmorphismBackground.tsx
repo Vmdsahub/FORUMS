@@ -8,16 +8,15 @@ export default function GlassmorphismBackground() {
   }
 
   return (
-    <div className="fixed inset-0 z-[-10] overflow-hidden pointer-events-none">
+    <div className="absolute inset-0 z-[-10] overflow-hidden pointer-events-none">
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-30"
+        className="absolute inset-0 w-full h-full object-cover opacity-50"
         style={{
-          filter: "blur(2px)",
-          position: "fixed",
+          filter: "blur(1px)",
         }}
       >
         <source
