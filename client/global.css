@@ -711,10 +711,9 @@
     50% { transform: translateY(-1px); }
   }
 
-  /* === APLICAÇÃO GLOBAL DO TEMA === */
+  /* === APLICAÇÃO GLOBAL === */
   .theme-glassmorphism-liquid {
     color: var(--glass-text-primary);
-    font-weight: 400;
   }
 
   /* === TIPOGRAFIA === */
@@ -725,10 +724,6 @@
   .theme-glassmorphism-liquid h5,
   .theme-glassmorphism-liquid h6 {
     color: var(--glass-text-primary);
-    text-shadow:
-      0 1px 3px rgba(0, 0, 0, 0.5),
-      0 0 10px rgba(0, 212, 255, 0.3);
-    font-weight: 600;
   }
 
   .theme-glassmorphism-liquid p,
@@ -739,29 +734,27 @@
 
   .theme-glassmorphism-liquid .text-black {
     color: var(--glass-text-primary) !important;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
 
   /* === BACKGROUNDS === */
   .theme-glassmorphism-liquid .bg-white {
     background: var(--glass-bg-secondary) !important;
-    backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid var(--glass-border-primary);
+    backdrop-filter: blur(20px) saturate(120%);
+    border: 1px solid var(--glass-border);
     box-shadow:
-      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 4px 16px rgba(0, 0, 0, 0.2),
       inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    animation: glassFloat 6s ease-in-out infinite;
   }
 
   .theme-glassmorphism-liquid .bg-gray-50 {
-    background: var(--glass-bg-tertiary) !important;
-    backdrop-filter: blur(15px) saturate(160%);
-    border: 1px solid var(--glass-border-secondary);
+    background: var(--glass-bg-primary) !important;
+    backdrop-filter: blur(15px) saturate(110%);
+    border: 1px solid var(--glass-border-light);
   }
 
   .theme-glassmorphism-liquid .bg-gray-100 {
-    background: var(--glass-bg-quaternary) !important;
-    backdrop-filter: blur(10px) saturate(140%);
+    background: var(--glass-bg-tertiary) !important;
+    backdrop-filter: blur(10px) saturate(110%);
   }
 
   /* === TEXTO === */
