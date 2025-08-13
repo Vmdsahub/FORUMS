@@ -113,10 +113,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 5000);
 
-      const response = await fetch("/api/user/likes", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-        },
+      const response = await fetch(`/api/user-stats/profile/${user.id}`, {
         signal: controller.signal,
       });
 
@@ -124,7 +121,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
       if (response.ok) {
         const data = await response.json();
-        setUserLikes(data.totalLikes || 0);
+        setUserLikes(data.points || 0);
       } else {
         console.warn("User likes service unavailable");
         setUserLikes(0); // Set 0 as fallback
