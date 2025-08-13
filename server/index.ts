@@ -50,6 +50,7 @@ import {
   updateCategoryIcon,
   removeCategoryIcon,
 } from "./routes/category-icons";
+import { getUserThemes, getUserLikes, purchaseTheme } from "./routes/themes";
 
 export function createServer() {
   const app = express();
@@ -153,6 +154,11 @@ export function createServer() {
     authenticateToken,
     removeCategoryIcon,
   );
+
+  // Theme routes
+  app.get("/api/user/themes", authenticateToken, getUserThemes);
+  app.get("/api/user/likes", authenticateToken, getUserLikes);
+  app.post("/api/user/themes/purchase", authenticateToken, purchaseTheme);
 
   return app;
 }

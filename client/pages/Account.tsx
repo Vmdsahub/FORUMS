@@ -1,4 +1,5 @@
 import { useAuth } from "@/contexts/AuthContext";
+import { useTheme } from "@/contexts/ThemeContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -25,6 +26,13 @@ interface Topic {
 
 export default function Account() {
   const { user, logout } = useAuth();
+  const {
+    availableThemes,
+    userThemes,
+    currentTheme,
+    applyTheme,
+    fetchUserThemes,
+  } = useTheme();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -43,6 +51,7 @@ export default function Account() {
     account: false,
     badges: false,
     topics: false,
+    cosmetics: false,
   });
 
   // Badge selection state
@@ -54,29 +63,46 @@ export default function Account() {
   // Fetch user's topics and badges
   useEffect(() => {
     if (user) {
-      fetchUserTopics();
-      fetchUserBadges();
+      // Stagger requests to prevent simultaneous calls
+      const timer1 = setTimeout(() => fetchUserTopics(), 100);
+      const timer2 = setTimeout(() => fetchUserBadges(), 200);
+      const timer3 = setTimeout(() => fetchUserThemes(), 300);
+
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+        clearTimeout(timer3);
+      };
     }
-  }, [user]);
+  }, [user, fetchUserThemes]);
 
   const fetchUserBadges = async () => {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
       // Buscar badges do usuário
       const userStatsResponse = await fetch("/api/user/stats", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
+        signal: controller.signal,
       });
 
       // Buscar todos os badges disponíveis
-      const allBadgesResponse = await fetch("/api/badges");
+      const allBadgesResponse = await fetch("/api/badges", {
+        signal: controller.signal,
+      });
 
       // Buscar seleção atual de badges
       const selectionResponse = await fetch("/api/user/badge-selection", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (userStatsResponse.ok && allBadgesResponse.ok) {
         const userStatsData = await userStatsResponse.json();
@@ -88,6 +114,8 @@ export default function Account() {
         // Definir data real de criação da conta
         if (userStatsData.createdAt) {
           setMemberSince(userStatsData.createdAt);
+        } else {
+          setMemberSince(new Date().toISOString()); // Fallback to current date
         }
 
         // Usar seleção salva ou todos os badges conquistados como fallback
@@ -100,9 +128,21 @@ export default function Account() {
           );
           setSelectedBadges(earnedBadgeIds);
         }
+      } else {
+        console.warn("Badge services unavailable, using defaults");
+        setUserBadges([]);
+        setAvailableBadges([]);
+        setSelectedBadges([]);
+        setMemberSince(new Date().toISOString());
       }
     } catch (error) {
-      console.error("Error fetching badges:", error);
+      if (error.name !== "AbortError") {
+        console.warn("Badge services unavailable, using defaults");
+      }
+      setUserBadges([]);
+      setAvailableBadges([]);
+      setSelectedBadges([]);
+      setMemberSince(new Date().toISOString());
     }
   };
 
@@ -132,22 +172,29 @@ export default function Account() {
   const fetchUserTopics = async () => {
     setIsLoadingTopics(true);
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000);
+
       const response = await fetch("/api/topics/user", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json();
         setUserTopics(data.topics || []);
       } else {
-        const errorData = await response.json();
-        console.error("Failed to fetch user topics:", errorData.message);
+        console.warn("User topics service unavailable");
         setUserTopics([]);
       }
     } catch (error) {
-      console.error("Error fetching user topics:", error);
+      if (error.name !== "AbortError") {
+        console.warn("User topics service unavailable");
+      }
       setUserTopics([]);
     } finally {
       setIsLoadingTopics(false);
@@ -207,7 +254,9 @@ export default function Account() {
     }
   };
 
-  const toggleSection = (section: "account" | "badges" | "topics") => {
+  const toggleSection = (
+    section: "account" | "badges" | "topics" | "cosmetics",
+  ) => {
     setSectionsExpanded((prev) => ({
       ...prev,
       [section]: !prev[section],
@@ -473,6 +522,146 @@ export default function Account() {
                     Salvar Seleção
                   </button>
                 )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Collapsible Cosmetics Section */}
+        <div className="mb-8">
+          <button
+            onClick={() => toggleSection("cosmetics")}
+            className="w-full flex items-center justify-between text-lg font-semibold text-black border-b border-gray-200 pb-2 mb-4 hover:text-gray-700 transition-colors"
+          >
+            <span className="flex items-center gap-2">🎨 Cosméticos</span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              className={`transform transition-transform ${
+                sectionsExpanded.cosmetics ? "rotate-180" : ""
+              }`}
+            >
+              <path d="M4 6l4 4 4-4H4z" />
+            </svg>
+          </button>
+
+          {sectionsExpanded.cosmetics && (
+            <div className="bg-white border border-gray-200 rounded-lg p-6">
+              <div className="mb-4">
+                <h4 className="font-semibold text-black mb-2">
+                  Seus Temas Comprados:
+                </h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Clique em um tema para aplicá-lo em todo o site
+                </p>
+                {userThemes.length === 0 && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <p className="text-sm text-blue-800 mb-2">
+                      🛒 Você ainda não comprou nenhum tema.
+                    </p>
+                    <button
+                      onClick={() => navigate("/shop")}
+                      className="text-blue-600 hover:text-blue-800 underline font-medium"
+                    >
+                      Visite a Loja de Likes para ver os temas disponíveis
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Temas disponíveis - sempre mostrar tema padrão */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                {/* Default Theme - sempre disponível */}
+                <div
+                  className={`border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
+                    currentTheme === "default"
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                  onClick={() => {
+                    applyTheme("default");
+                    toast.success("Tema padrão aplicado!");
+                  }}
+                >
+                  <div className="w-full h-16 bg-gray-100 rounded-lg mb-3 flex items-center justify-center text-2xl">
+                    ☀️
+                  </div>
+                  <div className="text-center">
+                    <h5 className="font-medium text-black text-sm">
+                      Tema Padrão
+                    </h5>
+                    <p className="text-xs text-gray-500">Gratuito</p>
+                    {currentTheme === "default" && (
+                      <div className="mt-2 text-blue-600 text-xs font-medium">
+                        ✓ Ativo
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* User Themes */}
+                {userThemes.map((userTheme) => {
+                  const theme = availableThemes.find(
+                    (t) => t.id === userTheme.themeId,
+                  );
+                  if (!theme) return null;
+
+                  const isActive = currentTheme === theme.id;
+
+                  return (
+                    <div
+                      key={theme.id}
+                      className={`border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
+                        isActive
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                      onClick={() => {
+                        applyTheme(theme.id);
+                        toast.success(`Tema "${theme.name}" aplicado!`);
+                      }}
+                    >
+                      <div
+                        className={`w-full h-16 rounded-lg mb-3 flex items-center justify-center text-2xl ${
+                          theme.id === "dark"
+                            ? "bg-gray-900 text-white"
+                            : "bg-gray-100"
+                        }`}
+                      >
+                        {theme.icon}
+                      </div>
+                      <div className="text-center">
+                        <h5 className="font-medium text-black text-sm">
+                          {theme.name}
+                        </h5>
+                        <p className="text-xs text-gray-500">
+                          Comprado em{" "}
+                          {new Date(userTheme.purchasedAt).toLocaleDateString(
+                            "pt-BR",
+                          )}
+                        </p>
+                        {isActive && (
+                          <div className="mt-2 text-blue-600 text-xs font-medium">
+                            ✓ Ativo
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <div className="text-center pt-4 border-t border-gray-200">
+                <button
+                  onClick={() => navigate("/shop")}
+                  className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
+                >
+                  {userThemes.length > 0
+                    ? "Comprar mais temas na Loja de Likes"
+                    : "Comprar temas na Loja de Likes"}
+                </button>
               </div>
             </div>
           )}

@@ -192,6 +192,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem("auth_token");
+    localStorage.removeItem("selected_theme"); // Limpar tema selecionado
     setUser(null);
     toast.success("Logout realizado com sucesso!");
   };

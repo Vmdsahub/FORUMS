@@ -72,7 +72,8 @@ interface IndexProps {
   currentWeek: number;
   setCurrentWeek: (week: number) => void;
   weeklyNewsletters: WeeklyNewsletter[];
-  forumCategories: ForumCategory[];
+  toolsCategories: ForumCategory[];
+  openSourceCategories: ForumCategory[];
   toggleNewsletterTopic: (id: number | string) => void;
   handleCategoryClick: (categoryId: string) => void;
   getSelectedCategoryData: () => ForumCategory | undefined;
@@ -91,7 +92,8 @@ export default function Index(props: IndexProps) {
     selectedCategory,
     currentWeek,
     weeklyNewsletters,
-    forumCategories,
+    toolsCategories,
+    openSourceCategories,
     toggleNewsletterTopic,
     handleCategoryClick,
     getSelectedCategoryData,
@@ -128,12 +130,25 @@ export default function Index(props: IndexProps) {
 
   // Carregar ícones salvos ao montar componente
   useEffect(() => {
-    loadSavedIcons();
+    // Add small delay to prevent simultaneous requests on initial load
+    const timer = setTimeout(() => {
+      loadSavedIcons();
+    }, 200);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const loadSavedIcons = async () => {
     try {
-      const response = await fetch("/api/category-icons");
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+      const response = await fetch("/api/category-icons", {
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
       if (response.ok) {
         const data = await response.json();
         setCustomIcons(data.icons || {});
@@ -145,8 +160,11 @@ export default function Index(props: IndexProps) {
         );
       }
     } catch (error) {
-      console.error("Erro ao carregar ícones salvos:", error);
       // Fail silently - icons are optional feature
+      if (error.name !== "AbortError") {
+        console.warn("Icons service unavailable, using defaults");
+      }
+      setCustomIcons({}); // Set empty object as fallback
     }
   };
 
@@ -423,9 +441,8 @@ export default function Index(props: IndexProps) {
                   </h2>
                   {currentNewsletter && (
                     <p className="text-lg text-gray-600 mt-2">
-                      Semana {currentNewsletter.week} •{" "}
-                      {currentNewsletter.startDate} -{" "}
-                      {currentNewsletter.endDate}
+                      Semana {currentNewsletter.week} - Atualizado todos os
+                      domingos
                     </p>
                   )}
                 </div>
@@ -450,7 +467,8 @@ export default function Index(props: IndexProps) {
                 </button>
               </div>
               <p className="text-md text-gray-500">
-                Insights técnicos e análises do mercado de IA
+                Seleção de notícias sobre as principais tecnologias e
+                ferramentas de Inteligência Artificial
               </p>
             </div>
 
@@ -706,7 +724,7 @@ export default function Index(props: IndexProps) {
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
               <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-black">
-                  Categorias do Fórum
+                  Ferramentas
                 </h2>
                 {isAdmin && (
                   <Dialog
@@ -792,7 +810,7 @@ export default function Index(props: IndexProps) {
               </div>
 
               <div className="divide-y divide-gray-100">
-                {forumCategories.map((category) => (
+                {toolsCategories.map((category) => (
                   <div
                     key={category.id}
                     className="hover:bg-gray-50 transition-all duration-300 ease-in-out cursor-pointer hover:-translate-y-0.5"
@@ -807,6 +825,207 @@ export default function Index(props: IndexProps) {
                                 customIcons[category.id]
                                   ? "cursor-pointer hover:opacity-75 transition-opacity"
                                   : "rounded-full bg-black text-white font-semibold"
+                              } ${user?.name === "Vitoca" ? "hover:ring-2 hover:ring-blue-500" : ""}`}
+                              onClick={(e) => handleIconClick(category.id, e)}
+                              title={
+                                user?.name === "Vitoca"
+                                  ? "Clique para alterar o ícone"
+                                  : undefined
+                              }
+                            >
+                              {customIcons[category.id] ? (
+                                <img
+                                  src={customIcons[category.id]}
+                                  alt={category.name}
+                                  className="w-12 h-12 object-contain"
+                                />
+                              ) : (
+                                <>
+                                  {category.name.split(" ")[0][0]}
+                                  {category.name.split(" ")[1]?.[0] || ""}
+                                </>
+                              )}
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold text-black mb-1">
+                                {category.name}
+                              </h3>
+                              <p className="text-gray-600 text-sm">
+                                {category.description}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3">
+                          <div className="text-right text-sm text-gray-500 min-w-[200px]">
+                            <div className="mb-1">
+                              <span className="font-medium text-black">
+                                {category.totalTopics}
+                              </span>{" "}
+                              tópicos
+                              <span className="mx-2">•</span>
+                              <span className="font-medium text-black">
+                                {category.totalPosts}
+                              </span>{" "}
+                              posts
+                            </div>
+                            {category.lastPost && (
+                              <div className="text-xs">
+                                Último:{" "}
+                                <span className="font-medium">
+                                  {category.lastPost.title}
+                                </span>
+                                <br />
+                                por{" "}
+                                <span className="font-medium">
+                                  {category.lastPost.author}
+                                </span>{" "}
+                                • {category.lastPost.date} às{" "}
+                                {category.lastPost.time}
+                              </div>
+                            )}
+                          </div>
+                          {isAdmin && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (
+                                  confirm(
+                                    `Tem certeza que deseja excluir a categoria "${category.name}"?`,
+                                  )
+                                ) {
+                                  toast.success(
+                                    `Categoria "${category.name}" excluída! (Demo - não persistente)`,
+                                  );
+                                }
+                              }}
+                              className="text-red-600 hover:text-red-800 p-2 rounded hover:bg-red-50 transition-colors"
+                              title="Excluir categoria (Admin)"
+                            >
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                              >
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                              </svg>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Open-Source Section */}
+            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden mt-6">
+              <div className="bg-gray-50 px-6 py-4 border-b border-gray-200 flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-black">
+                  Open-Source
+                </h2>
+                {isAdmin && (
+                  <Dialog
+                    open={isCategoryModalOpen}
+                    onOpenChange={setIsCategoryModalOpen}
+                  >
+                    <DialogTrigger asChild>
+                      <Button
+                        className="bg-gray-900 text-white hover:bg-gray-800 text-sm"
+                        size="sm"
+                      >
+                        + Nova Categoria
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-white border border-gray-200 shadow-lg sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle className="text-gray-900 text-xl font-semibold">
+                          Criar Nova Categoria
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 py-4">
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="cat-name"
+                            className="text-gray-900 font-medium"
+                          >
+                            Nome da Categoria
+                          </Label>
+                          <Input
+                            id="cat-name"
+                            value={newCategory.name}
+                            onChange={(e) =>
+                              setNewCategory({
+                                ...newCategory,
+                                name: e.target.value,
+                              })
+                            }
+                            placeholder="Ex: Inteligência Artificial"
+                            className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="cat-desc"
+                            className="text-gray-900 font-medium"
+                          >
+                            Descrição
+                          </Label>
+                          <Textarea
+                            id="cat-desc"
+                            value={newCategory.description}
+                            onChange={(e) =>
+                              setNewCategory({
+                                ...newCategory,
+                                description: e.target.value,
+                              })
+                            }
+                            placeholder="Descreva o que será discutido nesta categoria"
+                            rows={3}
+                            className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                          />
+                        </div>
+                        <div className="flex justify-end gap-3 pt-4">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setIsCategoryModalOpen(false)}
+                            className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                          >
+                            Cancelar
+                          </Button>
+                          <Button
+                            onClick={handleCreateCategory}
+                            className="bg-gray-900 text-white hover:bg-gray-800"
+                          >
+                            Criar Categoria
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                )}
+              </div>
+
+              <div className="divide-y divide-gray-100">
+                {openSourceCategories.map((category) => (
+                  <div
+                    key={`opensource-${category.id}`}
+                    className="hover:bg-gray-50 transition-all duration-300 ease-in-out cursor-pointer hover:-translate-y-0.5"
+                    onClick={() => handleCategoryClick(category.id)}
+                  >
+                    <div className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-4">
+                            <div
+                              className={`w-12 h-12 flex items-center justify-center ${
+                                customIcons[category.id]
+                                  ? "cursor-pointer hover:opacity-75 transition-opacity"
+                                  : "rounded-full bg-green-600 text-white font-semibold"
                               } ${user?.name === "Vitoca" ? "hover:ring-2 hover:ring-blue-500" : ""}`}
                               onClick={(e) => handleIconClick(category.id, e)}
                               title={

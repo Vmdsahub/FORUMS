@@ -3,10 +3,13 @@ import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { useCategoryStats } from "@/hooks/useCategoryStats";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import TopicView from "@/pages/TopicView";
 import Index from "@/pages/Index";
 import Account from "@/pages/Account";
 import SavedTopics from "@/pages/SavedTopics";
+import Shop from "@/pages/Shop";
 import NotFound from "@/pages/NotFound";
 
 interface NewsletterTopic {
@@ -94,7 +97,7 @@ let weeklyNewsletters: WeeklyNewsletter[] = [
         id: 4,
         title: "AI Art Revolution: Novas Ferramentas Transformam Criatividade",
         content:
-          "A indústria criativa está passando por uma revolução sem precedentes. Novas ferramentas de IA estão democratizando o acesso à criação artística profissional.\n\nPrincipais avanços:\n• DALL-E 3 com precisão fotorrealística\n• Midjourney v6 com controle de composição\n• Stable Diffusion XL para uso comercial\n• RunwayML para criação de vídeos\n\nImpacto no mercado:\n• Redução de 70% no tempo de produção\n• Democratização de ferramentas profissionais\n• Novos modelos de neg��cio emergindo\n• Questões éticas sobre autoria\n\nEstes desenvolvimentos estão redefinindo completamente o que significa ser criativo na era digital.",
+          "A indústria criativa está passando por uma revolução sem precedentes. Novas ferramentas de IA estão democratizando o acesso à criação artística profissional.\n\nPrincipais avanços:\n• DALL-E 3 com precisão fotorrealística\n• Midjourney v6 com controle de composição\n• Stable Diffusion XL para uso comercial\n• RunwayML para criação de vídeos\n\nImpacto no mercado:\n• Redução de 70% no tempo de produç��o\n• Democratização de ferramentas profissionais\n• Novos modelos de neg��cio emergindo\n• Questões éticas sobre autoria\n\nEstes desenvolvimentos estão redefinindo completamente o que significa ser criativo na era digital.",
         readTime: "10 min",
       },
       {
@@ -122,7 +125,8 @@ let weeklyNewsletters: WeeklyNewsletter[] = [
   },
 ];
 
-const forumCategories: ForumCategory[] = [
+// Categorias da seção Ferramentas
+const toolsCategories: ForumCategory[] = [
   {
     id: "imagem",
     name: "Imagem",
@@ -161,6 +165,48 @@ const forumCategories: ForumCategory[] = [
   },
 ];
 
+// Categorias da seção Open-Source
+const openSourceCategories: ForumCategory[] = [
+  {
+    id: "opensource-imagem",
+    name: "Imagem",
+    description:
+      "Stable Diffusion, DALL-E open-source e modelos de imagem gratuitos",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
+  {
+    id: "opensource-video",
+    name: "Vídeo",
+    description:
+      "Runway open-source, Zeroscope e ferramentas de vídeo gratuitas",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
+  {
+    id: "opensource-musica-audio",
+    name: "Música/Áudio",
+    description: "MusicGen, AudioCraft e ferramentas de áudio open-source",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
+  {
+    id: "opensource-vibe-coding",
+    name: "Vibe Coding",
+    description: "Code Llama, StarCoder e IDEs com IA gratuitas",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
+];
+
 function App() {
   const [activeSection, setActiveSection] = useState<"newsletter" | "forum">(
     "newsletter",
@@ -180,22 +226,39 @@ function App() {
   const loadNewsletters = async () => {
     setIsLoadingNewsletters(true);
     try {
-      const response = await fetch("/api/newsletter/articles");
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+
+      const response = await fetch("/api/newsletter/articles", {
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
       if (response.ok) {
         const data = await response.json();
         setNewsletters(data.weeklyNewsletters || []);
       } else {
-        console.error("Failed to load newsletters");
+        console.warn("Newsletter service unavailable, using fallback data");
+        setNewsletters(weeklyNewsletters); // Use local fallback data
       }
     } catch (error) {
-      console.error("Error loading newsletters:", error);
+      if (error.name !== "AbortError") {
+        console.warn("Newsletter service unavailable, using fallback data");
+      }
+      setNewsletters(weeklyNewsletters); // Use local fallback data
     } finally {
       setIsLoadingNewsletters(false);
     }
   };
 
   useEffect(() => {
-    loadNewsletters();
+    // Add small delay to prevent simultaneous requests on initial load
+    const timer = setTimeout(() => {
+      loadNewsletters();
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, []);
 
   const toggleNewsletterTopic = (id: number | string) => {
@@ -206,9 +269,19 @@ function App() {
     setSelectedCategory(selectedCategory === categoryId ? null : categoryId);
   };
 
-  // Create dynamic categories with real stats
-  const getDynamicCategories = (): ForumCategory[] => {
-    return forumCategories.map((category) => ({
+  // Create dynamic categories with real stats for tools
+  const getDynamicToolsCategories = (): ForumCategory[] => {
+    return toolsCategories.map((category) => ({
+      ...category,
+      totalTopics: categoryStats[category.id]?.totalTopics || 0,
+      totalPosts: categoryStats[category.id]?.totalPosts || 0,
+      lastPost: categoryStats[category.id]?.lastPost || undefined,
+    }));
+  };
+
+  // Create dynamic categories with real stats for open-source
+  const getDynamicOpenSourceCategories = (): ForumCategory[] => {
+    return openSourceCategories.map((category) => ({
       ...category,
       totalTopics: categoryStats[category.id]?.totalTopics || 0,
       totalPosts: categoryStats[category.id]?.totalPosts || 0,
@@ -217,8 +290,11 @@ function App() {
   };
 
   const getSelectedCategoryData = () => {
-    const dynamicCategories = getDynamicCategories();
-    return dynamicCategories.find((cat) => cat.id === selectedCategory);
+    const allCategories = [
+      ...getDynamicToolsCategories(),
+      ...getDynamicOpenSourceCategories(),
+    ];
+    return allCategories.find((cat) => cat.id === selectedCategory);
   };
 
   const navigateWeek = (direction: "prev" | "next") => {
@@ -233,43 +309,49 @@ function App() {
   const currentNewsletter = newsletters[currentWeek] || null;
 
   return (
-    <NotificationProvider>
-      <BrowserRouter>
-        <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
-          <Header activeSection={activeSection} />
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <Index
-                  activeSection={activeSection}
-                  setActiveSection={setActiveSection}
-                  expandedNewsletter={expandedNewsletter}
-                  setExpandedNewsletter={setExpandedNewsletter}
-                  selectedCategory={selectedCategory}
-                  setSelectedCategory={setSelectedCategory}
-                  currentWeek={currentWeek}
-                  setCurrentWeek={setCurrentWeek}
-                  weeklyNewsletters={newsletters}
-                  onNewsletterRefresh={loadNewsletters}
-                  forumCategories={getDynamicCategories()}
-                  toggleNewsletterTopic={toggleNewsletterTopic}
-                  refreshCategoryStats={refreshStats}
-                  handleCategoryClick={handleCategoryClick}
-                  getSelectedCategoryData={getSelectedCategoryData}
-                  navigateWeek={navigateWeek}
-                  currentNewsletter={currentNewsletter}
+    <ErrorBoundary>
+      <NotificationProvider>
+        <ThemeProvider>
+          <BrowserRouter>
+            <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
+              <Header activeSection={activeSection} />
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    <Index
+                      activeSection={activeSection}
+                      setActiveSection={setActiveSection}
+                      expandedNewsletter={expandedNewsletter}
+                      setExpandedNewsletter={setExpandedNewsletter}
+                      selectedCategory={selectedCategory}
+                      setSelectedCategory={setSelectedCategory}
+                      currentWeek={currentWeek}
+                      setCurrentWeek={setCurrentWeek}
+                      weeklyNewsletters={newsletters}
+                      onNewsletterRefresh={loadNewsletters}
+                      toolsCategories={getDynamicToolsCategories()}
+                      openSourceCategories={getDynamicOpenSourceCategories()}
+                      toggleNewsletterTopic={toggleNewsletterTopic}
+                      refreshCategoryStats={refreshStats}
+                      handleCategoryClick={handleCategoryClick}
+                      getSelectedCategoryData={getSelectedCategoryData}
+                      navigateWeek={navigateWeek}
+                      currentNewsletter={currentNewsletter}
+                    />
+                  }
                 />
-              }
-            />
-            <Route path="/topic/:topicId" element={<TopicView />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/saved-topics" element={<SavedTopics />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </div>
-      </BrowserRouter>
-    </NotificationProvider>
+                <Route path="/topic/:topicId" element={<TopicView />} />
+                <Route path="/account" element={<Account />} />
+                <Route path="/saved-topics" element={<SavedTopics />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
+          </BrowserRouter>
+        </ThemeProvider>
+      </NotificationProvider>
+    </ErrorBoundary>
   );
 }
 
