@@ -159,7 +159,18 @@ export default function CreateTopicModal({
       }
     } catch (error) {
       console.error("Error creating topic:", error);
-      const errorMessage = error instanceof Error ? error.message : "Erro ao criar tópico";
+      console.error("Error type:", typeof error);
+      console.error("Error constructor:", error?.constructor?.name);
+
+      let errorMessage = "Erro ao criar tópico";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error && typeof error === 'object' && 'message' in error) {
+        errorMessage = String(error.message);
+      }
+
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
