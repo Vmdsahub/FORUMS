@@ -351,12 +351,8 @@ export default function SimpleCommentSystem({
         setQuotedComment(null);
         await loadComments();
 
-        // Refresh category stats to update the homepage
-        try {
-          await fetch("/api/categories/stats");
-        } catch (error) {
-          console.warn("Failed to refresh category stats:", error);
-        }
+        // Trigger global category stats refresh
+        window.dispatchEvent(new CustomEvent('refreshCategoryStats'));
 
         toast.success("Comentário adicionado!");
       } else {
