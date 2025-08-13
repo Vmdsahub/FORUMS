@@ -26,7 +26,13 @@ interface Topic {
 
 export default function Account() {
   const { user, logout } = useAuth();
-  const { availableThemes, userThemes, currentTheme, applyTheme, fetchUserThemes } = useTheme();
+  const {
+    availableThemes,
+    userThemes,
+    currentTheme,
+    applyTheme,
+    fetchUserThemes,
+  } = useTheme();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -248,7 +254,9 @@ export default function Account() {
     }
   };
 
-  const toggleSection = (section: "account" | "badges" | "topics" | "cosmetics") => {
+  const toggleSection = (
+    section: "account" | "badges" | "topics" | "cosmetics",
+  ) => {
     setSectionsExpanded((prev) => ({
       ...prev,
       [section]: !prev[section],
@@ -566,70 +574,83 @@ export default function Account() {
               {/* Temas disponíveis - sempre mostrar tema padrão */}
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
                 {/* Default Theme - sempre disponível */}
+                <div
+                  className={`border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
+                    currentTheme === "default"
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                  onClick={() => {
+                    applyTheme("default");
+                    toast.success("Tema padrão aplicado!");
+                  }}
+                >
+                  <div className="w-full h-16 bg-gray-100 rounded-lg mb-3 flex items-center justify-center text-2xl">
+                    ☀️
+                  </div>
+                  <div className="text-center">
+                    <h5 className="font-medium text-black text-sm">
+                      Tema Padrão
+                    </h5>
+                    <p className="text-xs text-gray-500">Gratuito</p>
+                    {currentTheme === "default" && (
+                      <div className="mt-2 text-blue-600 text-xs font-medium">
+                        ✓ Ativo
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* User Themes */}
+                {userThemes.map((userTheme) => {
+                  const theme = availableThemes.find(
+                    (t) => t.id === userTheme.themeId,
+                  );
+                  if (!theme) return null;
+
+                  const isActive = currentTheme === theme.id;
+
+                  return (
                     <div
+                      key={theme.id}
                       className={`border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
-                        currentTheme === "default"
+                        isActive
                           ? "border-blue-500 bg-blue-50"
                           : "border-gray-200 hover:border-gray-300"
                       }`}
                       onClick={() => {
-                        applyTheme("default");
-                        toast.success("Tema padrão aplicado!");
+                        applyTheme(theme.id);
+                        toast.success(`Tema "${theme.name}" aplicado!`);
                       }}
                     >
-                      <div className="w-full h-16 bg-gray-100 rounded-lg mb-3 flex items-center justify-center text-2xl">
-                        ☀️
+                      <div
+                        className={`w-full h-16 rounded-lg mb-3 flex items-center justify-center text-2xl ${
+                          theme.id === "dark"
+                            ? "bg-gray-900 text-white"
+                            : "bg-gray-100"
+                        }`}
+                      >
+                        {theme.icon}
                       </div>
                       <div className="text-center">
-                        <h5 className="font-medium text-black text-sm">Tema Padrão</h5>
-                        <p className="text-xs text-gray-500">Gratuito</p>
-                        {currentTheme === "default" && (
+                        <h5 className="font-medium text-black text-sm">
+                          {theme.name}
+                        </h5>
+                        <p className="text-xs text-gray-500">
+                          Comprado em{" "}
+                          {new Date(userTheme.purchasedAt).toLocaleDateString(
+                            "pt-BR",
+                          )}
+                        </p>
+                        {isActive && (
                           <div className="mt-2 text-blue-600 text-xs font-medium">
                             ✓ Ativo
                           </div>
                         )}
                       </div>
                     </div>
-
-                    {/* User Themes */}
-                    {userThemes.map((userTheme) => {
-                      const theme = availableThemes.find(t => t.id === userTheme.themeId);
-                      if (!theme) return null;
-
-                      const isActive = currentTheme === theme.id;
-
-                      return (
-                        <div
-                          key={theme.id}
-                          className={`border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
-                            isActive
-                              ? "border-blue-500 bg-blue-50"
-                              : "border-gray-200 hover:border-gray-300"
-                          }`}
-                          onClick={() => {
-                            applyTheme(theme.id);
-                            toast.success(`Tema "${theme.name}" aplicado!`);
-                          }}
-                        >
-                          <div className={`w-full h-16 rounded-lg mb-3 flex items-center justify-center text-2xl ${
-                            theme.id === "dark" ? "bg-gray-900 text-white" : "bg-gray-100"
-                          }`}>
-                            {theme.icon}
-                          </div>
-                          <div className="text-center">
-                            <h5 className="font-medium text-black text-sm">{theme.name}</h5>
-                            <p className="text-xs text-gray-500">
-                              Comprado em {new Date(userTheme.purchasedAt).toLocaleDateString("pt-BR")}
-                            </p>
-                            {isActive && (
-                              <div className="mt-2 text-blue-600 text-xs font-medium">
-                                ✓ Ativo
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
+                  );
+                })}
               </div>
 
               <div className="text-center pt-4 border-t border-gray-200">
@@ -637,7 +658,9 @@ export default function Account() {
                   onClick={() => navigate("/shop")}
                   className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
                 >
-                  {userThemes.length > 0 ? "Comprar mais temas na Loja de Likes" : "Comprar temas na Loja de Likes"}
+                  {userThemes.length > 0
+                    ? "Comprar mais temas na Loja de Likes"
+                    : "Comprar temas na Loja de Likes"}
                 </button>
               </div>
             </div>

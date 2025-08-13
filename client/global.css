@@ -160,7 +160,8 @@
   }
 
   @keyframes bounceSubtle {
-    0%, 100% {
+    0%,
+    100% {
       transform: translateY(0);
     }
     50% {
@@ -173,12 +174,15 @@
       text-shadow: 0 0 5px rgba(79, 143, 247, 0.3);
     }
     to {
-      text-shadow: 0 0 20px rgba(79, 143, 247, 0.6), 0 0 30px rgba(79, 143, 247, 0.4);
+      text-shadow:
+        0 0 20px rgba(79, 143, 247, 0.6),
+        0 0 30px rgba(79, 143, 247, 0.4);
     }
   }
 
   @keyframes pulse {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
     }
     50% {
@@ -200,25 +204,25 @@
   /* 🌙 DARK THEME - Sistema Completo e Moderno */
   .theme-dark {
     /* === PALETA DE CORES BASE === */
-    --dark-bg-primary: #0a0b0f;      /* Fundo principal - quase preto */
-    --dark-bg-secondary: #1a1d23;    /* Cards e containers */
-    --dark-bg-tertiary: #2a2e35;     /* Elementos interativos */
-    --dark-bg-quaternary: #34394a;   /* Hover states */
+    --dark-bg-primary: #0a0b0f; /* Fundo principal - quase preto */
+    --dark-bg-secondary: #1a1d23; /* Cards e containers */
+    --dark-bg-tertiary: #2a2e35; /* Elementos interativos */
+    --dark-bg-quaternary: #34394a; /* Hover states */
 
-    --dark-text-primary: #ffffff;    /* Texto principal */
-    --dark-text-secondary: #b8bcc8;  /* Texto secundário */
-    --dark-text-tertiary: #8b929b;   /* Texto sutil */
+    --dark-text-primary: #ffffff; /* Texto principal */
+    --dark-text-secondary: #b8bcc8; /* Texto secundário */
+    --dark-text-tertiary: #8b929b; /* Texto sutil */
     --dark-text-quaternary: #5a6069; /* Texto muito sutil */
 
-    --dark-accent-blue: #4f8ff7;     /* Azul principal */
-    --dark-accent-purple: #8b5cf6;   /* Roxo */
-    --dark-accent-green: #22c55e;    /* Verde */
-    --dark-accent-red: #ef4444;      /* Vermelho */
-    --dark-accent-orange: #f97316;   /* Laranja */
+    --dark-accent-blue: #4f8ff7; /* Azul principal */
+    --dark-accent-purple: #8b5cf6; /* Roxo */
+    --dark-accent-green: #22c55e; /* Verde */
+    --dark-accent-red: #ef4444; /* Vermelho */
+    --dark-accent-orange: #f97316; /* Laranja */
 
-    --dark-border-primary: #3a3f4a;  /* Bordas principais */
+    --dark-border-primary: #3a3f4a; /* Bordas principais */
     --dark-border-secondary: #2a2e35; /* Bordas sutis */
-    --dark-border-accent: #4f8ff7;   /* Bordas de destaque */
+    --dark-border-accent: #4f8ff7; /* Bordas de destaque */
 
     /* === VARIÁVEIS CSS CUSTOMIZADAS === */
     --background: 240 10% 4%;
@@ -410,7 +414,11 @@
 
   /* === SPECIAL ELEMENTS === */
   .theme-dark .bg-blue-50 {
-    background: linear-gradient(135deg, rgba(79, 143, 247, 0.1), rgba(139, 92, 246, 0.05)) !important;
+    background: linear-gradient(
+      135deg,
+      rgba(79, 143, 247, 0.1),
+      rgba(139, 92, 246, 0.05)
+    ) !important;
     border-color: rgba(79, 143, 247, 0.2) !important;
   }
 

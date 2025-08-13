@@ -441,7 +441,8 @@ export default function Index(props: IndexProps) {
                   </h2>
                   {currentNewsletter && (
                     <p className="text-lg text-gray-600 mt-2">
-                      Semana {currentNewsletter.week} - Atualizado todos os domingos
+                      Semana {currentNewsletter.week} - Atualizado todos os
+                      domingos
                     </p>
                   )}
                 </div>
@@ -466,7 +467,8 @@ export default function Index(props: IndexProps) {
                 </button>
               </div>
               <p className="text-md text-gray-500">
-                Seleção de notícias sobre as principais tecnologias e ferramentas de Inteligência Artificial
+                Seleção de notícias sobre as principais tecnologias e
+                ferramentas de Inteligência Artificial
               </p>
             </div>
 

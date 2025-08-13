@@ -35,7 +35,12 @@ export class ErrorBoundary extends React.Component<
     if (this.state.hasError) {
       if (this.props.fallback) {
         const FallbackComponent = this.props.fallback;
-        return <FallbackComponent error={this.state.error} resetError={this.resetError} />;
+        return (
+          <FallbackComponent
+            error={this.state.error}
+            resetError={this.resetError}
+          />
+        );
       }
 
       return (
@@ -49,14 +54,15 @@ export class ErrorBoundary extends React.Component<
                 fill="currentColor"
                 className="mx-auto"
               >
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
               </svg>
             </div>
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
               Oops! Algo deu errado
             </h2>
             <p className="text-gray-600 mb-6">
-              Encontramos um problema técnico. Por favor, tente recarregar a página.
+              Encontramos um problema técnico. Por favor, tente recarregar a
+              página.
             </p>
             <div className="space-y-3">
               <button

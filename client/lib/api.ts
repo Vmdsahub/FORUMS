@@ -5,22 +5,20 @@ interface ApiOptions {
 }
 
 export class ApiError extends Error {
-  constructor(message: string, public status?: number) {
+  constructor(
+    message: string,
+    public status?: number,
+  ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
 export async function apiCall<T>(
   url: string,
-  options: RequestInit & ApiOptions = {}
+  options: RequestInit & ApiOptions = {},
 ): Promise<T> {
-  const {
-    timeout = 5000,
-    retries = 0,
-    fallback,
-    ...fetchOptions
-  } = options;
+  const { timeout = 5000, retries = 0, fallback, ...fetchOptions } = options;
 
   let lastError: Error;
 
@@ -43,22 +41,30 @@ export async function apiCall<T>(
       }
     } catch (error) {
       lastError = error as Error;
-      
+
       // Don't retry on abort or client errors
-      if (error.name === 'AbortError' || (error instanceof ApiError && error.status && error.status < 500)) {
+      if (
+        error.name === "AbortError" ||
+        (error instanceof ApiError && error.status && error.status < 500)
+      ) {
         break;
       }
 
       // Wait before retry
       if (attempt < retries) {
-        await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+        await new Promise((resolve) =>
+          setTimeout(resolve, 1000 * (attempt + 1)),
+        );
       }
     }
   }
 
   // If we have a fallback, use it instead of throwing
   if (fallback !== undefined) {
-    console.warn(`API call to ${url} failed, using fallback:`, lastError.message);
+    console.warn(
+      `API call to ${url} failed, using fallback:`,
+      lastError.message,
+    );
     return fallback;
   }
 

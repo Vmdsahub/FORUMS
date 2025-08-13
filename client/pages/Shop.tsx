@@ -8,7 +8,13 @@ import { toast } from "sonner";
 export default function Shop() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { availableThemes, userThemes, userLikes, purchaseTheme, fetchUserLikes } = useTheme();
+  const {
+    availableThemes,
+    userThemes,
+    userLikes,
+    purchaseTheme,
+    fetchUserLikes,
+  } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -20,7 +26,7 @@ export default function Shop() {
   }, [user, navigate, fetchUserLikes]);
 
   const isPurchased = (themeId: string) => {
-    return userThemes.some(ut => ut.themeId === themeId);
+    return userThemes.some((ut) => ut.themeId === themeId);
   };
 
   const canAfford = (theme: Theme) => {
@@ -29,7 +35,9 @@ export default function Shop() {
 
   const handlePurchase = async (theme: Theme) => {
     if (!canAfford(theme)) {
-      toast.error(`Você precisa de ${theme.price} likes para comprar este tema. Você tem apenas ${userLikes} likes.`);
+      toast.error(
+        `Você precisa de ${theme.price} likes para comprar este tema. Você tem apenas ${userLikes} likes.`,
+      );
       return;
     }
 
@@ -42,7 +50,9 @@ export default function Shop() {
     try {
       const success = await purchaseTheme(theme.id);
       if (success) {
-        toast.success(`Tema "${theme.name}" comprado com sucesso! Vá para a Central do Usuário para aplicá-lo.`);
+        toast.success(
+          `Tema "${theme.name}" comprado com sucesso! Vá para a Central do Usuário para aplicá-lo.`,
+        );
       } else {
         toast.error("Erro ao comprar o tema. Tente novamente.");
       }
@@ -68,7 +78,12 @@ export default function Shop() {
               onClick={() => navigate("/")}
               className="flex items-center gap-2 text-gray-600 hover:text-black transition-colors"
             >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+              >
                 <path
                   d="M8 0L6.6 1.4 12.2 7H0v2h12.2L6.6 14.6 8 16l8-8-8-8z"
                   transform="rotate(180 8 8)"
@@ -85,42 +100,50 @@ export default function Shop() {
               </p>
             </div>
           </div>
-          
+
           {/* Likes balance - right side, bigger and cleaner */}
           <div className="flex items-center gap-3 bg-gray-50 px-6 py-4 border border-gray-200">
             <span className="text-gray-700 font-medium">Seus likes:</span>
             <div className="flex items-center gap-2">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="#ef4444">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
               </svg>
-              <span className="text-2xl font-bold text-gray-900">{userLikes}</span>
+              <span className="text-2xl font-bold text-gray-900">
+                {userLikes}
+              </span>
             </div>
           </div>
         </div>
 
         {/* Themes Grid */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-black mb-6">Temas Disponíveis</h2>
+          <h2 className="text-xl font-semibold text-black mb-6">
+            Temas Disponíveis
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {availableThemes.map((theme) => {
               const purchased = isPurchased(theme.id);
               const affordable = canAfford(theme);
-              
+
               return (
                 <div
                   key={theme.id}
                   className={`border-2 rounded-lg p-6 transition-all duration-300 hover:shadow-lg ${
-                    purchased 
-                      ? "border-green-300 bg-green-50" 
-                      : affordable 
-                        ? "border-gray-200 hover:border-blue-300" 
+                    purchased
+                      ? "border-green-300 bg-green-50"
+                      : affordable
+                        ? "border-gray-200 hover:border-blue-300"
                         : "border-gray-200 opacity-75"
                   }`}
                 >
                   {/* Theme Preview */}
-                  <div className={`w-full h-32 rounded-lg mb-4 flex items-center justify-center text-4xl ${
-                    theme.id === "dark" ? "bg-gray-900 text-white" : "bg-gray-100"
-                  }`}>
+                  <div
+                    className={`w-full h-32 rounded-lg mb-4 flex items-center justify-center text-4xl ${
+                      theme.id === "dark"
+                        ? "bg-gray-900 text-white"
+                        : "bg-gray-100"
+                    }`}
+                  >
                     {theme.icon}
                   </div>
 
@@ -129,14 +152,21 @@ export default function Shop() {
                     <h3 className="text-lg font-semibold text-black mb-3">
                       {theme.name}
                     </h3>
-                    
+
                     {/* Price and Status */}
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-1">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="#ef4444">
-                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="#ef4444"
+                        >
+                          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
                         </svg>
-                        <span className="font-semibold text-black">{theme.price}</span>
+                        <span className="font-semibold text-black">
+                          {theme.price}
+                        </span>
                         <span className="text-sm text-gray-500">likes</span>
                       </div>
                       {purchased && (
@@ -177,7 +207,6 @@ export default function Shop() {
             })}
           </div>
         </div>
-
       </div>
     </main>
   );

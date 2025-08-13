@@ -37,7 +37,7 @@ const AVAILABLE_THEMES: Theme[] = [
     price: 1,
     preview: "/api/images/theme-dark-preview.jpg",
     cssClass: "theme-dark",
-    icon: "🌙"
+    icon: "🌙",
   },
   // Futuros temas podem ser adicionados aqui
 ];
@@ -139,7 +139,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const purchaseTheme = async (themeId: string): Promise<boolean> => {
     if (!user) return false;
 
-    const theme = availableThemes.find(t => t.id === themeId);
+    const theme = availableThemes.find((t) => t.id === themeId);
     if (!theme) return false;
 
     if (userLikes < theme.price) {
@@ -165,7 +165,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       if (response.ok) {
         const data = await response.json();
         setUserLikes(data.remainingLikes);
-        setUserThemes(prev => [...prev, { themeId, purchasedAt: new Date().toISOString() }]);
+        setUserThemes((prev) => [
+          ...prev,
+          { themeId, purchasedAt: new Date().toISOString() },
+        ]);
         return true;
       }
     } catch (error) {

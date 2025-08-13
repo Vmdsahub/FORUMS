@@ -170,7 +170,8 @@ const openSourceCategories: ForumCategory[] = [
   {
     id: "opensource-imagem",
     name: "Imagem",
-    description: "Stable Diffusion, DALL-E open-source e modelos de imagem gratuitos",
+    description:
+      "Stable Diffusion, DALL-E open-source e modelos de imagem gratuitos",
     totalTopics: 0,
     totalPosts: 0,
     lastPost: undefined,
@@ -179,7 +180,8 @@ const openSourceCategories: ForumCategory[] = [
   {
     id: "opensource-video",
     name: "Vídeo",
-    description: "Runway open-source, Zeroscope e ferramentas de vídeo gratuitas",
+    description:
+      "Runway open-source, Zeroscope e ferramentas de vídeo gratuitas",
     totalTopics: 0,
     totalPosts: 0,
     lastPost: undefined,
@@ -288,7 +290,10 @@ function App() {
   };
 
   const getSelectedCategoryData = () => {
-    const allCategories = [...getDynamicToolsCategories(), ...getDynamicOpenSourceCategories()];
+    const allCategories = [
+      ...getDynamicToolsCategories(),
+      ...getDynamicOpenSourceCategories(),
+    ];
     return allCategories.find((cat) => cat.id === selectedCategory);
   };
 
@@ -308,41 +313,41 @@ function App() {
       <NotificationProvider>
         <ThemeProvider>
           <BrowserRouter>
-          <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
-            <Header activeSection={activeSection} />
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <Index
-                    activeSection={activeSection}
-                    setActiveSection={setActiveSection}
-                    expandedNewsletter={expandedNewsletter}
-                    setExpandedNewsletter={setExpandedNewsletter}
-                    selectedCategory={selectedCategory}
-                    setSelectedCategory={setSelectedCategory}
-                    currentWeek={currentWeek}
-                    setCurrentWeek={setCurrentWeek}
-                    weeklyNewsletters={newsletters}
-                    onNewsletterRefresh={loadNewsletters}
-                    toolsCategories={getDynamicToolsCategories()}
-                    openSourceCategories={getDynamicOpenSourceCategories()}
-                    toggleNewsletterTopic={toggleNewsletterTopic}
-                    refreshCategoryStats={refreshStats}
-                    handleCategoryClick={handleCategoryClick}
-                    getSelectedCategoryData={getSelectedCategoryData}
-                    navigateWeek={navigateWeek}
-                    currentNewsletter={currentNewsletter}
-                  />
-                }
-              />
-              <Route path="/topic/:topicId" element={<TopicView />} />
-              <Route path="/account" element={<Account />} />
-              <Route path="/saved-topics" element={<SavedTopics />} />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </div>
+            <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
+              <Header activeSection={activeSection} />
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    <Index
+                      activeSection={activeSection}
+                      setActiveSection={setActiveSection}
+                      expandedNewsletter={expandedNewsletter}
+                      setExpandedNewsletter={setExpandedNewsletter}
+                      selectedCategory={selectedCategory}
+                      setSelectedCategory={setSelectedCategory}
+                      currentWeek={currentWeek}
+                      setCurrentWeek={setCurrentWeek}
+                      weeklyNewsletters={newsletters}
+                      onNewsletterRefresh={loadNewsletters}
+                      toolsCategories={getDynamicToolsCategories()}
+                      openSourceCategories={getDynamicOpenSourceCategories()}
+                      toggleNewsletterTopic={toggleNewsletterTopic}
+                      refreshCategoryStats={refreshStats}
+                      handleCategoryClick={handleCategoryClick}
+                      getSelectedCategoryData={getSelectedCategoryData}
+                      navigateWeek={navigateWeek}
+                      currentNewsletter={currentNewsletter}
+                    />
+                  }
+                />
+                <Route path="/topic/:topicId" element={<TopicView />} />
+                <Route path="/account" element={<Account />} />
+                <Route path="/saved-topics" element={<SavedTopics />} />
+                <Route path="/shop" element={<Shop />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
           </BrowserRouter>
         </ThemeProvider>
       </NotificationProvider>

@@ -1,7 +1,10 @@
 import { RequestHandler } from "express";
 
 // Mock data - em produção seria um banco de dados
-const userThemes: Record<string, Array<{ themeId: string; purchasedAt: string }>> = {};
+const userThemes: Record<
+  string,
+  Array<{ themeId: string; purchasedAt: string }>
+> = {};
 
 // Função para calcular likes reais de um usuário
 function calculateUserLikes(userId: string): number {
@@ -88,7 +91,7 @@ export const purchaseTheme: RequestHandler = (req, res) => {
 
     // Verificar se o usuário já possui o tema
     const currentThemes = userThemes[userId] || [];
-    if (currentThemes.some(t => t.themeId === themeId)) {
+    if (currentThemes.some((t) => t.themeId === themeId)) {
       return res.status(400).json({ message: "Usuário já possui este tema" });
     }
 
@@ -102,7 +105,7 @@ export const purchaseTheme: RequestHandler = (req, res) => {
 
     if (availableLikes < themePrice) {
       return res.status(400).json({
-        message: `Likes insuficientes. Necessário: ${themePrice}, disponível: ${availableLikes}`
+        message: `Likes insuficientes. Necessário: ${themePrice}, disponível: ${availableLikes}`,
       });
     }
 
@@ -113,7 +116,7 @@ export const purchaseTheme: RequestHandler = (req, res) => {
     }
     userThemes[userId].push({
       themeId,
-      purchasedAt: new Date().toISOString()
+      purchasedAt: new Date().toISOString(),
     });
 
     const remainingLikes = earnedLikes - userSpentLikes[userId];
@@ -121,7 +124,7 @@ export const purchaseTheme: RequestHandler = (req, res) => {
     res.json({
       success: true,
       remainingLikes: Math.max(0, remainingLikes),
-      message: "Tema comprado com sucesso"
+      message: "Tema comprado com sucesso",
     });
   } catch (error) {
     console.error("Error purchasing theme:", error);
