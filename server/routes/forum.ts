@@ -7,7 +7,7 @@ import {
   CreateCommentRequest,
   LikeResponse,
 } from "@shared/forum";
-import { getTopicCommentStats } from "./simple-comments";
+import { getTopicCommentStats, getTopicMostRecentCommentDate } from "./simple-comments";
 // Temporariamente removido para evitar problemas de importação
 
 // Simple in-memory storage for demo purposes
