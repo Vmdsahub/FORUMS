@@ -190,11 +190,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem("auth_token");
-    localStorage.removeItem("selected_theme"); // Limpar tema selecionado
-    setUser(null);
-    toast.success("Logout realizado com sucesso!");
+  const logout = async () => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      if (token) {
+        // Call server logout endpoint to invalidate token
+        await fetch("/api/auth/logout", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error during logout:", error);
+      // Continue with logout even if server call fails
+    } finally {
+      // Always clear local state
+      localStorage.removeItem("auth_token");
+      localStorage.removeItem("selected_theme"); // Limpar tema selecionado
+      setUser(null);
+      toast.success("Logout realizado com sucesso!");
+    }
   };
 
   return (
