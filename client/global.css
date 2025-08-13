@@ -907,36 +907,24 @@
     backdrop-filter: blur(15px) saturate(110%);
   }
 
-  /* === SCROLLBARS LÍQUIDAS === */
+  /* === SCROLLBARS === */
   .theme-glassmorphism-liquid *::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
 
   .theme-glassmorphism-liquid *::-webkit-scrollbar-track {
     background: var(--glass-bg-primary);
-    border-radius: 8px;
-    border: 1px solid var(--glass-border-secondary);
+    border-radius: 3px;
   }
 
   .theme-glassmorphism-liquid *::-webkit-scrollbar-thumb {
-    background: linear-gradient(
-      135deg,
-      var(--glass-accent-cyan),
-      var(--glass-accent-purple)
-    );
-    border-radius: 8px;
-    border: 2px solid var(--glass-bg-primary);
-    box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+    background: var(--glass-bg-tertiary);
+    border-radius: 3px;
   }
 
   .theme-glassmorphism-liquid *::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(
-      135deg,
-      #00e6ff,
-      #c55cff
-    );
-    box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+    background: var(--glass-border);
   }
 
   /* === EFEITOS HOVER AVANÇADOS === */
