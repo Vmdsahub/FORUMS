@@ -259,6 +259,18 @@ function App() {
   // Get dynamic category statistics
   const { categoryStats, refreshStats } = useCategoryStats();
 
+  // Listen for global category stats refresh events
+  useEffect(() => {
+    const handleRefreshStats = () => {
+      refreshStats();
+    };
+
+    window.addEventListener('refreshCategoryStats', handleRefreshStats);
+    return () => {
+      window.removeEventListener('refreshCategoryStats', handleRefreshStats);
+    };
+  }, [refreshStats]);
+
   // Load newsletters from API
   const loadNewsletters = async () => {
     setIsLoadingNewsletters(true);
