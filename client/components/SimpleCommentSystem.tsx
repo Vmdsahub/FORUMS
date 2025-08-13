@@ -308,6 +308,8 @@ export default function SimpleCommentSystem({
 
       if (response.ok) {
         await loadComments();
+        // Trigger global category stats refresh
+        window.dispatchEvent(new CustomEvent('refreshCategoryStats'));
       } else {
         const data = await response.json();
         toast.error(data.message || "Erro ao excluir");
