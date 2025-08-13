@@ -112,6 +112,7 @@ export default function Index(props: IndexProps) {
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
     null,
   );
+  const [editingCategoryDescription, setEditingCategoryDescription] = useState("");
   const [customIcons, setCustomIcons] = useState<Record<string, string>>({});
   const [isNewsletterModalOpen, setIsNewsletterModalOpen] = useState(false);
   const [newCategory, setNewCategory] = useState({ name: "", description: "" });
