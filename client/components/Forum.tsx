@@ -217,6 +217,11 @@ export default function Forum() {
     formData.append("file", file);
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        controller.abort(new DOMException("Upload request timeout", "TimeoutError"));
+      }, 30000); // 30s timeout for upload
+
       // Primeiro, fazer upload da imagem
       const uploadResponse = await fetch("/api/upload", {
         method: "POST",
@@ -224,6 +229,7 @@ export default function Forum() {
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
         body: formData,
+        signal: controller.signal,
       });
 
       if (uploadResponse.ok) {
@@ -240,7 +246,10 @@ export default function Forum() {
             categoryId,
             iconUrl: uploadResult.url,
           }),
+          signal: controller.signal,
         });
+
+        clearTimeout(timeoutId);
 
         if (saveResponse.ok) {
           setCustomIcons((prev) => ({
@@ -249,10 +258,19 @@ export default function Forum() {
           }));
           setIconModalOpen(false);
           setEditingCategoryId(null);
+        } else {
+          console.warn("Failed to save category icon");
         }
+      } else {
+        clearTimeout(timeoutId);
+        console.warn("Failed to upload image");
       }
-    } catch (error) {
-      console.error("Erro ao fazer upload do ícone:", error);
+    } catch (error: any) {
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        console.warn("Upload request timed out");
+      } else {
+        console.warn("Error uploading icon:", error.message);
+      }
     }
   };
 
