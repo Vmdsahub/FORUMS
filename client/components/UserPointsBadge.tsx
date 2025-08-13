@@ -14,6 +14,7 @@ interface UserPointsBadgeProps {
   showPoints?: boolean;
   showBadges?: boolean;
   size?: "sm" | "md" | "lg";
+  refreshTrigger?: number; // Prop para forçar refresh
 }
 
 export default function UserPointsBadge({
@@ -21,6 +22,7 @@ export default function UserPointsBadge({
   showPoints = true,
   showBadges = false,
   size = "sm",
+  refreshTrigger,
 }: UserPointsBadgeProps) {
   const [userStats, setUserStats] = useState<{
     points: number;
@@ -75,7 +77,7 @@ export default function UserPointsBadge({
     };
 
     fetchUserStats();
-  }, [userId]);
+  }, [userId, refreshTrigger]);
 
   if (isLoading || !userStats) {
     return null;
