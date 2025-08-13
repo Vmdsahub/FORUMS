@@ -350,6 +350,14 @@ export default function SimpleCommentSystem({
         setNewComment("");
         setQuotedComment(null);
         await loadComments();
+
+        // Refresh category stats to update the homepage
+        try {
+          await fetch("/api/categories/stats");
+        } catch (error) {
+          console.warn("Failed to refresh category stats:", error);
+        }
+
         toast.success("Comentário adicionado!");
       } else {
         const data = await response.json();
