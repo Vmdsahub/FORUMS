@@ -563,10 +563,9 @@ export default function Account() {
                 )}
               </div>
 
-              {userThemes.length > 0 && (
-                <>
-                  {/* Default Theme */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+              {/* Temas disponíveis - sempre mostrar tema padrão */}
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-4">
+                {/* Default Theme - sempre disponível */}
                     <div
                       className={`border-2 rounded-lg p-4 cursor-pointer transition-all hover:shadow-md ${
                         currentTheme === "default"
@@ -631,18 +630,16 @@ export default function Account() {
                         </div>
                       );
                     })}
-                  </div>
+              </div>
 
-                  <div className="text-center pt-4 border-t border-gray-200">
-                    <button
-                      onClick={() => navigate("/shop")}
-                      className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
-                    >
-                      Comprar mais temas na Loja de Likes
-                    </button>
-                  </div>
-                </>
-              )}
+              <div className="text-center pt-4 border-t border-gray-200">
+                <button
+                  onClick={() => navigate("/shop")}
+                  className="text-blue-600 hover:text-blue-800 text-sm font-medium underline"
+                >
+                  {userThemes.length > 0 ? "Comprar mais temas na Loja de Likes" : "Comprar temas na Loja de Likes"}
+                </button>
+              </div>
             </div>
           )}
         </div>
