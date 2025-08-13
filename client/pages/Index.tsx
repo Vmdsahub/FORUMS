@@ -142,7 +142,9 @@ export default function Index(props: IndexProps) {
   const loadSavedIcons = async () => {
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
+      const timeoutId = setTimeout(() => {
+        controller.abort(new DOMException("Category icons request timeout", "TimeoutError"));
+      }, 5000); // 5s timeout
 
       const response = await fetch("/api/category-icons", {
         signal: controller.signal,
@@ -159,11 +161,14 @@ export default function Index(props: IndexProps) {
           response.status,
           response.statusText,
         );
+        setCustomIcons({}); // Set empty object as fallback
       }
-    } catch (error) {
+    } catch (error: any) {
       // Fail silently - icons are optional feature
-      if (error.name !== "AbortError") {
-        console.warn("Icons service unavailable, using defaults");
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        console.warn("Category icons request timed out");
+      } else {
+        console.warn("Icons service unavailable, using defaults:", error.message);
       }
       setCustomIcons({}); // Set empty object as fallback
     }
