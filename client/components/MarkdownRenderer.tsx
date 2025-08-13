@@ -1,10 +1,23 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import ImageModal from "@/components/ImageModal";
 
 interface MarkdownRendererProps {
   content: string;
 }
 
 export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
+  const [modalImage, setModalImage] = useState<{ src: string; alt: string; isVideo: boolean } | null>(null);
+
+  // Configurar função global para abrir modal
+  useEffect(() => {
+    (window as any).openImageModal = (src: string, alt: string, isVideo: boolean) => {
+      setModalImage({ src, alt, isVideo });
+    };
+
+    return () => {
+      delete (window as any).openImageModal;
+    };
+  }, []);
   const renderContent = () => {
     // Se o conteúdo já é HTML (contém tags), renderiza diretamente
     if (content.includes("<") && content.includes(">")) {
@@ -26,13 +39,13 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
     // Convert image markdown ![alt](url) to img tags
     processedContent = processedContent.replace(
       /!\[(.*?)\]\((.*?)\)/g,
-      '<div style="margin: 16px 0;"><img src="$2" alt="$1" style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #e5e7eb;" loading="lazy" /><p style="font-size: 14px; color: #6b7280; margin-top: 8px; text-align: center;">$1</p></div>',
+      '<div style="margin: 16px 0; text-align: center;"><img src="$2" alt="$1" style="max-width: 300px; height: auto; border-radius: 8px; border: 1px solid #e5e7eb; cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform=\'scale(1.02)\'" onmouseout="this.style.transform=\'scale(1)\'" onclick="window.openImageModal(\'$2\', \'$1\', false)" loading="lazy" /><p style="font-size: 14px; color: #6b7280; margin-top: 8px; text-align: center;">$1</p></div>',
     );
 
     // Convert video links [Video: name](url) to video tags
     processedContent = processedContent.replace(
       /\[Vídeo: (.*?)\]\((.*?)\)/g,
-      '<div style="margin: 16px 0;"><div style="position: relative; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb;"><video controls style="width: 100%; height: auto;" preload="metadata"><source src="$2" type="video/mp4"><source src="$2" type="video/webm"><source src="$2" type="video/mov">Seu navegador não suporta vídeo HTML5.</video></div><p style="font-size: 14px; color: #6b7280; margin-top: 8px; display: flex; align-items: center; gap: 4px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color: #2563eb;"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>$1</p></div>',
+      '<div style="margin: 16px 0; text-align: center;"><div style="position: relative; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb; display: inline-block; max-width: 300px;"><video controls style="width: 100%; height: auto; cursor: pointer;" onclick="window.openImageModal(\'$2\', \'$1\', true)" preload="metadata"><source src="$2" type="video/mp4"><source src="$2" type="video/webm"><source src="$2" type="video/mov">Seu navegador não suporta vídeo HTML5.</video></div><p style="font-size: 14px; color: #6b7280; margin-top: 8px; display: flex; align-items: center; gap: 4px; justify-content: center;"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="color: #2563eb;"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>$1</p></div>',
     );
 
     // Convert code blocks ```code``` to styled blocks
@@ -54,13 +67,24 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
   };
 
   return (
-    <div
-      className="prose max-w-none text-gray-700 leading-relaxed"
-      dangerouslySetInnerHTML={{ __html: renderContent() }}
-      style={{
-        wordBreak: "break-word",
-        overflowWrap: "break-word",
-      }}
-    />
+    <>
+      <div
+        className="prose max-w-none text-gray-700 leading-relaxed"
+        dangerouslySetInnerHTML={{ __html: renderContent() }}
+        style={{
+          wordBreak: "break-word",
+          overflowWrap: "break-word",
+        }}
+      />
+
+      {/* Modal de imagem/vídeo */}
+      <ImageModal
+        isOpen={!!modalImage}
+        onClose={() => setModalImage(null)}
+        src={modalImage?.src || ""}
+        alt={modalImage?.alt || ""}
+        isVideo={modalImage?.isVideo || false}
+      />
+    </>
   );
 }
