@@ -183,13 +183,31 @@ export default function Forum() {
 
   const loadSavedIcons = async () => {
     try {
-      const response = await fetch("/api/category-icons");
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        controller.abort(new DOMException("Category icons request timeout", "TimeoutError"));
+      }, 5000);
+
+      const response = await fetch("/api/category-icons", {
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
       if (response.ok) {
         const data = await response.json();
         setCustomIcons(data.icons || {});
+      } else {
+        console.warn("Failed to load category icons:", response.status);
+        setCustomIcons({});
       }
-    } catch (error) {
-      console.error("Erro ao carregar ícones salvos:", error);
+    } catch (error: any) {
+      if (error.name === "AbortError" || error.name === "TimeoutError") {
+        console.warn("Category icons request timed out");
+      } else {
+        console.warn("Icons service unavailable, using defaults:", error.message);
+      }
+      setCustomIcons({});
     }
   };
 
