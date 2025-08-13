@@ -1324,25 +1324,58 @@ export default function Index(props: IndexProps) {
       <Dialog open={iconModalOpen} onOpenChange={setIconModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Alterar Ícone da Categoria</DialogTitle>
+            <DialogTitle>Editar Categoria</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
-            <p className="text-sm text-gray-600">
-              Selecione uma nova imagem para o ícone da categoria.
-            </p>
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file && editingCategoryId) {
-                  handleIconUpload(file, editingCategoryId);
-                }
-              }}
-            />
+            <div>
+              <Label htmlFor="category-description" className="text-sm font-medium">
+                Descrição da Categoria
+              </Label>
+              <textarea
+                id="category-description"
+                value={editingCategoryDescription}
+                onChange={(e) => setEditingCategoryDescription(e.target.value)}
+                className="w-full mt-1 p-2 border border-gray-300 rounded-md resize-none"
+                rows={3}
+                placeholder="Digite a descrição da categoria..."
+              />
+            </div>
+            <div>
+              <Label htmlFor="category-icon" className="text-sm font-medium">
+                Ícone da Categoria
+              </Label>
+              <p className="text-sm text-gray-600 mb-2">
+                Selecione uma nova imagem para o ícone da categoria.
+              </p>
+              <Input
+                id="category-icon"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file && editingCategoryId) {
+                    handleIconUpload(file, editingCategoryId);
+                  }
+                }}
+              />
+            </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setIconModalOpen(false)}>
                 Cancelar
+              </Button>
+              <Button
+                onClick={() => {
+                  if (editingCategoryId) {
+                    // Salvar descrição (por enquanto apenas mostrar toast)
+                    toast.success(`Descrição da categoria atualizada! (Demo - não persistente)`);
+                    setIconModalOpen(false);
+                    setEditingCategoryId(null);
+                    setEditingCategoryDescription("");
+                  }
+                }}
+                className="bg-blue-600 text-white hover:bg-blue-700"
+              >
+                Salvar Alterações
               </Button>
             </div>
           </div>
