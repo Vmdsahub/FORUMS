@@ -919,15 +919,53 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
     Object.keys(categoryStats).forEach((categoryId) => {
       const categoryTopics = allTopics.filter((t) => t.category === categoryId);
       if (categoryTopics.length > 0) {
-        // Get the most recent topic
-        const lastTopic = categoryTopics.sort(
-          (a, b) =>
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+        // Get the topic with the most recent activity (either creation or comment)
+        const topicsWithActivity = categoryTopics.map(topic => {
+          // Get the most recent activity time
+          const topicCreatedTime = new Date(topic.createdAt).getTime();
+          let mostRecentTime = topicCreatedTime;
+
+          // Check if topic has lastPost data from comments
+          if (topic.lastPost && topic.lastPost.date && topic.lastPost.time) {
+            try {
+              // Parse Brazilian date format: DD/MM/YYYY
+              const [day, month, year] = topic.lastPost.date.split('/');
+              const [hours, minutes] = topic.lastPost.time.split(':');
+
+              const lastPostDate = new Date(
+                parseInt(year),
+                parseInt(month) - 1, // Month is 0-indexed
+                parseInt(day),
+                parseInt(hours),
+                parseInt(minutes)
+              );
+
+              const lastPostTime = lastPostDate.getTime();
+              if (!isNaN(lastPostTime)) {
+                mostRecentTime = Math.max(mostRecentTime, lastPostTime);
+              }
+            } catch (error) {
+              console.warn(`[STATS] Error parsing lastPost date for topic "${topic.title}":`, error);
+            }
+          }
+
+          return {
+            topic,
+            mostRecentTime
+          };
+        });
+
+        // Sort by most recent activity and get the first one
+        const mostRecentTopicData = topicsWithActivity.sort(
+          (a, b) => b.mostRecentTime - a.mostRecentTime
         )[0];
 
+        const lastTopic = mostRecentTopicData.topic;
+
+        // Use the lastPost data if available, otherwise fall back to current time
         categoryStats[categoryId].lastPost = {
           title: lastTopic.title,
-          author: lastTopic.author,
+          author: lastTopic.lastPost?.author || lastTopic.author,
           date:
             lastTopic.lastPost?.date ||
             new Date().toLocaleDateString("pt-BR", {
