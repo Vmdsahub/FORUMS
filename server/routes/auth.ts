@@ -125,7 +125,13 @@ export const handleLogin: RequestHandler = (req, res) => {
     // Find user by email
     const user = Array.from(users.values()).find((u) => u.email === email);
 
-    if (!user || !verifyPassword(password, user.password)) {
+    if (!user) {
+      return res.status(401).json({
+        message: "Ops, parece que essa conta não existe!",
+      } as ErrorResponse);
+    }
+
+    if (!verifyPassword(password, user.password)) {
       return res.status(401).json({
         message: "Email ou senha incorretos",
       } as ErrorResponse);
