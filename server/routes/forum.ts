@@ -425,6 +425,8 @@ export const handleGetTopics: RequestHandler = (req, res) => {
       const aActivity = getMostRecentActivity(a);
       const bActivity = getMostRecentActivity(b);
 
+      console.log(`[SORT] Comparing "${a.title}" (${new Date(aActivity).toLocaleString()}) vs "${b.title}" (${new Date(bActivity).toLocaleString()}) - Result: ${bActivity - aActivity}`);
+
       return bActivity - aActivity;
     });
   }
