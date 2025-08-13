@@ -393,13 +393,41 @@ export const handleGetTopics: RequestHandler = (req, res) => {
     }
   }
 
+  // Helper function to get most recent activity date (topic creation or last comment)
+  const getMostRecentActivity = (topic: Topic): number => {
+    const topicDate = new Date(topic.createdAt).getTime();
+    const topicComments = Array.from(comments.values()).filter(c => c.topicId === topic.id);
+
+    if (topicComments.length === 0) {
+      return topicDate;
+    }
+
+    // Find the most recent comment date
+    const mostRecentCommentDate = Math.max(
+      ...topicComments.map(comment => {
+        // Parse comment date and time
+        const [day, month, year] = comment.date.split('/');
+        const [hours, minutes] = comment.time.split(':');
+        const commentDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day), parseInt(hours), parseInt(minutes));
+        return commentDate.getTime();
+      })
+    );
+
+    return Math.max(topicDate, mostRecentCommentDate);
+  };
+
   if (search) {
     filteredTopics.sort((a, b) => b.likes - a.likes);
   } else {
     filteredTopics.sort((a, b) => {
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+
+      // Sort by most recent activity (creation date or last comment)
+      const aActivity = getMostRecentActivity(a);
+      const bActivity = getMostRecentActivity(b);
+
+      return bActivity - aActivity;
     });
   }
 
