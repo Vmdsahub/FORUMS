@@ -96,7 +96,7 @@ export const purchaseTheme: RequestHandler = (req, res) => {
     }
 
     // Verificar preço do tema
-    const themesPrices = { dark: 1 };
+    const themesPrices = { dark: 1, "glassmorphism-liquid": 1 };
     const themePrice = themesPrices[themeId as keyof typeof themesPrices];
 
     const earnedLikes = calculateUserLikes(userId);
