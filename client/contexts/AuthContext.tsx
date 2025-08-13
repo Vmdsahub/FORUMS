@@ -92,19 +92,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         toast.success("Login realizado com sucesso!");
         return true;
       } else {
-        let errorMessage = "Erro ao fazer login";
         try {
-          const errorText = await response.text();
-          console.log("Login error response text:", errorText);
-          if (errorText) {
-            const error = JSON.parse(errorText);
-            errorMessage = error.message || errorMessage;
-          }
+          const errorData = await response.json();
+          const errorMessage = errorData?.message || "Erro ao fazer login";
+          toast.error(errorMessage);
         } catch (jsonError) {
-          console.error("Error parsing error response:", jsonError);
+          console.error("Error parsing JSON:", jsonError);
+          toast.error("Erro ao fazer login");
         }
-        console.log("Final error message:", errorMessage);
-        toast.error(errorMessage);
         return false;
       }
     } catch (error: any) {
