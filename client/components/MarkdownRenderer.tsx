@@ -6,11 +6,19 @@ interface MarkdownRendererProps {
 }
 
 export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
-  const [modalImage, setModalImage] = useState<{ src: string; alt: string; isVideo: boolean } | null>(null);
+  const [modalImage, setModalImage] = useState<{
+    src: string;
+    alt: string;
+    isVideo: boolean;
+  } | null>(null);
 
   // Configurar função global para abrir modal
   useEffect(() => {
-    (window as any).openImageModal = (src: string, alt: string, isVideo: boolean) => {
+    (window as any).openImageModal = (
+      src: string,
+      alt: string,
+      isVideo: boolean,
+    ) => {
       setModalImage({ src, alt, isVideo });
     };
 

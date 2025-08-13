@@ -142,13 +142,18 @@ export default function CreateTopicModal({
         onStatsRefresh?.(); // Refresh category statistics
       } else {
         console.log("Response status:", response.status);
-        console.log("Response headers:", Object.fromEntries(response.headers.entries()));
+        console.log(
+          "Response headers:",
+          Object.fromEntries(response.headers.entries()),
+        );
 
         let errorData;
         try {
           const responseText = await response.text();
           console.log("Response text:", responseText);
-          errorData = responseText ? JSON.parse(responseText) : { message: "Erro desconhecido" };
+          errorData = responseText
+            ? JSON.parse(responseText)
+            : { message: "Erro desconhecido" };
         } catch (parseError) {
           console.error("Error parsing response:", parseError);
           errorData = { message: "Erro ao processar resposta do servidor" };
@@ -165,9 +170,9 @@ export default function CreateTopicModal({
       let errorMessage = "Erro ao criar tópico";
       if (error instanceof Error) {
         errorMessage = error.message;
-      } else if (typeof error === 'string') {
+      } else if (typeof error === "string") {
         errorMessage = error;
-      } else if (error && typeof error === 'object' && 'message' in error) {
+      } else if (error && typeof error === "object" && "message" in error) {
         errorMessage = String(error.message);
       }
 

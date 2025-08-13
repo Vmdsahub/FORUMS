@@ -10,7 +10,13 @@ interface ImageModalProps {
   isVideo?: boolean;
 }
 
-export default function ImageModal({ isOpen, onClose, src, alt, isVideo = false }: ImageModalProps) {
+export default function ImageModal({
+  isOpen,
+  onClose,
+  src,
+  alt,
+  isVideo = false,
+}: ImageModalProps) {
   if (!isOpen) return null;
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -20,7 +26,7 @@ export default function ImageModal({ isOpen, onClose, src, alt, isVideo = false 
   };
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4"
       onClick={handleBackdropClick}
     >
@@ -41,7 +47,7 @@ export default function ImageModal({ isOpen, onClose, src, alt, isVideo = false 
             controls
             autoPlay
             className="max-w-full max-h-[85vh] object-contain"
-            style={{ display: 'block' }}
+            style={{ display: "block" }}
           >
             <source src={src} type="video/mp4" />
             <source src={src} type="video/webm" />
@@ -53,7 +59,7 @@ export default function ImageModal({ isOpen, onClose, src, alt, isVideo = false 
             src={src}
             alt={alt}
             className="max-w-full max-h-[85vh] object-contain"
-            style={{ display: 'block' }}
+            style={{ display: "block" }}
           />
         )}
 

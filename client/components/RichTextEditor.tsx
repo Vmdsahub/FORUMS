@@ -18,7 +18,11 @@ export default function RichTextEditor({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [modalImage, setModalImage] = useState<{ src: string; alt: string; isVideo: boolean } | null>(null);
+  const [modalImage, setModalImage] = useState<{
+    src: string;
+    alt: string;
+    isVideo: boolean;
+  } | null>(null);
 
   // Sincronizar o conteúdo do editor com o value
   useEffect(() => {
@@ -29,7 +33,11 @@ export default function RichTextEditor({
 
   // Configurar função global para abrir modal
   useEffect(() => {
-    (window as any).openImageModal = (src: string, alt: string, isVideo: boolean) => {
+    (window as any).openImageModal = (
+      src: string,
+      alt: string,
+      isVideo: boolean,
+    ) => {
       setModalImage({ src, alt, isVideo });
     };
 

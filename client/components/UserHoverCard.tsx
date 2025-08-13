@@ -50,8 +50,12 @@ export default function UserHoverCard({
         // Buscar dados do perfil do usuário
         const profileResponse = await fetch(`/api/user/profile/${userId}`);
 
-        console.log(`[UserHoverCard] URL da requisição: /api/user/profile/${userId}`);
-        console.log(`[UserHoverCard] Status da resposta: ${profileResponse.status}`);
+        console.log(
+          `[UserHoverCard] URL da requisição: /api/user/profile/${userId}`,
+        );
+        console.log(
+          `[UserHoverCard] Status da resposta: ${profileResponse.status}`,
+        );
 
         // Buscar seleção de badges do usuário específico
         let userSelection: string[] = [];
@@ -82,7 +86,7 @@ export default function UserHoverCard({
           setUserProfile({
             points: profileData.points, // Usar pontos do perfil
             badges: profileData.badges,
-            createdAt: profileData.createdAt
+            createdAt: profileData.createdAt,
           });
           setBadgeSelection(userSelection);
         } else {
@@ -156,7 +160,8 @@ export default function UserHoverCard({
                   <div className="flex items-center gap-1">
                     <h3 className="font-semibold text-gray-900">{userName}</h3>
                     <span className="text-base font-medium text-gray-700 px-2 py-1 rounded-full flex items-center gap-1">
-                      <span className="text-lg">❤️</span> <span className="text-base">{userProfile.points}</span>
+                      <span className="text-lg">❤️</span>{" "}
+                      <span className="text-base">{userProfile.points}</span>
                     </span>
                   </div>
                 </div>
