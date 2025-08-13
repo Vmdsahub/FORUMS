@@ -70,6 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     captcha: string,
   ): Promise<boolean> => {
     setIsLoading(true);
+
     try {
       const response = await fetch("/api/auth/login", {
         method: "POST",
@@ -79,35 +80,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         body: JSON.stringify({ email, password, captcha }),
       });
 
-      // Read response once and handle both success and error cases
-      const responseText = await response.text();
-
       if (response.ok) {
+        const data: AuthResponse = await response.json();
+        localStorage.setItem("auth_token", data.token);
+        setUser(data.user);
+        toast.success("Login realizado com sucesso!");
+        return true;
+      }
+
+      // Handle error responses - check status and show appropriate message
+      if (response.status === 401) {
+        // For 401 status, we know the server is sending the specific message
         try {
-          const data: AuthResponse = JSON.parse(responseText);
-          localStorage.setItem("auth_token", data.token);
-          setUser(data.user);
-          toast.success("Login realizado com sucesso!");
-          return true;
-        } catch (parseError) {
-          console.error("Error parsing success response:", parseError);
-          toast.error("Erro inesperado. Tente novamente.");
-          return false;
+          const errorData = await response.json();
+          toast.error(errorData?.message || "Credenciais inválidas");
+        } catch {
+          // If JSON parsing fails for 401, show our custom message
+          toast.error("Ops, parece que essa conta não existe!");
         }
       } else {
-        try {
-          const errorData = JSON.parse(responseText);
-          toast.error(errorData?.message || "Erro ao fazer login");
-        } catch (parseError) {
-          console.error("Error parsing error response:", parseError);
-          console.log("Raw response:", responseText);
-          toast.error("Erro ao fazer login");
-        }
-        return false;
+        toast.error("Erro ao fazer login");
       }
-    } catch (error: any) {
-      console.error("Login error:", error);
-      toast.error("Erro de conexão. Tente novamente.");
+
+      return false;
+
+    } catch (networkError: any) {
+      console.error("Network error:", networkError);
+
+      // If it's a network error and we're dealing with login attempt,
+      // check if it's likely a 401 response that failed to parse
+      if (networkError.message?.includes("JSON") || networkError.message?.includes("stream")) {
+        toast.error("Ops, parece que essa conta não existe!");
+      } else {
+        toast.error("Erro de conexão. Tente novamente.");
+      }
+
       return false;
     } finally {
       setIsLoading(false);
