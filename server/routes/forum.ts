@@ -227,7 +227,7 @@ function initializeDemoData() {
       title: "Stable Diffusion XL: Novidades e melhorias",
       description: "Análise das novas funcionalidades do SDXL",
       content:
-        "O Stable Diffusion XL trouxe várias melhorias significativas:\n\n1. **Resolução nativa 1024x1024**: Muito melhor que os 512x512 do modelo original\n2. **Modelo de refino**: Permite melhorar os detalhes das imagens geradas\n3. **Melhor compreensão de texto**: Prompts mais complexos funcionam melhor\n4. **Controle de aspectos**: Diferentes proporções funcionam melhor\n\nTestei bastante e os resultados são impressionantes. Alguém mais teve experiências similares?",
+        "O Stable Diffusion XL trouxe várias melhorias significativas:\n\n1. **Resolução nativa 1024x1024**: Muito melhor que os 512x512 do modelo original\n2. **Modelo de refino**: Permite melhorar os detalhes das imagens geradas\n3. **Melhor compreensão de texto**: Prompts mais complexos funcionam melhor\n4. **Controle de aspectos**: Diferentes proporções funcionam melhor\n\nTestei bastante e os resultados são impressionantes. Algu��m mais teve experiências similares?",
       author: "ImageGen",
       authorId: "user_image_gen",
       authorAvatar: "IG",
@@ -919,39 +919,11 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
     Object.keys(categoryStats).forEach((categoryId) => {
       const categoryTopics = allTopics.filter((t) => t.category === categoryId);
       if (categoryTopics.length > 0) {
-        // Get the topic with the most recent activity (either creation or comment)
+        // Get the topic with the most recent activity using same logic as topic list
         const topicsWithActivity = categoryTopics.map(topic => {
-          // Get the most recent activity time
-          const topicCreatedTime = new Date(topic.createdAt).getTime();
-          let mostRecentTime = topicCreatedTime;
-
-          // Check if topic has lastPost data from comments
-          if (topic.lastPost && topic.lastPost.date && topic.lastPost.time) {
-            try {
-              // Parse Brazilian date format: DD/MM/YYYY
-              const [day, month, year] = topic.lastPost.date.split('/');
-              const [hours, minutes] = topic.lastPost.time.split(':');
-
-              const lastPostDate = new Date(
-                parseInt(year),
-                parseInt(month) - 1, // Month is 0-indexed
-                parseInt(day),
-                parseInt(hours),
-                parseInt(minutes)
-              );
-
-              const lastPostTime = lastPostDate.getTime();
-              if (!isNaN(lastPostTime)) {
-                mostRecentTime = Math.max(mostRecentTime, lastPostTime);
-              }
-            } catch (error) {
-              console.warn(`[STATS] Error parsing lastPost date for topic "${topic.title}":`, error);
-            }
-          }
-
           return {
             topic,
-            mostRecentTime
+            mostRecentTime: getMostRecentActivity(topic)
           };
         });
 
