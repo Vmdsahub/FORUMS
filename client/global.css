@@ -657,4 +657,10 @@
       box-shadow: none !important;
     }
   }
+
+  /* === TOAST CUSTOMIZATION === */
+  [data-sonner-toast] {
+    width: fit-content !important;
+    max-width: 400px !important;
+  }
 }

@@ -9,7 +9,15 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AuthProvider>
       <App />
-      <Toaster position="bottom-right" />
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            width: "fit-content",
+            maxWidth: "400px",
+          },
+        }}
+      />
     </AuthProvider>
   </React.StrictMode>,
 );

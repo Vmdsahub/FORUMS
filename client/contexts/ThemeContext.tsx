@@ -25,6 +25,7 @@ interface ThemeContextType {
   applyTheme: (themeId: string) => void;
   fetchUserThemes: () => void;
   fetchUserLikes: () => void;
+  refreshLikes: () => void; // Nova função para refresh global
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -200,6 +201,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const refreshLikes = () => {
+    fetchUserLikes();
+  };
+
   return (
     <ThemeContext.Provider
       value={{
@@ -211,6 +216,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         applyTheme,
         fetchUserThemes,
         fetchUserLikes,
+        refreshLikes,
       }}
     >
       {children}

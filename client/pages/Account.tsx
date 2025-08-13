@@ -32,6 +32,8 @@ export default function Account() {
     currentTheme,
     applyTheme,
     fetchUserThemes,
+    userLikes,
+    refreshLikes,
   } = useTheme();
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
@@ -67,14 +69,16 @@ export default function Account() {
       const timer1 = setTimeout(() => fetchUserTopics(), 100);
       const timer2 = setTimeout(() => fetchUserBadges(), 200);
       const timer3 = setTimeout(() => fetchUserThemes(), 300);
+      const timer4 = setTimeout(() => refreshLikes(), 400);
 
       return () => {
         clearTimeout(timer1);
         clearTimeout(timer2);
         clearTimeout(timer3);
+        clearTimeout(timer4);
       };
     }
-  }, [user, fetchUserThemes]);
+  }, [user, fetchUserThemes, refreshLikes]);
 
   const fetchUserBadges = async () => {
     try {
@@ -358,12 +362,12 @@ export default function Account() {
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-1">
               <h2 className="text-xl font-semibold text-black">{user.name}</h2>
-              <UserPointsBadge
-                userId={user.id}
-                size="md"
-                showPoints={true}
-                showBadges={false}
-              />
+              <div className="flex items-center gap-2 bg-red-50 px-3 py-1 rounded-full">
+                <span className="text-red-600 font-medium text-base">
+                  ❤️ {userLikes}
+                </span>
+                <span className="text-sm text-gray-500">likes</span>
+              </div>
             </div>
             <p className="text-gray-600 mb-1">{user.email}</p>
             <div className="flex items-center gap-3">

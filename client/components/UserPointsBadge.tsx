@@ -14,6 +14,7 @@ interface UserPointsBadgeProps {
   showPoints?: boolean;
   showBadges?: boolean;
   size?: "sm" | "md" | "lg";
+  refreshTrigger?: number; // Prop para forçar refresh
 }
 
 export default function UserPointsBadge({
@@ -21,6 +22,7 @@ export default function UserPointsBadge({
   showPoints = true,
   showBadges = false,
   size = "sm",
+  refreshTrigger,
 }: UserPointsBadgeProps) {
   const [userStats, setUserStats] = useState<{
     points: number;
@@ -33,16 +35,32 @@ export default function UserPointsBadge({
       try {
         console.log(`[UserPointsBadge] Buscando stats para usuário: ${userId}`);
 
-        const response = await fetch(`/api/user/profile/${userId}`);
-        if (response.ok) {
-          const data = await response.json();
-          console.log(`[UserPointsBadge] Dados recebidos:`, data);
+        // Buscar saldo disponível de likes (mesma fonte da loja)
+        const likesResponse = await fetch("/api/user/likes", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+          },
+        });
+
+        // Buscar badges do perfil
+        const profileResponse = await fetch(`/api/user/profile/${userId}`);
+
+        if (likesResponse.ok && profileResponse.ok) {
+          const likesData = await likesResponse.json();
+          const profileData = await profileResponse.json();
+
+          console.log(
+            `[UserPointsBadge] Saldo de likes:`,
+            likesData.totalLikes,
+          );
+          console.log(`[UserPointsBadge] Badges:`, profileData.badges);
+
           setUserStats({
-            points: data.points,
-            badges: data.badges,
+            points: likesData.totalLikes, // Usar saldo disponível (já descontando gastos)
+            badges: profileData.badges,
           });
         } else {
-          console.error("Erro ao buscar stats do usuário:", response.status);
+          console.error("Erro ao buscar stats do usuário");
           // Fallback para dados básicos
           setUserStats({
             points: 0,
@@ -62,7 +80,7 @@ export default function UserPointsBadge({
     };
 
     fetchUserStats();
-  }, [userId]);
+  }, [userId, refreshTrigger]);
 
   if (isLoading || !userStats) {
     return null;
