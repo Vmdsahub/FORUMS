@@ -11,10 +11,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <App />
       <Toaster
         position="bottom-right"
+        offset={16}
         toastOptions={{
           style: {
-            marginRight: '8px',
-            marginBottom: '8px'
+            maxWidth: '400px',
+            width: 'fit-content'
           }
         }}
       />
