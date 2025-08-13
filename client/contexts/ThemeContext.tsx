@@ -74,7 +74,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       const savedTheme = localStorage.getItem("selected_theme");
       if (savedTheme && savedTheme !== "default") {
         setCurrentTheme(savedTheme);
-        document.body.classList.add("theme-dark");
+        if (savedTheme === "dark") {
+          document.body.classList.add("theme-dark");
+        } else if (savedTheme === "glassmorphism-liquid") {
+          document.body.classList.add("theme-glassmorphism-liquid");
+        }
       }
     } else {
       // Usuário deslogado: limpar tudo
