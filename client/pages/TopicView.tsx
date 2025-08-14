@@ -204,28 +204,6 @@ export default function TopicView() {
   };
 
 
-  const handleDeleteComment = async (commentId: string) => {
-    try {
-      const response = await fetch(`/api/comments/${commentId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-        },
-      });
-
-      if (response.ok) {
-        // Recarregar o tópico para obter a estrutura atualizada
-        await fetchTopic();
-        toast.success("Comentário excluído!");
-      } else {
-        const errorData = await response.json();
-        toast.error(errorData.message || "Erro ao excluir comentário");
-      }
-    } catch (error) {
-      console.error("Error deleting comment:", error);
-      toast.error("Erro ao excluir comentário");
-    }
-  };
 
   const handleDeleteTopic = async () => {
     if (!isAdmin || !topic) return;
@@ -303,7 +281,7 @@ export default function TopicView() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-black mb-4">
-            Tópico n��o encontrado
+            Tópico não encontrado
           </h2>
           <Button onClick={() => navigate("/")} variant="outline">
             Voltar ao início
