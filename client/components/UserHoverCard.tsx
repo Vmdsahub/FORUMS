@@ -47,8 +47,9 @@ export default function UserHoverCard({
       try {
         console.log(`[UserHoverCard] Buscando perfil para usuário: ${userId}`);
 
-        // Buscar dados do perfil do usuário
-        const profileResponse = await fetch(`/api/user/profile/${userId}`);
+        // Buscar dados do perfil do usuário com cache busting
+        const timestamp = Date.now();
+        const profileResponse = await fetch(`/api/user/profile/${userId}?t=${timestamp}`);
 
         console.log(
           `[UserHoverCard] URL da requisição: /api/user/profile/${userId}`,
