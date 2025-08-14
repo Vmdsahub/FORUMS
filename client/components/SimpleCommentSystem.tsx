@@ -294,8 +294,9 @@ export default function SimpleCommentSystem({
           ),
         );
 
-        // Trigger user stats refresh for hover cards
+        // Trigger user stats refresh for hover cards and theme context
         window.dispatchEvent(new CustomEvent("userLikeUpdate"));
+        window.dispatchEvent(new CustomEvent("refreshUserLikes"));
 
         // Verificar se o usuário ganhou um novo emblema
         if (data.newBadge) {
