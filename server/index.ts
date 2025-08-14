@@ -9,6 +9,7 @@ import {
   handleMe,
   handleLogout,
   authenticateToken,
+  optionalAuthenticateToken,
 } from "./routes/auth";
 import {
   handleGetTopics,
