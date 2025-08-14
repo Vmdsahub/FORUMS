@@ -206,7 +206,12 @@ export default function SimpleCommentSystem({
   // Carregar comentários
   const loadComments = async () => {
     try {
-      const response = await fetch(`/api/comments/${topicId}`);
+      const headers: Record<string, string> = {};
+      if (user) {
+        headers.Authorization = `Bearer ${localStorage.getItem("auth_token")}`;
+      }
+
+      const response = await fetch(`/api/comments/${topicId}`, { headers });
       if (response.ok) {
         const data = await response.json();
         // Filtra apenas comentários raiz (sem parentId) e ordena por data
