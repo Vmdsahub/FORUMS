@@ -383,13 +383,13 @@ export default function Forum() {
                             e.stopPropagation();
                             toggleLike(topic.id);
                           }}
-                          className={`flex items-center gap-2 ${
-                            topic.isLiked
-                              ? "text-red-500"
-                              : "text-muted-foreground"
-                          }`}
+                          className="flex items-center gap-2 text-muted-foreground heart-button"
                         >
-                          <span>❤️</span>
+                          <span className={`transition-all ${
+                            topic.isLiked
+                              ? "heart-red"
+                              : "heart-gray"
+                          }`}>❤️</span>
                           {topic.likes}
                         </Button>
                         <div className="flex items-center gap-2 text-muted-foreground">
@@ -417,7 +417,7 @@ export default function Forum() {
       <div className="text-center mb-8">
         <h3 className="text-2xl font-semibold mb-2">Fórum da Comunidade</h3>
         <p className="text-muted-foreground">
-          Participe das discussões mais relevantes da comunidade tech
+          Participe das discuss��es mais relevantes da comunidade tech
         </p>
       </div>
 
