@@ -159,6 +159,8 @@ export default function Forum() {
               : topic,
           ),
         );
+        // Trigger user stats refresh for hover cards
+        window.dispatchEvent(new CustomEvent("userLikeUpdate"));
       }
     } catch (error) {
       console.error("Error toggling like:", error);
