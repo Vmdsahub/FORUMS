@@ -106,7 +106,11 @@ export default function Forum() {
       if (category) params.append("category", category);
 
       console.log("Fetching topics for category:", category);
-      const response = await fetch(`/api/topics?${params}`);
+      const response = await fetch(`/api/topics?${params}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         console.log("Topics fetched:", data);
