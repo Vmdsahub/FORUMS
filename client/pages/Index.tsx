@@ -192,6 +192,9 @@ export default function Index(props: IndexProps) {
 
       const response = await fetch(`/api/topics?${params}`, {
         signal: controller.signal,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
       });
 
       clearTimeout(timeoutId);
