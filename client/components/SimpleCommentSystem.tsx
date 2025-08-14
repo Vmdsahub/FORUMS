@@ -118,22 +118,26 @@ function CommentItem({
           {/* Ações no canto inferior direito */}
           <div className="absolute bottom-0 right-4 flex items-center gap-2">
             <button
-              onClick={() => onLike(comment.id)}
-              className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${
+              onClick={() => {
+                onLike(comment.id);
+                // Add like animation
+                if (!comment.isLiked) {
+                  const button = document.getElementById(`heart-${comment.id}`);
+                  if (button) {
+                    button.classList.add('liked');
+                    setTimeout(() => button.classList.remove('liked'), 600);
+                  }
+                }
+              }}
+              id={`heart-${comment.id}`}
+              className={`heart-button flex items-center gap-1 text-xs transition-all ${
                 comment.isLiked
-                  ? "text-red-600 bg-red-50 hover:bg-red-100"
-                  : "text-gray-500 hover:text-red-600 hover:bg-red-50"
+                  ? "text-red-500"
+                  : "text-gray-400 hover:text-red-500"
               }`}
               title="Curtir comentário"
             >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 16 16"
-                fill="currentColor"
-              >
-                <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
-              </svg>
+              <span className="text-sm">❤️</span>
               {comment.likes}
             </button>
 
