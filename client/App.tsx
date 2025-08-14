@@ -60,7 +60,7 @@ interface ForumCategory {
 }
 
 // Weekly newsletters now loaded from API
-let weeklyNewsletters: WeeklyNewsletter[] = [
+const fallbackNewsletters: WeeklyNewsletter[] = [
   {
     week: 3,
     startDate: "15 Jan",
