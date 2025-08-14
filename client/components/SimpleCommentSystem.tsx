@@ -135,8 +135,8 @@ function CommentItem({
             >
               <span className={`text-sm transition-all ${
                 comment.isLiked
-                  ? ""
-                  : "filter grayscale"
+                  ? "heart-red"
+                  : "heart-gray"
               }`}>❤️</span>
               {comment.likes}
             </button>
