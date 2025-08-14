@@ -71,9 +71,9 @@ export default function Shop() {
   return (
     <main className="container max-w-6xl mx-auto px-6 py-12">
       <div className="bg-white rounded-lg border border-gray-200 p-8">
-        {/* Header with title and likes on the right */}
-        <div className="flex items-start justify-between mb-8">
-          <div className="flex items-center gap-4">
+        {/* Header with centered title and likes */}
+        <div className="mb-8">
+          <div className="flex justify-start mb-6">
             <button
               onClick={() => navigate("/")}
               className="flex items-center gap-2 text-gray-600 hover:text-black transition-colors"
@@ -93,17 +93,15 @@ export default function Shop() {
             </button>
           </div>
 
-          {/* Title and likes balance - right side, vertical layout */}
-          <div className="text-right">
+          {/* Centered title and likes balance */}
+          <div className="text-center">
             <h1 className="text-3xl font-bold text-black mb-4">
               🛒 Loja de Likes
             </h1>
-            <div className="flex items-center justify-end gap-3">
+            <div className="flex items-center justify-center gap-3">
               <span className="text-gray-700 font-medium">Seus likes:</span>
               <div className="flex items-center gap-2">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="#ef4444">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-                </svg>
+                <span className="text-2xl">❤️</span>
                 <span className="text-2xl font-bold text-gray-900">
                   {userLikes}
                 </span>
