@@ -473,13 +473,13 @@ export default function TopicView() {
                   }
                 }}
                 id={`topic-heart-${topic.id}`}
-                className={`heart-button flex items-center gap-2 px-3 py-2 transition-all ${
-                  topic.isLiked
-                    ? "text-red-500"
-                    : "text-gray-400 hover:text-red-500"
-                }`}
+                className={`heart-button flex items-center gap-2 px-3 py-2 transition-all text-gray-600 hover:text-gray-800`}
               >
-                <span>❤️</span>
+                <span className={`transition-all ${
+                  topic.isLiked
+                    ? ""
+                    : "filter grayscale"
+                }`}>❤️</span>
                 {topic.likes}
               </button>
               {isAdmin && (
