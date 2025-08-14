@@ -130,14 +130,14 @@ function CommentItem({
                 }
               }}
               id={`heart-${comment.id}`}
-              className={`heart-button flex items-center gap-1 text-xs transition-all ${
-                comment.isLiked
-                  ? "text-red-500"
-                  : "text-gray-400 hover:text-red-500"
-              }`}
+              className={`heart-button flex items-center gap-1 text-xs transition-all text-gray-600 hover:text-gray-800`}
               title="Curtir comentário"
             >
-              <span className="text-sm">❤️</span>
+              <span className={`text-sm transition-all ${
+                comment.isLiked
+                  ? ""
+                  : "filter grayscale"
+              }`}>❤️</span>
               {comment.likes}
             </button>
 
