@@ -52,25 +52,6 @@ export default function UserHoverCard({
         const timestamp = Date.now();
         const profileResponse = await fetch(`/api/user/profile/${userId}?t=${timestamp}`);
 
-        // Buscar likes reais (considerando gastos) se for o próprio usuário
-        let realUserLikes = 0;
-        const currentUserId = localStorage.getItem("auth_token"); // Check if user is logged in
-        if (currentUserId && userId) {
-          try {
-            const likesResponse = await fetch(`/api/user/likes?userId=${userId}`, {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-              },
-            });
-            if (likesResponse.ok) {
-              const likesData = await likesResponse.json();
-              realUserLikes = likesData.totalLikes || 0;
-            }
-          } catch (error) {
-            console.log("[UserHoverCard] Could not fetch user likes, using profile data");
-          }
-        }
-
         console.log(
           `[UserHoverCard] URL da requisição: /api/user/profile/${userId}`,
         );
