@@ -389,9 +389,7 @@ export default function Forum() {
                               : "text-muted-foreground"
                           }`}
                         >
-                          <Heart
-                            className={`w-4 h-4 ${topic.isLiked ? "fill-current" : ""}`}
-                          />
+                          <span>❤️</span>
                           {topic.likes}
                         </Button>
                         <div className="flex items-center gap-2 text-muted-foreground">
