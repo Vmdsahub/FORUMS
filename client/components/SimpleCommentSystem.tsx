@@ -281,24 +281,26 @@ export default function SimpleCommentSystem({
 
       if (response.ok) {
         const data = await response.json();
-        console.log("[BADGE DEBUG] Like response data:", data);
-        console.log("[BADGE DEBUG] newBadge present:", !!data.newBadge);
-        console.log("[BADGE DEBUG] newBadge object:", data.newBadge);
+        console.log("[LIKE DEBUG] Response:", data);
+
+        // Atualizar o estado imediatamente
+        setComments(prevComments =>
+          prevComments.map(comment =>
+            comment.id === commentId
+              ? { ...comment, likes: data.likes, isLiked: data.isLiked }
+              : comment
+          )
+        );
 
         // Verificar se o usuário ganhou um novo emblema
         if (data.newBadge) {
-          console.log(
-            "[BADGE DEBUG] Triggering badge notification for:",
-            data.newBadge.name,
-          );
+          console.log("[BADGE DEBUG] New badge:", data.newBadge.name);
           addNotification(
             `Parabéns! Você conquistou o emblema "${data.newBadge.name}": ${data.newBadge.description}`,
             "badge",
             data.newBadge.icon,
           );
         }
-
-        await loadComments();
       }
     } catch (error) {
       toast.error("Erro ao curtir");
