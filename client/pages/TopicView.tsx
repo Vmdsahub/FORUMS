@@ -477,8 +477,8 @@ export default function TopicView() {
               >
                 <span className={`transition-all ${
                   topic.isLiked
-                    ? ""
-                    : "filter grayscale"
+                    ? "heart-red"
+                    : "heart-gray"
                 }`}>❤️</span>
                 {topic.likes}
               </button>
