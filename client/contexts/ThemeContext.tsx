@@ -269,6 +269,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     fetchUserLikes();
   };
 
+  // Event listeners for like updates - placed after function declarations
+  useEffect(() => {
+    const handleRefresh = () => {
+      fetchUserLikes();
+    };
+
+    const handleLikeUpdate = () => {
+      fetchUserLikes();
+    };
+
+    window.addEventListener("refreshUserLikes", handleRefresh);
+    window.addEventListener("userLikeUpdate", handleLikeUpdate);
+    return () => {
+      window.removeEventListener("refreshUserLikes", handleRefresh);
+      window.removeEventListener("userLikeUpdate", handleLikeUpdate);
+    };
+  }, []);
+
   return (
     <ThemeContext.Provider
       value={{
