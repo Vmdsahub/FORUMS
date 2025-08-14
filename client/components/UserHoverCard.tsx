@@ -120,7 +120,19 @@ export default function UserHoverCard({
     if (showCard) {
       fetchUserProfile();
     }
-  }, [userId, showCard]);
+  }, [userId, showCard, refreshTrigger]);
+
+  // Listen for like changes to refresh user data
+  useEffect(() => {
+    const handleLikeUpdate = () => {
+      setRefreshTrigger(prev => prev + 1);
+    };
+
+    window.addEventListener("userLikeUpdate", handleLikeUpdate);
+    return () => {
+      window.removeEventListener("userLikeUpdate", handleLikeUpdate);
+    };
+  }, []);
 
   const formatMemberSince = (dateString: string) => {
     const date = new Date(dateString);
