@@ -130,39 +130,6 @@ export default function TopicView() {
     }
   };
 
-  const handleLikeComment = async (commentId: string) => {
-    if (!user) {
-      toast.error("Faça login para curtir");
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/comments/${commentId}/like`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setTopic((prev) => {
-          if (!prev) return null;
-          return {
-            ...prev,
-            comments: prev.comments.map((comment) =>
-              comment.id === commentId
-                ? { ...comment, likes: data.likes, isLiked: data.isLiked }
-                : comment,
-            ),
-          };
-        });
-      }
-    } catch (error) {
-      console.error("Error liking comment:", error);
-      toast.error("Erro ao curtir comentário");
-    }
-  };
 
   const handleSubmitComment = async (e: React.FormEvent) => {
     e.preventDefault();
