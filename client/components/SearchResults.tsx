@@ -216,9 +216,7 @@ export default function SearchResults({
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2 text-gray-500">
-                          <Heart
-                            className={`w-4 h-4 ${topic.isLiked ? "fill-current text-red-500" : ""}`}
-                          />
+                          <span>❤️</span>
                           <span className="font-medium">{topic.likes}</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-500">
