@@ -292,7 +292,13 @@ function App() {
 
       if (response.ok) {
         const data = await response.json();
-        setNewsletters(data.weeklyNewsletters || []);
+        const newsletters = data.weeklyNewsletters || [];
+        setNewsletters(newsletters);
+
+        // Start at current week (week 0 = newest/current)
+        if (newsletters.length > 0) {
+          setCurrentWeek(0);
+        }
       } else {
         console.warn("Newsletter service unavailable, using fallback data");
         setNewsletters(fallbackNewsletters); // Use local fallback data
