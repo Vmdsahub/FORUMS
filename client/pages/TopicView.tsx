@@ -126,44 +126,6 @@ export default function TopicView() {
   };
 
 
-  const handleSubmitComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user) {
-      toast.error("Faça login para comentar");
-      return;
-    }
-
-    if (!newComment.trim()) {
-      toast.error("Digite um comentário");
-      return;
-    }
-
-    setIsSubmitting(true);
-    try {
-      const response = await fetch(`/api/topics/${topicId}/comments`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-        },
-        body: JSON.stringify({ content: newComment }),
-      });
-
-      if (response.ok) {
-        // Recarregar o tópico para obter a estrutura organizada
-        await fetchTopic();
-        setNewComment("");
-        toast.success("Comentário adicionado!");
-      } else {
-        toast.error("Erro ao adicionar comentário");
-      }
-    } catch (error) {
-      console.error("Error submitting comment:", error);
-      toast.error("Erro ao adicionar comentário");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
 
 
