@@ -69,7 +69,11 @@ export default function TopicView() {
     }
 
     try {
-      const response = await fetch(`/api/topics/${topicId}`);
+      const response = await fetch(`/api/topics/${topicId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
@@ -105,6 +109,9 @@ export default function TopicView() {
         setTopic((prev) =>
           prev ? { ...prev, likes: data.likes, isLiked: data.isLiked } : null,
         );
+        // Trigger user stats refresh for hover cards and theme context
+        window.dispatchEvent(new CustomEvent("userLikeUpdate"));
+        window.dispatchEvent(new CustomEvent("refreshUserLikes"));
       }
     } catch (error) {
       console.error("Error liking topic:", error);

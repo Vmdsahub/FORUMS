@@ -60,11 +60,11 @@ interface ForumCategory {
 }
 
 // Weekly newsletters now loaded from API
-let weeklyNewsletters: WeeklyNewsletter[] = [
+const fallbackNewsletters: WeeklyNewsletter[] = [
   {
-    week: 3,
-    startDate: "15 Jan",
-    endDate: "21 Jan 2024",
+    week: 1,
+    startDate: "06 Jan",
+    endDate: "12 Jan 2025",
     topics: [
       {
         id: 1,
@@ -292,10 +292,16 @@ function App() {
 
       if (response.ok) {
         const data = await response.json();
-        setNewsletters(data.weeklyNewsletters || []);
+        const newsletters = data.weeklyNewsletters || [];
+        setNewsletters(newsletters);
+
+        // Start at current week (week 0 = newest/current)
+        if (newsletters.length > 0) {
+          setCurrentWeek(0);
+        }
       } else {
         console.warn("Newsletter service unavailable, using fallback data");
-        setNewsletters(weeklyNewsletters); // Use local fallback data
+        setNewsletters(fallbackNewsletters); // Use local fallback data
       }
     } catch (error: any) {
       if (error.name === "AbortError" || error.name === "TimeoutError") {
@@ -306,7 +312,7 @@ function App() {
           error.message,
         );
       }
-      setNewsletters(weeklyNewsletters); // Use local fallback data
+      setNewsletters(fallbackNewsletters); // Use local fallback data
     } finally {
       setIsLoadingNewsletters(false);
     }

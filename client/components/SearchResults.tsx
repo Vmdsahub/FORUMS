@@ -39,7 +39,11 @@ export default function SearchResults({
         params.append("categories", categories.join(","));
       }
 
-      const response = await fetch(`/api/topics?${params}`);
+      const response = await fetch(`/api/topics?${params}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setResults(data.topics);

@@ -85,10 +85,10 @@ export function createServer() {
   app.post("/api/auth/logout", authenticateToken, handleLogout);
 
   // Forum routes
-  app.get("/api/topics", handleGetTopics);
+  app.get("/api/topics", optionalAuthenticateToken, handleGetTopics);
   app.get("/api/topics/user", authenticateToken, handleGetUserTopics);
   app.get("/api/categories/stats", handleGetCategoryStats);
-  app.get("/api/topics/:topicId", handleGetTopic);
+  app.get("/api/topics/:topicId", optionalAuthenticateToken, handleGetTopic);
   app.post("/api/topics", authenticateToken, handleCreateTopic);
   // ROTAS ANTIGAS DE COMENTÁRIOS - TEMPORARIAMENTE DESABILITADAS
   // app.post(

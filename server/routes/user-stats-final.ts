@@ -137,17 +137,28 @@ export const handleGetUserProfile: RequestHandler = (req, res) => {
   }
 
   // Calcular likes reais em tempo real
-  const realLikes = calculateUserLikes(userId);
-  user.totalLikes = realLikes; // Atualizar cache
+  const earnedLikes = calculateUserLikes(userId);
+
+  // Importar gastos da loja (themes.ts) para manter consistência
+  let spentLikes = 0;
+  try {
+    const themesModule = require("./themes");
+    spentLikes = themesModule.getUserSpentLikes ? themesModule.getUserSpentLikes(userId) : 0;
+  } catch (error) {
+    console.log("[USER-STATS] Could not get spent likes, using 0");
+  }
+
+  const netLikes = Math.max(0, earnedLikes - spentLikes);
+  user.totalLikes = netLikes; // Atualizar cache
 
   console.log(
-    `[USER-STATS] Perfil usuário ${userId} tem ${realLikes} likes totais`,
+    `[USER-STATS] Perfil usuário ${userId} tem ${earnedLikes} earned, ${spentLikes} spent, ${netLikes} net likes`,
   );
 
-  const badges = calculateUserBadges(realLikes);
+  const badges = calculateUserBadges(earnedLikes); // Badges baseados em likes ganhos, não gastos
 
   res.json({
-    points: realLikes, // Pontos = likes totais recebidos
+    points: netLikes, // Pontos = likes líquidos (earned - spent)
     badges,
     createdAt: user.createdAt,
   });

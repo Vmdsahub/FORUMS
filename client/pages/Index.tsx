@@ -192,6 +192,9 @@ export default function Index(props: IndexProps) {
 
       const response = await fetch(`/api/topics?${params}`, {
         signal: controller.signal,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
       });
 
       clearTimeout(timeoutId);
@@ -480,8 +483,7 @@ export default function Index(props: IndexProps) {
                   </h2>
                   {currentNewsletter && (
                     <p className="text-lg text-gray-600 mt-2">
-                      Semana {currentNewsletter.week} - Atualizado todos os
-                      domingos
+                      Semana {currentNewsletter.week} de 2025 - Atualizações todos os domingos
                     </p>
                   )}
                 </div>
