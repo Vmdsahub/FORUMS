@@ -118,22 +118,28 @@ function CommentItem({
           {/* Ações no canto inferior direito */}
           <div className="absolute bottom-0 right-4 flex items-center gap-2">
             <button
-              onClick={() => onLike(comment.id)}
-              className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${
-                comment.isLiked
-                  ? "text-red-600 bg-red-50 hover:bg-red-100"
-                  : "text-gray-500 hover:text-red-600 hover:bg-red-50"
-              }`}
+              onClick={() => {
+                onLike(comment.id);
+                // Add like animation
+                if (!comment.isLiked) {
+                  const button = document.getElementById(`heart-${comment.id}`);
+                  if (button) {
+                    button.classList.add("liked");
+                    setTimeout(() => button.classList.remove("liked"), 600);
+                  }
+                }
+              }}
+              id={`heart-${comment.id}`}
+              className={`heart-button flex items-center gap-1 text-xs transition-all text-gray-600 hover:text-gray-800`}
               title="Curtir comentário"
             >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 16 16"
-                fill="currentColor"
+              <span
+                className={`text-sm transition-all ${
+                  comment.isLiked ? "heart-red" : "heart-gray"
+                }`}
               >
-                <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
-              </svg>
+                ❤️
+              </span>
               {comment.likes}
             </button>
 
@@ -202,7 +208,12 @@ export default function SimpleCommentSystem({
   // Carregar comentários
   const loadComments = async () => {
     try {
-      const response = await fetch(`/api/comments/${topicId}`);
+      const headers: Record<string, string> = {};
+      if (user) {
+        headers.Authorization = `Bearer ${localStorage.getItem("auth_token")}`;
+      }
+
+      const response = await fetch(`/api/comments/${topicId}`, { headers });
       if (response.ok) {
         const data = await response.json();
         // Filtra apenas comentários raiz (sem parentId) e ordena por data
@@ -272,24 +283,26 @@ export default function SimpleCommentSystem({
 
       if (response.ok) {
         const data = await response.json();
-        console.log("[BADGE DEBUG] Like response data:", data);
-        console.log("[BADGE DEBUG] newBadge present:", !!data.newBadge);
-        console.log("[BADGE DEBUG] newBadge object:", data.newBadge);
+        console.log("[LIKE DEBUG] Response:", data);
+
+        // Atualizar o estado imediatamente
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment.id === commentId
+              ? { ...comment, likes: data.likes, isLiked: data.isLiked }
+              : comment,
+          ),
+        );
 
         // Verificar se o usuário ganhou um novo emblema
         if (data.newBadge) {
-          console.log(
-            "[BADGE DEBUG] Triggering badge notification for:",
-            data.newBadge.name,
-          );
+          console.log("[BADGE DEBUG] New badge:", data.newBadge.name);
           addNotification(
             `Parabéns! Você conquistou o emblema "${data.newBadge.name}": ${data.newBadge.description}`,
             "badge",
             data.newBadge.icon,
           );
         }
-
-        await loadComments();
       }
     } catch (error) {
       toast.error("Erro ao curtir");

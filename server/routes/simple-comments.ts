@@ -116,6 +116,7 @@ export const getComments: RequestHandler = (req, res) => {
     const userId = req.user?.id;
 
     console.log(`[COMMENTS] Buscando comentários para tópico: ${topicId}`);
+    console.log(`[COMMENTS] User ID identificado: ${userId || "não logado"}`);
 
     const commentTree = buildCommentTree(topicId, userId);
 
