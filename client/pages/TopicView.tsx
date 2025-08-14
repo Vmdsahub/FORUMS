@@ -21,9 +21,6 @@ interface Comment {
   time: string;
   likes: number;
   isLiked: boolean;
-  parentId?: string;
-  replies?: Comment[];
-  repliesCount?: number;
 }
 
 interface Topic {
