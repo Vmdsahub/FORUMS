@@ -122,6 +122,24 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, isAdmin]);
 
+  // Event listeners for like updates
+  useEffect(() => {
+    const handleRefresh = () => {
+      fetchUserLikes();
+    };
+
+    const handleLikeUpdate = () => {
+      fetchUserLikes();
+    };
+
+    window.addEventListener("refreshUserLikes", handleRefresh);
+    window.addEventListener("userLikeUpdate", handleLikeUpdate);
+    return () => {
+      window.removeEventListener("refreshUserLikes", handleRefresh);
+      window.removeEventListener("userLikeUpdate", handleLikeUpdate);
+    };
+  }, []);
+
   const fetchUserThemes = async () => {
     if (!user) return;
 
