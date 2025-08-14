@@ -62,9 +62,9 @@ interface ForumCategory {
 // Weekly newsletters now loaded from API
 const fallbackNewsletters: WeeklyNewsletter[] = [
   {
-    week: 3,
-    startDate: "15 Jan",
-    endDate: "21 Jan 2024",
+    week: 1,
+    startDate: "06 Jan",
+    endDate: "12 Jan 2025",
     topics: [
       {
         id: 1,
@@ -84,7 +84,7 @@ const fallbackNewsletters: WeeklyNewsletter[] = [
         id: 3,
         title: "Segurança Pós-Quântica: Preparação para a Próxima Era Digital",
         content:
-          "2024 marca o início de uma era crítica para a segurança digital. O avanço dos computadores quânticos acelera a obsolescência de protocolos criptográficos tradicionais.\n\nEstratégias de preparação:\n\n• Implementação de criptografia resistente a quantum\n• Migração para autenticação biométrica avançada\n• Adoção de arquiteturas Zero Trust\n• Integração de IA para detecção proativa\n• Sistemas de backup imutáveis\n\nRecomendações imediatas:\n• Autenticação multifator obrigat��ria\n• Gerenciamento centralizado de credenciais\n• Monitoramento contínuo de vulnerabilidades\n• Programas de treinamento especializados\n• Testes regulares de recuperação de desastres\n\nOrganizações que não iniciarem essa transição imediatamente enfrentarão riscos exponencialmente crescentes de comprometimento de dados.",
+          "2024 marca o início de uma era crítica para a segurança digital. O avanço dos computadores quânticos acelera a obsolescência de protocolos criptográficos tradicionais.\n\nEstratégias de preparação:\n\n• Implementação de criptografia resistente a quantum\n• Migração para autenticação biométrica avançada\n• Adoção de arquiteturas Zero Trust\n• Integração de IA para detecção proativa\n• Sistemas de backup imutáveis\n\nRecomendações imediatas:\n��� Autenticação multifator obrigat��ria\n• Gerenciamento centralizado de credenciais\n• Monitoramento contínuo de vulnerabilidades\n• Programas de treinamento especializados\n• Testes regulares de recuperação de desastres\n\nOrganizações que não iniciarem essa transição imediatamente enfrentarão riscos exponencialmente crescentes de comprometimento de dados.",
         readTime: "15 min",
       },
     ],
