@@ -470,10 +470,15 @@ export const handleGetTopics: RequestHandler = (req, res) => {
       const topicLikes = getLikeCount(topic.id);
       const totalLikes = topicLikes + commentStats.totalLikes;
 
+      // Check if user liked this topic
+      const userId = req.user?.id;
+      const isLiked = userId ? isLikedBy(topic.id, userId) : false;
+
       return {
         ...topic,
         replies: commentStats.commentsCount,
         likes: totalLikes,
+        isLiked: isLiked,
       };
     },
   );
