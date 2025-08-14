@@ -38,6 +38,11 @@ function calculateUserLikes(userId: string): number {
 // Storage para likes gastos em compras
 const userSpentLikes: Record<string, number> = {};
 
+// Função para obter likes gastos por um usuário
+export function getUserSpentLikes(userId: string): number {
+  return userSpentLikes[userId] || 0;
+}
+
 export const getUserThemes: RequestHandler = (req, res) => {
   try {
     const userId = req.user?.id;
