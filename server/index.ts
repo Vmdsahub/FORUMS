@@ -132,7 +132,7 @@ export function createServer() {
   app.get("/api/user/badge-selection/:userId", handleGetUserBadgeSelection);
 
   // Novo sistema de comentários - ANTES das rotas antigas para evitar conflito
-  app.get("/api/comments/:topicId", getComments);
+  app.get("/api/comments/:topicId", optionalAuthenticateToken, getComments);
   app.post("/api/comments/:topicId", authenticateToken, createComment);
   app.post("/api/comments/:commentId/like", authenticateToken, likeComment);
   app.delete("/api/comments/:commentId", authenticateToken, deleteComment);
