@@ -71,20 +71,25 @@ const createArticleSchema = z.object({
   readTime: z.string().min(1, "Tempo de leitura é obrigatório"),
 });
 
-// Helper function to get current week info
+// Get ISO week number (standard international week numbering)
+function getISOWeekNumber(date: Date) {
+  const target = new Date(date.valueOf());
+  const dayNumber = (date.getDay() + 6) % 7;
+  target.setDate(target.getDate() - dayNumber + 3);
+  const firstThursday = target.valueOf();
+  target.setMonth(0, 1);
+  if (target.getDay() !== 4) {
+    target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+  }
+  return 1 + Math.ceil((firstThursday - target.valueOf()) / 604800000);
+}
+
+// Helper function to get current week info using ISO 8601 week standard
 function getCurrentWeekInfo() {
   const now = new Date();
-  const currentYear = now.getFullYear();
 
-  // Get start of year
-  const startOfYear = new Date(currentYear, 0, 1);
-
-  // Calculate week number based on ISO week date system
-  const dayOfYear =
-    Math.floor(
-      (now.getTime() - startOfYear.getTime()) / (24 * 60 * 60 * 1000),
-    ) + 1;
-  const weekNumber = Math.ceil(dayOfYear / 7);
+  // Calculate ISO week number (more accurate)
+  const weekNumber = getISOWeekNumber(now);
 
   // Get start of current week (Monday)
   const startOfWeek = new Date(now);
