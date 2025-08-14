@@ -95,14 +95,11 @@ export default function Shop() {
               <h1 className="text-3xl font-bold text-black mb-2">
                 🛒 Loja de Likes
               </h1>
-              <p className="text-gray-600">
-                Personalize sua experiência com temas exclusivos
-              </p>
             </div>
           </div>
 
-          {/* Likes balance - right side, bigger and cleaner */}
-          <div className="flex items-center gap-3 bg-gray-50 px-6 py-4 border border-gray-200">
+          {/* Likes balance - right side, without rectangle */}
+          <div className="flex items-center gap-3">
             <span className="text-gray-700 font-medium">Seus likes:</span>
             <div className="flex items-center gap-2">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="#ef4444">
