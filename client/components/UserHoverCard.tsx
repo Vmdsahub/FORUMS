@@ -41,6 +41,7 @@ export default function UserHoverCard({
   const [badgeSelection, setBadgeSelection] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showCard, setShowCard] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
