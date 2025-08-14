@@ -115,6 +115,41 @@ export const authenticateToken: RequestHandler = (req, res, next) => {
   next();
 };
 
+// Optional authentication middleware - allows access with or without token
+export const optionalAuthenticateToken: RequestHandler = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    // No token provided - continue without user
+    req.user = undefined;
+    return next();
+  }
+
+  const userId = tokens.get(token);
+  if (!userId) {
+    // Invalid token - continue without user
+    req.user = undefined;
+    return next();
+  }
+
+  const user = users.get(userId);
+  if (!user) {
+    // User not found - continue without user
+    req.user = undefined;
+    return next();
+  }
+
+  // Valid token and user - attach user to request
+  req.user = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role || "user",
+  };
+  next();
+};
+
 export const handleLogin: RequestHandler = (req, res) => {
   try {
     console.log("[LOGIN] Request received:", { email: req.body.email });
