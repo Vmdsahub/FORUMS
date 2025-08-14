@@ -11,17 +11,6 @@ import UserPointsBadge from "@/components/UserPointsBadge";
 import UserHoverCard from "@/components/UserHoverCard";
 import ReportModal from "@/components/ReportModal";
 
-interface Comment {
-  id: string;
-  content: string;
-  author: string;
-  authorId: string;
-  authorAvatar: string;
-  date: string;
-  time: string;
-  likes: number;
-  isLiked: boolean;
-}
 
 interface Topic {
   id: string;
