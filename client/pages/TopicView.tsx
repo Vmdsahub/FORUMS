@@ -51,9 +51,7 @@ export default function TopicView() {
   const navigate = useNavigate();
   const { user, isAdmin } = useAuth();
   const [topic, setTopic] = useState<Topic | null>(null);
-  const [newComment, setNewComment] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [savedTopicIds, setSavedTopicIds] = useState<string[]>([]);
   const [showReportModal, setShowReportModal] = useState(false);
 
@@ -406,7 +404,7 @@ export default function TopicView() {
                 <button
                   onClick={handleDeleteTopic}
                   className="flex items-center gap-2 px-3 py-2 rounded-md text-red-600 hover:bg-red-50 transition-colors"
-                  title="Excluir tópico (Admin)"
+                  title="Excluir t��pico (Admin)"
                 >
                   <svg
                     width="16"
