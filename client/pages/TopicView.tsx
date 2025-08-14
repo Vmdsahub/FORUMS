@@ -109,6 +109,8 @@ export default function TopicView() {
         setTopic((prev) =>
           prev ? { ...prev, likes: data.likes, isLiked: data.isLiked } : null,
         );
+        // Trigger user stats refresh for hover cards
+        window.dispatchEvent(new CustomEvent("userLikeUpdate"));
       }
     } catch (error) {
       console.error("Error liking topic:", error);
