@@ -385,11 +385,13 @@ export default function Forum() {
                           }}
                           className="flex items-center gap-2 text-muted-foreground heart-button"
                         >
-                          <span className={`transition-all ${
-                            topic.isLiked
-                              ? "heart-red"
-                              : "heart-gray"
-                          }`}>❤️</span>
+                          <span
+                            className={`transition-all ${
+                              topic.isLiked ? "heart-red" : "heart-gray"
+                            }`}
+                          >
+                            ❤️
+                          </span>
                           {topic.likes}
                         </Button>
                         <div className="flex items-center gap-2 text-muted-foreground">

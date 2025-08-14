@@ -124,8 +124,8 @@ function CommentItem({
                 if (!comment.isLiked) {
                   const button = document.getElementById(`heart-${comment.id}`);
                   if (button) {
-                    button.classList.add('liked');
-                    setTimeout(() => button.classList.remove('liked'), 600);
+                    button.classList.add("liked");
+                    setTimeout(() => button.classList.remove("liked"), 600);
                   }
                 }
               }}
@@ -133,11 +133,13 @@ function CommentItem({
               className={`heart-button flex items-center gap-1 text-xs transition-all text-gray-600 hover:text-gray-800`}
               title="Curtir comentário"
             >
-              <span className={`text-sm transition-all ${
-                comment.isLiked
-                  ? "heart-red"
-                  : "heart-gray"
-              }`}>❤️</span>
+              <span
+                className={`text-sm transition-all ${
+                  comment.isLiked ? "heart-red" : "heart-gray"
+                }`}
+              >
+                ❤️
+              </span>
               {comment.likes}
             </button>
 
@@ -284,12 +286,12 @@ export default function SimpleCommentSystem({
         console.log("[LIKE DEBUG] Response:", data);
 
         // Atualizar o estado imediatamente
-        setComments(prevComments =>
-          prevComments.map(comment =>
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
             comment.id === commentId
               ? { ...comment, likes: data.likes, isLiked: data.isLiked }
-              : comment
-          )
+              : comment,
+          ),
         );
 
         // Verificar se o usuário ganhou um novo emblema

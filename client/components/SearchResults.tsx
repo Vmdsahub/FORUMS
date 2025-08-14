@@ -216,11 +216,13 @@ export default function SearchResults({
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2 text-gray-500">
-                          <span className={`transition-all ${
-                            topic.isLiked
-                              ? "heart-red"
-                              : "heart-gray"
-                          }`}>❤️</span>
+                          <span
+                            className={`transition-all ${
+                              topic.isLiked ? "heart-red" : "heart-gray"
+                            }`}
+                          >
+                            ❤️
+                          </span>
                           <span className="font-medium">{topic.likes}</span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-500">

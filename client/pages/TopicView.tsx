@@ -11,7 +11,6 @@ import UserPointsBadge from "@/components/UserPointsBadge";
 import UserHoverCard from "@/components/UserHoverCard";
 import ReportModal from "@/components/ReportModal";
 
-
 interface Topic {
   id: string;
   title: string;
@@ -112,10 +111,6 @@ export default function TopicView() {
       toast.error("Erro ao curtir tópico");
     }
   };
-
-
-
-
 
   const handleDeleteTopic = async () => {
     if (!isAdmin || !topic) return;
@@ -333,21 +328,25 @@ export default function TopicView() {
                   handleLikeTopic();
                   // Add like animation
                   if (!topic.isLiked) {
-                    const button = document.getElementById(`topic-heart-${topic.id}`);
+                    const button = document.getElementById(
+                      `topic-heart-${topic.id}`,
+                    );
                     if (button) {
-                      button.classList.add('liked');
-                      setTimeout(() => button.classList.remove('liked'), 600);
+                      button.classList.add("liked");
+                      setTimeout(() => button.classList.remove("liked"), 600);
                     }
                   }
                 }}
                 id={`topic-heart-${topic.id}`}
                 className={`heart-button flex items-center gap-2 px-3 py-2 transition-all text-gray-600 hover:text-gray-800`}
               >
-                <span className={`transition-all ${
-                  topic.isLiked
-                    ? "heart-red"
-                    : "heart-gray"
-                }`}>❤️</span>
+                <span
+                  className={`transition-all ${
+                    topic.isLiked ? "heart-red" : "heart-gray"
+                  }`}
+                >
+                  ❤️
+                </span>
                 {topic.likes}
               </button>
               {isAdmin && (
