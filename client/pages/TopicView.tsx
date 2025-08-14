@@ -32,7 +32,6 @@ interface Topic {
   isHot?: boolean;
   category: string;
   content: string;
-  comments: Comment[];
 }
 
 export default function TopicView() {
