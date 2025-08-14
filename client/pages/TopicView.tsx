@@ -203,28 +203,6 @@ export default function TopicView() {
     }
   };
 
-  const handleReplyToComment = async (parentId: string, content: string) => {
-    if (!user) {
-      toast.error("Faça login para responder");
-      return;
-    }
-
-    const response = await fetch(`/api/topics/${topicId}/comments`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-      },
-      body: JSON.stringify({ content, parentId }),
-    });
-
-    if (response.ok) {
-      // Recarregar o tópico para obter a estrutura organizada
-      await fetchTopic();
-    } else {
-      throw new Error("Erro ao adicionar resposta");
-    }
-  };
 
   const handleDeleteComment = async (commentId: string) => {
     try {
@@ -325,7 +303,7 @@ export default function TopicView() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-black mb-4">
-            Tópico não encontrado
+            Tópico n��o encontrado
           </h2>
           <Button onClick={() => navigate("/")} variant="outline">
             Voltar ao início
