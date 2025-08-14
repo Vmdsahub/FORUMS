@@ -138,7 +138,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       window.removeEventListener("refreshUserLikes", handleRefresh);
       window.removeEventListener("userLikeUpdate", handleLikeUpdate);
     };
-  }, []);
+  }, [fetchUserLikes]);
 
   const fetchUserThemes = async () => {
     if (!user) return;
