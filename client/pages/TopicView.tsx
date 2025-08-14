@@ -69,7 +69,11 @@ export default function TopicView() {
     }
 
     try {
-      const response = await fetch(`/api/topics/${topicId}`);
+      const response = await fetch(`/api/topics/${topicId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+        },
+      });
 
       if (response.ok) {
         const data = await response.json();
