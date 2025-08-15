@@ -273,6 +273,9 @@ function App() {
     currentNewsletter
   } = useWeekNavigation({ newsletters, isAdmin });
 
+  // Debug log
+  console.log('App debug:', { isAdmin, newslettersLength: newsletters.length, currentWeek });
+
   // Listen for global category stats refresh events
   useEffect(() => {
     const handleRefreshStats = () => {
