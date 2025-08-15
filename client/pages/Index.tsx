@@ -1181,7 +1181,7 @@ export default function Index(props: IndexProps) {
 
         {activeSection === "forum" && selectedCategory && (
           <div
-            className="space-y-6 opacity-0 animate-fade-in transform translate-y-4"
+            className="space-y-6 opacity-0 animate-fade-in transform translate-y-4 hide-scrollbar"
             style={{
               animationDelay: "0.2s",
               animationFillMode: "forwards",
