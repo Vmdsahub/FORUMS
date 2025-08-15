@@ -286,6 +286,19 @@
     display: none !important;
   }
 
+  /* Ensure no scrollbars on main app container */
+  .app-container {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+    overflow-x: hidden !important;
+  }
+
+  .app-container::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
   /* 🌙 DARK THEME - Sistema Completo e Moderno */
   .theme-dark {
     /* === PALETA DE CORES BASE === */
