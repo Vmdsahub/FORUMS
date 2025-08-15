@@ -872,7 +872,7 @@ export default function Index(props: IndexProps) {
                 )}
               </div>
 
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 hide-scrollbar">
                 {toolsCategories.map((category) => (
                   <div
                     key={category.id}
