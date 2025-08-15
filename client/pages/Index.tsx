@@ -411,8 +411,8 @@ export default function Index(props: IndexProps) {
   return (
     <main className="container max-w-7xl mx-auto px-6 py-12 hide-scrollbar app-container">
       {/* Hero Section */}
-      <div className="text-center mb-8 animate-fade-in mt-8">
-        <div className="flex justify-center mb-4">
+      <div className="text-center mb-4 animate-fade-in mt-8">
+        <div className="flex justify-center mb-2">
           <img
             src="https://cdn.builder.io/api/v1/image/assets%2F503e95fcc6af443aa8cd375cfa461af7%2F980512f033cd4818997e6218b806b298?format=webp&width=800"
             alt="IA HUB"
@@ -427,10 +427,10 @@ export default function Index(props: IndexProps) {
           <div className="flex relative">
             {/* Sliding Background Indicator */}
             <div
-              className={`absolute top-0 bottom-0 bg-black rounded-md transition-all duration-500 ease-out shadow-lg ${
+              className={`absolute top-0 bottom-0 rounded-md transition-all duration-500 ease-out shadow-lg z-20 solid-black-bg ${
                 activeSection === "newsletter"
-                  ? "left-0 w-[110px]"
-                  : "left-[110px] w-[88px]"
+                  ? "left-0 w-[120px]"
+                  : "left-[120px] w-[80px]"
               }`}
               style={{
                 transform: "translateZ(0)",
@@ -442,20 +442,20 @@ export default function Index(props: IndexProps) {
 
             <button
               onClick={() => setActiveSection("newsletter")}
-              className={`relative z-10 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[110px] text-center ${
+              className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[120px] text-center ${
                 activeSection === "newsletter"
                   ? "text-white transform scale-[1.02]"
-                  : "text-gray-600 hover:text-black hover:bg-gray-50/50"
+                  : "text-gray-600 hover:text-black"
               }`}
             >
               Newsletter
             </button>
             <button
               onClick={() => setActiveSection("forum")}
-              className={`relative z-10 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[88px] text-center ${
+              className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[80px] text-center ${
                 activeSection === "forum"
                   ? "text-white transform scale-[1.02]"
-                  : "text-gray-600 hover:text-black hover:bg-gray-50/50"
+                  : "text-gray-600 hover:text-black"
               }`}
             >
               Fórum
