@@ -510,6 +510,7 @@ export default function Index(props: IndexProps) {
                     <p className="text-lg text-gray-600 mt-2">
                       Semana {currentNewsletter.week} de 2025 - Atualizações
                       todos os domingos
+                      {isAdmin && <span className="text-red-500 ml-2">[ADMIN MODE]</span>}
                     </p>
                   )}
                 </div>
