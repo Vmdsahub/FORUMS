@@ -249,6 +249,7 @@ const openSourceCategories: ForumCategory[] = [
 ];
 
 function App() {
+  const { isAdmin } = useAuth();
   const [activeSection, setActiveSection] = useState<"newsletter" | "forum">(
     "newsletter",
   );
@@ -256,12 +257,21 @@ function App() {
     number | string | null
   >(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [currentWeek, setCurrentWeek] = useState(0);
   const [newsletters, setNewsletters] = useState<WeeklyNewsletter[]>([]);
   const [isLoadingNewsletters, setIsLoadingNewsletters] = useState(false);
 
   // Get dynamic category statistics
   const { categoryStats, refreshStats } = useCategoryStats();
+
+  // Use the new week navigation hook
+  const {
+    currentWeek,
+    setCurrentWeek,
+    navigateWeek,
+    canNavigatePrev,
+    canNavigateNext,
+    currentNewsletter
+  } = useWeekNavigation({ newsletters, isAdmin });
 
   // Listen for global category stats refresh events
   useEffect(() => {
