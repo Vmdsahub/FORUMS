@@ -79,6 +79,8 @@ interface IndexProps {
   handleCategoryClick: (categoryId: string) => void;
   getSelectedCategoryData: () => ForumCategory | undefined;
   navigateWeek: (direction: "prev" | "next") => void;
+  canNavigatePrev: () => boolean;
+  canNavigateNext: () => boolean;
   currentNewsletter: WeeklyNewsletter;
   refreshCategoryStats?: () => void;
   onNewsletterRefresh?: () => void;
