@@ -427,7 +427,7 @@ export default function Index(props: IndexProps) {
           <div className="flex relative">
             {/* Sliding Background Indicator */}
             <div
-              className={`absolute top-0 bottom-0 bg-black rounded-md transition-all duration-500 ease-out ${
+              className={`absolute top-0 bottom-0 bg-black rounded-md transition-all duration-500 ease-out shadow-lg ${
                 activeSection === "newsletter"
                   ? "left-0 w-[118px]"
                   : "left-[118px] w-[95px]"
@@ -435,6 +435,7 @@ export default function Index(props: IndexProps) {
               style={{
                 transform: "translateZ(0)",
                 willChange: "transform, width",
+                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)",
               }}
             />
 
@@ -442,8 +443,8 @@ export default function Index(props: IndexProps) {
               onClick={() => setActiveSection("newsletter")}
               className={`relative z-10 px-6 py-2 rounded-md transition-all duration-300 ease-out font-medium ${
                 activeSection === "newsletter"
-                  ? "text-white"
-                  : "text-gray-600 hover:text-black"
+                  ? "text-white transform scale-[1.02]"
+                  : "text-gray-600 hover:text-black hover:bg-gray-50/50"
               }`}
             >
               Newsletter
@@ -452,8 +453,8 @@ export default function Index(props: IndexProps) {
               onClick={() => setActiveSection("forum")}
               className={`relative z-10 px-6 py-2 rounded-md transition-all duration-300 ease-out font-medium ${
                 activeSection === "forum"
-                  ? "text-white"
-                  : "text-gray-600 hover:text-black"
+                  ? "text-white transform scale-[1.02]"
+                  : "text-gray-600 hover:text-black hover:bg-gray-50/50"
               }`}
             >
               Fórum
