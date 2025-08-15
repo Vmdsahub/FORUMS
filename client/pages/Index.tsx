@@ -412,9 +412,13 @@ export default function Index(props: IndexProps) {
     <main className="container max-w-7xl mx-auto px-6 py-12">
       {/* Hero Section */}
       <div className="text-center mb-16 animate-fade-in">
-        <h1 className="text-5xl md:text-6xl font-bold text-black mb-4 tracking-tight">
-          IA HUB
-        </h1>
+        <div className="flex justify-center mb-4">
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets%2F503e95fcc6af443aa8cd375cfa461af7%2F980512f033cd4818997e6218b806b298?format=webp&width=800"
+            alt="IA HUB"
+            className="h-16 md:h-20 w-auto"
+          />
+        </div>
       </div>
 
       {/* Toggle Buttons */}
