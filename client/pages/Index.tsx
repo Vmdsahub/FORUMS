@@ -445,7 +445,7 @@ export default function Index(props: IndexProps) {
 
             <button
               onClick={() => setActiveSection("newsletter")}
-              className={`relative z-10 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[110px] text-center ${
+              className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[110px] text-center ${
                 activeSection === "newsletter"
                   ? "text-white transform scale-[1.02]"
                   : "text-gray-600 hover:text-black hover:bg-gray-50/50"
@@ -455,7 +455,7 @@ export default function Index(props: IndexProps) {
             </button>
             <button
               onClick={() => setActiveSection("forum")}
-              className={`relative z-10 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[88px] text-center ${
+              className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[88px] text-center ${
                 activeSection === "forum"
                   ? "text-white transform scale-[1.02]"
                   : "text-gray-600 hover:text-black hover:bg-gray-50/50"
