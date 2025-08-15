@@ -372,16 +372,7 @@ function App() {
     return allCategories.find((cat) => cat.id === selectedCategory);
   };
 
-  const navigateWeek = (direction: "prev" | "next") => {
-    if (direction === "prev" && currentWeek < newsletters.length - 1) {
-      setCurrentWeek(currentWeek + 1);
-    } else if (direction === "next" && currentWeek > 0) {
-      setCurrentWeek(currentWeek - 1);
-    }
-    setExpandedNewsletter(null);
-  };
-
-  const currentNewsletter = newsletters[currentWeek] || null;
+  // Navigation handled by useWeekNavigation hook
 
   return (
     <ErrorBoundary>
