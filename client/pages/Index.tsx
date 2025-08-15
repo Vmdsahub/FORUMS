@@ -516,12 +516,13 @@ export default function Index(props: IndexProps) {
 
                 <button
                   onClick={() => navigateWeek("next")}
-                  disabled={currentWeek <= 0}
+                  disabled={!canNavigateNext()}
                   className={`p-2 rounded-full transition-all duration-200 ${
-                    currentWeek <= 0
+                    !canNavigateNext()
                       ? "text-gray-300 cursor-not-allowed"
                       : "text-gray-600 hover:text-black hover:bg-gray-100"
                   }`}
+                  title="Navegar para semana mais recente"
                 >
                   <svg
                     width="20"
