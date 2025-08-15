@@ -774,10 +774,11 @@ export default function Index(props: IndexProps) {
 
         {activeSection === "forum" && !selectedCategory && (
           <div
-            className="space-y-6 opacity-0 animate-fade-in"
+            className="space-y-6 opacity-0 animate-fade-in transform translate-y-4"
             style={{
-              animationDelay: "0.1s",
+              animationDelay: "0.2s",
               animationFillMode: "forwards",
+              animation: "fadeInUp 0.8s ease-out 0.2s forwards",
             }}
           >
             {/* Forum Categories */}
@@ -1178,10 +1179,11 @@ export default function Index(props: IndexProps) {
 
         {activeSection === "forum" && selectedCategory && (
           <div
-            className="space-y-6 opacity-0 animate-fade-in"
+            className="space-y-6 opacity-0 animate-fade-in transform translate-y-4"
             style={{
-              animationDelay: "0.1s",
+              animationDelay: "0.2s",
               animationFillMode: "forwards",
+              animation: "fadeInUp 0.8s ease-out 0.2s forwards",
             }}
           >
             {/* Back Button */}
