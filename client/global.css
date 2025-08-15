@@ -250,6 +250,16 @@
     background-size: 50px 50px;
   }
 
+  /* Hide scrollbar but keep functionality for forum pages */
+  .hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
   /* 🌙 DARK THEME - Sistema Completo e Moderno */
   .theme-dark {
     /* === PALETA DE CORES BASE === */
