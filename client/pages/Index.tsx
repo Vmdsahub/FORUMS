@@ -1246,7 +1246,7 @@ export default function Index(props: IndexProps) {
                 </div>
               </div>
 
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 hide-scrollbar">
                 {isLoadingTopics ? (
                   <div className="p-12 text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto mb-4"></div>
