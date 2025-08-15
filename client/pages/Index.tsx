@@ -423,7 +423,7 @@ export default function Index(props: IndexProps) {
 
       {/* Toggle Buttons */}
       <div className="flex justify-center mb-12">
-        <div className="bg-white rounded-lg p-1 shadow-sm border border-gray-200 relative z-10">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 relative z-10 overflow-hidden">
           <div className="flex relative">
             {/* Sliding Background Indicator */}
             <div
