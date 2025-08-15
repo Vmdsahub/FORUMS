@@ -411,7 +411,7 @@ export default function Index(props: IndexProps) {
   return (
     <main className="container max-w-7xl mx-auto px-6 py-12">
       {/* Hero Section */}
-      <div className="text-center mb-16 animate-fade-in mt-8">
+      <div className="text-center mb-8 animate-fade-in mt-8">
         <div className="flex justify-center mb-4">
           <img
             src="https://cdn.builder.io/api/v1/image/assets%2F503e95fcc6af443aa8cd375cfa461af7%2F980512f033cd4818997e6218b806b298?format=webp&width=800"
@@ -423,13 +423,13 @@ export default function Index(props: IndexProps) {
 
       {/* Toggle Buttons */}
       <div className="flex justify-center mb-12">
-        <div className="bg-white rounded-lg p-1 shadow-sm border border-gray-200">
-          <div className="flex">
+        <div className="bg-white rounded-lg p-1 shadow-sm border border-gray-200 relative z-10">
+          <div className="flex gap-1">
             <button
               onClick={() => setActiveSection("newsletter")}
               className={`px-6 py-2 rounded-md transition-all duration-300 ease-in-out font-medium ${
                 activeSection === "newsletter"
-                  ? "bg-black text-white transform scale-105"
+                  ? "bg-black text-white"
                   : "text-gray-600 hover:text-black hover:bg-gray-50"
               }`}
             >
@@ -439,7 +439,7 @@ export default function Index(props: IndexProps) {
               onClick={() => setActiveSection("forum")}
               className={`px-6 py-2 rounded-md transition-all duration-300 ease-in-out font-medium ${
                 activeSection === "forum"
-                  ? "bg-black text-white transform scale-105"
+                  ? "bg-black text-white"
                   : "text-gray-600 hover:text-black hover:bg-gray-50"
               }`}
             >
