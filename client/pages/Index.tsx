@@ -411,8 +411,8 @@ export default function Index(props: IndexProps) {
   return (
     <main className="container max-w-7xl mx-auto px-6 py-12 hide-scrollbar app-container">
       {/* Hero Section */}
-      <div className="text-center mb-8 animate-fade-in mt-8">
-        <div className="flex justify-center mb-4">
+      <div className="text-center mb-4 animate-fade-in mt-8">
+        <div className="flex justify-center mb-2">
           <img
             src="https://cdn.builder.io/api/v1/image/assets%2F503e95fcc6af443aa8cd375cfa461af7%2F980512f033cd4818997e6218b806b298?format=webp&width=800"
             alt="IA HUB"
