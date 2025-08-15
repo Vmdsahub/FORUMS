@@ -124,7 +124,9 @@ export function useWeekNavigation({ newsletters, isAdmin = false }: UseWeekNavig
 
   const canNavigateNext = useCallback(() => {
     // Both admin and users can navigate to newer weeks if available
-    return newsletters.length > 1 && currentWeek > 0;
+    const canNav = newsletters.length > 1 && currentWeek > 0;
+    console.log('DEBUG canNavigateNext:', { currentWeek, newslettersLength: newsletters.length, result: canNav });
+    return canNav;
   }, [currentWeek, newsletters]);
 
   // Get current newsletter
