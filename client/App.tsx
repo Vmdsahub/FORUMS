@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { useCategoryStats } from "@/hooks/useCategoryStats";
+import { useWeekNavigation } from "@/hooks/useWeekNavigation";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -12,6 +13,7 @@ import Account from "@/pages/Account";
 import SavedTopics from "@/pages/SavedTopics";
 import Shop from "@/pages/Shop";
 import NotFound from "@/pages/NotFound";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface NewsletterTopic {
   id: number | string;
