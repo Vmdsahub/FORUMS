@@ -424,23 +424,36 @@ export default function Index(props: IndexProps) {
       {/* Toggle Buttons */}
       <div className="flex justify-center mb-12">
         <div className="bg-white rounded-lg p-1 shadow-sm border border-gray-200 relative z-10">
-          <div className="flex gap-1">
+          <div className="flex relative">
+            {/* Sliding Background Indicator */}
+            <div
+              className={`absolute top-0 bottom-0 bg-black rounded-md transition-all duration-500 ease-out ${
+                activeSection === "newsletter"
+                  ? "left-0 w-[118px]"
+                  : "left-[118px] w-[95px]"
+              }`}
+              style={{
+                transform: "translateZ(0)",
+                willChange: "transform, width",
+              }}
+            />
+
             <button
               onClick={() => setActiveSection("newsletter")}
-              className={`px-6 py-2 rounded-md transition-all duration-300 ease-in-out font-medium ${
+              className={`relative z-10 px-6 py-2 rounded-md transition-all duration-300 ease-out font-medium ${
                 activeSection === "newsletter"
-                  ? "bg-black text-white"
-                  : "text-gray-600 hover:text-black hover:bg-gray-50"
+                  ? "text-white"
+                  : "text-gray-600 hover:text-black"
               }`}
             >
               Newsletter
             </button>
             <button
               onClick={() => setActiveSection("forum")}
-              className={`px-6 py-2 rounded-md transition-all duration-300 ease-in-out font-medium ${
+              className={`relative z-10 px-6 py-2 rounded-md transition-all duration-300 ease-out font-medium ${
                 activeSection === "forum"
-                  ? "bg-black text-white"
-                  : "text-gray-600 hover:text-black hover:bg-gray-50"
+                  ? "text-white"
+                  : "text-gray-600 hover:text-black"
               }`}
             >
               Fórum
