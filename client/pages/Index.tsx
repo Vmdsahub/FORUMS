@@ -1069,7 +1069,7 @@ export default function Index(props: IndexProps) {
                 )}
               </div>
 
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 hide-scrollbar">
                 {openSourceCategories.map((category) => (
                   <div
                     key={`opensource-${category.id}`}
