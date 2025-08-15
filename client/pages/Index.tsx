@@ -519,10 +519,13 @@ export default function Index(props: IndexProps) {
                 </div>
 
                 <button
-                  onClick={() => navigateWeek("next")}
-                  disabled={!canNavigateNext()}
+                  onClick={() => {
+                    console.log('Clicked next button!', { isAdmin, canNavigateNext: canNavigateNext() });
+                    navigateWeek("next");
+                  }}
+                  disabled={isAdmin ? false : !canNavigateNext()}
                   className={`p-2 rounded-full transition-all duration-200 ${
-                    !canNavigateNext()
+                    (isAdmin ? false : !canNavigateNext())
                       ? "text-gray-300 cursor-not-allowed"
                       : "text-gray-600 hover:text-black hover:bg-gray-100"
                   }`}
