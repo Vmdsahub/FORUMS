@@ -135,7 +135,7 @@ export default function Header({ activeSection }: HeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full glass-minimal border-b border-black/5">
+    <header className="fixed top-0 z-50 w-full glass-minimal border-b border-black/5 backdrop-blur-lg bg-white/95">
       <div className="container flex h-16 max-w-7xl items-center justify-between px-6 mx-auto">
         <div className="flex items-center">
           <Link

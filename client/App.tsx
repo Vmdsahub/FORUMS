@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { useCategoryStats } from "@/hooks/useCategoryStats";
+import { useWeekNavigation } from "@/hooks/useWeekNavigation";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -12,6 +13,7 @@ import Account from "@/pages/Account";
 import SavedTopics from "@/pages/SavedTopics";
 import Shop from "@/pages/Shop";
 import NotFound from "@/pages/NotFound";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface NewsletterTopic {
   id: number | string;
@@ -247,6 +249,7 @@ const openSourceCategories: ForumCategory[] = [
 ];
 
 function App() {
+  const { isAdmin } = useAuth();
   const [activeSection, setActiveSection] = useState<"newsletter" | "forum">(
     "newsletter",
   );
@@ -254,12 +257,28 @@ function App() {
     number | string | null
   >(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [currentWeek, setCurrentWeek] = useState(0);
   const [newsletters, setNewsletters] = useState<WeeklyNewsletter[]>([]);
   const [isLoadingNewsletters, setIsLoadingNewsletters] = useState(false);
 
   // Get dynamic category statistics
   const { categoryStats, refreshStats } = useCategoryStats();
+
+  // Use the new week navigation hook
+  const {
+    currentWeek,
+    setCurrentWeek,
+    navigateWeek,
+    canNavigatePrev,
+    canNavigateNext,
+    currentNewsletter,
+  } = useWeekNavigation({ newsletters, isAdmin });
+
+  // Debug log
+  console.log("App debug:", {
+    isAdmin,
+    newslettersLength: newsletters.length,
+    currentWeek,
+  });
 
   // Listen for global category stats refresh events
   useEffect(() => {
@@ -295,10 +314,7 @@ function App() {
         const newsletters = data.weeklyNewsletters || [];
         setNewsletters(newsletters);
 
-        // Start at current week (week 0 = newest/current)
-        if (newsletters.length > 0) {
-          setCurrentWeek(0);
-        }
+        // Week navigation is now handled by useWeekNavigation hook
       } else {
         console.warn("Newsletter service unavailable, using fallback data");
         setNewsletters(fallbackNewsletters); // Use local fallback data
@@ -363,16 +379,7 @@ function App() {
     return allCategories.find((cat) => cat.id === selectedCategory);
   };
 
-  const navigateWeek = (direction: "prev" | "next") => {
-    if (direction === "prev" && currentWeek < newsletters.length - 1) {
-      setCurrentWeek(currentWeek + 1);
-    } else if (direction === "next" && currentWeek > 0) {
-      setCurrentWeek(currentWeek - 1);
-    }
-    setExpandedNewsletter(null);
-  };
-
-  const currentNewsletter = newsletters[currentWeek] || null;
+  // Navigation handled by useWeekNavigation hook
 
   return (
     <ErrorBoundary>
@@ -404,6 +411,8 @@ function App() {
                       handleCategoryClick={handleCategoryClick}
                       getSelectedCategoryData={getSelectedCategoryData}
                       navigateWeek={navigateWeek}
+                      canNavigatePrev={canNavigatePrev}
+                      canNavigateNext={canNavigateNext}
                       currentNewsletter={currentNewsletter}
                     />
                   }

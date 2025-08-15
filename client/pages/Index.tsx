@@ -79,6 +79,8 @@ interface IndexProps {
   handleCategoryClick: (categoryId: string) => void;
   getSelectedCategoryData: () => ForumCategory | undefined;
   navigateWeek: (direction: "prev" | "next") => void;
+  canNavigatePrev: () => boolean;
+  canNavigateNext: () => boolean;
   currentNewsletter: WeeklyNewsletter;
   refreshCategoryStats?: () => void;
   onNewsletterRefresh?: () => void;
@@ -99,6 +101,8 @@ export default function Index(props: IndexProps) {
     handleCategoryClick,
     getSelectedCategoryData,
     navigateWeek,
+    canNavigatePrev,
+    canNavigateNext,
     currentNewsletter,
     refreshCategoryStats,
     onNewsletterRefresh,
@@ -409,7 +413,7 @@ export default function Index(props: IndexProps) {
   };
 
   return (
-    <main className="container max-w-7xl mx-auto px-6 py-12 hide-scrollbar app-container">
+    <main className="container max-w-7xl mx-auto px-6 py-12 pt-20 hide-scrollbar app-container">
       {/* Hero Section */}
       <div className="text-center mb-4 animate-fade-in mt-8">
         <div className="flex justify-center mb-2">
@@ -429,8 +433,8 @@ export default function Index(props: IndexProps) {
             <div
               className={`absolute top-0 bottom-0 rounded-md transition-all duration-500 ease-out shadow-lg z-20 solid-black-bg ${
                 activeSection === "newsletter"
-                  ? "left-0 w-[120px]"
-                  : "left-[120px] w-[80px]"
+                  ? "left-0 w-[110px]"
+                  : "left-[110px] w-[90px]"
               }`}
               style={{
                 transform: "translateZ(0)",
@@ -442,7 +446,7 @@ export default function Index(props: IndexProps) {
 
             <button
               onClick={() => setActiveSection("newsletter")}
-              className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[120px] text-center ${
+              className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[110px] text-center ${
                 activeSection === "newsletter"
                   ? "text-white transform scale-[1.02]"
                   : "text-gray-600 hover:text-black"
@@ -452,7 +456,7 @@ export default function Index(props: IndexProps) {
             </button>
             <button
               onClick={() => setActiveSection("forum")}
-              className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[80px] text-center ${
+              className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[90px] text-center ${
                 activeSection === "forum"
                   ? "text-white transform scale-[1.02]"
                   : "text-gray-600 hover:text-black"
@@ -479,13 +483,24 @@ export default function Index(props: IndexProps) {
             <div className="text-center mb-12">
               <div className="flex items-center justify-center gap-4 mb-4">
                 <button
-                  onClick={() => navigateWeek("prev")}
-                  disabled={currentWeek >= weeklyNewsletters.length - 1}
+                  onClick={() => {
+                    console.log("Clicked prev button!", {
+                      isAdmin,
+                      canNavigatePrev: canNavigatePrev(),
+                    });
+                    navigateWeek("prev");
+                  }}
+                  disabled={isAdmin ? false : !canNavigatePrev()}
                   className={`p-2 rounded-full transition-all duration-200 ${
-                    currentWeek >= weeklyNewsletters.length - 1
+                    (isAdmin ? false : !canNavigatePrev())
                       ? "text-gray-300 cursor-not-allowed"
                       : "text-gray-600 hover:text-black hover:bg-gray-100"
                   }`}
+                  title={
+                    isAdmin
+                      ? "Navegar para semana anterior (Admin)"
+                      : "Voltar para semanas com conteúdo"
+                  }
                 >
                   <svg
                     width="20"
@@ -505,18 +520,28 @@ export default function Index(props: IndexProps) {
                     <p className="text-lg text-gray-600 mt-2">
                       Semana {currentNewsletter.week} de 2025 - Atualizações
                       todos os domingos
+                      {isAdmin && (
+                        <span className="text-red-500 ml-2">[ADMIN MODE]</span>
+                      )}
                     </p>
                   )}
                 </div>
 
                 <button
-                  onClick={() => navigateWeek("next")}
-                  disabled={currentWeek <= 0}
+                  onClick={() => {
+                    console.log("Clicked next button!", {
+                      isAdmin,
+                      canNavigateNext: canNavigateNext(),
+                    });
+                    navigateWeek("next");
+                  }}
+                  disabled={isAdmin ? false : !canNavigateNext()}
                   className={`p-2 rounded-full transition-all duration-200 ${
-                    currentWeek <= 0
+                    (isAdmin ? false : !canNavigateNext())
                       ? "text-gray-300 cursor-not-allowed"
                       : "text-gray-600 hover:text-black hover:bg-gray-100"
                   }`}
+                  title="Navegar para semana mais recente"
                 >
                   <svg
                     width="20"
