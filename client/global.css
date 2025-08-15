@@ -267,12 +267,23 @@
 
   /* Hide scrollbar but keep functionality for forum pages */
   .hide-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none !important; /* IE and Edge */
+    scrollbar-width: none !important; /* Firefox */
+    overflow-x: hidden !important; /* Hide horizontal scroll */
   }
 
   .hide-scrollbar::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
+    display: none !important; /* Chrome, Safari and Opera */
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar-track {
+    display: none !important;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar-thumb {
+    display: none !important;
   }
 
   /* 🌙 DARK THEME - Sistema Completo e Moderno */
