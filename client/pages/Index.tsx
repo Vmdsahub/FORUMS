@@ -416,7 +416,7 @@ export default function Index(props: IndexProps) {
           <img
             src="https://cdn.builder.io/api/v1/image/assets%2F503e95fcc6af443aa8cd375cfa461af7%2F980512f033cd4818997e6218b806b298?format=webp&width=800"
             alt="IA HUB"
-            className="h-16 md:h-20 w-auto"
+            className="h-24 md:h-32 w-auto"
           />
         </div>
       </div>
