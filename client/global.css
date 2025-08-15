@@ -64,6 +64,17 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+    /* Hide scrollbar globally */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  html::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family:
@@ -74,10 +85,14 @@
       "Segoe UI",
       Roboto,
       sans-serif;
+    /* Hide scrollbar on body */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+    overflow-x: hidden; /* Hide horizontal scroll */
   }
 
-  html {
-    scroll-behavior: smooth;
+  body::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
   }
 }
 
