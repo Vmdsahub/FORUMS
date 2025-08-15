@@ -411,12 +411,12 @@ export default function Index(props: IndexProps) {
   return (
     <main className="container max-w-7xl mx-auto px-6 py-12">
       {/* Hero Section */}
-      <div className="text-center mb-16 animate-fade-in">
+      <div className="text-center mb-16 animate-fade-in mt-8">
         <div className="flex justify-center mb-4">
           <img
             src="https://cdn.builder.io/api/v1/image/assets%2F503e95fcc6af443aa8cd375cfa461af7%2F980512f033cd4818997e6218b806b298?format=webp&width=800"
             alt="IA HUB"
-            className="h-20 md:h-28 w-auto"
+            className="h-24 md:h-32 w-auto"
           />
         </div>
       </div>
@@ -717,7 +717,7 @@ export default function Index(props: IndexProps) {
                           htmlFor="news-content"
                           className="text-gray-900 font-medium"
                         >
-                          Conte��do do Artigo
+                          Conteúdo do Artigo
                         </Label>
                         <Textarea
                           id="news-content"
