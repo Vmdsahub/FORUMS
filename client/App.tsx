@@ -148,7 +148,7 @@ const toolsCategories: ForumCategory[] = [
   },
   {
     id: "musica-audio",
-    name: "Música/Áudio",
+    name: "Música/��udio",
     description: "Produção musical e processamento de áudio com IA",
     totalTopics: 0,
     totalPosts: 0,
@@ -379,7 +379,7 @@ function App() {
       <NotificationProvider>
         <ThemeProvider>
           <BrowserRouter>
-            <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out hide-scrollbar">
+            <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out hide-scrollbar app-container">
               <GlassmorphismBackground />
               <Header activeSection={activeSection} />
               <Routes>
