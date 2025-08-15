@@ -270,11 +270,15 @@ function App() {
     navigateWeek,
     canNavigatePrev,
     canNavigateNext,
-    currentNewsletter
+    currentNewsletter,
   } = useWeekNavigation({ newsletters, isAdmin });
 
   // Debug log
-  console.log('App debug:', { isAdmin, newslettersLength: newsletters.length, currentWeek });
+  console.log("App debug:", {
+    isAdmin,
+    newslettersLength: newsletters.length,
+    currentWeek,
+  });
 
   // Listen for global category stats refresh events
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 interface WeeklyNewsletter {
   week: number;
@@ -12,7 +12,10 @@ interface UseWeekNavigationProps {
   isAdmin?: boolean;
 }
 
-export function useWeekNavigation({ newsletters, isAdmin = false }: UseWeekNavigationProps) {
+export function useWeekNavigation({
+  newsletters,
+  isAdmin = false,
+}: UseWeekNavigationProps) {
   const [currentWeek, setCurrentWeek] = useState(0);
 
   // Get ISO week number (same as backend)
@@ -23,7 +26,7 @@ export function useWeekNavigation({ newsletters, isAdmin = false }: UseWeekNavig
     const firstThursday = target.valueOf();
     target.setMonth(0, 1);
     if (target.getDay() !== 4) {
-      target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+      target.setMonth(0, 1 + ((4 - target.getDay() + 7) % 7));
     }
     return 1 + Math.ceil((firstThursday - target.valueOf()) / 604800000);
   }, []);
@@ -43,10 +46,12 @@ export function useWeekNavigation({ newsletters, isAdmin = false }: UseWeekNavig
     if (newsletters.length === 0) return;
 
     const currentRealWeek = getCurrentWeekNumber();
-    
+
     // Find the index of the current week in newsletters array
-    const currentWeekIndex = newsletters.findIndex(newsletter => newsletter.week === currentRealWeek);
-    
+    const currentWeekIndex = newsletters.findIndex(
+      (newsletter) => newsletter.week === currentRealWeek,
+    );
+
     if (currentWeekIndex !== -1) {
       // If current week exists in newsletters, set it as active
       setCurrentWeek(currentWeekIndex);
@@ -66,7 +71,9 @@ export function useWeekNavigation({ newsletters, isAdmin = false }: UseWeekNavig
 
       // If current real week is different from displayed week, and it's Sunday, auto-advance
       if (currentRealWeek !== currentNewsletterWeek && isSunday()) {
-        const newWeekIndex = newsletters.findIndex(newsletter => newsletter.week === currentRealWeek);
+        const newWeekIndex = newsletters.findIndex(
+          (newsletter) => newsletter.week === currentRealWeek,
+        );
         if (newWeekIndex !== -1) {
           setCurrentWeek(newWeekIndex);
         }
@@ -83,32 +90,42 @@ export function useWeekNavigation({ newsletters, isAdmin = false }: UseWeekNavig
   }, [newsletters, currentWeek, getCurrentWeekNumber, isSunday]);
 
   // Navigation function
-  const navigateWeek = useCallback((direction: "prev" | "next") => {
-    if (direction === "prev") {
-      // Going to older weeks
-      if (isAdmin) {
-        // Admins can navigate to any week
-        if (currentWeek < newsletters.length - 1) {
-          setCurrentWeek(currentWeek + 1);
+  const navigateWeek = useCallback(
+    (direction: "prev" | "next") => {
+      if (direction === "prev") {
+        // Going to older weeks
+        if (isAdmin) {
+          // Admins can navigate to any week
+          if (currentWeek < newsletters.length - 1) {
+            setCurrentWeek(currentWeek + 1);
+          }
+        } else {
+          // Users can only navigate to weeks with content
+          const nextWeekIndex = currentWeek + 1;
+          if (
+            nextWeekIndex < newsletters.length &&
+            newsletters[nextWeekIndex]?.topics?.length > 0
+          ) {
+            setCurrentWeek(nextWeekIndex);
+          }
         }
-      } else {
-        // Users can only navigate to weeks with content
-        const nextWeekIndex = currentWeek + 1;
-        if (nextWeekIndex < newsletters.length && newsletters[nextWeekIndex]?.topics?.length > 0) {
-          setCurrentWeek(nextWeekIndex);
+      } else if (direction === "next") {
+        // Going to newer weeks
+        if (currentWeek > 0) {
+          setCurrentWeek(currentWeek - 1);
         }
       }
-    } else if (direction === "next") {
-      // Going to newer weeks
-      if (currentWeek > 0) {
-        setCurrentWeek(currentWeek - 1);
-      }
-    }
-  }, [currentWeek, newsletters, isAdmin]);
+    },
+    [currentWeek, newsletters, isAdmin],
+  );
 
   // Check if navigation is possible
   const canNavigatePrev = useCallback(() => {
-    console.log('DEBUG canNavigatePrev:', { isAdmin, currentWeek, newslettersLength: newsletters.length });
+    console.log("DEBUG canNavigatePrev:", {
+      isAdmin,
+      currentWeek,
+      newslettersLength: newsletters.length,
+    });
 
     // Simplified logic: if there are newsletters and we're not at the end
     if (newsletters.length === 0) return false;
@@ -116,13 +133,15 @@ export function useWeekNavigation({ newsletters, isAdmin = false }: UseWeekNavig
     if (isAdmin) {
       // Admins can navigate to any week
       const canNav = currentWeek < newsletters.length - 1;
-      console.log('Admin canNavigatePrev result:', canNav);
+      console.log("Admin canNavigatePrev result:", canNav);
       return canNav;
     } else {
       // Users can only go to weeks with content
       const nextWeekIndex = currentWeek + 1;
-      const hasContent = nextWeekIndex < newsletters.length && newsletters[nextWeekIndex]?.topics?.length > 0;
-      console.log('User canNavigatePrev result:', hasContent);
+      const hasContent =
+        nextWeekIndex < newsletters.length &&
+        newsletters[nextWeekIndex]?.topics?.length > 0;
+      console.log("User canNavigatePrev result:", hasContent);
       return hasContent;
     }
   }, [currentWeek, newsletters, isAdmin]);
@@ -132,7 +151,11 @@ export function useWeekNavigation({ newsletters, isAdmin = false }: UseWeekNavig
     if (newsletters.length === 0) return false;
 
     const canNav = currentWeek > 0;
-    console.log('DEBUG canNavigateNext:', { currentWeek, newslettersLength: newsletters.length, result: canNav });
+    console.log("DEBUG canNavigateNext:", {
+      currentWeek,
+      newslettersLength: newsletters.length,
+      result: canNav,
+    });
     return canNav;
   }, [currentWeek, newsletters]);
 
@@ -147,6 +170,6 @@ export function useWeekNavigation({ newsletters, isAdmin = false }: UseWeekNavig
     canNavigateNext,
     currentNewsletter,
     getCurrentWeekNumber,
-    isSunday
+    isSunday,
   };
 }

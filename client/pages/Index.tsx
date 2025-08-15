@@ -484,7 +484,10 @@ export default function Index(props: IndexProps) {
               <div className="flex items-center justify-center gap-4 mb-4">
                 <button
                   onClick={() => {
-                    console.log('Clicked prev button!', { isAdmin, canNavigatePrev: canNavigatePrev() });
+                    console.log("Clicked prev button!", {
+                      isAdmin,
+                      canNavigatePrev: canNavigatePrev(),
+                    });
                     navigateWeek("prev");
                   }}
                   disabled={isAdmin ? false : !canNavigatePrev()}
@@ -493,7 +496,11 @@ export default function Index(props: IndexProps) {
                       ? "text-gray-300 cursor-not-allowed"
                       : "text-gray-600 hover:text-black hover:bg-gray-100"
                   }`}
-                  title={isAdmin ? "Navegar para semana anterior (Admin)" : "Voltar para semanas com conteúdo"}
+                  title={
+                    isAdmin
+                      ? "Navegar para semana anterior (Admin)"
+                      : "Voltar para semanas com conteúdo"
+                  }
                 >
                   <svg
                     width="20"
@@ -513,14 +520,19 @@ export default function Index(props: IndexProps) {
                     <p className="text-lg text-gray-600 mt-2">
                       Semana {currentNewsletter.week} de 2025 - Atualizações
                       todos os domingos
-                      {isAdmin && <span className="text-red-500 ml-2">[ADMIN MODE]</span>}
+                      {isAdmin && (
+                        <span className="text-red-500 ml-2">[ADMIN MODE]</span>
+                      )}
                     </p>
                   )}
                 </div>
 
                 <button
                   onClick={() => {
-                    console.log('Clicked next button!', { isAdmin, canNavigateNext: canNavigateNext() });
+                    console.log("Clicked next button!", {
+                      isAdmin,
+                      canNavigateNext: canNavigateNext(),
+                    });
                     navigateWeek("next");
                   }}
                   disabled={isAdmin ? false : !canNavigateNext()}
