@@ -464,13 +464,14 @@ export default function Index(props: IndexProps) {
       </div>
 
       {/* Content with smooth transitions */}
-      <div className="transition-all duration-500 ease-in-out">
+      <div className="transition-all duration-700 ease-out">
         {activeSection === "newsletter" && (
           <div
-            className="space-y-6 max-w-4xl mx-auto opacity-0 animate-fade-in"
+            className="space-y-6 max-w-4xl mx-auto opacity-0 animate-fade-in transform translate-y-4"
             style={{
-              animationDelay: "0.1s",
+              animationDelay: "0.2s",
               animationFillMode: "forwards",
+              animation: "fadeInUp 0.8s ease-out 0.2s forwards",
             }}
           >
             {/* Newsletter Header with Navigation */}
