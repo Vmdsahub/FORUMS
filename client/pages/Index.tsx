@@ -221,7 +221,7 @@ export default function Index(props: IndexProps) {
       if (error.name === "AbortError") {
         toast.error("Timeout ao carregar tópicos. Tente novamente.");
       } else if (error instanceof TypeError) {
-        toast.error("Erro de conex��o. Verifique sua internet.");
+        toast.error("Erro de conexão. Verifique sua internet.");
       } else {
         toast.error("Erro ao carregar tópicos");
       }
@@ -445,7 +445,7 @@ export default function Index(props: IndexProps) {
               className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[110px] text-center ${
                 activeSection === "newsletter"
                   ? "text-white transform scale-[1.02]"
-                  : "text-gray-600 hover:text-black hover:bg-gray-50/50"
+                  : "text-gray-600 hover:text-black"
               }`}
             >
               Newsletter
@@ -455,7 +455,7 @@ export default function Index(props: IndexProps) {
               className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[88px] text-center ${
                 activeSection === "forum"
                   ? "text-white transform scale-[1.02]"
-                  : "text-gray-600 hover:text-black hover:bg-gray-50/50"
+                  : "text-gray-600 hover:text-black"
               }`}
             >
               Fórum
