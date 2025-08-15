@@ -684,6 +684,26 @@
       inset 0 0 5px rgba(79, 143, 247, 0.1);
   }
 
+  /* === SOLID BLACK OVERRIDE FOR BUTTON INDICATORS === */
+  .solid-black-bg {
+    background-color: #000000 !important;
+    background: #000000 !important;
+    opacity: 1 !important;
+  }
+
+  .theme-dark .solid-black-bg {
+    background-color: #000000 !important;
+    background: #000000 !important;
+    opacity: 1 !important;
+  }
+
+  .theme-glassmorphism-liquid .solid-black-bg {
+    background-color: #000000 !important;
+    background: #000000 !important;
+    backdrop-filter: none !important;
+    opacity: 1 !important;
+  }
+
   /* === BADGES E TAGS === */
   .theme-dark .bg-yellow-100 {
     background: rgba(251, 191, 36, 0.15) !important;
