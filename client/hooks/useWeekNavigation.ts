@@ -109,7 +109,9 @@ export function useWeekNavigation({ newsletters, isAdmin = false }: UseWeekNavig
   // Check if navigation is possible
   const canNavigatePrev = useCallback(() => {
     if (isAdmin) {
-      return currentWeek < newsletters.length - 1;
+      // Admins can always navigate if there's any potential week to go to
+      // For prev (older weeks), we can navigate if we're not at the last index
+      return newsletters.length > 1 && currentWeek < newsletters.length - 1;
     } else {
       // Users can only go to weeks with content
       const nextWeekIndex = currentWeek + 1;
@@ -118,8 +120,9 @@ export function useWeekNavigation({ newsletters, isAdmin = false }: UseWeekNavig
   }, [currentWeek, newsletters, isAdmin]);
 
   const canNavigateNext = useCallback(() => {
-    return currentWeek > 0;
-  }, [currentWeek]);
+    // Both admin and users can navigate to newer weeks if available
+    return newsletters.length > 1 && currentWeek > 0;
+  }, [currentWeek, newsletters]);
 
   // Get current newsletter
   const currentNewsletter = newsletters[currentWeek] || null;
