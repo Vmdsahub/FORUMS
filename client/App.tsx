@@ -404,6 +404,8 @@ function App() {
                       handleCategoryClick={handleCategoryClick}
                       getSelectedCategoryData={getSelectedCategoryData}
                       navigateWeek={navigateWeek}
+                      canNavigatePrev={canNavigatePrev}
+                      canNavigateNext={canNavigateNext}
                       currentNewsletter={currentNewsletter}
                     />
                   }
