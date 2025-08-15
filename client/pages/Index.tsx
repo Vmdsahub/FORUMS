@@ -483,10 +483,13 @@ export default function Index(props: IndexProps) {
             <div className="text-center mb-12">
               <div className="flex items-center justify-center gap-4 mb-4">
                 <button
-                  onClick={() => navigateWeek("prev")}
-                  disabled={!canNavigatePrev()}
+                  onClick={() => {
+                    console.log('Clicked prev button!', { isAdmin, canNavigatePrev: canNavigatePrev() });
+                    navigateWeek("prev");
+                  }}
+                  disabled={isAdmin ? false : !canNavigatePrev()}
                   className={`p-2 rounded-full transition-all duration-200 ${
-                    !canNavigatePrev()
+                    (isAdmin ? false : !canNavigatePrev())
                       ? "text-gray-300 cursor-not-allowed"
                       : "text-gray-600 hover:text-black hover:bg-gray-100"
                   }`}
