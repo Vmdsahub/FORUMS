@@ -379,7 +379,7 @@ function App() {
       <NotificationProvider>
         <ThemeProvider>
           <BrowserRouter>
-            <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out">
+            <div className="min-h-screen bg-gray-50 transition-all duration-300 ease-in-out hide-scrollbar">
               <GlassmorphismBackground />
               <Header activeSection={activeSection} />
               <Routes>
