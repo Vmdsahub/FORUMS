@@ -429,8 +429,8 @@ export default function Index(props: IndexProps) {
             <div
               className={`absolute top-0 bottom-0 bg-black rounded-md transition-all duration-500 ease-out shadow-lg ${
                 activeSection === "newsletter"
-                  ? "left-0 w-[118px]"
-                  : "left-[118px] w-[95px]"
+                  ? "left-0 w-[110px]"
+                  : "left-[110px] w-[88px]"
               }`}
               style={{
                 transform: "translateZ(0)",
@@ -442,7 +442,7 @@ export default function Index(props: IndexProps) {
 
             <button
               onClick={() => setActiveSection("newsletter")}
-              className={`relative z-10 px-6 py-2 rounded-md transition-all duration-300 ease-out font-medium ${
+              className={`relative z-10 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[110px] text-center ${
                 activeSection === "newsletter"
                   ? "text-white transform scale-[1.02]"
                   : "text-gray-600 hover:text-black hover:bg-gray-50/50"
@@ -452,7 +452,7 @@ export default function Index(props: IndexProps) {
             </button>
             <button
               onClick={() => setActiveSection("forum")}
-              className={`relative z-10 px-6 py-2 rounded-md transition-all duration-300 ease-out font-medium ${
+              className={`relative z-10 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[88px] text-center ${
                 activeSection === "forum"
                   ? "text-white transform scale-[1.02]"
                   : "text-gray-600 hover:text-black hover:bg-gray-50/50"
