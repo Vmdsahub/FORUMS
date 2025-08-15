@@ -101,6 +101,8 @@ export default function Index(props: IndexProps) {
     handleCategoryClick,
     getSelectedCategoryData,
     navigateWeek,
+    canNavigatePrev,
+    canNavigateNext,
     currentNewsletter,
     refreshCategoryStats,
     onNewsletterRefresh,
