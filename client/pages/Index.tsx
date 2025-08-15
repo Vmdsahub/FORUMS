@@ -221,7 +221,7 @@ export default function Index(props: IndexProps) {
       if (error.name === "AbortError") {
         toast.error("Timeout ao carregar tópicos. Tente novamente.");
       } else if (error instanceof TypeError) {
-        toast.error("Erro de conexão. Verifique sua internet.");
+        toast.error("Erro de conex��o. Verifique sua internet.");
       } else {
         toast.error("Erro ao carregar tópicos");
       }
@@ -423,7 +423,7 @@ export default function Index(props: IndexProps) {
 
       {/* Toggle Buttons */}
       <div className="flex justify-center mb-12">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 relative z-10 overflow-hidden">
+        <div className="bg-white rounded-lg p-1 shadow-sm border border-gray-200 relative z-10">
           <div className="flex relative">
             {/* Sliding Background Indicator */}
             <div
