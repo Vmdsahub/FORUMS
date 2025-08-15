@@ -307,10 +307,7 @@ function App() {
         const newsletters = data.weeklyNewsletters || [];
         setNewsletters(newsletters);
 
-        // Start at current week (week 0 = newest/current)
-        if (newsletters.length > 0) {
-          setCurrentWeek(0);
-        }
+        // Week navigation is now handled by useWeekNavigation hook
       } else {
         console.warn("Newsletter service unavailable, using fallback data");
         setNewsletters(fallbackNewsletters); // Use local fallback data
