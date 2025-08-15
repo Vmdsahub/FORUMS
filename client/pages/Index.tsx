@@ -435,7 +435,8 @@ export default function Index(props: IndexProps) {
               style={{
                 transform: "translateZ(0)",
                 willChange: "transform, width",
-                boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)",
+                boxShadow:
+                  "0 2px 8px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)",
               }}
             />
 
@@ -502,7 +503,8 @@ export default function Index(props: IndexProps) {
                   </h2>
                   {currentNewsletter && (
                     <p className="text-lg text-gray-600 mt-2">
-                      Semana {currentNewsletter.week} de 2025 - Atualizações todos os domingos
+                      Semana {currentNewsletter.week} de 2025 - Atualizações
+                      todos os domingos
                     </p>
                   )}
                 </div>
