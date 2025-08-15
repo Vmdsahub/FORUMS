@@ -411,32 +411,51 @@ export default function Index(props: IndexProps) {
   return (
     <main className="container max-w-7xl mx-auto px-6 py-12">
       {/* Hero Section */}
-      <div className="text-center mb-16 animate-fade-in">
-        <h1 className="text-5xl md:text-6xl font-bold text-black mb-4 tracking-tight">
-          IA HUB
-        </h1>
+      <div className="text-center mb-8 animate-fade-in mt-8">
+        <div className="flex justify-center mb-4">
+          <img
+            src="https://cdn.builder.io/api/v1/image/assets%2F503e95fcc6af443aa8cd375cfa461af7%2F980512f033cd4818997e6218b806b298?format=webp&width=800"
+            alt="IA HUB"
+            className="h-24 md:h-32 w-auto"
+          />
+        </div>
       </div>
 
       {/* Toggle Buttons */}
       <div className="flex justify-center mb-12">
-        <div className="bg-white rounded-lg p-1 shadow-sm border border-gray-200">
-          <div className="flex">
+        <div className="bg-white rounded-lg p-1 shadow-sm border border-gray-200 relative z-10">
+          <div className="flex relative">
+            {/* Sliding Background Indicator */}
+            <div
+              className={`absolute top-0 bottom-0 bg-black rounded-md transition-all duration-500 ease-out shadow-lg ${
+                activeSection === "newsletter"
+                  ? "left-0 w-[118px]"
+                  : "left-[118px] w-[95px]"
+              }`}
+              style={{
+                transform: "translateZ(0)",
+                willChange: "transform, width",
+                boxShadow:
+                  "0 2px 8px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)",
+              }}
+            />
+
             <button
               onClick={() => setActiveSection("newsletter")}
-              className={`px-6 py-2 rounded-md transition-all duration-300 ease-in-out font-medium ${
+              className={`relative z-10 px-6 py-2 rounded-md transition-all duration-300 ease-out font-medium ${
                 activeSection === "newsletter"
-                  ? "bg-black text-white transform scale-105"
-                  : "text-gray-600 hover:text-black hover:bg-gray-50"
+                  ? "text-white transform scale-[1.02]"
+                  : "text-gray-600 hover:text-black hover:bg-gray-50/50"
               }`}
             >
               Newsletter
             </button>
             <button
               onClick={() => setActiveSection("forum")}
-              className={`px-6 py-2 rounded-md transition-all duration-300 ease-in-out font-medium ${
+              className={`relative z-10 px-6 py-2 rounded-md transition-all duration-300 ease-out font-medium ${
                 activeSection === "forum"
-                  ? "bg-black text-white transform scale-105"
-                  : "text-gray-600 hover:text-black hover:bg-gray-50"
+                  ? "text-white transform scale-[1.02]"
+                  : "text-gray-600 hover:text-black hover:bg-gray-50/50"
               }`}
             >
               Fórum
@@ -446,13 +465,14 @@ export default function Index(props: IndexProps) {
       </div>
 
       {/* Content with smooth transitions */}
-      <div className="transition-all duration-500 ease-in-out">
+      <div className="transition-all duration-700 ease-out">
         {activeSection === "newsletter" && (
           <div
-            className="space-y-6 max-w-4xl mx-auto opacity-0 animate-fade-in"
+            className="space-y-6 max-w-4xl mx-auto opacity-0 animate-fade-in transform translate-y-4"
             style={{
-              animationDelay: "0.1s",
+              animationDelay: "0.2s",
               animationFillMode: "forwards",
+              animation: "fadeInUp 0.8s ease-out 0.2s forwards",
             }}
           >
             {/* Newsletter Header with Navigation */}
@@ -483,7 +503,8 @@ export default function Index(props: IndexProps) {
                   </h2>
                   {currentNewsletter && (
                     <p className="text-lg text-gray-600 mt-2">
-                      Semana {currentNewsletter.week} de 2025 - Atualizações todos os domingos
+                      Semana {currentNewsletter.week} de 2025 - Atualizações
+                      todos os domingos
                     </p>
                   )}
                 </div>
@@ -755,10 +776,11 @@ export default function Index(props: IndexProps) {
 
         {activeSection === "forum" && !selectedCategory && (
           <div
-            className="space-y-6 opacity-0 animate-fade-in"
+            className="space-y-6 opacity-0 animate-fade-in transform translate-y-4"
             style={{
-              animationDelay: "0.1s",
+              animationDelay: "0.2s",
               animationFillMode: "forwards",
+              animation: "fadeInUp 0.8s ease-out 0.2s forwards",
             }}
           >
             {/* Forum Categories */}
@@ -1159,10 +1181,11 @@ export default function Index(props: IndexProps) {
 
         {activeSection === "forum" && selectedCategory && (
           <div
-            className="space-y-6 opacity-0 animate-fade-in"
+            className="space-y-6 opacity-0 animate-fade-in transform translate-y-4"
             style={{
-              animationDelay: "0.1s",
+              animationDelay: "0.2s",
               animationFillMode: "forwards",
+              animation: "fadeInUp 0.8s ease-out 0.2s forwards",
             }}
           >
             {/* Back Button */}

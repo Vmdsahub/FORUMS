@@ -140,9 +140,13 @@ export default function Header({ activeSection }: HeaderProps) {
         <div className="flex items-center">
           <Link
             to="/"
-            className="text-2xl font-bold text-black tracking-tight hover:text-gray-700 transition-colors"
+            className="flex items-center hover:opacity-75 transition-opacity"
           >
-            IA HUB
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets%2F503e95fcc6af443aa8cd375cfa461af7%2F980512f033cd4818997e6218b806b298?format=webp&width=800"
+              alt="IA HUB"
+              className="h-14 w-auto"
+            />
           </Link>
         </div>
 
