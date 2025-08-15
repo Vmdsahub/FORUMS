@@ -427,17 +427,19 @@ export default function Index(props: IndexProps) {
           <div className="flex relative">
             {/* Sliding Background Indicator */}
             <div
-              className={`absolute top-0 bottom-0 rounded-md transition-all duration-500 ease-out shadow-lg ${
+              className={`absolute top-0 bottom-0 rounded-md transition-all duration-500 ease-out shadow-lg z-20 ${
                 activeSection === "newsletter"
                   ? "left-0 w-[110px]"
                   : "left-[110px] w-[88px]"
               }`}
               style={{
-                backgroundColor: "#000000",
+                backgroundColor: "#000000 !important",
+                background: "#000000 !important",
                 transform: "translateZ(0)",
                 willChange: "transform, width",
                 boxShadow:
                   "0 2px 8px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1)",
+                opacity: "1 !important",
               }}
             />
 
