@@ -409,7 +409,7 @@ export default function Index(props: IndexProps) {
   };
 
   return (
-    <main className="container max-w-7xl mx-auto px-6 py-12">
+    <main className="container max-w-7xl mx-auto px-6 py-12 hide-scrollbar app-container">
       {/* Hero Section */}
       <div className="text-center mb-8 animate-fade-in mt-8">
         <div className="flex justify-center mb-4">
@@ -429,8 +429,8 @@ export default function Index(props: IndexProps) {
             <div
               className={`absolute top-0 bottom-0 bg-black rounded-md transition-all duration-500 ease-out shadow-lg ${
                 activeSection === "newsletter"
-                  ? "left-0 w-[118px]"
-                  : "left-[118px] w-[95px]"
+                  ? "left-0 w-[110px]"
+                  : "left-[110px] w-[88px]"
               }`}
               style={{
                 transform: "translateZ(0)",
@@ -442,7 +442,7 @@ export default function Index(props: IndexProps) {
 
             <button
               onClick={() => setActiveSection("newsletter")}
-              className={`relative z-10 px-6 py-2 rounded-md transition-all duration-300 ease-out font-medium ${
+              className={`relative z-10 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[110px] text-center ${
                 activeSection === "newsletter"
                   ? "text-white transform scale-[1.02]"
                   : "text-gray-600 hover:text-black hover:bg-gray-50/50"
@@ -452,7 +452,7 @@ export default function Index(props: IndexProps) {
             </button>
             <button
               onClick={() => setActiveSection("forum")}
-              className={`relative z-10 px-6 py-2 rounded-md transition-all duration-300 ease-out font-medium ${
+              className={`relative z-10 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[88px] text-center ${
                 activeSection === "forum"
                   ? "text-white transform scale-[1.02]"
                   : "text-gray-600 hover:text-black hover:bg-gray-50/50"
@@ -776,7 +776,7 @@ export default function Index(props: IndexProps) {
 
         {activeSection === "forum" && !selectedCategory && (
           <div
-            className="space-y-6 opacity-0 animate-fade-in transform translate-y-4"
+            className="space-y-6 opacity-0 animate-fade-in transform translate-y-4 hide-scrollbar"
             style={{
               animationDelay: "0.2s",
               animationFillMode: "forwards",
@@ -872,7 +872,7 @@ export default function Index(props: IndexProps) {
                 )}
               </div>
 
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 hide-scrollbar">
                 {toolsCategories.map((category) => (
                   <div
                     key={category.id}
@@ -1069,7 +1069,7 @@ export default function Index(props: IndexProps) {
                 )}
               </div>
 
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 hide-scrollbar">
                 {openSourceCategories.map((category) => (
                   <div
                     key={`opensource-${category.id}`}
@@ -1181,7 +1181,7 @@ export default function Index(props: IndexProps) {
 
         {activeSection === "forum" && selectedCategory && (
           <div
-            className="space-y-6 opacity-0 animate-fade-in transform translate-y-4"
+            className="space-y-6 opacity-0 animate-fade-in transform translate-y-4 hide-scrollbar"
             style={{
               animationDelay: "0.2s",
               animationFillMode: "forwards",
@@ -1246,7 +1246,7 @@ export default function Index(props: IndexProps) {
                 </div>
               </div>
 
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-gray-100 hide-scrollbar">
                 {isLoadingTopics ? (
                   <div className="p-12 text-center">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto mb-4"></div>

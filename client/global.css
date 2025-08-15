@@ -64,6 +64,17 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+    /* Hide scrollbar globally */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  html::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-family:
@@ -74,10 +85,14 @@
       "Segoe UI",
       Roboto,
       sans-serif;
+    /* Hide scrollbar on body */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+    overflow-x: hidden; /* Hide horizontal scroll */
   }
 
-  html {
-    scroll-behavior: smooth;
+  body::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
   }
 }
 
@@ -248,6 +263,65 @@
       linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
     background-size: 50px 50px;
+  }
+
+  /* Hide scrollbar but keep functionality for forum pages */
+  .hide-scrollbar {
+    -ms-overflow-style: none !important; /* IE and Edge */
+    scrollbar-width: none !important; /* Firefox */
+    overflow-x: hidden !important; /* Hide horizontal scroll */
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none !important; /* Chrome, Safari and Opera */
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar-track {
+    display: none !important;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar-thumb {
+    display: none !important;
+  }
+
+  /* Ensure no scrollbars on main app container */
+  .app-container {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+    overflow-x: hidden !important;
+  }
+
+  .app-container::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  /* Apply to root element */
+  #root {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
+    overflow-x: hidden !important;
+  }
+
+  #root::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  /* Universal scrollbar hiding for all elements */
+  *::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+
+  * {
+    -ms-overflow-style: none !important;
+    scrollbar-width: none !important;
   }
 
   /* 🌙 DARK THEME - Sistema Completo e Moderno */
