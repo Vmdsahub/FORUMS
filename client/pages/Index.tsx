@@ -409,7 +409,7 @@ export default function Index(props: IndexProps) {
   };
 
   return (
-    <main className="container max-w-7xl mx-auto px-6 py-12 hide-scrollbar app-container">
+    <main className="container max-w-7xl mx-auto px-6 py-12 pt-20 hide-scrollbar app-container">
       {/* Hero Section */}
       <div className="text-center mb-4 animate-fade-in mt-8">
         <div className="flex justify-center mb-2">
