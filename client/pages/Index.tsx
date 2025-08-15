@@ -484,12 +484,13 @@ export default function Index(props: IndexProps) {
               <div className="flex items-center justify-center gap-4 mb-4">
                 <button
                   onClick={() => navigateWeek("prev")}
-                  disabled={currentWeek >= weeklyNewsletters.length - 1}
+                  disabled={!canNavigatePrev()}
                   className={`p-2 rounded-full transition-all duration-200 ${
-                    currentWeek >= weeklyNewsletters.length - 1
+                    !canNavigatePrev()
                       ? "text-gray-300 cursor-not-allowed"
                       : "text-gray-600 hover:text-black hover:bg-gray-100"
                   }`}
+                  title={isAdmin ? "Navegar para semana anterior (Admin)" : "Voltar para semanas com conteúdo"}
                 >
                   <svg
                     width="20"
