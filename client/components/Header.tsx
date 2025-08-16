@@ -75,6 +75,7 @@ export default function Header({ activeSection }: HeaderProps) {
     useState(false);
   const [registerCaptcha, setRegisterCaptcha] = useState("");
   const [registerCaptchaValid, setRegisterCaptchaValid] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<{[key: string]: boolean}>({});
 
   // Categories for advanced search
   const categories = [
@@ -688,256 +689,194 @@ export default function Header({ activeSection }: HeaderProps) {
                         }, 0);
                       }
                     }}
-                    className="space-y-3 py-3"
+                    className="space-y-2 py-2"
                   >
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1">
-                        <Label
-                          htmlFor="first-name"
-                          className="text-gray-900 font-medium text-sm"
-                        >
-                          Nome *
-                        </Label>
-                        <Input
-                          id="first-name"
-                          placeholder="João"
-                          value={registerFirstName}
-                          onChange={(e) => setRegisterFirstName(e.target.value)}
-                          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white h-9"
-                          required
-                          minLength={2}
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label
-                          htmlFor="last-name"
-                          className="text-gray-900 font-medium text-sm"
-                        >
-                          Sobrenome *
-                        </Label>
-                        <Input
-                          id="last-name"
-                          placeholder="Silva"
-                          value={registerLastName}
-                          onChange={(e) => setRegisterLastName(e.target.value)}
-                          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white h-9"
-                          required
-                          minLength={2}
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-1">
-                      <Label
-                        htmlFor="register-email"
-                        className="text-gray-900 font-medium text-sm"
-                      >
-                        Email *
-                      </Label>
+                    <div className="grid grid-cols-2 gap-2">
                       <Input
-                        id="register-email"
-                        type="email"
-                        placeholder="seu@email.com"
-                        value={registerEmail}
-                        onChange={(e) => setRegisterEmail(e.target.value)}
-                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white h-9"
+                        id="first-name"
+                        placeholder="Nome"
+                        value={registerFirstName}
+                        onChange={(e) => setRegisterFirstName(e.target.value)}
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          validationErrors.firstName ? 'border-red-500 text-red-600' : 'border-gray-300'
+                        }`}
                         required
+                        minLength={2}
+                      />
+                      <Input
+                        id="last-name"
+                        placeholder="Sobrenome"
+                        value={registerLastName}
+                        onChange={(e) => setRegisterLastName(e.target.value)}
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          validationErrors.lastName ? 'border-red-500 text-red-600' : 'border-gray-300'
+                        }`}
+                        required
+                        minLength={2}
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1">
-                        <Label
-                          htmlFor="register-password"
-                          className="text-gray-900 font-medium text-sm"
-                        >
-                          Senha *
-                        </Label>
-                        <Input
-                          id="register-password"
-                          type="password"
-                          placeholder="••••••••"
-                          value={registerPassword}
-                          onChange={(e) => setRegisterPassword(e.target.value)}
-                          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white h-9"
-                          required
-                          minLength={8}
-                          pattern="(?=.*[A-Z]).*"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <Label
-                          htmlFor="confirm-password"
-                          className="text-gray-900 font-medium text-sm"
-                        >
-                          Confirmar Senha *
-                        </Label>
-                        <Input
-                          id="confirm-password"
-                          type="password"
-                          placeholder="••••••••"
-                          value={registerConfirmPassword}
-                          onChange={(e) => setRegisterConfirmPassword(e.target.value)}
-                          className={`border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                            registerConfirmPassword && registerPassword !== registerConfirmPassword 
-                              ? 'border-red-500 bg-red-50' 
-                              : registerConfirmPassword && registerPassword === registerConfirmPassword 
-                              ? 'border-green-500 bg-green-50' 
-                              : ''
-                          }`}
-                          required
-                          minLength={8}
-                        />
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-500">
-                      Mínimo de 8 caracteres com pelo menos uma letra maiúscula
-                    </p>
-                    {registerConfirmPassword && registerPassword !== registerConfirmPassword && (
-                      <p className="text-xs text-red-600">As senhas não coincidem</p>
-                    )}
-
-                    <div className="space-y-1">
-                      <Label
-                        htmlFor="register-phone"
-                        className="text-gray-900 font-medium text-sm"
-                      >
-                        Telefone *
-                      </Label>
+                    <Input
+                      id="register-email"
+                      type="email"
+                      placeholder="Email"
+                      value={registerEmail}
+                      onChange={(e) => setRegisterEmail(e.target.value)}
+                      className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                        validationErrors.email ? 'border-red-500 text-red-600' : 'border-gray-300'
+                      }`}
+                      required
+                    />
+                    <div className="grid grid-cols-2 gap-2">
                       <Input
-                        id="register-phone"
-                        type="tel"
-                        placeholder="(11) 999999999"
-                        value={registerPhone}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, '');
-                          if (value.length <= 11) {
-                            let formatted = value;
-                            if (value.length > 2) {
-                              formatted = `(${value.slice(0, 2)}) ${value.slice(2)}`;
-                            }
-                            if (value.length > 7) {
-                              formatted = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
-                            }
-                            setRegisterPhone(formatted);
+                        id="register-password"
+                        type="password"
+                        placeholder="Senha (min. 8 caracteres)"
+                        value={registerPassword}
+                        onChange={(e) => setRegisterPassword(e.target.value)}
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          validationErrors.password ? 'border-red-500 text-red-600' : 'border-gray-300'
+                        }`}
+                        required
+                        minLength={8}
+                        pattern="(?=.*[A-Z]).*"
+                      />
+                      <Input
+                        id="confirm-password"
+                        type="password"
+                        placeholder="Confirmar Senha"
+                        value={registerConfirmPassword}
+                        onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          validationErrors.confirmPassword ? 'border-red-500 text-red-600' : 'border-gray-300'
+                        }`}
+                        required
+                        minLength={8}
+                      />
+                    </div>
+
+                    <Input
+                      id="register-phone"
+                      type="tel"
+                      placeholder="Telefone (11) 99999-9999"
+                      value={registerPhone}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '');
+                        if (value.length <= 11) {
+                          let formatted = value;
+                          if (value.length > 2) {
+                            formatted = `(${value.slice(0, 2)}) ${value.slice(2)}`;
                           }
-                        }}
-                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white h-9"
+                          if (value.length > 7) {
+                            formatted = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
+                          }
+                          setRegisterPhone(formatted);
+                        }
+                      }}
+                      className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                        validationErrors.phone ? 'border-red-500 text-red-600' : 'border-gray-300'
+                      }`}
+                      required
+                      maxLength={15}
+                    />
+
+                    <div className="grid grid-cols-3 gap-2">
+                      <select
+                        id="birth-day"
+                        value={registerBirthDay}
+                        onChange={(e) => setRegisterBirthDay(e.target.value)}
+                        className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
+                          validationErrors.birthDate ? 'border-red-500 text-red-600' : 'border-gray-300'
+                        }`}
                         required
-                        maxLength={15}
-                      />
-                      <p className="text-xs text-gray-500">
-                        Apenas números - máximo 11 dígitos com DDD
-                      </p>
+                      >
+                        <option value="">Dia</option>
+                        {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                          <option key={day} value={day.toString().padStart(2, '0')}>
+                            {day}
+                          </option>
+                        ))}
+                      </select>
+                      <select
+                        id="birth-month"
+                        value={registerBirthMonth}
+                        onChange={(e) => setRegisterBirthMonth(e.target.value)}
+                        className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
+                          validationErrors.birthDate ? 'border-red-500 text-red-600' : 'border-gray-300'
+                        }`}
+                        required
+                      >
+                        <option value="">Mês</option>
+                        <option value="01">Janeiro</option>
+                        <option value="02">Fevereiro</option>
+                        <option value="03">Março</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Maio</option>
+                        <option value="06">Junho</option>
+                        <option value="07">Julho</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Setembro</option>
+                        <option value="10">Outubro</option>
+                        <option value="11">Novembro</option>
+                        <option value="12">Dezembro</option>
+                      </select>
+                      <select
+                        id="birth-year"
+                        value={registerBirthYear}
+                        onChange={(e) => setRegisterBirthYear(e.target.value)}
+                        className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
+                          validationErrors.birthDate ? 'border-red-500 text-red-600' : 'border-gray-300'
+                        }`}
+                        required
+                      >
+                        <option value="">Ano</option>
+                        {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                          <option key={year} value={year.toString()}>
+                            {year}
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
                     <div className="space-y-1">
-                      <Label className="text-gray-900 font-medium text-sm">
-                        Data de Nascimento *
-                      </Label>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div>
-                          <Label htmlFor="birth-day" className="text-xs text-gray-600">Dia</Label>
-                          <select
-                            id="birth-day"
-                            value={registerBirthDay}
-                            onChange={(e) => setRegisterBirthDay(e.target.value)}
-                            className="w-full h-9 px-2 border border-gray-300 rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500"
-                            required
-                          >
-                            <option value="">Dia</option>
-                            {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
-                              <option key={day} value={day.toString().padStart(2, '0')}>
-                                {day}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div>
-                          <Label htmlFor="birth-month" className="text-xs text-gray-600">Mês</Label>
-                          <select
-                            id="birth-month"
-                            value={registerBirthMonth}
-                            onChange={(e) => setRegisterBirthMonth(e.target.value)}
-                            className="w-full h-9 px-2 border border-gray-300 rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500"
-                            required
-                          >
-                            <option value="">Mês</option>
-                            <option value="01">Janeiro</option>
-                            <option value="02">Fevereiro</option>
-                            <option value="03">Março</option>
-                            <option value="04">Abril</option>
-                            <option value="05">Maio</option>
-                            <option value="06">Junho</option>
-                            <option value="07">Julho</option>
-                            <option value="08">Agosto</option>
-                            <option value="09">Setembro</option>
-                            <option value="10">Outubro</option>
-                            <option value="11">Novembro</option>
-                            <option value="12">Dezembro</option>
-                          </select>
-                        </div>
-                        <div>
-                          <Label htmlFor="birth-year" className="text-xs text-gray-600">Ano</Label>
-                          <select
-                            id="birth-year"
-                            value={registerBirthYear}
-                            onChange={(e) => setRegisterBirthYear(e.target.value)}
-                            className="w-full h-9 px-2 border border-gray-300 rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500"
-                            required
-                          >
-                            <option value="">Ano</option>
-                            {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
-                              <option key={year} value={year.toString()}>
-                                {year}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex items-start space-x-2">
+                      <div className="flex items-center space-x-2">
                         <Checkbox
                           id="register-terms"
                           checked={registerAcceptTerms}
                           onCheckedChange={(checked) =>
                             setRegisterAcceptTerms(checked as boolean)
                           }
-                          className="mt-0.5"
                         />
-                        <div className="text-sm">
-                          <label
-                            htmlFor="register-terms"
-                            className="text-gray-700"
-                          >
-                            Eu aceito os{" "}
-                            <TermsDialog>
-                              <button
-                                type="button"
-                                className="text-blue-600 hover:text-blue-800 underline"
-                              >
-                                termos e condições
-                              </button>
-                            </TermsDialog>{" "}
-                            *
-                          </label>
-                        </div>
+                        <label
+                          htmlFor="register-terms"
+                          className={`text-sm ${
+                            validationErrors.terms ? 'text-red-600' : 'text-gray-700'
+                          }`}
+                        >
+                          Aceito os{" "}
+                          <TermsDialog>
+                            <button
+                              type="button"
+                              className="text-blue-600 hover:text-blue-800 underline"
+                            >
+                              termos e condições
+                            </button>
+                          </TermsDialog>
+                        </label>
                       </div>
 
-                      <div className="flex items-start space-x-2">
+                      <div className="flex items-center space-x-2">
                         <Checkbox
                           id="register-newsletter"
                           checked={registerAcceptNewsletter}
                           onCheckedChange={(checked) =>
                             setRegisterAcceptNewsletter(checked as boolean)
                           }
-                          className="mt-0.5"
                         />
                         <label
                           htmlFor="register-newsletter"
-                          className="text-xs text-gray-700"
+                          className="text-sm text-gray-700"
                         >
-                          Quero receber a newsletter do IA HUB
+                          Quero receber newsletter
                         </label>
                       </div>
                     </div>
