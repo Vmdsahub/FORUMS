@@ -940,30 +940,42 @@ export default function Header({ activeSection }: HeaderProps) {
                       </div>
                     </div>
 
-                    <Input
-                      id="register-phone"
-                      type="tel"
-                      placeholder="Telefone (11) 99999-9999"
-                      value={registerPhone}
-                      onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, '');
-                        if (value.length <= 11) {
-                          let formatted = value;
-                          if (value.length > 2) {
-                            formatted = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+                    <div>
+                      <Input
+                        id="register-phone"
+                        type="tel"
+                        placeholder="Telefone (11) 99999-9999"
+                        value={registerPhone}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '');
+                          if (value.length <= 11) {
+                            let formatted = value;
+                            if (value.length > 2) {
+                              formatted = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+                            }
+                            if (value.length > 7) {
+                              formatted = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
+                            }
+                            setRegisterPhone(formatted);
+
+                            if (value.length >= 10) {
+                              const timeoutId = setTimeout(() => checkPhoneAvailable(formatted), 500);
+                              return () => clearTimeout(timeoutId);
+                            }
                           }
-                          if (value.length > 7) {
-                            formatted = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
-                          }
-                          setRegisterPhone(formatted);
-                        }
-                      }}
-                      className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                        validationErrors.phone ? 'border-red-500 text-red-600' : 'border-gray-300'
-                      }`}
-                      required
-                      maxLength={15}
-                    />
+                        }}
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          validationErrors.phone ? 'border-red-500 text-red-600' : 'border-gray-300'
+                        }`}
+                        required
+                        maxLength={15}
+                      />
+                      {fieldMessages.phone && (
+                        <p className={`text-xs mt-1 ${validationErrors.phone ? 'text-red-600' : 'text-green-600'}`}>
+                          {fieldMessages.phone}
+                        </p>
+                      )}
+                    </div>
 
                     <div className="grid grid-cols-3 gap-2">
                       <select
