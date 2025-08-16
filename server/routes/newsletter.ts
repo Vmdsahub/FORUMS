@@ -139,6 +139,12 @@ export const handleCreateArticle: RequestHandler = (req, res) => {
     const { title, content, readTime } = createArticleSchema.parse(req.body);
 
     const currentWeekInfo = getCurrentWeekInfo();
+    console.log("📝 Criando artigo:", {
+      title,
+      currentWeekInfo,
+      today: new Date().toLocaleDateString("pt-BR")
+    });
+
     const articleId =
       Date.now().toString() + "_" + Math.random().toString(36).substring(2);
 
