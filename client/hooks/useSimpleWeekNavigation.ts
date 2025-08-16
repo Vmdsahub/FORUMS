@@ -39,16 +39,34 @@ export function useSimpleWeekNavigation({
 
   // Merge dos dados da API com as semanas geradas
   useEffect(() => {
+    console.log("🔄 Fazendo merge de dados:", {
+      articlesData,
+      hasWeeklyNewsletters: !!articlesData?.weeklyNewsletters,
+      weeklyNewslettersCount: articlesData?.weeklyNewsletters?.length || 0,
+      allWeeksCount: allWeeks.length
+    });
+
     const mergedWeeks = allWeeks.map((week) => {
       // Procurar se existe conteúdo para esta semana nos dados da API
       if (articlesData?.weeklyNewsletters) {
         const apiWeek = articlesData.weeklyNewsletters.find(
-          (apiWeek: any) => 
-            apiWeek.week === week.week && 
-            // Para compatibilidade, assumir que API retorna dados do ano atual
-            (apiWeek.year === week.year || !apiWeek.year)
+          (apiWeek: any) => {
+            const matches = apiWeek.week === week.week &&
+              // Para compatibilidade, assumir que API retorna dados do ano atual
+              (apiWeek.year === week.year || !apiWeek.year);
+
+            if (matches) {
+              console.log("📅 Match encontrado:", {
+                systemWeek: `${week.week}/${week.year}`,
+                apiWeek: `${apiWeek.week}/${apiWeek.year || 'sem ano'}`,
+                topicsCount: apiWeek.topics?.length || 0
+              });
+            }
+
+            return matches;
+          }
         );
-        
+
         if (apiWeek) {
           return {
             ...week,
@@ -56,8 +74,13 @@ export function useSimpleWeekNavigation({
           };
         }
       }
-      
+
       return week; // Retorna semana vazia se não há conteúdo
+    });
+
+    console.log("✅ Merge concluído:", {
+      weeksWithContent: mergedWeeks.filter(w => w.topics?.length > 0).length,
+      totalWeeks: mergedWeeks.length
     });
 
     setWeeksWithContent(mergedWeeks);
