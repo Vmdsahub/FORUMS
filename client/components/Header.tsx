@@ -1009,6 +1009,8 @@ export default function Header({ activeSection }: HeaderProps) {
                           className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
                             validationErrors.confirmPassword
                               ? "border-red-500 text-red-600"
+                              : registerConfirmPassword.length > 0 && registerPassword === registerConfirmPassword
+                              ? "border-green-500"
                               : "border-gray-300"
                           }`}
                           required
