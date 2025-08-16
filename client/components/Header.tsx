@@ -214,11 +214,28 @@ export default function Header({ activeSection }: HeaderProps) {
   };
 
   const validatePassword = (password: string, confirmPassword: string) => {
-    // Apenas limpar erros de validação, sem mostrar mensagens em tempo real
+    // Validação em tempo real da senha
+    const isPasswordTooShort = password.length > 0 && password.length < 8;
+    const doPasswordsMatch = confirmPassword.length > 0 && password !== confirmPassword;
+
     setValidationErrors((prev) => ({
       ...prev,
-      password: false,
-      confirmPassword: false,
+      password: isPasswordTooShort,
+      confirmPassword: doPasswordsMatch,
+    }));
+
+    setFieldMessages((prev) => ({
+      ...prev,
+      password: isPasswordTooShort
+        ? "A senha deve ter pelo menos 8 caracteres"
+        : password.length >= 8
+          ? "Senha válida"
+          : "",
+      confirmPassword: doPasswordsMatch
+        ? "As senhas não coincidem"
+        : confirmPassword.length > 0 && password === confirmPassword
+          ? "Senhas coincidem"
+          : "",
     }));
   };
 
