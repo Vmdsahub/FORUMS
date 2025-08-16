@@ -712,9 +712,8 @@ export default function Header({ activeSection }: HeaderProps) {
                           return;
                         }
 
-                        // Reset validation errors
-                        setValidationErrors({});
-                        const errors: { [key: string]: boolean } = {};
+                        // Preserve existing validation errors (like username/email availability)
+                        const errors: { [key: string]: boolean } = { ...validationErrors };
 
                         // Validações de campos obrigatórios
                         if (
