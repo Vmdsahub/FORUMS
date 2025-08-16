@@ -927,9 +927,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                           validationErrors.username
                             ? "border-red-500 text-red-600"
-                            : fieldMessages.username &&
-                                registerUsername.trim() &&
-                                !validationErrors.username
+                            : registerUsername.trim() && fieldMessages.username && !validationErrors.username
                               ? "border-green-500"
                               : "border-gray-300"
                         }`}
