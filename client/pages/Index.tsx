@@ -271,17 +271,31 @@ export default function Index(props: IndexProps) {
     }
 
     try {
+      // Se admin e há uma semana selecionada, usar essa semana. Senão, criar na semana atual
+      const requestBody: any = {
+        title: newNewsletter.title,
+        content: newNewsletter.content,
+        readTime: newNewsletter.readTime,
+      };
+
+      // Se admin está visualizando uma semana específica, criar artigo nessa semana
+      if (isAdmin && currentNewsletter) {
+        requestBody.targetWeek = currentNewsletter.week;
+        requestBody.targetYear = currentNewsletter.year;
+        console.log("🎯 Admin criando artigo na semana:", {
+          week: currentNewsletter.week,
+          year: currentNewsletter.year,
+          title: newNewsletter.title
+        });
+      }
+
       const response = await fetch("/api/newsletter/articles", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
-        body: JSON.stringify({
-          title: newNewsletter.title,
-          content: newNewsletter.content,
-          readTime: newNewsletter.readTime,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (response.ok) {
