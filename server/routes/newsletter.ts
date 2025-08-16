@@ -73,6 +73,8 @@ const createArticleSchema = z.object({
   title: z.string().min(1, "Título é obrigatório"),
   content: z.string().min(1, "Conteúdo é obrigatório"),
   readTime: z.string().min(1, "Tempo de leitura é obrigatório"),
+  targetWeek: z.number().optional(), // Semana específica (opcional)
+  targetYear: z.number().optional(), // Ano específico (opcional)
 });
 
 // Get ISO week number (standard international week numbering)
