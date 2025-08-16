@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/popover";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/contexts/NotificationContext";
-import Captcha from "@/components/Captcha";
+import AdvancedCaptcha from "@/components/AdvancedCaptcha";
 import TermsDialog from "@/components/TermsDialog";
 import { toast } from "sonner";
 
