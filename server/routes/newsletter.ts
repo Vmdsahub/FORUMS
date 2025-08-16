@@ -101,8 +101,12 @@ function getCurrentWeekInfo() {
   const endOfWeek = new Date(startOfWeek);
   endOfWeek.setDate(startOfWeek.getDate() + 6);
 
+  // Determine the year for the week (important for ISO weeks)
+  const weekYear = now.getFullYear();
+
   return {
     week: weekNumber,
+    year: weekYear, // Adicionar ano
     startDate: startOfWeek.toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "short",
@@ -216,7 +220,7 @@ export const handleGetArticles: RequestHandler = (req, res) => {
 export const handleDeleteArticle: RequestHandler = (req, res) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ message: "Não autenticado" });
+      return res.status(401).json({ message: "N��o autenticado" });
     }
 
     if (req.user.role !== "admin") {
