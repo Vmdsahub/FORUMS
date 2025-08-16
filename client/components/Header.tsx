@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/popover";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotifications } from "@/contexts/NotificationContext";
-import Captcha from "@/components/Captcha";
+import AdvancedCaptcha from "@/components/AdvancedCaptcha";
 import TermsDialog from "@/components/TermsDialog";
 import { toast } from "sonner";
 
@@ -61,16 +61,27 @@ export default function Header({ activeSection }: HeaderProps) {
   const [loginCaptchaValid, setLoginCaptchaValid] = useState(false);
 
   // Register form state
-  const [registerName, setRegisterName] = useState("");
+  const [registerFirstName, setRegisterFirstName] = useState("");
+  const [registerLastName, setRegisterLastName] = useState("");
+  const [registerUsername, setRegisterUsername] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
+  const [registerConfirmPassword, setRegisterConfirmPassword] = useState("");
   const [registerPhone, setRegisterPhone] = useState("");
-  const [registerBirthDate, setRegisterBirthDate] = useState("");
+  const [registerBirthDay, setRegisterBirthDay] = useState("");
+  const [registerBirthMonth, setRegisterBirthMonth] = useState("");
+  const [registerBirthYear, setRegisterBirthYear] = useState("");
   const [registerAcceptTerms, setRegisterAcceptTerms] = useState(false);
   const [registerAcceptNewsletter, setRegisterAcceptNewsletter] =
     useState(false);
   const [registerCaptcha, setRegisterCaptcha] = useState("");
   const [registerCaptchaValid, setRegisterCaptchaValid] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [fieldMessages, setFieldMessages] = useState<{ [key: string]: string }>(
+    {},
+  );
 
   // Categories for advanced search
   const categories = [
@@ -132,6 +143,83 @@ export default function Header({ activeSection }: HeaderProps) {
         ? prev.filter((id) => id !== categoryId)
         : [...prev, categoryId],
     );
+  };
+
+  // Real-time validation functions
+  const checkUsernameAvailable = async (username: string) => {
+    if (!username || username.length < 2) return;
+
+    try {
+      const response = await fetch(
+        `/api/auth/check-username/${encodeURIComponent(username)}`,
+      );
+      const data = await response.json();
+
+      setValidationErrors((prev) => ({
+        ...prev,
+        username: !data.available,
+      }));
+      setFieldMessages((prev) => ({
+        ...prev,
+        username: data.message,
+      }));
+    } catch (error) {
+      console.error("Error checking username:", error);
+    }
+  };
+
+  const checkEmailAvailable = async (email: string) => {
+    if (!email || !email.includes("@")) return;
+
+    try {
+      const response = await fetch(
+        `/api/auth/check-email/${encodeURIComponent(email)}`,
+      );
+      const data = await response.json();
+
+      setValidationErrors((prev) => ({
+        ...prev,
+        email: !data.available,
+      }));
+      setFieldMessages((prev) => ({
+        ...prev,
+        email: data.message,
+      }));
+    } catch (error) {
+      console.error("Error checking email:", error);
+    }
+  };
+
+  const checkPhoneAvailable = async (phone: string) => {
+    const cleanPhone = phone.replace(/\D/g, "");
+    if (!cleanPhone || cleanPhone.length < 10) return;
+
+    try {
+      const response = await fetch(
+        `/api/auth/check-phone/${encodeURIComponent(phone)}`,
+      );
+      const data = await response.json();
+
+      setValidationErrors((prev) => ({
+        ...prev,
+        phone: !data.available,
+      }));
+      setFieldMessages((prev) => ({
+        ...prev,
+        phone: data.message,
+      }));
+    } catch (error) {
+      console.error("Error checking phone:", error);
+    }
+  };
+
+  const validatePassword = (password: string, confirmPassword: string) => {
+    // Apenas limpar erros de validação, sem mostrar mensagens em tempo real
+    setValidationErrors((prev) => ({
+      ...prev,
+      password: false,
+      confirmPassword: false,
+    }));
   };
 
   return (
@@ -454,7 +542,7 @@ export default function Header({ activeSection }: HeaderProps) {
                       >
                         <path d="M8 7c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 1c-1.5 0-4 .8-4 2.5V12h8v-1.5c0-1.7-2.5-2.5-4-2.5z" />
                       </svg>
-                      <span className="text-gray-700">Central do Usu��rio</span>
+                      <span className="text-gray-700">Central do Usuário</span>
                     </button>
                     <hr className="my-2" />
                     <button
@@ -555,7 +643,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         minLength={6}
                       />
                     </div>
-                    <Captcha
+                    <AdvancedCaptcha
                       onCaptchaChange={setLoginCaptcha}
                       onValidationChange={setLoginCaptchaValid}
                     />
@@ -580,13 +668,14 @@ export default function Header({ activeSection }: HeaderProps) {
                     Cadastrar
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-md max-h-[80vh] overflow-y-auto bg-white border border-gray-200 shadow-lg">
+                <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto bg-white border border-gray-200 shadow-lg">
                   <DialogHeader>
                     <DialogTitle className="text-gray-900 text-xl font-semibold">
                       Criar Conta
                     </DialogTitle>
                   </DialogHeader>
                   <form
+                    noValidate
                     onSubmit={async (e) => {
                       e.preventDefault();
 
@@ -597,34 +686,131 @@ export default function Header({ activeSection }: HeaderProps) {
                           );
                           return;
                         }
+
+                        // Reset validation errors
+                        setValidationErrors({});
+                        const errors: { [key: string]: boolean } = {};
+
+                        // Validações de campos obrigatórios
+                        if (
+                          !registerFirstName.trim() ||
+                          registerFirstName.length < 2
+                        ) {
+                          errors.firstName = true;
+                        }
+                        if (
+                          !registerLastName.trim() ||
+                          registerLastName.length < 2
+                        ) {
+                          errors.lastName = true;
+                        }
+                        if (
+                          !registerUsername.trim() ||
+                          registerUsername.length < 2
+                        ) {
+                          errors.username = true;
+                        }
+                        if (
+                          !registerEmail.trim() ||
+                          !registerEmail.includes("@")
+                        ) {
+                          errors.email = true;
+                        }
+                        if (
+                          !registerPassword ||
+                          registerPassword.length < 8 ||
+                          !/(?=.*[A-Z])/.test(registerPassword)
+                        ) {
+                          errors.password = true;
+                        }
+                        if (
+                          !registerConfirmPassword ||
+                          registerPassword !== registerConfirmPassword
+                        ) {
+                          errors.confirmPassword = true;
+                        }
+                        if (
+                          !registerPhone.replace(/\D/g, "") ||
+                          registerPhone.replace(/\D/g, "").length < 10
+                        ) {
+                          errors.phone = true;
+                        }
+                        if (
+                          !registerBirthDay ||
+                          !registerBirthMonth ||
+                          !registerBirthYear
+                        ) {
+                          errors.birthDate = true;
+                        }
+                        if (!registerAcceptTerms) {
+                          errors.terms = true;
+                        }
                         if (!registerCaptchaValid) {
+                          errors.captcha = true;
+                        }
+
+                        // Verificar se a data é válida
+                        if (
+                          registerBirthDay &&
+                          registerBirthMonth &&
+                          registerBirthYear
+                        ) {
+                          const birthDate = new Date(
+                            parseInt(registerBirthYear),
+                            parseInt(registerBirthMonth) - 1,
+                            parseInt(registerBirthDay),
+                          );
+                          if (
+                            birthDate.getDate() !==
+                              parseInt(registerBirthDay) ||
+                            birthDate.getMonth() !==
+                              parseInt(registerBirthMonth) - 1 ||
+                            birthDate.getFullYear() !==
+                              parseInt(registerBirthYear)
+                          ) {
+                            errors.birthDate = true;
+                          }
+                        }
+
+                        // Se há erros (exceto captcha), mostrar e parar
+                        const nonCaptchaErrors = Object.keys(errors).filter(
+                          (key) => key !== "captcha",
+                        );
+                        if (nonCaptchaErrors.length > 0) {
+                          setValidationErrors(errors);
+                          toast.error(
+                            "Por favor, preencha todos os campos corretamente",
+                          );
+                          return;
+                        }
+
+                        // Se apenas erro de captcha, permitir prosseguir mas mostrar erro específico
+                        if (errors.captcha) {
+                          setValidationErrors(errors);
                           toast.error(
                             "Por favor, complete a verificação de segurança",
                           );
                           return;
                         }
-                        if (!registerAcceptTerms) {
-                          toast.error(
-                            "Você deve aceitar os termos de condições",
-                          );
-                          return;
-                        }
+
+                        const fullName = registerUsername.trim();
+                        const formattedBirthDate = `${registerBirthYear}-${registerBirthMonth.padStart(2, "0")}-${registerBirthDay.padStart(2, "0")}`;
 
                         console.log("Submitting registration form...", {
-                          registerName,
+                          fullName,
                           registerEmail,
                           registerPhone,
-                          registerBirthDate,
+                          formattedBirthDate,
                         });
 
                         console.log("[FORM] Calling register function");
 
                         const success = await register(
-                          registerName,
+                          fullName,
                           registerEmail,
                           registerPassword,
                           registerPhone,
-                          registerBirthDate,
+                          formattedBirthDate,
                           registerAcceptTerms,
                           registerAcceptNewsletter,
                           registerCaptcha,
@@ -637,15 +823,22 @@ export default function Header({ activeSection }: HeaderProps) {
 
                         if (success) {
                           setIsRegisterOpen(false);
-                          setRegisterName("");
+                          setRegisterFirstName("");
+                          setRegisterLastName("");
+                          setRegisterUsername("");
                           setRegisterEmail("");
                           setRegisterPassword("");
+                          setRegisterConfirmPassword("");
                           setRegisterPhone("");
-                          setRegisterBirthDate("");
+                          setRegisterBirthDay("");
+                          setRegisterBirthMonth("");
+                          setRegisterBirthYear("");
                           setRegisterAcceptTerms(false);
                           setRegisterAcceptNewsletter(false);
                           setRegisterCaptcha("");
                           setRegisterCaptchaValid(false);
+                          setValidationErrors({});
+                          setFieldMessages({});
                         }
                       } catch (formError) {
                         console.error(
@@ -657,162 +850,322 @@ export default function Header({ activeSection }: HeaderProps) {
                         }, 0);
                       }
                     }}
-                    className="space-y-4 py-4"
+                    className="space-y-2 py-2"
                   >
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="name"
-                        className="text-gray-900 font-medium"
-                      >
-                        Nome
-                      </Label>
+                    <div className="grid grid-cols-2 gap-2">
                       <Input
-                        id="name"
-                        placeholder="Seu nome"
-                        value={registerName}
-                        onChange={(e) => setRegisterName(e.target.value)}
-                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        id="first-name"
+                        placeholder="Nome"
+                        value={registerFirstName}
+                        onChange={(e) => setRegisterFirstName(e.target.value)}
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          validationErrors.firstName
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
+                        }`}
+                        required
+                        minLength={2}
+                      />
+                      <Input
+                        id="last-name"
+                        placeholder="Sobrenome"
+                        value={registerLastName}
+                        onChange={(e) => setRegisterLastName(e.target.value)}
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          validationErrors.lastName
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
+                        }`}
                         required
                         minLength={2}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="register-email"
-                        className="text-gray-900 font-medium"
-                      >
-                        Email
-                      </Label>
+                    <div>
+                      <Input
+                        id="username"
+                        placeholder="Nome de usuário"
+                        value={registerUsername}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setRegisterUsername(value);
+                          if (value.length >= 2) {
+                            const timeoutId = setTimeout(
+                              () => checkUsernameAvailable(value),
+                              500,
+                            );
+                            return () => clearTimeout(timeoutId);
+                          }
+                        }}
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          validationErrors.username
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
+                        }`}
+                        required
+                        minLength={2}
+                      />
+                      {fieldMessages.username && registerUsername.trim() && (
+                        <p
+                          className={`text-xs mt-1 ${validationErrors.username ? "text-red-600" : "text-green-600"}`}
+                        >
+                          {fieldMessages.username}
+                        </p>
+                      )}
+                    </div>
+                    <div>
                       <Input
                         id="register-email"
                         type="email"
-                        placeholder="seu@email.com"
+                        placeholder="Email"
                         value={registerEmail}
-                        onChange={(e) => setRegisterEmail(e.target.value)}
-                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setRegisterEmail(value);
+                          if (value.includes("@")) {
+                            const timeoutId = setTimeout(
+                              () => checkEmailAvailable(value),
+                              500,
+                            );
+                            return () => clearTimeout(timeoutId);
+                          }
+                        }}
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          validationErrors.email
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
+                        }`}
                         required
                       />
+                      {fieldMessages.email && registerEmail.trim() && (
+                        <p
+                          className={`text-xs mt-1 ${validationErrors.email ? "text-red-600" : "text-green-600"}`}
+                        >
+                          {fieldMessages.email}
+                        </p>
+                      )}
                     </div>
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="register-password"
-                        className="text-gray-900 font-medium"
-                      >
-                        Senha
-                      </Label>
-                      <Input
-                        id="register-password"
-                        type="password"
-                        placeholder="••��•••••"
-                        value={registerPassword}
-                        onChange={(e) => setRegisterPassword(e.target.value)}
-                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
-                        required
-                        minLength={8}
-                        pattern="(?=.*[A-Z]).*"
-                      />
-                      <p className="text-xs text-gray-500">
-                        Mínimo de 8 caracteres com pelo menos uma letra
-                        maiúscula
-                      </p>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <Input
+                          id="register-password"
+                          type="password"
+                          placeholder="Senha (min. 8 caracteres)"
+                          value={registerPassword}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setRegisterPassword(value);
+                            validatePassword(value, registerConfirmPassword);
+                          }}
+                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                            validationErrors.password
+                              ? "border-red-500 text-red-600"
+                              : "border-gray-300"
+                          }`}
+                          required
+                          minLength={8}
+                          pattern="(?=.*[A-Z]).*"
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          id="confirm-password"
+                          type="password"
+                          placeholder="Confirmar Senha"
+                          value={registerConfirmPassword}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setRegisterConfirmPassword(value);
+                            validatePassword(registerPassword, value);
+                          }}
+                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                            validationErrors.confirmPassword
+                              ? "border-red-500 text-red-600"
+                              : "border-gray-300"
+                          }`}
+                          required
+                          minLength={8}
+                        />
+                      </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="register-phone"
-                        className="text-gray-900 font-medium"
-                      >
-                        Telefone
-                      </Label>
+                    <div>
                       <Input
                         id="register-phone"
                         type="tel"
-                        placeholder="(11) 99999-9999"
+                        placeholder="Telefone (11) 99999-9999"
                         value={registerPhone}
-                        onChange={(e) => setRegisterPhone(e.target.value)}
-                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, "");
+                          if (value.length <= 11) {
+                            let formatted = value;
+                            if (value.length > 2) {
+                              formatted = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+                            }
+                            if (value.length > 7) {
+                              formatted = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
+                            }
+                            setRegisterPhone(formatted);
+
+                            if (value.length >= 10) {
+                              const timeoutId = setTimeout(
+                                () => checkPhoneAvailable(formatted),
+                                500,
+                              );
+                              return () => clearTimeout(timeoutId);
+                            }
+                          }
+                        }}
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          validationErrors.phone
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
+                        }`}
                         required
-                        minLength={10}
+                        maxLength={15}
                       />
+                      {fieldMessages.phone && registerPhone.trim() && (
+                        <p
+                          className={`text-xs mt-1 ${validationErrors.phone ? "text-red-600" : "text-green-600"}`}
+                        >
+                          {fieldMessages.phone}
+                        </p>
+                      )}
                     </div>
 
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="register-birthdate"
-                        className="text-gray-900 font-medium"
+                    <div className="grid grid-cols-3 gap-2">
+                      <select
+                        id="birth-day"
+                        value={registerBirthDay}
+                        onChange={(e) => setRegisterBirthDay(e.target.value)}
+                        className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
+                          validationErrors.birthDate
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
+                        }`}
+                        required
                       >
-                        Data de Nascimento
-                      </Label>
-                      <Input
-                        id="register-birthdate"
-                        type="date"
-                        value={registerBirthDate}
-                        onChange={(e) => setRegisterBirthDate(e.target.value)}
-                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        <option value="">Dia</option>
+                        {Array.from({ length: 31 }, (_, i) => i + 1).map(
+                          (day) => (
+                            <option
+                              key={day}
+                              value={day.toString().padStart(2, "0")}
+                            >
+                              {day}
+                            </option>
+                          ),
+                        )}
+                      </select>
+                      <select
+                        id="birth-month"
+                        value={registerBirthMonth}
+                        onChange={(e) => setRegisterBirthMonth(e.target.value)}
+                        className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
+                          validationErrors.birthDate
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
+                        }`}
                         required
-                      />
+                      >
+                        <option value="">Mês</option>
+                        <option value="01">Janeiro</option>
+                        <option value="02">Fevereiro</option>
+                        <option value="03">Março</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Maio</option>
+                        <option value="06">Junho</option>
+                        <option value="07">Julho</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Setembro</option>
+                        <option value="10">Outubro</option>
+                        <option value="11">Novembro</option>
+                        <option value="12">Dezembro</option>
+                      </select>
+                      <select
+                        id="birth-year"
+                        value={registerBirthYear}
+                        onChange={(e) => setRegisterBirthYear(e.target.value)}
+                        className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
+                          validationErrors.birthDate
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
+                        }`}
+                        required
+                      >
+                        <option value="">Ano</option>
+                        {Array.from(
+                          { length: 100 },
+                          (_, i) => new Date().getFullYear() - i,
+                        ).map((year) => (
+                          <option key={year} value={year.toString()}>
+                            {year}
+                          </option>
+                        ))}
+                      </select>
                     </div>
 
-                    <div className="space-y-3">
-                      <div className="flex items-start space-x-2">
+                    <div className="space-y-1">
+                      <div className="flex items-center space-x-2">
                         <Checkbox
                           id="register-terms"
                           checked={registerAcceptTerms}
                           onCheckedChange={(checked) =>
                             setRegisterAcceptTerms(checked as boolean)
                           }
-                          className="mt-0.5"
                         />
-                        <div className="text-sm">
-                          <label
-                            htmlFor="register-terms"
-                            className="text-gray-700"
-                          >
-                            Eu aceito os{" "}
-                            <TermsDialog>
-                              <button
-                                type="button"
-                                className="text-blue-600 hover:text-blue-800 underline"
-                              >
-                                termos de condições
-                              </button>
-                            </TermsDialog>{" "}
-                            *
-                          </label>
-                        </div>
+                        <label
+                          htmlFor="register-terms"
+                          className={`text-sm ${
+                            validationErrors.terms
+                              ? "text-red-600"
+                              : "text-gray-700"
+                          }`}
+                        >
+                          Aceito os{" "}
+                          <TermsDialog>
+                            <button
+                              type="button"
+                              className="text-blue-600 hover:text-blue-800 underline"
+                            >
+                              termos e condições
+                            </button>
+                          </TermsDialog>
+                        </label>
                       </div>
 
-                      <div className="flex items-start space-x-2">
+                      <div className="flex items-center space-x-2">
                         <Checkbox
                           id="register-newsletter"
                           checked={registerAcceptNewsletter}
                           onCheckedChange={(checked) =>
                             setRegisterAcceptNewsletter(checked as boolean)
                           }
-                          className="mt-0.5"
                         />
                         <label
                           htmlFor="register-newsletter"
                           className="text-sm text-gray-700"
                         >
-                          Quero receber a newsletter do IA HUB com novidades e
-                          conteúdos sobre inteligência artificial
+                          Quero receber newsletter
                         </label>
                       </div>
                     </div>
 
-                    <Captcha
-                      onCaptchaChange={setRegisterCaptcha}
-                      onValidationChange={setRegisterCaptchaValid}
-                    />
+                    <div
+                      className={
+                        validationErrors.captcha
+                          ? "border border-red-500 rounded-md p-2"
+                          : ""
+                      }
+                    >
+                      <AdvancedCaptcha
+                        onCaptchaChange={setRegisterCaptcha}
+                        onValidationChange={setRegisterCaptchaValid}
+                      />
+                    </div>
                     <Button
                       type="submit"
                       className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium"
-                      disabled={
-                        isLoading ||
-                        !registerCaptchaValid ||
-                        !registerAcceptTerms
-                      }
+                      disabled={isLoading || !registerAcceptTerms}
                     >
                       {isLoading ? "Criando conta..." : "Criar Conta"}
                     </Button>
