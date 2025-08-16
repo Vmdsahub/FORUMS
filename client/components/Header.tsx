@@ -901,10 +901,12 @@ export default function Header({ activeSection }: HeaderProps) {
                       </div>
                     </div>
 
-                    <AdvancedCaptcha
-                      onCaptchaChange={setRegisterCaptcha}
-                      onValidationChange={setRegisterCaptchaValid}
-                    />
+                    <div className={validationErrors.captcha ? 'border border-red-500 rounded-md p-2' : ''}>
+                      <AdvancedCaptcha
+                        onCaptchaChange={setRegisterCaptcha}
+                        onValidationChange={setRegisterCaptchaValid}
+                      />
+                    </div>
                     <Button
                       type="submit"
                       className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium"
