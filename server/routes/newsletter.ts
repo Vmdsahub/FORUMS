@@ -164,6 +164,13 @@ export const handleCreateArticle: RequestHandler = (req, res) => {
 
     articles.set(articleId, article);
 
+    console.log("✅ Artigo salvo:", {
+      id: articleId,
+      week: article.week,
+      year: article.year,
+      totalArticles: articles.size
+    });
+
     res.status(201).json({
       message: "Artigo criado com sucesso",
       article,
