@@ -69,7 +69,7 @@ interface IndexProps {
   handleCategoryClick: (categoryId: string) => void;
   getSelectedCategoryData: () => ForumCategory | undefined;
   navigateWeek: (direction: "prev" | "next") => void; // Mantido para compatibilidade, mas não usado
-  canNavigatePrev: () => boolean; // Mantido para compatibilidade, mas não usado
+  canNavigatePrev: () => boolean; // Mantido para compatibilidade, mas n��o usado
   canNavigateNext: () => boolean; // Mantido para compatibilidade, mas não usado
   currentNewsletter: WeeklyNewsletter; // Mantido para compatibilidade, mas não usado
   refreshCategoryStats?: () => void;
@@ -567,13 +567,6 @@ export default function Index(props: IndexProps) {
                 Seleção de notícias sobre as principais tecnologias e
                 ferramentas de Inteligência Artificial
               </p>
-              {debugInfo && (
-                <p className="text-sm text-gray-400 mt-2">
-                  Sistema: {debugInfo.totalWeeks} semanas disponíveis (2025-2030) |
-                  {debugInfo.hasContent ? ' Com conteúdo' : ' Sem conteúdo'} |
-                  {debugInfo.isSunday ? ' Domingo (dia de atualização)' : ''}
-                </p>
-              )}
             </div>
 
             {currentNewsletter?.topics &&
