@@ -934,13 +934,11 @@ export default function Header({ activeSection }: HeaderProps) {
                         required
                         minLength={2}
                       />
-                      {fieldMessages.username &&
-                        registerUsername.trim() &&
-                        validationErrors.username && (
-                          <p className="text-xs mt-2 text-red-600">
-                            {fieldMessages.username}
-                          </p>
-                        )}
+                      {fieldMessages.username && registerUsername.trim() && (
+                        <p className={`text-xs mt-2 ${validationErrors.username ? 'text-red-600' : 'text-green-600'}`}>
+                          {fieldMessages.username}
+                        </p>
+                      )}
                     </div>
 
                     {/* Email */}
