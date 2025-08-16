@@ -458,7 +458,7 @@ export default function Header({ activeSection }: HeaderProps) {
                       >
                         <path d="M8 7c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 1c-1.5 0-4 .8-4 2.5V12h8v-1.5c0-1.7-2.5-2.5-4-2.5z" />
                       </svg>
-                      <span className="text-gray-700">Central do Usu��rio</span>
+                      <span className="text-gray-700">Central do Usuário</span>
                     </button>
                     <hr className="my-2" />
                     <button
@@ -559,7 +559,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         minLength={6}
                       />
                     </div>
-                    <Captcha
+                    <AdvancedCaptcha
                       onCaptchaChange={setLoginCaptcha}
                       onValidationChange={setLoginCaptchaValid}
                     />
@@ -627,8 +627,8 @@ export default function Header({ activeSection }: HeaderProps) {
 
                         // Verificar se a data é válida
                         const birthDate = new Date(parseInt(registerBirthYear), parseInt(registerBirthMonth) - 1, parseInt(registerBirthDay));
-                        if (birthDate.getDate() !== parseInt(registerBirthDay) ||
-                            birthDate.getMonth() !== parseInt(registerBirthMonth) - 1 ||
+                        if (birthDate.getDate() !== parseInt(registerBirthDay) || 
+                            birthDate.getMonth() !== parseInt(registerBirthMonth) - 1 || 
                             birthDate.getFullYear() !== parseInt(registerBirthYear)) {
                           toast.error("Data de nascimento inválida");
                           return;
@@ -743,67 +743,159 @@ export default function Header({ activeSection }: HeaderProps) {
                         required
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="register-password"
-                        className="text-gray-900 font-medium"
-                      >
-                        Senha
-                      </Label>
-                      <Input
-                        id="register-password"
-                        type="password"
-                        placeholder="••��•••••"
-                        value={registerPassword}
-                        onChange={(e) => setRegisterPassword(e.target.value)}
-                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
-                        required
-                        minLength={8}
-                        pattern="(?=.*[A-Z]).*"
-                      />
-                      <p className="text-xs text-gray-500">
-                        Mínimo de 8 caracteres com pelo menos uma letra
-                        maiúscula
-                      </p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <Label
+                          htmlFor="register-password"
+                          className="text-gray-900 font-medium text-sm"
+                        >
+                          Senha *
+                        </Label>
+                        <Input
+                          id="register-password"
+                          type="password"
+                          placeholder="••••••••"
+                          value={registerPassword}
+                          onChange={(e) => setRegisterPassword(e.target.value)}
+                          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white h-9"
+                          required
+                          minLength={8}
+                          pattern="(?=.*[A-Z]).*"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label
+                          htmlFor="confirm-password"
+                          className="text-gray-900 font-medium text-sm"
+                        >
+                          Confirmar Senha *
+                        </Label>
+                        <Input
+                          id="confirm-password"
+                          type="password"
+                          placeholder="••••••••"
+                          value={registerConfirmPassword}
+                          onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+                          className={`border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                            registerConfirmPassword && registerPassword !== registerConfirmPassword 
+                              ? 'border-red-500 bg-red-50' 
+                              : registerConfirmPassword && registerPassword === registerConfirmPassword 
+                              ? 'border-green-500 bg-green-50' 
+                              : ''
+                          }`}
+                          required
+                          minLength={8}
+                        />
+                      </div>
                     </div>
+                    <p className="text-xs text-gray-500">
+                      Mínimo de 8 caracteres com pelo menos uma letra maiúscula
+                    </p>
+                    {registerConfirmPassword && registerPassword !== registerConfirmPassword && (
+                      <p className="text-xs text-red-600">As senhas não coincidem</p>
+                    )}
 
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label
                         htmlFor="register-phone"
-                        className="text-gray-900 font-medium"
+                        className="text-gray-900 font-medium text-sm"
                       >
-                        Telefone
+                        Telefone *
                       </Label>
                       <Input
                         id="register-phone"
                         type="tel"
-                        placeholder="(11) 99999-9999"
+                        placeholder="(11) 999999999"
                         value={registerPhone}
-                        onChange={(e) => setRegisterPhone(e.target.value)}
-                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, '');
+                          if (value.length <= 11) {
+                            let formatted = value;
+                            if (value.length > 2) {
+                              formatted = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+                            }
+                            if (value.length > 7) {
+                              formatted = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
+                            }
+                            setRegisterPhone(formatted);
+                          }
+                        }}
+                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white h-9"
                         required
-                        minLength={10}
+                        maxLength={15}
                       />
+                      <p className="text-xs text-gray-500">
+                        Apenas números - máximo 11 dígitos com DDD
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-gray-900 font-medium text-sm">
+                        Data de Nascimento *
+                      </Label>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div>
+                          <Label htmlFor="birth-day" className="text-xs text-gray-600">Dia</Label>
+                          <select
+                            id="birth-day"
+                            value={registerBirthDay}
+                            onChange={(e) => setRegisterBirthDay(e.target.value)}
+                            className="w-full h-9 px-2 border border-gray-300 rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500"
+                            required
+                          >
+                            <option value="">Dia</option>
+                            {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                              <option key={day} value={day.toString().padStart(2, '0')}>
+                                {day}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                        <div>
+                          <Label htmlFor="birth-month" className="text-xs text-gray-600">Mês</Label>
+                          <select
+                            id="birth-month"
+                            value={registerBirthMonth}
+                            onChange={(e) => setRegisterBirthMonth(e.target.value)}
+                            className="w-full h-9 px-2 border border-gray-300 rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500"
+                            required
+                          >
+                            <option value="">Mês</option>
+                            <option value="01">Janeiro</option>
+                            <option value="02">Fevereiro</option>
+                            <option value="03">Março</option>
+                            <option value="04">Abril</option>
+                            <option value="05">Maio</option>
+                            <option value="06">Junho</option>
+                            <option value="07">Julho</option>
+                            <option value="08">Agosto</option>
+                            <option value="09">Setembro</option>
+                            <option value="10">Outubro</option>
+                            <option value="11">Novembro</option>
+                            <option value="12">Dezembro</option>
+                          </select>
+                        </div>
+                        <div>
+                          <Label htmlFor="birth-year" className="text-xs text-gray-600">Ano</Label>
+                          <select
+                            id="birth-year"
+                            value={registerBirthYear}
+                            onChange={(e) => setRegisterBirthYear(e.target.value)}
+                            className="w-full h-9 px-2 border border-gray-300 rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500"
+                            required
+                          >
+                            <option value="">Ano</option>
+                            {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                              <option key={year} value={year.toString()}>
+                                {year}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label
-                        htmlFor="register-birthdate"
-                        className="text-gray-900 font-medium"
-                      >
-                        Data de Nascimento
-                      </Label>
-                      <Input
-                        id="register-birthdate"
-                        type="date"
-                        value={registerBirthDate}
-                        onChange={(e) => setRegisterBirthDate(e.target.value)}
-                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-3">
                       <div className="flex items-start space-x-2">
                         <Checkbox
                           id="register-terms"
@@ -824,7 +916,7 @@ export default function Header({ activeSection }: HeaderProps) {
                                 type="button"
                                 className="text-blue-600 hover:text-blue-800 underline"
                               >
-                                termos de condições
+                                termos e condições
                               </button>
                             </TermsDialog>{" "}
                             *
@@ -843,15 +935,14 @@ export default function Header({ activeSection }: HeaderProps) {
                         />
                         <label
                           htmlFor="register-newsletter"
-                          className="text-sm text-gray-700"
+                          className="text-xs text-gray-700"
                         >
-                          Quero receber a newsletter do IA HUB com novidades e
-                          conteúdos sobre inteligência artificial
+                          Quero receber a newsletter do IA HUB
                         </label>
                       </div>
                     </div>
 
-                    <Captcha
+                    <AdvancedCaptcha
                       onCaptchaChange={setRegisterCaptcha}
                       onValidationChange={setRegisterCaptchaValid}
                     />
