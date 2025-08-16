@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import { useCategoryStats } from "@/hooks/useCategoryStats";
-import { useWeekNavigation } from "@/hooks/useWeekNavigation";
+import { useSimpleWeekNavigation } from "@/hooks/useSimpleWeekNavigation";
+import { NewsletterTopic, WeeklyNewsletter } from "@/utils/weekSystem";
 import { NotificationProvider } from "@/contexts/NotificationContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -15,19 +16,7 @@ import Shop from "@/pages/Shop";
 import NotFound from "@/pages/NotFound";
 import { useAuth } from "@/contexts/AuthContext";
 
-interface NewsletterTopic {
-  id: number | string;
-  title: string;
-  content: string;
-  readTime: string;
-}
-
-interface WeeklyNewsletter {
-  week: number;
-  startDate: string;
-  endDate: string;
-  topics: NewsletterTopic[];
-}
+// Interfaces movidas para @/utils/weekSystem
 
 interface ForumPost {
   id: string;
@@ -61,72 +50,7 @@ interface ForumCategory {
   };
 }
 
-// Weekly newsletters now loaded from API
-const fallbackNewsletters: WeeklyNewsletter[] = [
-  {
-    week: 1,
-    startDate: "06 Jan",
-    endDate: "12 Jan 2025",
-    topics: [
-      {
-        id: 1,
-        title: "GPT-4 Turbo vs Claude 3: Análise Comparativa de Performance",
-        content:
-          "Uma análise técnica detalhada dos principais modelos de linguagem que estão redefinindo o panorama da inteligência artificial empresarial.\n\nO OpenAI anunciou significativas otimizações no GPT-4 Turbo, resultando em melhorias de 40% na velocidade de resposta e redução de 50% nos custos operacionais. Simultaneamente, a Anthropic introduziu o Claude 3, estabelecendo novos padrões para compreensão contextual e raciocínio complexo.\n\nPrincipais diferenciadores técnicos:\n\n• Arquitetura de processamento otimizada\n• Redução substancial de latência\n• Expansão do contexto para 200k tokens\n• Integração nativa com APIs empresariais\n• Capacidades multimodais avançadas\n\nEssas inovações representam um marco na evolução da IA conversacional, estabelecendo novos padrões para aplicações empresariais de grande escala.",
-        readTime: "8 min",
-      },
-      {
-        id: 2,
-        title: "Cursor vs VS Code: Evolução dos Ambientes de Desenvolvimento",
-        content:
-          "O mercado de editores de código está passando por uma transformação fundamental. Enquanto o VS Code consolida sua posição como padrão da indústria, o Cursor emerge como pioneiro na integração nativa de IA.\n\nAnálise comparativa:\n\nCursor - Inovação Orientada por IA:\n• Integração nativa com modelos de linguagem\n�� Interface otimizada para desenvolvimento assistido\n• Sugestões contextuais inteligentes\n• Workflow de pair programming com IA\n\nVS Code - Estabilidade e Ecossistema:\n• Base instalada de 15+ milhões de desenvolvedores\n• Ecossistema maduro com 40k+ extensões\n• Performance battle-tested em projetos enterprise\n• Suporte oficial da Microsoft\n\nA decisão entre plataformas agora transcende funcionalidades básicas, focando na visão estratégica para o futuro do desenvolvimento de software.",
-        readTime: "12 min",
-      },
-      {
-        id: 3,
-        title: "Segurança Pós-Quântica: Preparação para a Próxima Era Digital",
-        content:
-          "2024 marca o início de uma era crítica para a segurança digital. O avanço dos computadores quânticos acelera a obsolescência de protocolos criptográficos tradicionais.\n\nEstratégias de preparação:\n\n• Implementação de criptografia resistente a quantum\n• Migração para autenticação biométrica avançada\n• Adoção de arquiteturas Zero Trust\n• Integração de IA para detecção proativa\n• Sistemas de backup imutáveis\n\nRecomendações imediatas:\n• Autenticação multifator obrigat��ria\n• Gerenciamento centralizado de credenciais\n• Monitoramento contínuo de vulnerabilidades\n• Programas de treinamento especializados\n• Testes regulares de recuperação de desastres\n\nOrganizações que não iniciarem essa transição imediatamente enfrentarão riscos exponencialmente crescentes de comprometimento de dados.",
-        readTime: "15 min",
-      },
-    ],
-  },
-  {
-    week: 2,
-    startDate: "08 Jan",
-    endDate: "14 Jan 2024",
-    topics: [
-      {
-        id: 4,
-        title: "AI Art Revolution: Novas Ferramentas Transformam Criatividade",
-        content:
-          "A indústria criativa está passando por uma revolução sem precedentes. Novas ferramentas de IA estão democratizando o acesso à criação artística profissional.\n\nPrincipais avanços:\n• DALL-E 3 com precisão fotorrealística\n• Midjourney v6 com controle de composição\n• Stable Diffusion XL para uso comercial\n• RunwayML para criação de vídeos\n\nImpacto no mercado:\n• Redução de 70% no tempo de produç��o\n• Democratização de ferramentas profissionais\n• Novos modelos de neg��cio emergindo\n• Questões éticas sobre autoria\n\nEstes desenvolvimentos estão redefinindo completamente o que significa ser criativo na era digital.",
-        readTime: "10 min",
-      },
-      {
-        id: 5,
-        title: "Open Source AI: A Nova Fronteira da Inovação",
-        content:
-          "O movimento open source em IA está ganhando momentum. Modelos como Llama 2, Mistral e Code Llama estão competindo diretamente com soluções proprietárias.\n\nVantagens do Open Source:\n• Transparência total dos algoritmos\n• Customização para casos específicos\n��� Sem dependência de vendors\n• Comunidade ativa de desenvolvedores\n\nDesafios:\n• Recursos computacionais necessários\n• Complexidade de implementação\n• Suporte limitado\n• Questões de responsabilidade\n\nO futuro da IA pode estar na democratização através do código aberto.",
-        readTime: "7 min",
-      },
-    ],
-  },
-  {
-    week: 1,
-    startDate: "01 Jan",
-    endDate: "07 Jan 2024",
-    topics: [
-      {
-        id: 6,
-        title: "2024: O Ano da IA Multimodal",
-        content:
-          "2024 promete ser o ano em que a IA multimodal se torna mainstream. Modelos capazes de processar texto, imagem, áudio e vídeo simultaneamente estão revolucionando interações.\n\nTendências principais:\n• GPT-4V com análise de imagens\n• Claude 3 com capacidades visuais\n• Gemini Ultra da Google\n• LLaVA para código aberto\n\nAplicações emergentes:\n• Assistentes visuais inteligentes\n• Análise automática de documentos\n• Criação de conteúdo integrado\n• Acessibilidade aprimorada\n\nEstas tecnologias estão criando experiências mais naturais e intuitivas.",
-        readTime: "9 min",
-      },
-    ],
-  },
-];
+// Os dados de fallback não são mais necessários - o sistema gera automaticamente todas as semanas
 
 // Categorias da seção Ferramentas
 const toolsCategories: ForumCategory[] = [
@@ -257,27 +181,37 @@ function App() {
     number | string | null
   >(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [newsletters, setNewsletters] = useState<WeeklyNewsletter[]>([]);
+  const [newsletterData, setNewsletterData] = useState<any>(null);
   const [isLoadingNewsletters, setIsLoadingNewsletters] = useState(false);
 
   // Get dynamic category statistics
   const { categoryStats, refreshStats } = useCategoryStats();
 
-  // Use the new week navigation hook
+  // Use the new simplified week navigation system
   const {
-    currentWeek,
-    setCurrentWeek,
+    currentNewsletter,
     navigateWeek,
     canNavigatePrev,
     canNavigateNext,
-    currentNewsletter,
-  } = useWeekNavigation({ newsletters, isAdmin });
-
-  // Debug log
-  console.log("App debug:", {
+    goToCurrentWeek,
+    isCurrentWeek,
+    debugInfo,
+  } = useSimpleWeekNavigation({
     isAdmin,
-    newslettersLength: newsletters.length,
-    currentWeek,
+    articlesData: newsletterData,
+  });
+
+  // Debug log para o novo sistema
+  console.log("App debug (novo sistema):", {
+    isAdmin,
+    debugInfo,
+    currentNewsletter: currentNewsletter
+      ? {
+          week: currentNewsletter.week,
+          year: currentNewsletter.year,
+          topicsCount: currentNewsletter.topics?.length || 0,
+        }
+      : null,
   });
 
   // Listen for global category stats refresh events
@@ -311,24 +245,30 @@ function App() {
 
       if (response.ok) {
         const data = await response.json();
-        const newsletters = data.weeklyNewsletters || [];
-        setNewsletters(newsletters);
-
-        // Week navigation is now handled by useWeekNavigation hook
+        setNewsletterData(data);
+        console.log("📰 Newsletter data loaded:", {
+          hasWeeklyNewsletters: !!data.weeklyNewsletters,
+          count: data.weeklyNewsletters?.length || 0,
+          weeks:
+            data.weeklyNewsletters?.map(
+              (w: any) =>
+                `${w.week}/${w.year || "sem ano"} (${w.topics?.length || 0} topics)`,
+            ) || [],
+        });
       } else {
-        console.warn("Newsletter service unavailable, using fallback data");
-        setNewsletters(fallbackNewsletters); // Use local fallback data
+        console.warn("Newsletter service unavailable, using empty data");
+        setNewsletterData({ weeklyNewsletters: [] });
       }
     } catch (error: any) {
       if (error.name === "AbortError" || error.name === "TimeoutError") {
         console.warn("Newsletter request timed out");
       } else {
         console.warn(
-          "Newsletter service unavailable, using fallback data:",
+          "Newsletter service unavailable, using empty data:",
           error.message,
         );
       }
-      setNewsletters(fallbackNewsletters); // Use local fallback data
+      setNewsletterData({ weeklyNewsletters: [] });
     } finally {
       setIsLoadingNewsletters(false);
     }
@@ -400,10 +340,11 @@ function App() {
                       setExpandedNewsletter={setExpandedNewsletter}
                       selectedCategory={selectedCategory}
                       setSelectedCategory={setSelectedCategory}
-                      currentWeek={currentWeek}
-                      setCurrentWeek={setCurrentWeek}
-                      weeklyNewsletters={newsletters}
+                      currentWeek={debugInfo.currentWeekIndex}
+                      setCurrentWeek={() => {}} // Não usado mais
+                      weeklyNewsletters={[]} // Não usado mais
                       onNewsletterRefresh={loadNewsletters}
+                      newsletterData={newsletterData} // Passar dados da API
                       toolsCategories={getDynamicToolsCategories()}
                       openSourceCategories={getDynamicOpenSourceCategories()}
                       toggleNewsletterTopic={toggleNewsletterTopic}

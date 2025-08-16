@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Topic } from "@shared/forum";
 import { toast } from "sonner";
+import { useSimpleWeekNavigation } from "@/hooks/useSimpleWeekNavigation";
+import { NewsletterTopic, WeeklyNewsletter } from "@/utils/weekSystem";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,19 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import CreateTopicModal from "@/components/CreateTopicModal";
 
-interface NewsletterTopic {
-  id: number | string;
-  title: string;
-  content: string;
-  readTime: string;
-}
-
-interface WeeklyNewsletter {
-  week: number;
-  startDate: string;
-  endDate: string;
-  topics: NewsletterTopic[];
-}
+// Interfaces movidas para @/utils/weekSystem
 
 interface ForumPost {
   id: string;
@@ -70,20 +60,21 @@ interface IndexProps {
   setExpandedNewsletter: (id: number | string | null) => void;
   selectedCategory: string | null;
   setSelectedCategory: (id: string | null) => void;
-  currentWeek: number;
-  setCurrentWeek: (week: number) => void;
-  weeklyNewsletters: WeeklyNewsletter[];
+  currentWeek: number; // Mantido para compatibilidade, mas não usado
+  setCurrentWeek: (week: number) => void; // Mantido para compatibilidade, mas não usado
+  weeklyNewsletters: WeeklyNewsletter[]; // Mantido para compatibilidade, mas não usado
   toolsCategories: ForumCategory[];
   openSourceCategories: ForumCategory[];
   toggleNewsletterTopic: (id: number | string) => void;
   handleCategoryClick: (categoryId: string) => void;
   getSelectedCategoryData: () => ForumCategory | undefined;
-  navigateWeek: (direction: "prev" | "next") => void;
-  canNavigatePrev: () => boolean;
-  canNavigateNext: () => boolean;
-  currentNewsletter: WeeklyNewsletter;
+  navigateWeek: (direction: "prev" | "next") => void; // Mantido para compatibilidade, mas não usado
+  canNavigatePrev: () => boolean; // Mantido para compatibilidade, mas n��o usado
+  canNavigateNext: () => boolean; // Mantido para compatibilidade, mas não usado
+  currentNewsletter: WeeklyNewsletter; // Mantido para compatibilidade, mas não usado
   refreshCategoryStats?: () => void;
   onNewsletterRefresh?: () => void;
+  newsletterData?: any; // Adicionar dados da newsletter da API
 }
 
 export default function Index(props: IndexProps) {
@@ -93,20 +84,28 @@ export default function Index(props: IndexProps) {
     setActiveSection,
     expandedNewsletter,
     selectedCategory,
-    currentWeek,
-    weeklyNewsletters,
     toolsCategories,
     openSourceCategories,
     toggleNewsletterTopic,
     handleCategoryClick,
     getSelectedCategoryData,
+    refreshCategoryStats,
+    onNewsletterRefresh,
+    newsletterData,
+  } = props;
+
+  // Use o novo sistema de semanas simplificado
+  const {
+    currentNewsletter,
     navigateWeek,
     canNavigatePrev,
     canNavigateNext,
-    currentNewsletter,
-    refreshCategoryStats,
-    onNewsletterRefresh,
-  } = props;
+    isCurrentWeek,
+    debugInfo,
+  } = useSimpleWeekNavigation({
+    isAdmin,
+    articlesData: newsletterData, // Usar os dados da API
+  });
 
   const [realTopics, setRealTopics] = useState<Topic[]>([]);
   const [isLoadingTopics, setIsLoadingTopics] = useState(false);
@@ -272,17 +271,31 @@ export default function Index(props: IndexProps) {
     }
 
     try {
+      // Se admin e há uma semana selecionada, usar essa semana. Senão, criar na semana atual
+      const requestBody: any = {
+        title: newNewsletter.title,
+        content: newNewsletter.content,
+        readTime: newNewsletter.readTime,
+      };
+
+      // Se admin está visualizando uma semana específica, criar artigo nessa semana
+      if (isAdmin && currentNewsletter) {
+        requestBody.targetWeek = currentNewsletter.week;
+        requestBody.targetYear = currentNewsletter.year;
+        console.log("🎯 Admin criando artigo na semana:", {
+          week: currentNewsletter.week,
+          year: currentNewsletter.year,
+          title: newNewsletter.title,
+        });
+      }
+
       const response = await fetch("/api/newsletter/articles", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
-        body: JSON.stringify({
-          title: newNewsletter.title,
-          content: newNewsletter.content,
-          readTime: newNewsletter.readTime,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
       if (response.ok) {
@@ -433,8 +446,8 @@ export default function Index(props: IndexProps) {
             <div
               className={`absolute top-0 bottom-0 rounded-md transition-all duration-500 ease-out shadow-lg z-20 solid-black-bg ${
                 activeSection === "newsletter"
-                  ? "left-0 w-[110px]"
-                  : "left-[110px] w-[90px]"
+                  ? "left-0 w-[100px]"
+                  : "left-[100px] w-[90px]"
               }`}
               style={{
                 transform: "translateZ(0)",
@@ -446,7 +459,7 @@ export default function Index(props: IndexProps) {
 
             <button
               onClick={() => setActiveSection("newsletter")}
-              className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[110px] text-center ${
+              className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[100px] text-center ${
                 activeSection === "newsletter"
                   ? "text-white transform scale-[1.02]"
                   : "text-gray-600 hover:text-black"
@@ -518,11 +531,18 @@ export default function Index(props: IndexProps) {
                   </h2>
                   {currentNewsletter && (
                     <p className="text-lg text-gray-600 mt-2">
-                      Semana {currentNewsletter.week} de 2025 - Atualizações
-                      todos os domingos
-                      {isAdmin && (
-                        <span className="text-red-500 ml-2">[ADMIN MODE]</span>
-                      )}
+                      Semana{" "}
+                      <span
+                        className={
+                          isCurrentWeek
+                            ? "text-green-600 font-semibold"
+                            : "text-yellow-700 font-semibold"
+                        }
+                      >
+                        {currentNewsletter.week}
+                      </span>{" "}
+                      de {currentNewsletter.year} - Atualizações todos os
+                      domingos
                     </p>
                   )}
                 </div>
@@ -572,9 +592,6 @@ export default function Index(props: IndexProps) {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="text-sm text-gray-500 mb-2">
-                          #{topic.id.toString().padStart(2, "0")}
-                        </div>
                         <h3 className="text-xl font-semibold text-black mb-3">
                           {topic.title}
                         </h3>
@@ -604,30 +621,6 @@ export default function Index(props: IndexProps) {
                         <div className="prose max-w-none text-gray-700 leading-relaxed whitespace-pre-line mb-4">
                           {topic.content}
                         </div>
-                        {user && (
-                          <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
-                            <button
-                              onClick={() => {
-                                // Handle newsletter like - you can implement this later
-                                console.log(
-                                  "Newsletter like clicked for topic",
-                                  topic.id,
-                                );
-                              }}
-                              className="flex items-center gap-2 px-3 py-2 rounded-md bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
-                            >
-                              <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 16 16"
-                                fill="currentColor"
-                              >
-                                <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
-                              </svg>
-                              0
-                            </button>
-                          </div>
-                        )}
                         {isAdmin && (
                           <div className="px-6 py-3 border-t border-gray-200 bg-gray-50">
                             <div className="flex gap-2">
@@ -712,6 +705,15 @@ export default function Index(props: IndexProps) {
                       <DialogTitle className="text-gray-900 text-xl font-semibold">
                         Criar Novo Artigo da Newsletter
                       </DialogTitle>
+                      {isAdmin && currentNewsletter && (
+                        <p className="text-sm text-blue-600 mt-2">
+                          📅 Será criado na{" "}
+                          <strong>
+                            Semana {currentNewsletter.week} de{" "}
+                            {currentNewsletter.year}
+                          </strong>
+                        </p>
+                      )}
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
