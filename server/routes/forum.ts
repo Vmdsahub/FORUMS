@@ -854,7 +854,7 @@ export const handleDeleteComment: RequestHandler = (req, res) => {
     });
   }
 
-  // Função para deletar comentário e todas suas respostas
+  // Funç��o para deletar comentário e todas suas respostas
   function deleteCommentAndReplies(commentId: string): number {
     let deletedCount = 0;
 
@@ -896,18 +896,22 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
     // Lista de todas as categorias
     const allCategoryIds = [
       // Ferramentas
+      "llms",
       "imagem",
       "video",
       "musica-audio",
       "vibe-coding",
       "duvidas-erros",
+      "projetos-comunidade",
       "outros",
       // Open-Source
+      "opensource-llms",
       "opensource-imagem",
       "opensource-video",
       "opensource-musica-audio",
       "opensource-vibe-coding",
       "opensource-duvidas-erros",
+      "opensource-projetos-comunidade",
       "opensource-outros",
     ];
 

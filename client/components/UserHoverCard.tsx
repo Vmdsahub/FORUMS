@@ -50,7 +50,9 @@ export default function UserHoverCard({
 
         // Buscar dados do perfil do usuário com cache busting
         const timestamp = Date.now();
-        const profileResponse = await fetch(`/api/user/profile/${userId}?t=${timestamp}`);
+        const profileResponse = await fetch(
+          `/api/user/profile/${userId}?t=${timestamp}`,
+        );
 
         console.log(
           `[UserHoverCard] URL da requisição: /api/user/profile/${userId}`,
@@ -125,7 +127,7 @@ export default function UserHoverCard({
   // Listen for like changes to refresh user data
   useEffect(() => {
     const handleLikeUpdate = () => {
-      setRefreshTrigger(prev => prev + 1);
+      setRefreshTrigger((prev) => prev + 1);
     };
 
     window.addEventListener("userLikeUpdate", handleLikeUpdate);
