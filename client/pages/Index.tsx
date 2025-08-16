@@ -459,7 +459,7 @@ export default function Index(props: IndexProps) {
 
             <button
               onClick={() => setActiveSection("newsletter")}
-              className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[100px] text-center ${
+              className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[120px] text-center ${
                 activeSection === "newsletter"
                   ? "text-white transform scale-[1.02]"
                   : "text-gray-600 hover:text-black"
