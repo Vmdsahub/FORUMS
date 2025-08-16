@@ -735,6 +735,11 @@ export default function Index(props: IndexProps) {
                       <DialogTitle className="text-gray-900 text-xl font-semibold">
                         Criar Novo Artigo da Newsletter
                       </DialogTitle>
+                      {isAdmin && currentNewsletter && (
+                        <p className="text-sm text-blue-600 mt-2">
+                          📅 Será criado na <strong>Semana {currentNewsletter.week} de {currentNewsletter.year}</strong>
+                        </p>
+                      )}
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
