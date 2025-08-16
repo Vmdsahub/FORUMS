@@ -196,10 +196,13 @@ export function getAllWeeks(): WeeklyNewsletter[] {
   if (!_cachedWeeks) {
     _cachedWeeks = generateAllWeeks();
     console.log(`Sistema de semanas inicializado: ${_cachedWeeks.length} semanas geradas (2025-2030)`);
-    
+
     // Executar testes em desenvolvimento
-    if (process.env.NODE_ENV === 'development') {
-      testScenarios();
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+      // Importar e executar testes após inicialização
+      import('./testWeekScenarios').then(({ runTestsIfDevelopment }) => {
+        runTestsIfDevelopment();
+      });
     }
   }
   return _cachedWeeks;
