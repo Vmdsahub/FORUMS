@@ -1157,7 +1157,8 @@ export default function Header({ activeSection }: HeaderProps) {
                       </div>
                     </div>
 
-                    <div className="space-y-1">
+                    {/* Termos e Newsletter */}
+                    <div className="space-y-3 pt-2">
                       <div className="flex items-center space-x-2">
                         <Checkbox
                           id="register-terms"
