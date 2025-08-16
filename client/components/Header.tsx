@@ -602,36 +602,55 @@ export default function Header({ activeSection }: HeaderProps) {
                           );
                           return;
                         }
-                        if (!registerCaptchaValid) {
-                          toast.error(
-                            "Por favor, complete a verificação de segurança",
-                          );
-                          return;
+
+                        // Reset validation errors
+                        setValidationErrors({});
+                        const errors: {[key: string]: boolean} = {};
+
+                        // Validações de campos obrigatórios
+                        if (!registerFirstName.trim() || registerFirstName.length < 2) {
+                          errors.firstName = true;
+                        }
+                        if (!registerLastName.trim() || registerLastName.length < 2) {
+                          errors.lastName = true;
+                        }
+                        if (!registerEmail.trim() || !registerEmail.includes('@')) {
+                          errors.email = true;
+                        }
+                        if (!registerPassword || registerPassword.length < 8 || !/(?=.*[A-Z])/.test(registerPassword)) {
+                          errors.password = true;
+                        }
+                        if (!registerConfirmPassword || registerPassword !== registerConfirmPassword) {
+                          errors.confirmPassword = true;
+                        }
+                        if (!registerPhone.replace(/\D/g, '') || registerPhone.replace(/\D/g, '').length < 10) {
+                          errors.phone = true;
+                        }
+                        if (!registerBirthDay || !registerBirthMonth || !registerBirthYear) {
+                          errors.birthDate = true;
                         }
                         if (!registerAcceptTerms) {
-                          toast.error(
-                            "Você deve aceitar os termos e condições",
-                          );
-                          return;
+                          errors.terms = true;
                         }
-
-                        // Validações adicionais
-                        if (registerPassword !== registerConfirmPassword) {
-                          toast.error("As senhas não coincidem");
-                          return;
-                        }
-
-                        if (!registerBirthDay || !registerBirthMonth || !registerBirthYear) {
-                          toast.error("Por favor, preencha sua data de nascimento completa");
-                          return;
+                        if (!registerCaptchaValid) {
+                          errors.captcha = true;
+                          toast.error("Por favor, complete a verificação de segurança");
                         }
 
                         // Verificar se a data é válida
-                        const birthDate = new Date(parseInt(registerBirthYear), parseInt(registerBirthMonth) - 1, parseInt(registerBirthDay));
-                        if (birthDate.getDate() !== parseInt(registerBirthDay) || 
-                            birthDate.getMonth() !== parseInt(registerBirthMonth) - 1 || 
-                            birthDate.getFullYear() !== parseInt(registerBirthYear)) {
-                          toast.error("Data de nascimento inválida");
+                        if (registerBirthDay && registerBirthMonth && registerBirthYear) {
+                          const birthDate = new Date(parseInt(registerBirthYear), parseInt(registerBirthMonth) - 1, parseInt(registerBirthDay));
+                          if (birthDate.getDate() !== parseInt(registerBirthDay) ||
+                              birthDate.getMonth() !== parseInt(registerBirthMonth) - 1 ||
+                              birthDate.getFullYear() !== parseInt(registerBirthYear)) {
+                            errors.birthDate = true;
+                          }
+                        }
+
+                        // Se há erros, mostrar e parar
+                        if (Object.keys(errors).length > 0) {
+                          setValidationErrors(errors);
+                          toast.error("Por favor, preencha todos os campos corretamente");
                           return;
                         }
 
