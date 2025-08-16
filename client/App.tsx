@@ -334,6 +334,7 @@ function App() {
                       setCurrentWeek={() => {}} // Não usado mais
                       weeklyNewsletters={[]} // Não usado mais
                       onNewsletterRefresh={loadNewsletters}
+                      newsletterData={newsletterData} // Passar dados da API
                       toolsCategories={getDynamicToolsCategories()}
                       openSourceCategories={getDynamicOpenSourceCategories()}
                       toggleNewsletterTopic={toggleNewsletterTopic}
