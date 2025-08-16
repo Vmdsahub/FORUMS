@@ -181,44 +181,17 @@ export default function AdvancedCaptcha({
           Novo
         </Button>
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="captcha-input" className="text-sm text-gray-700">
-          Digite o código mostrado na imagem:
-        </Label>
+      <div>
         <Input
           id="captcha-input"
           type="text"
-          placeholder="Digite o código (6 caracteres)"
+          placeholder="Digite o código mostrado acima"
           value={userAnswer}
           onChange={(e) => handleAnswerChange(e.target.value)}
-          className={`border-gray-300 focus:border-gray-500 focus:ring-gray-500 uppercase ${
-            userAnswer && (isValid ? "border-green-500 bg-green-50" : "border-red-500 bg-red-50")
-          }`}
+          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 uppercase h-9"
           maxLength={6}
         />
-        {userAnswer && (
-          <div className="flex items-center gap-2">
-            {isValid ? (
-              <div className="flex items-center text-green-600 text-sm">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="mr-1">
-                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                </svg>
-                Código verificado com sucesso
-              </div>
-            ) : (
-              <div className="flex items-center text-red-600 text-sm">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="mr-1">
-                  <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                </svg>
-                Código incorreto
-              </div>
-            )}
-          </div>
-        )}
       </div>
-      <p className="text-xs text-gray-500">
-        Não consegue ler? Clique em "Novo" para gerar outro código
-      </p>
     </div>
   );
 }
