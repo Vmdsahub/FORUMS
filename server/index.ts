@@ -10,6 +10,9 @@ import {
   handleLogout,
   authenticateToken,
   optionalAuthenticateToken,
+  checkUsername,
+  checkEmail,
+  checkPhone,
 } from "./routes/auth";
 import {
   handleGetTopics,
