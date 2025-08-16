@@ -214,11 +214,32 @@ export default function Header({ activeSection }: HeaderProps) {
   };
 
   const validatePassword = (password: string, confirmPassword: string) => {
-    // Apenas limpar erros de validação, sem mostrar mensagens em tempo real
+    // Validação em tempo real da senha
+    const hasMinLength = password.length >= 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const isPasswordValid = hasMinLength && hasUppercase;
+    const isPasswordInvalid = password.length > 0 && !isPasswordValid;
+
+    const doPasswordsMatch =
+      confirmPassword.length > 0 && password !== confirmPassword;
+
     setValidationErrors((prev) => ({
       ...prev,
-      password: false,
-      confirmPassword: false,
+      password: isPasswordInvalid,
+      confirmPassword: doPasswordsMatch,
+    }));
+
+    let passwordMessage = "";
+    if (password.length > 0 && !hasMinLength) {
+      passwordMessage = "A senha deve ter pelo menos 8 caracteres";
+    } else if (password.length >= 8 && !hasUppercase) {
+      passwordMessage = "A senha deve conter pelo menos uma letra maiúscula";
+    }
+
+    setFieldMessages((prev) => ({
+      ...prev,
+      password: passwordMessage,
+      confirmPassword: doPasswordsMatch ? "As senhas não coincidem" : "",
     }));
   };
 
@@ -850,36 +871,43 @@ export default function Header({ activeSection }: HeaderProps) {
                         }, 0);
                       }
                     }}
-                    className="space-y-2 py-2"
+                    className="space-y-4 py-4"
                   >
-                    <div className="grid grid-cols-2 gap-2">
-                      <Input
-                        id="first-name"
-                        placeholder="Nome"
-                        value={registerFirstName}
-                        onChange={(e) => setRegisterFirstName(e.target.value)}
-                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                          validationErrors.firstName
-                            ? "border-red-500 text-red-600"
-                            : "border-gray-300"
-                        }`}
-                        required
-                        minLength={2}
-                      />
-                      <Input
-                        id="last-name"
-                        placeholder="Sobrenome"
-                        value={registerLastName}
-                        onChange={(e) => setRegisterLastName(e.target.value)}
-                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                          validationErrors.lastName
-                            ? "border-red-500 text-red-600"
-                            : "border-gray-300"
-                        }`}
-                        required
-                        minLength={2}
-                      />
+                    {/* Nome e Sobrenome */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Input
+                          id="first-name"
+                          placeholder="Nome"
+                          value={registerFirstName}
+                          onChange={(e) => setRegisterFirstName(e.target.value)}
+                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
+                            validationErrors.firstName
+                              ? "border-red-500 text-red-600"
+                              : "border-gray-300"
+                          }`}
+                          required
+                          minLength={2}
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          id="last-name"
+                          placeholder="Sobrenome"
+                          value={registerLastName}
+                          onChange={(e) => setRegisterLastName(e.target.value)}
+                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
+                            validationErrors.lastName
+                              ? "border-red-500 text-red-600"
+                              : "border-gray-300"
+                          }`}
+                          required
+                          minLength={2}
+                        />
+                      </div>
                     </div>
+
+                    {/* Nome de usuário */}
                     <div>
                       <Input
                         id="username"
@@ -896,22 +924,28 @@ export default function Header({ activeSection }: HeaderProps) {
                             return () => clearTimeout(timeoutId);
                           }
                         }}
-                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                           validationErrors.username
                             ? "border-red-500 text-red-600"
-                            : "border-gray-300"
+                            : fieldMessages.username &&
+                                registerUsername.trim() &&
+                                !validationErrors.username
+                              ? "border-green-500"
+                              : "border-gray-300"
                         }`}
                         required
                         minLength={2}
                       />
-                      {fieldMessages.username && registerUsername.trim() && (
-                        <p
-                          className={`text-xs mt-1 ${validationErrors.username ? "text-red-600" : "text-green-600"}`}
-                        >
-                          {fieldMessages.username}
-                        </p>
-                      )}
+                      {fieldMessages.username &&
+                        registerUsername.trim() &&
+                        validationErrors.username && (
+                          <p className="text-xs mt-2 text-red-600">
+                            {fieldMessages.username}
+                          </p>
+                        )}
                     </div>
+
+                    {/* Email */}
                     <div>
                       <Input
                         id="register-email"
@@ -929,42 +963,57 @@ export default function Header({ activeSection }: HeaderProps) {
                             return () => clearTimeout(timeoutId);
                           }
                         }}
-                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                           validationErrors.email
                             ? "border-red-500 text-red-600"
-                            : "border-gray-300"
+                            : fieldMessages.email &&
+                                registerEmail.trim() &&
+                                !validationErrors.email
+                              ? "border-green-500"
+                              : "border-gray-300"
                         }`}
                         required
                       />
-                      {fieldMessages.email && registerEmail.trim() && (
-                        <p
-                          className={`text-xs mt-1 ${validationErrors.email ? "text-red-600" : "text-green-600"}`}
-                        >
-                          {fieldMessages.email}
-                        </p>
-                      )}
+                      {fieldMessages.email &&
+                        registerEmail.trim() &&
+                        validationErrors.email && (
+                          <p className="text-xs mt-2 text-red-600">
+                            {fieldMessages.email}
+                          </p>
+                        )}
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+
+                    {/* Senhas */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
                         <Input
                           id="register-password"
                           type="password"
-                          placeholder="Senha (min. 8 caracteres)"
+                          placeholder="Senha"
                           value={registerPassword}
                           onChange={(e) => {
                             const value = e.target.value;
                             setRegisterPassword(value);
                             validatePassword(value, registerConfirmPassword);
                           }}
-                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                             validationErrors.password
                               ? "border-red-500 text-red-600"
-                              : "border-gray-300"
+                              : registerPassword.length >= 8 &&
+                                  /[A-Z]/.test(registerPassword)
+                                ? "border-green-500"
+                                : "border-gray-300"
                           }`}
                           required
                           minLength={8}
                           pattern="(?=.*[A-Z]).*"
                         />
+                        {registerPassword.trim() &&
+                          validationErrors.password && (
+                            <p className="text-xs mt-2 text-red-600">
+                              {fieldMessages.password}
+                            </p>
+                          )}
                       </div>
                       <div>
                         <Input
@@ -977,14 +1026,23 @@ export default function Header({ activeSection }: HeaderProps) {
                             setRegisterConfirmPassword(value);
                             validatePassword(registerPassword, value);
                           }}
-                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                             validationErrors.confirmPassword
                               ? "border-red-500 text-red-600"
-                              : "border-gray-300"
+                              : registerConfirmPassword.length > 0 &&
+                                  registerPassword === registerConfirmPassword
+                                ? "border-green-500"
+                                : "border-gray-300"
                           }`}
                           required
                           minLength={8}
                         />
+                        {registerConfirmPassword.trim() &&
+                          validationErrors.confirmPassword && (
+                            <p className="text-xs mt-2 text-red-600">
+                              {fieldMessages.confirmPassword}
+                            </p>
+                          )}
                       </div>
                     </div>
 
@@ -1018,94 +1076,107 @@ export default function Header({ activeSection }: HeaderProps) {
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
                           validationErrors.phone
                             ? "border-red-500 text-red-600"
-                            : "border-gray-300"
+                            : fieldMessages.phone &&
+                                registerPhone.trim() &&
+                                !validationErrors.phone
+                              ? "border-green-500"
+                              : "border-gray-300"
                         }`}
                         required
                         maxLength={15}
                       />
-                      {fieldMessages.phone && registerPhone.trim() && (
-                        <p
-                          className={`text-xs mt-1 ${validationErrors.phone ? "text-red-600" : "text-green-600"}`}
-                        >
-                          {fieldMessages.phone}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-2">
-                      <select
-                        id="birth-day"
-                        value={registerBirthDay}
-                        onChange={(e) => setRegisterBirthDay(e.target.value)}
-                        className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
-                          validationErrors.birthDate
-                            ? "border-red-500 text-red-600"
-                            : "border-gray-300"
-                        }`}
-                        required
-                      >
-                        <option value="">Dia</option>
-                        {Array.from({ length: 31 }, (_, i) => i + 1).map(
-                          (day) => (
-                            <option
-                              key={day}
-                              value={day.toString().padStart(2, "0")}
-                            >
-                              {day}
-                            </option>
-                          ),
+                      {fieldMessages.phone &&
+                        registerPhone.trim() &&
+                        validationErrors.phone && (
+                          <p className="text-xs mt-1 text-red-600">
+                            {fieldMessages.phone}
+                          </p>
                         )}
-                      </select>
-                      <select
-                        id="birth-month"
-                        value={registerBirthMonth}
-                        onChange={(e) => setRegisterBirthMonth(e.target.value)}
-                        className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
-                          validationErrors.birthDate
-                            ? "border-red-500 text-red-600"
-                            : "border-gray-300"
-                        }`}
-                        required
-                      >
-                        <option value="">Mês</option>
-                        <option value="01">Janeiro</option>
-                        <option value="02">Fevereiro</option>
-                        <option value="03">Março</option>
-                        <option value="04">Abril</option>
-                        <option value="05">Maio</option>
-                        <option value="06">Junho</option>
-                        <option value="07">Julho</option>
-                        <option value="08">Agosto</option>
-                        <option value="09">Setembro</option>
-                        <option value="10">Outubro</option>
-                        <option value="11">Novembro</option>
-                        <option value="12">Dezembro</option>
-                      </select>
-                      <select
-                        id="birth-year"
-                        value={registerBirthYear}
-                        onChange={(e) => setRegisterBirthYear(e.target.value)}
-                        className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
-                          validationErrors.birthDate
-                            ? "border-red-500 text-red-600"
-                            : "border-gray-300"
-                        }`}
-                        required
-                      >
-                        <option value="">Ano</option>
-                        {Array.from(
-                          { length: 100 },
-                          (_, i) => new Date().getFullYear() - i,
-                        ).map((year) => (
-                          <option key={year} value={year.toString()}>
-                            {year}
-                          </option>
-                        ))}
-                      </select>
                     </div>
 
-                    <div className="space-y-1">
-                      <div className="flex items-center space-x-2">
+                    {/* Data de Nascimento */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-3">
+                        Data de Nascimento
+                      </label>
+                      <div className="grid grid-cols-3 gap-3">
+                        <select
+                          id="birth-day"
+                          value={registerBirthDay}
+                          onChange={(e) => setRegisterBirthDay(e.target.value)}
+                          className={`w-full h-11 px-3 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
+                            validationErrors.birthDate
+                              ? "border-red-500 text-red-600"
+                              : "border-gray-300"
+                          }`}
+                          required
+                        >
+                          <option value="">Dia</option>
+                          {Array.from({ length: 31 }, (_, i) => i + 1).map(
+                            (day) => (
+                              <option
+                                key={day}
+                                value={day.toString().padStart(2, "0")}
+                              >
+                                {day}
+                              </option>
+                            ),
+                          )}
+                        </select>
+                        <select
+                          id="birth-month"
+                          value={registerBirthMonth}
+                          onChange={(e) =>
+                            setRegisterBirthMonth(e.target.value)
+                          }
+                          className={`w-full h-11 px-3 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
+                            validationErrors.birthDate
+                              ? "border-red-500 text-red-600"
+                              : "border-gray-300"
+                          }`}
+                          required
+                        >
+                          <option value="">Mês</option>
+                          <option value="01">Janeiro</option>
+                          <option value="02">Fevereiro</option>
+                          <option value="03">Março</option>
+                          <option value="04">Abril</option>
+                          <option value="05">Maio</option>
+                          <option value="06">Junho</option>
+                          <option value="07">Julho</option>
+                          <option value="08">Agosto</option>
+                          <option value="09">Setembro</option>
+                          <option value="10">Outubro</option>
+                          <option value="11">Novembro</option>
+                          <option value="12">Dezembro</option>
+                        </select>
+                        <select
+                          id="birth-year"
+                          value={registerBirthYear}
+                          onChange={(e) => setRegisterBirthYear(e.target.value)}
+                          className={`w-full h-11 px-3 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
+                            validationErrors.birthDate
+                              ? "border-red-500 text-red-600"
+                              : "border-gray-300"
+                          }`}
+                          required
+                        >
+                          <option value="">Ano</option>
+                          {Array.from(
+                            { length: 100 },
+                            (_, i) => new Date().getFullYear() - i,
+                          ).map((year) => (
+                            <option key={year} value={year.toString()}>
+                              {year}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Termos e Newsletter */}
+                    <div className="space-y-3 pt-2">
+                      <div className="flex items-center space-x-3">
                         <Checkbox
                           id="register-terms"
                           checked={registerAcceptTerms}
@@ -1133,7 +1204,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         </label>
                       </div>
 
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-3">
                         <Checkbox
                           id="register-newsletter"
                           checked={registerAcceptNewsletter}
@@ -1164,7 +1235,7 @@ export default function Header({ activeSection }: HeaderProps) {
                     </div>
                     <Button
                       type="submit"
-                      className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium"
+                      className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium h-12 text-base mt-6 transition-colors duration-200"
                       disabled={isLoading || !registerAcceptTerms}
                     >
                       {isLoading ? "Criando conta..." : "Criar Conta"}
