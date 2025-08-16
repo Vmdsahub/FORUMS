@@ -18,19 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import CreateTopicModal from "@/components/CreateTopicModal";
 
-interface NewsletterTopic {
-  id: number | string;
-  title: string;
-  content: string;
-  readTime: string;
-}
-
-interface WeeklyNewsletter {
-  week: number;
-  startDate: string;
-  endDate: string;
-  topics: NewsletterTopic[];
-}
+// Interfaces movidas para @/utils/weekSystem
 
 interface ForumPost {
   id: string;
