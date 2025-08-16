@@ -249,6 +249,17 @@ export const handleRegister: RequestHandler = (req, res) => {
       } as ErrorResponse);
     }
 
+    // Check if phone already exists
+    const cleanPhone = phone.replace(/\D/g, '');
+    const existingPhoneUser = Array.from(users.values()).find(
+      (u) => u.phone && u.phone.replace(/\D/g, '') === cleanPhone,
+    );
+    if (existingPhoneUser) {
+      return res.status(409).json({
+        message: "Telefone já está em uso",
+      } as ErrorResponse);
+    }
+
     // Create new user
     const userId =
       "user_" + Date.now() + "_" + Math.random().toString(36).substring(2);
