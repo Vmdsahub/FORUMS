@@ -155,8 +155,6 @@ export default function Header({ activeSection }: HeaderProps) {
       );
       const data = await response.json();
 
-      console.log("[USERNAME CHECK]", { username, available: data.available, message: data.message, willSetError: !data.available });
-
       setValidationErrors((prev) => ({
         ...prev,
         username: !data.available,
@@ -178,8 +176,6 @@ export default function Header({ activeSection }: HeaderProps) {
         `/api/auth/check-email/${encodeURIComponent(email)}`,
       );
       const data = await response.json();
-
-      console.log("[EMAIL CHECK]", { email, available: data.available, message: data.message, willSetError: !data.available });
 
       setValidationErrors((prev) => ({
         ...prev,
@@ -928,27 +924,11 @@ export default function Header({ activeSection }: HeaderProps) {
                           }
                         }}
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
-                          (() => {
-                            const hasError = validationErrors.username;
-                            const hasValue = registerUsername.trim();
-                            const hasMessage = fieldMessages.username;
-                            const shouldBeGreen = hasValue && hasMessage && !hasError;
-
-                            console.log("[USERNAME CSS]", {
-                              username: registerUsername,
-                              hasError,
-                              hasValue: !!hasValue,
-                              hasMessage: !!hasMessage,
-                              shouldBeGreen,
-                              message: fieldMessages.username
-                            });
-
-                            return hasError
-                              ? "border-red-500 text-red-600"
-                              : shouldBeGreen
-                                ? "border-green-500"
-                                : "border-gray-300";
-                          })()
+                          validationErrors.username
+                            ? "border-red-500 text-red-600"
+                            : registerUsername.trim() && fieldMessages.username && !validationErrors.username
+                              ? "border-green-500"
+                              : "border-gray-300"
                         }`}
                         required
                         minLength={2}
