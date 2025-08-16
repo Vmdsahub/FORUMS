@@ -872,36 +872,43 @@ export default function Header({ activeSection }: HeaderProps) {
                         }, 0);
                       }
                     }}
-                    className="space-y-2 py-2"
+                    className="space-y-4 py-4"
                   >
-                    <div className="grid grid-cols-2 gap-2">
-                      <Input
-                        id="first-name"
-                        placeholder="Nome"
-                        value={registerFirstName}
-                        onChange={(e) => setRegisterFirstName(e.target.value)}
-                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                          validationErrors.firstName
-                            ? "border-red-500 text-red-600"
-                            : "border-gray-300"
-                        }`}
-                        required
-                        minLength={2}
-                      />
-                      <Input
-                        id="last-name"
-                        placeholder="Sobrenome"
-                        value={registerLastName}
-                        onChange={(e) => setRegisterLastName(e.target.value)}
-                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                          validationErrors.lastName
-                            ? "border-red-500 text-red-600"
-                            : "border-gray-300"
-                        }`}
-                        required
-                        minLength={2}
-                      />
+                    {/* Nome e Sobrenome */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Input
+                          id="first-name"
+                          placeholder="Nome"
+                          value={registerFirstName}
+                          onChange={(e) => setRegisterFirstName(e.target.value)}
+                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
+                            validationErrors.firstName
+                              ? "border-red-500 text-red-600"
+                              : "border-gray-300"
+                          }`}
+                          required
+                          minLength={2}
+                        />
+                      </div>
+                      <div>
+                        <Input
+                          id="last-name"
+                          placeholder="Sobrenome"
+                          value={registerLastName}
+                          onChange={(e) => setRegisterLastName(e.target.value)}
+                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
+                            validationErrors.lastName
+                              ? "border-red-500 text-red-600"
+                              : "border-gray-300"
+                          }`}
+                          required
+                          minLength={2}
+                        />
+                      </div>
                     </div>
+
+                    {/* Nome de usuário */}
                     <div>
                       <Input
                         id="username"
@@ -918,7 +925,7 @@ export default function Header({ activeSection }: HeaderProps) {
                             return () => clearTimeout(timeoutId);
                           }
                         }}
-                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                           validationErrors.username
                             ? "border-red-500 text-red-600"
                             : fieldMessages.username && registerUsername.trim() && !validationErrors.username
@@ -929,11 +936,13 @@ export default function Header({ activeSection }: HeaderProps) {
                         minLength={2}
                       />
                       {fieldMessages.username && registerUsername.trim() && validationErrors.username && (
-                        <p className="text-xs mt-1 text-red-600">
+                        <p className="text-xs mt-2 text-red-600">
                           {fieldMessages.username}
                         </p>
                       )}
                     </div>
+
+                    {/* Email */}
                     <div>
                       <Input
                         id="register-email"
