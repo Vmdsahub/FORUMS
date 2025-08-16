@@ -64,15 +64,6 @@ const toolsCategories: ForumCategory[] = [
     posts: [],
   },
   {
-    id: "projetos-comunidade",
-    name: "Projetos da comunidade",
-    description: "Projetos, experimentos e criações da comunidade com IA",
-    totalTopics: 0,
-    totalPosts: 0,
-    lastPost: undefined,
-    posts: [],
-  },
-  {
     id: "imagem",
     name: "Imagem",
     description: "Geração de imagens, edição e ferramentas visuais com IA",
@@ -118,6 +109,15 @@ const toolsCategories: ForumCategory[] = [
     posts: [],
   },
   {
+    id: "projetos-comunidade",
+    name: "Projetos da comunidade",
+    description: "Projetos, experimentos e criações da comunidade com IA",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
+  {
     id: "outros",
     name: "Outros",
     description: "Discussões gerais sobre ferramentas de IA não categorizadas",
@@ -134,15 +134,6 @@ const openSourceCategories: ForumCategory[] = [
     id: "opensource-llms",
     name: "LLMs",
     description: "Llama, Mistral, Code Llama e outros modelos de linguagem open-source",
-    totalTopics: 0,
-    totalPosts: 0,
-    lastPost: undefined,
-    posts: [],
-  },
-  {
-    id: "opensource-projetos-comunidade",
-    name: "Projetos da comunidade",
-    description: "Projetos open-source e contribuições da comunidade para IA",
     totalTopics: 0,
     totalPosts: 0,
     lastPost: undefined,
@@ -191,6 +182,15 @@ const openSourceCategories: ForumCategory[] = [
     name: "Dúvidas/Erros",
     description:
       "Tire suas dúvidas e relate problemas com ferramentas open-source",
+    totalTopics: 0,
+    totalPosts: 0,
+    lastPost: undefined,
+    posts: [],
+  },
+  {
+    id: "opensource-projetos-comunidade",
+    name: "Projetos da comunidade",
+    description: "Projetos open-source e contribuições da comunidade para IA",
     totalTopics: 0,
     totalPosts: 0,
     lastPost: undefined,
@@ -378,7 +378,7 @@ function App() {
                       setSelectedCategory={setSelectedCategory}
                       currentWeek={debugInfo.currentWeekIndex}
                       setCurrentWeek={() => {}} // Não usado mais
-                      weeklyNewsletters={[]} // N��o usado mais
+                      weeklyNewsletters={[]} // Não usado mais
                       onNewsletterRefresh={loadNewsletters}
                       newsletterData={newsletterData} // Passar dados da API
                       toolsCategories={getDynamicToolsCategories()}
