@@ -330,9 +330,9 @@ function App() {
                       setExpandedNewsletter={setExpandedNewsletter}
                       selectedCategory={selectedCategory}
                       setSelectedCategory={setSelectedCategory}
-                      currentWeek={currentWeek}
-                      setCurrentWeek={setCurrentWeek}
-                      weeklyNewsletters={newsletters}
+                      currentWeek={debugInfo.currentWeekIndex}
+                      setCurrentWeek={() => {}} // Não usado mais
+                      weeklyNewsletters={[]} // Não usado mais
                       onNewsletterRefresh={loadNewsletters}
                       toolsCategories={getDynamicToolsCategories()}
                       openSourceCategories={getDynamicOpenSourceCategories()}
