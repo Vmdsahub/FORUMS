@@ -141,6 +141,104 @@ export default function Header({ activeSection }: HeaderProps) {
     );
   };
 
+  // Real-time validation functions
+  const checkUsernameAvailable = async (username: string) => {
+    if (!username || username.length < 2) return;
+
+    try {
+      const response = await fetch(`/api/auth/check-username/${encodeURIComponent(username)}`);
+      const data = await response.json();
+
+      setValidationErrors(prev => ({
+        ...prev,
+        username: !data.available
+      }));
+      setFieldMessages(prev => ({
+        ...prev,
+        username: data.message
+      }));
+    } catch (error) {
+      console.error('Error checking username:', error);
+    }
+  };
+
+  const checkEmailAvailable = async (email: string) => {
+    if (!email || !email.includes('@')) return;
+
+    try {
+      const response = await fetch(`/api/auth/check-email/${encodeURIComponent(email)}`);
+      const data = await response.json();
+
+      setValidationErrors(prev => ({
+        ...prev,
+        email: !data.available
+      }));
+      setFieldMessages(prev => ({
+        ...prev,
+        email: data.message
+      }));
+    } catch (error) {
+      console.error('Error checking email:', error);
+    }
+  };
+
+  const checkPhoneAvailable = async (phone: string) => {
+    const cleanPhone = phone.replace(/\D/g, '');
+    if (!cleanPhone || cleanPhone.length < 10) return;
+
+    try {
+      const response = await fetch(`/api/auth/check-phone/${encodeURIComponent(phone)}`);
+      const data = await response.json();
+
+      setValidationErrors(prev => ({
+        ...prev,
+        phone: !data.available
+      }));
+      setFieldMessages(prev => ({
+        ...prev,
+        phone: data.message
+      }));
+    } catch (error) {
+      console.error('Error checking phone:', error);
+    }
+  };
+
+  const validatePassword = (password: string, confirmPassword: string) => {
+    const hasMinLength = password.length >= 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const isValid = hasMinLength && hasUpperCase;
+
+    setValidationErrors(prev => ({
+      ...prev,
+      password: !isValid,
+      confirmPassword: confirmPassword && password !== confirmPassword
+    }));
+
+    if (!isValid && password) {
+      setFieldMessages(prev => ({
+        ...prev,
+        password: !hasMinLength ? 'Mínimo 8 caracteres' : 'Precisa de 1 letra maiúscula'
+      }));
+    } else {
+      setFieldMessages(prev => ({
+        ...prev,
+        password: ''
+      }));
+    }
+
+    if (confirmPassword && password !== confirmPassword) {
+      setFieldMessages(prev => ({
+        ...prev,
+        confirmPassword: 'Senhas não coincidem'
+      }));
+    } else {
+      setFieldMessages(prev => ({
+        ...prev,
+        confirmPassword: ''
+      }));
+    }
+  };
+
   return (
     <header className="fixed top-0 z-50 w-full glass-minimal border-b border-black/5 backdrop-blur-lg bg-white/95">
       <div className="container flex h-16 max-w-7xl items-center justify-between px-6 mx-auto">
