@@ -215,27 +215,32 @@ export default function Header({ activeSection }: HeaderProps) {
 
   const validatePassword = (password: string, confirmPassword: string) => {
     // Validação em tempo real da senha
-    const isPasswordTooShort = password.length > 0 && password.length < 8;
+    const hasMinLength = password.length >= 8;
+    const hasUppercase = /[A-Z]/.test(password);
+    const isPasswordValid = hasMinLength && hasUppercase;
+    const isPasswordInvalid = password.length > 0 && !isPasswordValid;
+
     const doPasswordsMatch = confirmPassword.length > 0 && password !== confirmPassword;
 
     setValidationErrors((prev) => ({
       ...prev,
-      password: isPasswordTooShort,
+      password: isPasswordInvalid,
       confirmPassword: doPasswordsMatch,
     }));
 
+    let passwordMessage = "";
+    if (password.length > 0 && !hasMinLength) {
+      passwordMessage = "A senha deve ter pelo menos 8 caracteres";
+    } else if (password.length >= 8 && !hasUppercase) {
+      passwordMessage = "A senha deve conter pelo menos uma letra maiúscula";
+    }
+
     setFieldMessages((prev) => ({
       ...prev,
-      password: isPasswordTooShort
-        ? "A senha deve ter pelo menos 8 caracteres"
-        : password.length >= 8
-          ? "Senha válida"
-          : "",
+      password: passwordMessage,
       confirmPassword: doPasswordsMatch
         ? "As senhas não coincidem"
-        : confirmPassword.length > 0 && password === confirmPassword
-          ? "Senhas coincidem"
-          : "",
+        : "",
     }));
   };
 
