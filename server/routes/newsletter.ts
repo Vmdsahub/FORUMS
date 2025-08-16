@@ -10,6 +10,7 @@ interface NewsletterArticle {
   authorName: string;
   createdAt: string;
   week: number;
+  year: number; // Adicionar ano
   startDate: string;
   endDate: string;
 }
@@ -220,7 +221,7 @@ export const handleGetArticles: RequestHandler = (req, res) => {
 export const handleDeleteArticle: RequestHandler = (req, res) => {
   try {
     if (!req.user) {
-      return res.status(401).json({ message: "N��o autenticado" });
+      return res.status(401).json({ message: "Não autenticado" });
     }
 
     if (req.user.role !== "admin") {
