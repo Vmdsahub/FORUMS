@@ -74,6 +74,7 @@ interface IndexProps {
   currentNewsletter: WeeklyNewsletter; // Mantido para compatibilidade, mas não usado
   refreshCategoryStats?: () => void;
   onNewsletterRefresh?: () => void;
+  newsletterData?: any; // Adicionar dados da newsletter da API
 }
 
 export default function Index(props: IndexProps) {
