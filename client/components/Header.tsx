@@ -204,39 +204,12 @@ export default function Header({ activeSection }: HeaderProps) {
   };
 
   const validatePassword = (password: string, confirmPassword: string) => {
-    const hasMinLength = password.length >= 8;
-    const hasUpperCase = /[A-Z]/.test(password);
-    const isValid = hasMinLength && hasUpperCase;
-
+    // Apenas limpar erros de validação, sem mostrar mensagens em tempo real
     setValidationErrors(prev => ({
       ...prev,
-      password: !isValid,
-      confirmPassword: confirmPassword && password !== confirmPassword
+      password: false,
+      confirmPassword: false
     }));
-
-    if (!isValid && password) {
-      setFieldMessages(prev => ({
-        ...prev,
-        password: !hasMinLength ? 'Mínimo 8 caracteres' : 'Precisa de 1 letra maiúscula'
-      }));
-    } else {
-      setFieldMessages(prev => ({
-        ...prev,
-        password: ''
-      }));
-    }
-
-    if (confirmPassword && password !== confirmPassword) {
-      setFieldMessages(prev => ({
-        ...prev,
-        confirmPassword: 'Senhas não coincidem'
-      }));
-    } else {
-      setFieldMessages(prev => ({
-        ...prev,
-        confirmPassword: ''
-      }));
-    }
   };
 
   return (
