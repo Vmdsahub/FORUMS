@@ -181,21 +181,25 @@ function App() {
     number | string | null
   >(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [newsletters, setNewsletters] = useState<WeeklyNewsletter[]>([]);
+  const [newsletterData, setNewsletterData] = useState<any>(null);
   const [isLoadingNewsletters, setIsLoadingNewsletters] = useState(false);
 
   // Get dynamic category statistics
   const { categoryStats, refreshStats } = useCategoryStats();
 
-  // Use the new week navigation hook
+  // Use the new simplified week navigation system
   const {
-    currentWeek,
-    setCurrentWeek,
+    currentNewsletter,
     navigateWeek,
     canNavigatePrev,
     canNavigateNext,
-    currentNewsletter,
-  } = useWeekNavigation({ newsletters, isAdmin });
+    goToCurrentWeek,
+    isCurrentWeek,
+    debugInfo,
+  } = useSimpleWeekNavigation({
+    isAdmin,
+    articlesData: newsletterData
+  });
 
   // Debug log
   console.log("App debug:", {
