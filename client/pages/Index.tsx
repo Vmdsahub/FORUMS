@@ -60,18 +60,18 @@ interface IndexProps {
   setExpandedNewsletter: (id: number | string | null) => void;
   selectedCategory: string | null;
   setSelectedCategory: (id: string | null) => void;
-  currentWeek: number;
-  setCurrentWeek: (week: number) => void;
-  weeklyNewsletters: WeeklyNewsletter[];
+  currentWeek: number; // Mantido para compatibilidade, mas não usado
+  setCurrentWeek: (week: number) => void; // Mantido para compatibilidade, mas não usado
+  weeklyNewsletters: WeeklyNewsletter[]; // Mantido para compatibilidade, mas não usado
   toolsCategories: ForumCategory[];
   openSourceCategories: ForumCategory[];
   toggleNewsletterTopic: (id: number | string) => void;
   handleCategoryClick: (categoryId: string) => void;
   getSelectedCategoryData: () => ForumCategory | undefined;
-  navigateWeek: (direction: "prev" | "next") => void;
-  canNavigatePrev: () => boolean;
-  canNavigateNext: () => boolean;
-  currentNewsletter: WeeklyNewsletter;
+  navigateWeek: (direction: "prev" | "next") => void; // Mantido para compatibilidade, mas não usado
+  canNavigatePrev: () => boolean; // Mantido para compatibilidade, mas não usado
+  canNavigateNext: () => boolean; // Mantido para compatibilidade, mas não usado
+  currentNewsletter: WeeklyNewsletter; // Mantido para compatibilidade, mas não usado
   refreshCategoryStats?: () => void;
   onNewsletterRefresh?: () => void;
 }
