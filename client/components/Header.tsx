@@ -1079,76 +1079,82 @@ export default function Header({ activeSection }: HeaderProps) {
                       )}
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2">
-                      <select
-                        id="birth-day"
-                        value={registerBirthDay}
-                        onChange={(e) => setRegisterBirthDay(e.target.value)}
-                        className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
-                          validationErrors.birthDate
-                            ? "border-red-500 text-red-600"
-                            : "border-gray-300"
-                        }`}
-                        required
-                      >
-                        <option value="">Dia</option>
-                        {Array.from({ length: 31 }, (_, i) => i + 1).map(
-                          (day) => (
-                            <option
-                              key={day}
-                              value={day.toString().padStart(2, "0")}
-                            >
-                              {day}
+                    {/* Data de Nascimento */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-3">
+                        Data de Nascimento
+                      </label>
+                      <div className="grid grid-cols-3 gap-3">
+                        <select
+                          id="birth-day"
+                          value={registerBirthDay}
+                          onChange={(e) => setRegisterBirthDay(e.target.value)}
+                          className={`w-full h-11 px-3 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
+                            validationErrors.birthDate
+                              ? "border-red-500 text-red-600"
+                              : "border-gray-300"
+                          }`}
+                          required
+                        >
+                          <option value="">Dia</option>
+                          {Array.from({ length: 31 }, (_, i) => i + 1).map(
+                            (day) => (
+                              <option
+                                key={day}
+                                value={day.toString().padStart(2, "0")}
+                              >
+                                {day}
+                              </option>
+                            ),
+                          )}
+                        </select>
+                        <select
+                          id="birth-month"
+                          value={registerBirthMonth}
+                          onChange={(e) => setRegisterBirthMonth(e.target.value)}
+                          className={`w-full h-11 px-3 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
+                            validationErrors.birthDate
+                              ? "border-red-500 text-red-600"
+                              : "border-gray-300"
+                          }`}
+                          required
+                        >
+                          <option value="">Mês</option>
+                          <option value="01">Janeiro</option>
+                          <option value="02">Fevereiro</option>
+                          <option value="03">Março</option>
+                          <option value="04">Abril</option>
+                          <option value="05">Maio</option>
+                          <option value="06">Junho</option>
+                          <option value="07">Julho</option>
+                          <option value="08">Agosto</option>
+                          <option value="09">Setembro</option>
+                          <option value="10">Outubro</option>
+                          <option value="11">Novembro</option>
+                          <option value="12">Dezembro</option>
+                        </select>
+                        <select
+                          id="birth-year"
+                          value={registerBirthYear}
+                          onChange={(e) => setRegisterBirthYear(e.target.value)}
+                          className={`w-full h-11 px-3 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
+                            validationErrors.birthDate
+                              ? "border-red-500 text-red-600"
+                              : "border-gray-300"
+                          }`}
+                          required
+                        >
+                          <option value="">Ano</option>
+                          {Array.from(
+                            { length: 100 },
+                            (_, i) => new Date().getFullYear() - i,
+                          ).map((year) => (
+                            <option key={year} value={year.toString()}>
+                              {year}
                             </option>
-                          ),
-                        )}
-                      </select>
-                      <select
-                        id="birth-month"
-                        value={registerBirthMonth}
-                        onChange={(e) => setRegisterBirthMonth(e.target.value)}
-                        className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
-                          validationErrors.birthDate
-                            ? "border-red-500 text-red-600"
-                            : "border-gray-300"
-                        }`}
-                        required
-                      >
-                        <option value="">Mês</option>
-                        <option value="01">Janeiro</option>
-                        <option value="02">Fevereiro</option>
-                        <option value="03">Março</option>
-                        <option value="04">Abril</option>
-                        <option value="05">Maio</option>
-                        <option value="06">Junho</option>
-                        <option value="07">Julho</option>
-                        <option value="08">Agosto</option>
-                        <option value="09">Setembro</option>
-                        <option value="10">Outubro</option>
-                        <option value="11">Novembro</option>
-                        <option value="12">Dezembro</option>
-                      </select>
-                      <select
-                        id="birth-year"
-                        value={registerBirthYear}
-                        onChange={(e) => setRegisterBirthYear(e.target.value)}
-                        className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
-                          validationErrors.birthDate
-                            ? "border-red-500 text-red-600"
-                            : "border-gray-300"
-                        }`}
-                        required
-                      >
-                        <option value="">Ano</option>
-                        {Array.from(
-                          { length: 100 },
-                          (_, i) => new Date().getFullYear() - i,
-                        ).map((year) => (
-                          <option key={year} value={year.toString()}>
-                            {year}
-                          </option>
-                        ))}
-                      </select>
+                          ))}
+                        </select>
+                      </div>
                     </div>
 
                     <div className="space-y-1">
