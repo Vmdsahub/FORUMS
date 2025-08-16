@@ -446,8 +446,8 @@ export default function Index(props: IndexProps) {
             <div
               className={`absolute top-0 bottom-0 rounded-md transition-all duration-500 ease-out shadow-lg z-20 solid-black-bg ${
                 activeSection === "newsletter"
-                  ? "left-0 w-[100px]"
-                  : "left-[100px] w-[90px]"
+                  ? "left-0 w-[120px]"
+                  : "left-[120px] w-[90px]"
               }`}
               style={{
                 transform: "translateZ(0)",
