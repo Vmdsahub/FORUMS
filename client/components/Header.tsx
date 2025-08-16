@@ -962,21 +962,17 @@ export default function Header({ activeSection }: HeaderProps) {
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                           validationErrors.email
                             ? "border-red-500 text-red-600"
-                            : fieldMessages.email &&
-                                registerEmail.trim() &&
-                                !validationErrors.email
+                            : registerEmail.trim() && fieldMessages.email && !validationErrors.email
                               ? "border-green-500"
                               : "border-gray-300"
                         }`}
                         required
                       />
-                      {fieldMessages.email &&
-                        registerEmail.trim() &&
-                        validationErrors.email && (
-                          <p className="text-xs mt-2 text-red-600">
-                            {fieldMessages.email}
-                          </p>
-                        )}
+                      {fieldMessages.email && registerEmail.trim() && (
+                        <p className={`text-xs mt-2 ${validationErrors.email ? 'text-red-600' : 'text-green-600'}`}>
+                          {fieldMessages.email}
+                        </p>
+                      )}
                     </div>
 
                     {/* Senhas */}
@@ -1072,22 +1068,18 @@ export default function Header({ activeSection }: HeaderProps) {
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
                           validationErrors.phone
                             ? "border-red-500 text-red-600"
-                            : fieldMessages.phone &&
-                                registerPhone.trim() &&
-                                !validationErrors.phone
+                            : registerPhone.trim() && fieldMessages.phone && !validationErrors.phone
                               ? "border-green-500"
                               : "border-gray-300"
                         }`}
                         required
                         maxLength={15}
                       />
-                      {fieldMessages.phone &&
-                        registerPhone.trim() &&
-                        validationErrors.phone && (
-                          <p className="text-xs mt-1 text-red-600">
-                            {fieldMessages.phone}
-                          </p>
-                        )}
+                      {fieldMessages.phone && registerPhone.trim() && (
+                        <p className={`text-xs mt-1 ${validationErrors.phone ? 'text-red-600' : 'text-green-600'}`}>
+                          {fieldMessages.phone}
+                        </p>
+                      )}
                     </div>
 
                     {/* Data de Nascimento */}
