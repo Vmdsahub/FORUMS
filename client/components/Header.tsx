@@ -840,6 +840,31 @@ export default function Header({ activeSection }: HeaderProps) {
                         minLength={2}
                       />
                     </div>
+                    <div>
+                      <Input
+                        id="username"
+                        placeholder="Nome de usuário"
+                        value={registerUsername}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setRegisterUsername(value);
+                          if (value.length >= 2) {
+                            const timeoutId = setTimeout(() => checkUsernameAvailable(value), 500);
+                            return () => clearTimeout(timeoutId);
+                          }
+                        }}
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          validationErrors.username ? 'border-red-500 text-red-600' : 'border-gray-300'
+                        }`}
+                        required
+                        minLength={2}
+                      />
+                      {fieldMessages.username && (
+                        <p className={`text-xs mt-1 ${validationErrors.username ? 'text-red-600' : 'text-green-600'}`}>
+                          {fieldMessages.username}
+                        </p>
+                      )}
+                    </div>
                     <Input
                       id="register-email"
                       type="email"
