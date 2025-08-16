@@ -896,6 +896,8 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
     // Lista de todas as categorias
     const allCategoryIds = [
       // Ferramentas
+      "llms",
+      "projetos-comunidade",
       "imagem",
       "video",
       "musica-audio",
@@ -903,6 +905,8 @@ export const handleGetCategoryStats: RequestHandler = (req, res) => {
       "duvidas-erros",
       "outros",
       // Open-Source
+      "opensource-llms",
+      "opensource-projetos-comunidade",
       "opensource-imagem",
       "opensource-video",
       "opensource-musica-audio",
