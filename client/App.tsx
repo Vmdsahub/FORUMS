@@ -201,11 +201,15 @@ function App() {
     articlesData: newsletterData
   });
 
-  // Debug log
-  console.log("App debug:", {
+  // Debug log para o novo sistema
+  console.log("App debug (novo sistema):", {
     isAdmin,
-    newslettersLength: newsletters.length,
-    currentWeek,
+    debugInfo,
+    currentNewsletter: currentNewsletter ? {
+      week: currentNewsletter.week,
+      year: currentNewsletter.year,
+      topicsCount: currentNewsletter.topics?.length || 0
+    } : null,
   });
 
   // Listen for global category stats refresh events
