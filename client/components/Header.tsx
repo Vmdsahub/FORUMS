@@ -891,31 +891,53 @@ export default function Header({ activeSection }: HeaderProps) {
                       )}
                     </div>
                     <div className="grid grid-cols-2 gap-2">
-                      <Input
-                        id="register-password"
-                        type="password"
-                        placeholder="Senha (min. 8 caracteres)"
-                        value={registerPassword}
-                        onChange={(e) => setRegisterPassword(e.target.value)}
-                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                          validationErrors.password ? 'border-red-500 text-red-600' : 'border-gray-300'
-                        }`}
-                        required
-                        minLength={8}
-                        pattern="(?=.*[A-Z]).*"
-                      />
-                      <Input
-                        id="confirm-password"
-                        type="password"
-                        placeholder="Confirmar Senha"
-                        value={registerConfirmPassword}
-                        onChange={(e) => setRegisterConfirmPassword(e.target.value)}
-                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                          validationErrors.confirmPassword ? 'border-red-500 text-red-600' : 'border-gray-300'
-                        }`}
-                        required
-                        minLength={8}
-                      />
+                      <div>
+                        <Input
+                          id="register-password"
+                          type="password"
+                          placeholder="Senha (min. 8 caracteres)"
+                          value={registerPassword}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setRegisterPassword(value);
+                            validatePassword(value, registerConfirmPassword);
+                          }}
+                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                            validationErrors.password ? 'border-red-500 text-red-600' : 'border-gray-300'
+                          }`}
+                          required
+                          minLength={8}
+                          pattern="(?=.*[A-Z]).*"
+                        />
+                        {fieldMessages.password && (
+                          <p className="text-xs mt-1 text-red-600">
+                            {fieldMessages.password}
+                          </p>
+                        )}
+                      </div>
+                      <div>
+                        <Input
+                          id="confirm-password"
+                          type="password"
+                          placeholder="Confirmar Senha"
+                          value={registerConfirmPassword}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            setRegisterConfirmPassword(value);
+                            validatePassword(registerPassword, value);
+                          }}
+                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                            validationErrors.confirmPassword ? 'border-red-500 text-red-600' : 'border-gray-300'
+                          }`}
+                          required
+                          minLength={8}
+                        />
+                        {fieldMessages.confirmPassword && (
+                          <p className="text-xs mt-1 text-red-600">
+                            {fieldMessages.confirmPassword}
+                          </p>
+                        )}
+                      </div>
                     </div>
 
                     <Input
