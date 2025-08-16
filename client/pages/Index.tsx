@@ -446,8 +446,8 @@ export default function Index(props: IndexProps) {
             <div
               className={`absolute top-0 bottom-0 rounded-md transition-all duration-500 ease-out shadow-lg z-20 solid-black-bg ${
                 activeSection === "newsletter"
-                  ? "left-0 w-[100px]"
-                  : "left-[100px] w-[90px]"
+                  ? "left-0 w-[120px]"
+                  : "left-[120px] w-[90px]"
               }`}
               style={{
                 transform: "translateZ(0)",
@@ -459,7 +459,7 @@ export default function Index(props: IndexProps) {
 
             <button
               onClick={() => setActiveSection("newsletter")}
-              className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[100px] text-center ${
+              className={`relative z-30 px-5 py-2 rounded-md transition-all duration-300 ease-out font-medium w-[120px] text-center ${
                 activeSection === "newsletter"
                   ? "text-white transform scale-[1.02]"
                   : "text-gray-600 hover:text-black"
