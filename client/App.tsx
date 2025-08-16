@@ -57,7 +57,8 @@ const toolsCategories: ForumCategory[] = [
   {
     id: "llms",
     name: "LLMs",
-    description: "Large Language Models: ChatGPT, Claude, Gemini e outras IAs conversacionais",
+    description:
+      "Large Language Models: ChatGPT, Claude, Gemini e outras IAs conversacionais",
     totalTopics: 0,
     totalPosts: 0,
     lastPost: undefined,
@@ -133,7 +134,8 @@ const openSourceCategories: ForumCategory[] = [
   {
     id: "opensource-llms",
     name: "LLMs",
-    description: "Llama, Mistral, Code Llama e outros modelos de linguagem open-source",
+    description:
+      "Llama, Mistral, Code Llama e outros modelos de linguagem open-source",
     totalTopics: 0,
     totalPosts: 0,
     lastPost: undefined,
