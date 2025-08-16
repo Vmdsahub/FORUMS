@@ -244,7 +244,11 @@ function App() {
       if (response.ok) {
         const data = await response.json();
         setNewsletterData(data);
-        console.log("Newsletter data loaded:", data);
+        console.log("📰 Newsletter data loaded:", {
+          hasWeeklyNewsletters: !!data.weeklyNewsletters,
+          count: data.weeklyNewsletters?.length || 0,
+          weeks: data.weeklyNewsletters?.map((w: any) => `${w.week}/${w.year || 'sem ano'} (${w.topics?.length || 0} topics)`) || []
+        });
       } else {
         console.warn("Newsletter service unavailable, using empty data");
         setNewsletterData({ weeklyNewsletters: [] });
