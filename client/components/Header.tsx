@@ -609,26 +609,49 @@ export default function Header({ activeSection }: HeaderProps) {
                         }
                         if (!registerAcceptTerms) {
                           toast.error(
-                            "Você deve aceitar os termos de condições",
+                            "Você deve aceitar os termos e condições",
                           );
                           return;
                         }
 
+                        // Validações adicionais
+                        if (registerPassword !== registerConfirmPassword) {
+                          toast.error("As senhas não coincidem");
+                          return;
+                        }
+
+                        if (!registerBirthDay || !registerBirthMonth || !registerBirthYear) {
+                          toast.error("Por favor, preencha sua data de nascimento completa");
+                          return;
+                        }
+
+                        // Verificar se a data é válida
+                        const birthDate = new Date(parseInt(registerBirthYear), parseInt(registerBirthMonth) - 1, parseInt(registerBirthDay));
+                        if (birthDate.getDate() !== parseInt(registerBirthDay) ||
+                            birthDate.getMonth() !== parseInt(registerBirthMonth) - 1 ||
+                            birthDate.getFullYear() !== parseInt(registerBirthYear)) {
+                          toast.error("Data de nascimento inválida");
+                          return;
+                        }
+
+                        const fullName = `${registerFirstName} ${registerLastName}`.trim();
+                        const formattedBirthDate = `${registerBirthYear}-${registerBirthMonth.padStart(2, '0')}-${registerBirthDay.padStart(2, '0')}`;
+
                         console.log("Submitting registration form...", {
-                          registerName,
+                          fullName,
                           registerEmail,
                           registerPhone,
-                          registerBirthDate,
+                          formattedBirthDate,
                         });
 
                         console.log("[FORM] Calling register function");
 
                         const success = await register(
-                          registerName,
+                          fullName,
                           registerEmail,
                           registerPassword,
                           registerPhone,
-                          registerBirthDate,
+                          formattedBirthDate,
                           registerAcceptTerms,
                           registerAcceptNewsletter,
                           registerCaptcha,
@@ -641,11 +664,15 @@ export default function Header({ activeSection }: HeaderProps) {
 
                         if (success) {
                           setIsRegisterOpen(false);
-                          setRegisterName("");
+                          setRegisterFirstName("");
+                          setRegisterLastName("");
                           setRegisterEmail("");
                           setRegisterPassword("");
+                          setRegisterConfirmPassword("");
                           setRegisterPhone("");
-                          setRegisterBirthDate("");
+                          setRegisterBirthDay("");
+                          setRegisterBirthMonth("");
+                          setRegisterBirthYear("");
                           setRegisterAcceptTerms(false);
                           setRegisterAcceptNewsletter(false);
                           setRegisterCaptcha("");
@@ -661,7 +688,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         }, 0);
                       }
                     }}
-                    className="space-y-4 py-4"
+                    className="space-y-3 py-3"
                   >
                     <div className="space-y-2">
                       <Label
