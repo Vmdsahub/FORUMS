@@ -690,22 +690,41 @@ export default function Header({ activeSection }: HeaderProps) {
                     }}
                     className="space-y-3 py-3"
                   >
-                    <div className="space-y-2">
-                      <Label
-                        htmlFor="name"
-                        className="text-gray-900 font-medium"
-                      >
-                        Nome
-                      </Label>
-                      <Input
-                        id="name"
-                        placeholder="Seu nome"
-                        value={registerName}
-                        onChange={(e) => setRegisterName(e.target.value)}
-                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
-                        required
-                        minLength={2}
-                      />
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-1">
+                        <Label
+                          htmlFor="first-name"
+                          className="text-gray-900 font-medium text-sm"
+                        >
+                          Nome *
+                        </Label>
+                        <Input
+                          id="first-name"
+                          placeholder="João"
+                          value={registerFirstName}
+                          onChange={(e) => setRegisterFirstName(e.target.value)}
+                          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white h-9"
+                          required
+                          minLength={2}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label
+                          htmlFor="last-name"
+                          className="text-gray-900 font-medium text-sm"
+                        >
+                          Sobrenome *
+                        </Label>
+                        <Input
+                          id="last-name"
+                          placeholder="Silva"
+                          value={registerLastName}
+                          onChange={(e) => setRegisterLastName(e.target.value)}
+                          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white h-9"
+                          required
+                          minLength={2}
+                        />
+                      </div>
                     </div>
                     <div className="space-y-2">
                       <Label
