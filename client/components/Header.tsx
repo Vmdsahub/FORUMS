@@ -954,6 +954,8 @@ export default function Header({ activeSection }: HeaderProps) {
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
                           validationErrors.email
                             ? "border-red-500 text-red-600"
+                            : fieldMessages.email && registerEmail.trim() && !validationErrors.email
+                            ? "border-green-500"
                             : "border-gray-300"
                         }`}
                         required
