@@ -133,10 +133,24 @@ export function getCurrentWeekIndex(weeks: WeeklyNewsletter[]): number {
   const now = new Date();
   const currentWeekInfo = getISOWeekNumber(now);
 
+  console.log("🗓️ Procurando semana atual:", {
+    today: now.toLocaleDateString("pt-BR"),
+    currentWeekInfo,
+    totalWeeks: weeks.length,
+    firstWeek: weeks[0] ? `${weeks[0].week}/${weeks[0].year}` : 'nenhuma',
+    lastWeek: weeks[weeks.length-1] ? `${weeks[weeks.length-1].week}/${weeks[weeks.length-1].year}` : 'nenhuma'
+  });
+
   // Encontrar a semana correspondente na lista
   const weekIndex = weeks.findIndex(
     (w) => w.week === currentWeekInfo.week && w.year === currentWeekInfo.year
   );
+
+  console.log("📍 Resultado da busca:", {
+    weekIndex,
+    found: weekIndex !== -1,
+    foundWeek: weekIndex !== -1 ? `${weeks[weekIndex].week}/${weeks[weekIndex].year}` : 'não encontrada'
+  });
 
   // Se encontrou a semana atual, retorna o índice
   if (weekIndex !== -1) {
@@ -144,6 +158,7 @@ export function getCurrentWeekIndex(weeks: WeeklyNewsletter[]): number {
   }
 
   // Se não encontrou (caso edge), retorna a primeira semana disponível
+  console.warn("⚠️ Semana atual não encontrada, usando primeira semana disponível");
   return 0;
 }
 
