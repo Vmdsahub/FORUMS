@@ -584,7 +584,7 @@ export default function Header({ activeSection }: HeaderProps) {
                     Cadastrar
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-md max-h-[80vh] overflow-y-auto bg-white border border-gray-200 shadow-lg">
+                <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto bg-white border border-gray-200 shadow-lg">
                   <DialogHeader>
                     <DialogTitle className="text-gray-900 text-xl font-semibold">
                       Criar Conta
