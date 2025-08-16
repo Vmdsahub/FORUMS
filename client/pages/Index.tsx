@@ -531,7 +531,7 @@ export default function Index(props: IndexProps) {
                   </h2>
                   {currentNewsletter && (
                     <p className="text-lg text-gray-600 mt-2">
-                      Semana <span className={isCurrentWeek ? "text-green-600 font-semibold" : "text-yellow-600 font-semibold"}>{currentNewsletter.week}</span> de {currentNewsletter.year} - Atualizações
+                      Semana <span className={isCurrentWeek ? "text-green-600 font-semibold" : "text-yellow-700 font-semibold"}>{currentNewsletter.week}</span> de {currentNewsletter.year} - Atualizações
                       todos os domingos
                     </p>
                   )}
