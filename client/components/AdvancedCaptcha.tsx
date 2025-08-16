@@ -147,8 +147,7 @@ export default function AdvancedCaptcha({
   }, []);
 
   return (
-    <div className="space-y-3">
-      <Label className="text-gray-900 font-medium">Verificação de Segurança</Label>
+    <div className="space-y-2">
       <div className="flex items-center gap-3">
         <div className="flex-1">
           <div className="border-2 border-gray-300 rounded-lg p-4 bg-white shadow-sm">
