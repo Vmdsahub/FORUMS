@@ -960,7 +960,7 @@ export default function Header({ activeSection }: HeaderProps) {
                             return () => clearTimeout(timeoutId);
                           }
                         }}
-                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                           validationErrors.email
                             ? "border-red-500 text-red-600"
                             : fieldMessages.email && registerEmail.trim() && !validationErrors.email
@@ -970,12 +970,14 @@ export default function Header({ activeSection }: HeaderProps) {
                         required
                       />
                       {fieldMessages.email && registerEmail.trim() && validationErrors.email && (
-                        <p className="text-xs mt-1 text-red-600">
+                        <p className="text-xs mt-2 text-red-600">
                           {fieldMessages.email}
                         </p>
                       )}
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+
+                    {/* Senhas */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
                         <Input
                           id="register-password"
@@ -987,7 +989,7 @@ export default function Header({ activeSection }: HeaderProps) {
                             setRegisterPassword(value);
                             validatePassword(value, registerConfirmPassword);
                           }}
-                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                             validationErrors.password
                               ? "border-red-500 text-red-600"
                               : registerPassword.length >= 8 && /[A-Z]/.test(registerPassword)
@@ -999,7 +1001,7 @@ export default function Header({ activeSection }: HeaderProps) {
                           pattern="(?=.*[A-Z]).*"
                         />
                         {registerPassword.trim() && validationErrors.password && (
-                          <p className="text-xs mt-1 text-red-600">
+                          <p className="text-xs mt-2 text-red-600">
                             {fieldMessages.password}
                           </p>
                         )}
@@ -1015,7 +1017,7 @@ export default function Header({ activeSection }: HeaderProps) {
                             setRegisterConfirmPassword(value);
                             validatePassword(registerPassword, value);
                           }}
-                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                             validationErrors.confirmPassword
                               ? "border-red-500 text-red-600"
                               : registerConfirmPassword.length > 0 && registerPassword === registerConfirmPassword
@@ -1026,7 +1028,7 @@ export default function Header({ activeSection }: HeaderProps) {
                           minLength={8}
                         />
                         {registerConfirmPassword.trim() && validationErrors.confirmPassword && (
-                          <p className="text-xs mt-1 text-red-600">
+                          <p className="text-xs mt-2 text-red-600">
                             {fieldMessages.confirmPassword}
                           </p>
                         )}
