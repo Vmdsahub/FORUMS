@@ -916,11 +916,6 @@ export default function Header({ activeSection }: HeaderProps) {
                           minLength={8}
                           pattern="(?=.*[A-Z]).*"
                         />
-                        {fieldMessages.password && (
-                          <p className="text-xs mt-1 text-red-600">
-                            {fieldMessages.password}
-                          </p>
-                        )}
                       </div>
                       <div>
                         <Input
