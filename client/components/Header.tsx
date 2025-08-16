@@ -155,6 +155,8 @@ export default function Header({ activeSection }: HeaderProps) {
       );
       const data = await response.json();
 
+      console.log("[USERNAME CHECK]", { username, available: data.available, message: data.message, willSetError: !data.available });
+
       setValidationErrors((prev) => ({
         ...prev,
         username: !data.available,
