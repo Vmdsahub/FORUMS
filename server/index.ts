@@ -87,6 +87,11 @@ export function createServer() {
   app.get("/api/auth/me", authenticateToken, handleMe);
   app.post("/api/auth/logout", authenticateToken, handleLogout);
 
+  // Validation routes for real-time checking
+  app.get("/api/auth/check-username/:username", checkUsername);
+  app.get("/api/auth/check-email/:email", checkEmail);
+  app.get("/api/auth/check-phone/:phone", checkPhone);
+
   // Forum routes
   app.get("/api/topics", optionalAuthenticateToken, handleGetTopics);
   app.get("/api/topics/user", authenticateToken, handleGetUserTopics);
