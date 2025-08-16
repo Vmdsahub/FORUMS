@@ -182,13 +182,14 @@ export const handleGetArticles: RequestHandler = (req, res) => {
   try {
     const allArticles = Array.from(articles.values());
 
-    // Group articles by week
+    // Group articles by week and year
     const articlesByWeek = allArticles.reduce(
       (acc, article) => {
-        const weekKey = article.week;
+        const weekKey = `${article.year}-${article.week}`;
         if (!acc[weekKey]) {
           acc[weekKey] = {
             week: article.week,
+            year: article.year, // Incluir ano
             startDate: article.startDate,
             endDate: article.endDate,
             topics: [],
@@ -204,12 +205,15 @@ export const handleGetArticles: RequestHandler = (req, res) => {
 
         return acc;
       },
-      {} as Record<number, any>,
+      {} as Record<string, any>,
     );
 
-    // Convert to array and sort by week (newest first)
+    // Convert to array and sort by year and week (newest first)
     const weeklyNewsletters = Object.values(articlesByWeek).sort(
-      (a, b) => b.week - a.week,
+      (a: any, b: any) => {
+        if (a.year !== b.year) return b.year - a.year;
+        return b.week - a.week;
+      },
     );
 
     res.json({ weeklyNewsletters });
