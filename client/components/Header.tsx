@@ -865,17 +865,31 @@ export default function Header({ activeSection }: HeaderProps) {
                         </p>
                       )}
                     </div>
-                    <Input
-                      id="register-email"
-                      type="email"
-                      placeholder="Email"
-                      value={registerEmail}
-                      onChange={(e) => setRegisterEmail(e.target.value)}
-                      className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                        validationErrors.email ? 'border-red-500 text-red-600' : 'border-gray-300'
-                      }`}
-                      required
-                    />
+                    <div>
+                      <Input
+                        id="register-email"
+                        type="email"
+                        placeholder="Email"
+                        value={registerEmail}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setRegisterEmail(value);
+                          if (value.includes('@')) {
+                            const timeoutId = setTimeout(() => checkEmailAvailable(value), 500);
+                            return () => clearTimeout(timeoutId);
+                          }
+                        }}
+                        className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
+                          validationErrors.email ? 'border-red-500 text-red-600' : 'border-gray-300'
+                        }`}
+                        required
+                      />
+                      {fieldMessages.email && (
+                        <p className={`text-xs mt-1 ${validationErrors.email ? 'text-red-600' : 'text-green-600'}`}>
+                          {fieldMessages.email}
+                        </p>
+                      )}
+                    </div>
                     <div className="grid grid-cols-2 gap-2">
                       <Input
                         id="register-password"
