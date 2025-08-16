@@ -179,6 +179,8 @@ export default function Header({ activeSection }: HeaderProps) {
       );
       const data = await response.json();
 
+      console.log("[EMAIL CHECK]", { email, available: data.available, message: data.message, willSetError: !data.available });
+
       setValidationErrors((prev) => ({
         ...prev,
         email: !data.available,
