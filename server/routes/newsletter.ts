@@ -93,26 +93,20 @@ function getISOWeekNumber(date: Date) {
 // Helper function to get current week info using ISO 8601 week standard
 function getCurrentWeekInfo() {
   const now = new Date();
+  const weekInfo = getISOWeekNumber(now);
+  return getWeekInfo(weekInfo.week, weekInfo.year);
+}
 
-  // Calculate ISO week number (more accurate)
-  const weekNumber = getISOWeekNumber(now);
-
-  // Get start of current week (Monday)
-  const startOfWeek = new Date(now);
-  const day = startOfWeek.getDay();
-  const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1);
-  startOfWeek.setDate(diff);
-
-  // Get end of current week (Sunday)
+// Helper function to get week info for a specific week/year
+function getWeekInfo(week: number, year: number) {
+  // Calculate start and end dates for the specific week
+  const startOfWeek = getWeekStartDate(year, week);
   const endOfWeek = new Date(startOfWeek);
   endOfWeek.setDate(startOfWeek.getDate() + 6);
 
-  // Determine the year for the week (important for ISO weeks)
-  const weekYear = now.getFullYear();
-
   return {
-    week: weekNumber,
-    year: weekYear, // Adicionar ano
+    week,
+    year,
     startDate: startOfWeek.toLocaleDateString("pt-BR", {
       day: "2-digit",
       month: "short",
@@ -123,6 +117,19 @@ function getCurrentWeekInfo() {
       year: "numeric",
     }),
   };
+}
+
+// Helper function to get start date of a specific week
+function getWeekStartDate(year: number, week: number): Date {
+  const simple = new Date(year, 0, 1 + (week - 1) * 7);
+  const dow = simple.getDay();
+  const ISOweekStart = simple;
+  if (dow <= 4) {
+    ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+  } else {
+    ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+  }
+  return ISOweekStart;
 }
 
 // Create article
