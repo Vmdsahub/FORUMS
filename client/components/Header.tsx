@@ -76,8 +76,12 @@ export default function Header({ activeSection }: HeaderProps) {
     useState(false);
   const [registerCaptcha, setRegisterCaptcha] = useState("");
   const [registerCaptchaValid, setRegisterCaptchaValid] = useState(false);
-  const [validationErrors, setValidationErrors] = useState<{[key: string]: boolean}>({});
-  const [fieldMessages, setFieldMessages] = useState<{[key: string]: string}>({});
+  const [validationErrors, setValidationErrors] = useState<{
+    [key: string]: boolean;
+  }>({});
+  const [fieldMessages, setFieldMessages] = useState<{ [key: string]: string }>(
+    {},
+  );
 
   // Categories for advanced search
   const categories = [
@@ -146,69 +150,75 @@ export default function Header({ activeSection }: HeaderProps) {
     if (!username || username.length < 2) return;
 
     try {
-      const response = await fetch(`/api/auth/check-username/${encodeURIComponent(username)}`);
+      const response = await fetch(
+        `/api/auth/check-username/${encodeURIComponent(username)}`,
+      );
       const data = await response.json();
 
-      setValidationErrors(prev => ({
+      setValidationErrors((prev) => ({
         ...prev,
-        username: !data.available
+        username: !data.available,
       }));
-      setFieldMessages(prev => ({
+      setFieldMessages((prev) => ({
         ...prev,
-        username: data.message
+        username: data.message,
       }));
     } catch (error) {
-      console.error('Error checking username:', error);
+      console.error("Error checking username:", error);
     }
   };
 
   const checkEmailAvailable = async (email: string) => {
-    if (!email || !email.includes('@')) return;
+    if (!email || !email.includes("@")) return;
 
     try {
-      const response = await fetch(`/api/auth/check-email/${encodeURIComponent(email)}`);
+      const response = await fetch(
+        `/api/auth/check-email/${encodeURIComponent(email)}`,
+      );
       const data = await response.json();
 
-      setValidationErrors(prev => ({
+      setValidationErrors((prev) => ({
         ...prev,
-        email: !data.available
+        email: !data.available,
       }));
-      setFieldMessages(prev => ({
+      setFieldMessages((prev) => ({
         ...prev,
-        email: data.message
+        email: data.message,
       }));
     } catch (error) {
-      console.error('Error checking email:', error);
+      console.error("Error checking email:", error);
     }
   };
 
   const checkPhoneAvailable = async (phone: string) => {
-    const cleanPhone = phone.replace(/\D/g, '');
+    const cleanPhone = phone.replace(/\D/g, "");
     if (!cleanPhone || cleanPhone.length < 10) return;
 
     try {
-      const response = await fetch(`/api/auth/check-phone/${encodeURIComponent(phone)}`);
+      const response = await fetch(
+        `/api/auth/check-phone/${encodeURIComponent(phone)}`,
+      );
       const data = await response.json();
 
-      setValidationErrors(prev => ({
+      setValidationErrors((prev) => ({
         ...prev,
-        phone: !data.available
+        phone: !data.available,
       }));
-      setFieldMessages(prev => ({
+      setFieldMessages((prev) => ({
         ...prev,
-        phone: data.message
+        phone: data.message,
       }));
     } catch (error) {
-      console.error('Error checking phone:', error);
+      console.error("Error checking phone:", error);
     }
   };
 
   const validatePassword = (password: string, confirmPassword: string) => {
     // Apenas limpar erros de validação, sem mostrar mensagens em tempo real
-    setValidationErrors(prev => ({
+    setValidationErrors((prev) => ({
       ...prev,
       password: false,
-      confirmPassword: false
+      confirmPassword: false,
     }));
   };
 
@@ -679,31 +689,57 @@ export default function Header({ activeSection }: HeaderProps) {
 
                         // Reset validation errors
                         setValidationErrors({});
-                        const errors: {[key: string]: boolean} = {};
+                        const errors: { [key: string]: boolean } = {};
 
                         // Validações de campos obrigatórios
-                        if (!registerFirstName.trim() || registerFirstName.length < 2) {
+                        if (
+                          !registerFirstName.trim() ||
+                          registerFirstName.length < 2
+                        ) {
                           errors.firstName = true;
                         }
-                        if (!registerLastName.trim() || registerLastName.length < 2) {
+                        if (
+                          !registerLastName.trim() ||
+                          registerLastName.length < 2
+                        ) {
                           errors.lastName = true;
                         }
-                        if (!registerUsername.trim() || registerUsername.length < 2) {
+                        if (
+                          !registerUsername.trim() ||
+                          registerUsername.length < 2
+                        ) {
                           errors.username = true;
                         }
-                        if (!registerEmail.trim() || !registerEmail.includes('@')) {
+                        if (
+                          !registerEmail.trim() ||
+                          !registerEmail.includes("@")
+                        ) {
                           errors.email = true;
                         }
-                        if (!registerPassword || registerPassword.length < 8 || !/(?=.*[A-Z])/.test(registerPassword)) {
+                        if (
+                          !registerPassword ||
+                          registerPassword.length < 8 ||
+                          !/(?=.*[A-Z])/.test(registerPassword)
+                        ) {
                           errors.password = true;
                         }
-                        if (!registerConfirmPassword || registerPassword !== registerConfirmPassword) {
+                        if (
+                          !registerConfirmPassword ||
+                          registerPassword !== registerConfirmPassword
+                        ) {
                           errors.confirmPassword = true;
                         }
-                        if (!registerPhone.replace(/\D/g, '') || registerPhone.replace(/\D/g, '').length < 10) {
+                        if (
+                          !registerPhone.replace(/\D/g, "") ||
+                          registerPhone.replace(/\D/g, "").length < 10
+                        ) {
                           errors.phone = true;
                         }
-                        if (!registerBirthDay || !registerBirthMonth || !registerBirthYear) {
+                        if (
+                          !registerBirthDay ||
+                          !registerBirthMonth ||
+                          !registerBirthYear
+                        ) {
                           errors.birthDate = true;
                         }
                         if (!registerAcceptTerms) {
@@ -714,32 +750,51 @@ export default function Header({ activeSection }: HeaderProps) {
                         }
 
                         // Verificar se a data é válida
-                        if (registerBirthDay && registerBirthMonth && registerBirthYear) {
-                          const birthDate = new Date(parseInt(registerBirthYear), parseInt(registerBirthMonth) - 1, parseInt(registerBirthDay));
-                          if (birthDate.getDate() !== parseInt(registerBirthDay) ||
-                              birthDate.getMonth() !== parseInt(registerBirthMonth) - 1 ||
-                              birthDate.getFullYear() !== parseInt(registerBirthYear)) {
+                        if (
+                          registerBirthDay &&
+                          registerBirthMonth &&
+                          registerBirthYear
+                        ) {
+                          const birthDate = new Date(
+                            parseInt(registerBirthYear),
+                            parseInt(registerBirthMonth) - 1,
+                            parseInt(registerBirthDay),
+                          );
+                          if (
+                            birthDate.getDate() !==
+                              parseInt(registerBirthDay) ||
+                            birthDate.getMonth() !==
+                              parseInt(registerBirthMonth) - 1 ||
+                            birthDate.getFullYear() !==
+                              parseInt(registerBirthYear)
+                          ) {
                             errors.birthDate = true;
                           }
                         }
 
                         // Se há erros (exceto captcha), mostrar e parar
-                        const nonCaptchaErrors = Object.keys(errors).filter(key => key !== 'captcha');
+                        const nonCaptchaErrors = Object.keys(errors).filter(
+                          (key) => key !== "captcha",
+                        );
                         if (nonCaptchaErrors.length > 0) {
                           setValidationErrors(errors);
-                          toast.error("Por favor, preencha todos os campos corretamente");
+                          toast.error(
+                            "Por favor, preencha todos os campos corretamente",
+                          );
                           return;
                         }
 
                         // Se apenas erro de captcha, permitir prosseguir mas mostrar erro específico
                         if (errors.captcha) {
                           setValidationErrors(errors);
-                          toast.error("Por favor, complete a verificação de segurança");
+                          toast.error(
+                            "Por favor, complete a verificação de segurança",
+                          );
                           return;
                         }
 
                         const fullName = registerUsername.trim();
-                        const formattedBirthDate = `${registerBirthYear}-${registerBirthMonth.padStart(2, '0')}-${registerBirthDay.padStart(2, '0')}`;
+                        const formattedBirthDate = `${registerBirthYear}-${registerBirthMonth.padStart(2, "0")}-${registerBirthDay.padStart(2, "0")}`;
 
                         console.log("Submitting registration form...", {
                           fullName,
@@ -804,7 +859,9 @@ export default function Header({ activeSection }: HeaderProps) {
                         value={registerFirstName}
                         onChange={(e) => setRegisterFirstName(e.target.value)}
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                          validationErrors.firstName ? 'border-red-500 text-red-600' : 'border-gray-300'
+                          validationErrors.firstName
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
                         }`}
                         required
                         minLength={2}
@@ -815,7 +872,9 @@ export default function Header({ activeSection }: HeaderProps) {
                         value={registerLastName}
                         onChange={(e) => setRegisterLastName(e.target.value)}
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                          validationErrors.lastName ? 'border-red-500 text-red-600' : 'border-gray-300'
+                          validationErrors.lastName
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
                         }`}
                         required
                         minLength={2}
@@ -830,18 +889,25 @@ export default function Header({ activeSection }: HeaderProps) {
                           const value = e.target.value;
                           setRegisterUsername(value);
                           if (value.length >= 2) {
-                            const timeoutId = setTimeout(() => checkUsernameAvailable(value), 500);
+                            const timeoutId = setTimeout(
+                              () => checkUsernameAvailable(value),
+                              500,
+                            );
                             return () => clearTimeout(timeoutId);
                           }
                         }}
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                          validationErrors.username ? 'border-red-500 text-red-600' : 'border-gray-300'
+                          validationErrors.username
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
                         }`}
                         required
                         minLength={2}
                       />
                       {fieldMessages.username && registerUsername.trim() && (
-                        <p className={`text-xs mt-1 ${validationErrors.username ? 'text-red-600' : 'text-green-600'}`}>
+                        <p
+                          className={`text-xs mt-1 ${validationErrors.username ? "text-red-600" : "text-green-600"}`}
+                        >
                           {fieldMessages.username}
                         </p>
                       )}
@@ -855,18 +921,25 @@ export default function Header({ activeSection }: HeaderProps) {
                         onChange={(e) => {
                           const value = e.target.value;
                           setRegisterEmail(value);
-                          if (value.includes('@')) {
-                            const timeoutId = setTimeout(() => checkEmailAvailable(value), 500);
+                          if (value.includes("@")) {
+                            const timeoutId = setTimeout(
+                              () => checkEmailAvailable(value),
+                              500,
+                            );
                             return () => clearTimeout(timeoutId);
                           }
                         }}
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                          validationErrors.email ? 'border-red-500 text-red-600' : 'border-gray-300'
+                          validationErrors.email
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
                         }`}
                         required
                       />
                       {fieldMessages.email && registerEmail.trim() && (
-                        <p className={`text-xs mt-1 ${validationErrors.email ? 'text-red-600' : 'text-green-600'}`}>
+                        <p
+                          className={`text-xs mt-1 ${validationErrors.email ? "text-red-600" : "text-green-600"}`}
+                        >
                           {fieldMessages.email}
                         </p>
                       )}
@@ -884,7 +957,9 @@ export default function Header({ activeSection }: HeaderProps) {
                             validatePassword(value, registerConfirmPassword);
                           }}
                           className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                            validationErrors.password ? 'border-red-500 text-red-600' : 'border-gray-300'
+                            validationErrors.password
+                              ? "border-red-500 text-red-600"
+                              : "border-gray-300"
                           }`}
                           required
                           minLength={8}
@@ -903,7 +978,9 @@ export default function Header({ activeSection }: HeaderProps) {
                             validatePassword(registerPassword, value);
                           }}
                           className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                            validationErrors.confirmPassword ? 'border-red-500 text-red-600' : 'border-gray-300'
+                            validationErrors.confirmPassword
+                              ? "border-red-500 text-red-600"
+                              : "border-gray-300"
                           }`}
                           required
                           minLength={8}
@@ -918,7 +995,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         placeholder="Telefone (11) 99999-9999"
                         value={registerPhone}
                         onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, '');
+                          const value = e.target.value.replace(/\D/g, "");
                           if (value.length <= 11) {
                             let formatted = value;
                             if (value.length > 2) {
@@ -930,19 +1007,26 @@ export default function Header({ activeSection }: HeaderProps) {
                             setRegisterPhone(formatted);
 
                             if (value.length >= 10) {
-                              const timeoutId = setTimeout(() => checkPhoneAvailable(formatted), 500);
+                              const timeoutId = setTimeout(
+                                () => checkPhoneAvailable(formatted),
+                                500,
+                              );
                               return () => clearTimeout(timeoutId);
                             }
                           }
                         }}
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
-                          validationErrors.phone ? 'border-red-500 text-red-600' : 'border-gray-300'
+                          validationErrors.phone
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
                         }`}
                         required
                         maxLength={15}
                       />
                       {fieldMessages.phone && registerPhone.trim() && (
-                        <p className={`text-xs mt-1 ${validationErrors.phone ? 'text-red-600' : 'text-green-600'}`}>
+                        <p
+                          className={`text-xs mt-1 ${validationErrors.phone ? "text-red-600" : "text-green-600"}`}
+                        >
                           {fieldMessages.phone}
                         </p>
                       )}
@@ -954,23 +1038,32 @@ export default function Header({ activeSection }: HeaderProps) {
                         value={registerBirthDay}
                         onChange={(e) => setRegisterBirthDay(e.target.value)}
                         className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
-                          validationErrors.birthDate ? 'border-red-500 text-red-600' : 'border-gray-300'
+                          validationErrors.birthDate
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
                         }`}
                         required
                       >
                         <option value="">Dia</option>
-                        {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
-                          <option key={day} value={day.toString().padStart(2, '0')}>
-                            {day}
-                          </option>
-                        ))}
+                        {Array.from({ length: 31 }, (_, i) => i + 1).map(
+                          (day) => (
+                            <option
+                              key={day}
+                              value={day.toString().padStart(2, "0")}
+                            >
+                              {day}
+                            </option>
+                          ),
+                        )}
                       </select>
                       <select
                         id="birth-month"
                         value={registerBirthMonth}
                         onChange={(e) => setRegisterBirthMonth(e.target.value)}
                         className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
-                          validationErrors.birthDate ? 'border-red-500 text-red-600' : 'border-gray-300'
+                          validationErrors.birthDate
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
                         }`}
                         required
                       >
@@ -993,12 +1086,17 @@ export default function Header({ activeSection }: HeaderProps) {
                         value={registerBirthYear}
                         onChange={(e) => setRegisterBirthYear(e.target.value)}
                         className={`w-full h-9 px-2 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
-                          validationErrors.birthDate ? 'border-red-500 text-red-600' : 'border-gray-300'
+                          validationErrors.birthDate
+                            ? "border-red-500 text-red-600"
+                            : "border-gray-300"
                         }`}
                         required
                       >
                         <option value="">Ano</option>
-                        {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                        {Array.from(
+                          { length: 100 },
+                          (_, i) => new Date().getFullYear() - i,
+                        ).map((year) => (
                           <option key={year} value={year.toString()}>
                             {year}
                           </option>
@@ -1018,7 +1116,9 @@ export default function Header({ activeSection }: HeaderProps) {
                         <label
                           htmlFor="register-terms"
                           className={`text-sm ${
-                            validationErrors.terms ? 'text-red-600' : 'text-gray-700'
+                            validationErrors.terms
+                              ? "text-red-600"
+                              : "text-gray-700"
                           }`}
                         >
                           Aceito os{" "}
@@ -1050,7 +1150,13 @@ export default function Header({ activeSection }: HeaderProps) {
                       </div>
                     </div>
 
-                    <div className={validationErrors.captcha ? 'border border-red-500 rounded-md p-2' : ''}>
+                    <div
+                      className={
+                        validationErrors.captcha
+                          ? "border border-red-500 rounded-md p-2"
+                          : ""
+                      }
+                    >
                       <AdvancedCaptcha
                         onCaptchaChange={setRegisterCaptcha}
                         onValidationChange={setRegisterCaptchaValid}
@@ -1059,10 +1165,7 @@ export default function Header({ activeSection }: HeaderProps) {
                     <Button
                       type="submit"
                       className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium"
-                      disabled={
-                        isLoading ||
-                        !registerAcceptTerms
-                      }
+                      disabled={isLoading || !registerAcceptTerms}
                     >
                       {isLoading ? "Criando conta..." : "Criar Conta"}
                     </Button>

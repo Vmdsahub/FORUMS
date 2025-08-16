@@ -42,7 +42,12 @@ export default function AdvancedCaptcha({
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Create gradient background
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+    const gradient = ctx.createLinearGradient(
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+    );
     gradient.addColorStop(0, "#f8fafc");
     gradient.addColorStop(0.5, "#e2e8f0");
     gradient.addColorStop(1, "#cbd5e1");
@@ -52,7 +57,8 @@ export default function AdvancedCaptcha({
     // Add noise lines with different colors
     const lineColors = ["#94a3b8", "#64748b", "#475569"];
     for (let i = 0; i < 8; i++) {
-      ctx.strokeStyle = lineColors[Math.floor(Math.random() * lineColors.length)];
+      ctx.strokeStyle =
+        lineColors[Math.floor(Math.random() * lineColors.length)];
       ctx.lineWidth = Math.random() * 2 + 1;
       ctx.beginPath();
       ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
@@ -68,33 +74,33 @@ export default function AdvancedCaptcha({
       const y = canvas.height / 2;
 
       ctx.save();
-      
+
       // Random font size and style
       const fontSize = 20 + Math.random() * 8;
       const fontFamily = Math.random() > 0.5 ? "Arial" : "Georgia";
       ctx.font = `bold ${fontSize}px ${fontFamily}`;
-      
+
       // Random colors
       const colors = ["#1e293b", "#334155", "#475569", "#0f172a"];
       ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
-      
+
       // Random rotation
       ctx.translate(x, y);
       ctx.rotate((Math.random() - 0.5) * 0.4);
-      
+
       // Random position offset
       const offsetX = (Math.random() - 0.5) * 10;
       const offsetY = (Math.random() - 0.5) * 10;
-      
+
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.fillText(char, offsetX, offsetY);
-      
+
       // Add shadow/outline
       ctx.strokeStyle = "#94a3b8";
       ctx.lineWidth = 0.5;
       ctx.strokeText(char, offsetX, offsetY);
-      
+
       ctx.restore();
     }
 
@@ -106,7 +112,7 @@ export default function AdvancedCaptcha({
         Math.random() * canvas.width,
         Math.random() * canvas.height,
         size,
-        size
+        size,
       );
     }
 
@@ -118,7 +124,8 @@ export default function AdvancedCaptcha({
       const amplitude = 10;
       const frequency = 0.02;
       for (let x = 0; x < canvas.width; x++) {
-        const y = canvas.height / 2 + Math.sin(x * frequency + i * 2) * amplitude;
+        const y =
+          canvas.height / 2 + Math.sin(x * frequency + i * 2) * amplitude;
         if (x === 0) {
           ctx.moveTo(x, y);
         } else {

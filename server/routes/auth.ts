@@ -250,9 +250,9 @@ export const handleRegister: RequestHandler = (req, res) => {
     }
 
     // Check if phone already exists
-    const cleanPhone = phone.replace(/\D/g, '');
+    const cleanPhone = phone.replace(/\D/g, "");
     const existingPhoneUser = Array.from(users.values()).find(
-      (u) => u.phone && u.phone.replace(/\D/g, '') === cleanPhone,
+      (u) => u.phone && u.phone.replace(/\D/g, "") === cleanPhone,
     );
     if (existingPhoneUser) {
       return res.status(409).json({
@@ -329,16 +329,21 @@ export const checkUsername: RequestHandler = (req, res) => {
   const { username } = req.params;
 
   if (!username || username.length < 2) {
-    return res.json({ available: false, message: "Nome de usuário deve ter pelo menos 2 caracteres" });
+    return res.json({
+      available: false,
+      message: "Nome de usuário deve ter pelo menos 2 caracteres",
+    });
   }
 
   const existingUser = Array.from(users.values()).find(
-    (u) => u.name.toLowerCase() === username.toLowerCase()
+    (u) => u.name.toLowerCase() === username.toLowerCase(),
   );
 
   res.json({
     available: !existingUser,
-    message: existingUser ? "Nome de usuário já está em uso" : "Nome de usuário disponível"
+    message: existingUser
+      ? "Nome de usuário já está em uso"
+      : "Nome de usuário disponível",
   });
 };
 
@@ -346,17 +351,17 @@ export const checkUsername: RequestHandler = (req, res) => {
 export const checkEmail: RequestHandler = (req, res) => {
   const { email } = req.params;
 
-  if (!email || !email.includes('@')) {
+  if (!email || !email.includes("@")) {
     return res.json({ available: false, message: "Email inválido" });
   }
 
   const existingUser = Array.from(users.values()).find(
-    (u) => u.email.toLowerCase() === email.toLowerCase()
+    (u) => u.email.toLowerCase() === email.toLowerCase(),
   );
 
   res.json({
     available: !existingUser,
-    message: existingUser ? "Email já está em uso" : "Email disponível"
+    message: existingUser ? "Email já está em uso" : "Email disponível",
   });
 };
 
@@ -365,19 +370,22 @@ export const checkPhone: RequestHandler = (req, res) => {
   const { phone } = req.params;
 
   // Remove formatting to check just numbers
-  const cleanPhone = phone.replace(/\D/g, '');
+  const cleanPhone = phone.replace(/\D/g, "");
 
   if (!cleanPhone || cleanPhone.length < 10) {
-    return res.json({ available: false, message: "Telefone deve ter pelo menos 10 dígitos" });
+    return res.json({
+      available: false,
+      message: "Telefone deve ter pelo menos 10 dígitos",
+    });
   }
 
   const existingUser = Array.from(users.values()).find(
-    (u) => u.phone && u.phone.replace(/\D/g, '') === cleanPhone
+    (u) => u.phone && u.phone.replace(/\D/g, "") === cleanPhone,
   );
 
   res.json({
     available: !existingUser,
-    message: existingUser ? "Telefone já está em uso" : "Telefone disponível"
+    message: existingUser ? "Telefone já está em uso" : "Telefone disponível",
   });
 };
 
