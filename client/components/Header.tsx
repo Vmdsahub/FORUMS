@@ -934,11 +934,6 @@ export default function Header({ activeSection }: HeaderProps) {
                           required
                           minLength={8}
                         />
-                        {fieldMessages.confirmPassword && (
-                          <p className="text-xs mt-1 text-red-600">
-                            {fieldMessages.confirmPassword}
-                          </p>
-                        )}
                       </div>
                     </div>
 
