@@ -582,9 +582,6 @@ export default function Index(props: IndexProps) {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <div className="text-sm text-gray-500 mb-2">
-                          #{topic.id.toString().padStart(2, "0")}
-                        </div>
                         <h3 className="text-xl font-semibold text-black mb-3">
                           {topic.title}
                         </h3>
