@@ -949,7 +949,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         <Input
                           id="register-password"
                           type="password"
-                          placeholder="Senha (min. 8 caracteres)"
+                          placeholder="Senha"
                           value={registerPassword}
                           onChange={(e) => {
                             const value = e.target.value;
@@ -965,6 +965,13 @@ export default function Header({ activeSection }: HeaderProps) {
                           minLength={8}
                           pattern="(?=.*[A-Z]).*"
                         />
+                        {registerPassword.trim() && (
+                          <p
+                            className={`text-xs mt-1 ${validationErrors.password ? "text-red-600" : "text-green-600"}`}
+                          >
+                            {fieldMessages.password}
+                          </p>
+                        )}
                       </div>
                       <div>
                         <Input
