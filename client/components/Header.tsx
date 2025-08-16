@@ -63,6 +63,7 @@ export default function Header({ activeSection }: HeaderProps) {
   // Register form state
   const [registerFirstName, setRegisterFirstName] = useState("");
   const [registerLastName, setRegisterLastName] = useState("");
+  const [registerUsername, setRegisterUsername] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState("");
@@ -76,6 +77,7 @@ export default function Header({ activeSection }: HeaderProps) {
   const [registerCaptcha, setRegisterCaptcha] = useState("");
   const [registerCaptchaValid, setRegisterCaptchaValid] = useState(false);
   const [validationErrors, setValidationErrors] = useState<{[key: string]: boolean}>({});
+  const [fieldMessages, setFieldMessages] = useState<{[key: string]: string}>({});
 
   // Categories for advanced search
   const categories = [
@@ -614,6 +616,9 @@ export default function Header({ activeSection }: HeaderProps) {
                         if (!registerLastName.trim() || registerLastName.length < 2) {
                           errors.lastName = true;
                         }
+                        if (!registerUsername.trim() || registerUsername.length < 2) {
+                          errors.username = true;
+                        }
                         if (!registerEmail.trim() || !registerEmail.includes('@')) {
                           errors.email = true;
                         }
@@ -654,7 +659,7 @@ export default function Header({ activeSection }: HeaderProps) {
                           return;
                         }
 
-                        const fullName = `${registerFirstName} ${registerLastName}`.trim();
+                        const fullName = registerUsername.trim();
                         const formattedBirthDate = `${registerBirthYear}-${registerBirthMonth.padStart(2, '0')}-${registerBirthDay.padStart(2, '0')}`;
 
                         console.log("Submitting registration form...", {
@@ -686,6 +691,7 @@ export default function Header({ activeSection }: HeaderProps) {
                           setIsRegisterOpen(false);
                           setRegisterFirstName("");
                           setRegisterLastName("");
+                          setRegisterUsername("");
                           setRegisterEmail("");
                           setRegisterPassword("");
                           setRegisterConfirmPassword("");
@@ -698,6 +704,7 @@ export default function Header({ activeSection }: HeaderProps) {
                           setRegisterCaptcha("");
                           setRegisterCaptchaValid(false);
                           setValidationErrors({});
+                          setFieldMessages({});
                         }
                       } catch (formError) {
                         console.error(
