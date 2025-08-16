@@ -737,7 +737,6 @@ export default function Header({ activeSection }: HeaderProps) {
                         }
                         if (!registerCaptchaValid) {
                           errors.captcha = true;
-                          toast.error("Por favor, complete a verificação de segurança");
                         }
 
                         // Verificar se a data é válida
@@ -750,10 +749,18 @@ export default function Header({ activeSection }: HeaderProps) {
                           }
                         }
 
-                        // Se há erros, mostrar e parar
-                        if (Object.keys(errors).length > 0) {
+                        // Se há erros (exceto captcha), mostrar e parar
+                        const nonCaptchaErrors = Object.keys(errors).filter(key => key !== 'captcha');
+                        if (nonCaptchaErrors.length > 0) {
                           setValidationErrors(errors);
                           toast.error("Por favor, preencha todos os campos corretamente");
+                          return;
+                        }
+
+                        // Se apenas erro de captcha, permitir prosseguir mas mostrar erro específico
+                        if (errors.captcha) {
+                          setValidationErrors(errors);
+                          toast.error("Por favor, complete a verificação de segurança");
                           return;
                         }
 
@@ -859,7 +866,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         required
                         minLength={2}
                       />
-                      {fieldMessages.username && (
+                      {fieldMessages.username && registerUsername.trim() && (
                         <p className={`text-xs mt-1 ${validationErrors.username ? 'text-red-600' : 'text-green-600'}`}>
                           {fieldMessages.username}
                         </p>
@@ -884,7 +891,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         }`}
                         required
                       />
-                      {fieldMessages.email && (
+                      {fieldMessages.email && registerEmail.trim() && (
                         <p className={`text-xs mt-1 ${validationErrors.email ? 'text-red-600' : 'text-green-600'}`}>
                           {fieldMessages.email}
                         </p>
@@ -970,7 +977,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         required
                         maxLength={15}
                       />
-                      {fieldMessages.phone && (
+                      {fieldMessages.phone && registerPhone.trim() && (
                         <p className={`text-xs mt-1 ${validationErrors.phone ? 'text-red-600' : 'text-green-600'}`}>
                           {fieldMessages.phone}
                         </p>
@@ -1090,7 +1097,6 @@ export default function Header({ activeSection }: HeaderProps) {
                       className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium"
                       disabled={
                         isLoading ||
-                        !registerCaptchaValid ||
                         !registerAcceptTerms
                       }
                     >
