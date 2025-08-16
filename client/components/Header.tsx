@@ -1218,7 +1218,7 @@ export default function Header({ activeSection }: HeaderProps) {
                     </div>
                     <Button
                       type="submit"
-                      className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium"
+                      className="w-full bg-gray-900 text-white hover:bg-gray-800 font-medium h-12 text-base mt-6 transition-colors duration-200"
                       disabled={isLoading || !registerAcceptTerms}
                     >
                       {isLoading ? "Criando conta..." : "Criar Conta"}
