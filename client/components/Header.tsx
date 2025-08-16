@@ -1061,10 +1061,8 @@ export default function Header({ activeSection }: HeaderProps) {
                         required
                         maxLength={15}
                       />
-                      {fieldMessages.phone && registerPhone.trim() && (
-                        <p
-                          className={`text-xs mt-1 ${validationErrors.phone ? "text-red-600" : "text-green-600"}`}
-                        >
+                      {fieldMessages.phone && registerPhone.trim() && validationErrors.phone && (
+                        <p className="text-xs mt-1 text-red-600">
                           {fieldMessages.phone}
                         </p>
                       )}
