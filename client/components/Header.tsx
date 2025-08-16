@@ -665,6 +665,7 @@ export default function Header({ activeSection }: HeaderProps) {
                     </DialogTitle>
                   </DialogHeader>
                   <form
+                    noValidate
                     onSubmit={async (e) => {
                       e.preventDefault();
 
