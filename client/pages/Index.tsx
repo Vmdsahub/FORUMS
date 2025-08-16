@@ -611,30 +611,6 @@ export default function Index(props: IndexProps) {
                         <div className="prose max-w-none text-gray-700 leading-relaxed whitespace-pre-line mb-4">
                           {topic.content}
                         </div>
-                        {user && (
-                          <div className="flex items-center gap-4 pt-4 border-t border-gray-200">
-                            <button
-                              onClick={() => {
-                                // Handle newsletter like - you can implement this later
-                                console.log(
-                                  "Newsletter like clicked for topic",
-                                  topic.id,
-                                );
-                              }}
-                              className="flex items-center gap-2 px-3 py-2 rounded-md bg-gray-100 text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors"
-                            >
-                              <svg
-                                width="16"
-                                height="16"
-                                viewBox="0 0 16 16"
-                                fill="currentColor"
-                              >
-                                <path d="M8 14s-5-4-5-8c0-2.5 2-4.5 4.5-4.5C9 1.5 8 3 8 3s-1-1.5 2.5-1.5C13 1.5 15 3.5 15 6c0 4-5 8-5 8z" />
-                              </svg>
-                              0
-                            </button>
-                          </div>
-                        )}
                         {isAdmin && (
                           <div className="px-6 py-3 border-t border-gray-200 bg-gray-50">
                             <div className="flex gap-2">
