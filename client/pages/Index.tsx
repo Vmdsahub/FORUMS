@@ -83,20 +83,27 @@ export default function Index(props: IndexProps) {
     setActiveSection,
     expandedNewsletter,
     selectedCategory,
-    currentWeek,
-    weeklyNewsletters,
     toolsCategories,
     openSourceCategories,
     toggleNewsletterTopic,
     handleCategoryClick,
     getSelectedCategoryData,
-    navigateWeek,
-    canNavigatePrev,
-    canNavigateNext,
-    currentNewsletter,
     refreshCategoryStats,
     onNewsletterRefresh,
   } = props;
+
+  // Use o novo sistema de semanas simplificado
+  const {
+    currentNewsletter,
+    navigateWeek,
+    canNavigatePrev,
+    canNavigateNext,
+    isCurrentWeek,
+    debugInfo,
+  } = useSimpleWeekNavigation({
+    isAdmin,
+    // A API data será carregada automaticamente via App.tsx
+  });
 
   const [realTopics, setRealTopics] = useState<Topic[]>([]);
   const [isLoadingTopics, setIsLoadingTopics] = useState(false);
