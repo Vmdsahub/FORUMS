@@ -243,13 +243,11 @@ function App() {
 
       if (response.ok) {
         const data = await response.json();
-        const newsletters = data.weeklyNewsletters || [];
-        setNewsletters(newsletters);
-
-        // Week navigation is now handled by useWeekNavigation hook
+        setNewsletterData(data);
+        console.log("Newsletter data loaded:", data);
       } else {
-        console.warn("Newsletter service unavailable, using fallback data");
-        setNewsletters(fallbackNewsletters); // Use local fallback data
+        console.warn("Newsletter service unavailable, using empty data");
+        setNewsletterData({ weeklyNewsletters: [] });
       }
     } catch (error: any) {
       if (error.name === "AbortError" || error.name === "TimeoutError") {
