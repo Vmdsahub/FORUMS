@@ -212,6 +212,17 @@ export function getAllWeeks(): WeeklyNewsletter[] {
     _cachedWeeks = generateAllWeeks();
     console.log(`Sistema de semanas inicializado: ${_cachedWeeks.length} semanas geradas (2025-2030)`);
 
+    // Debug específico para as semanas problemáticas
+    const weeks32to34 = _cachedWeeks.filter(w =>
+      w.year === 2025 && w.week >= 32 && w.week <= 34
+    );
+    console.log("🔍 Debug semanas 32-34 de 2025:", weeks32to34.map(w => ({
+      week: w.week,
+      year: w.year,
+      period: `${w.startDate} - ${w.endDate}`,
+      topics: w.topics?.length || 0
+    })));
+
     // Executar testes em desenvolvimento
     if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
       // Importar e executar testes após inicialização
