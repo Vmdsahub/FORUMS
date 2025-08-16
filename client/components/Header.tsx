@@ -61,11 +61,15 @@ export default function Header({ activeSection }: HeaderProps) {
   const [loginCaptchaValid, setLoginCaptchaValid] = useState(false);
 
   // Register form state
-  const [registerName, setRegisterName] = useState("");
+  const [registerFirstName, setRegisterFirstName] = useState("");
+  const [registerLastName, setRegisterLastName] = useState("");
   const [registerEmail, setRegisterEmail] = useState("");
   const [registerPassword, setRegisterPassword] = useState("");
+  const [registerConfirmPassword, setRegisterConfirmPassword] = useState("");
   const [registerPhone, setRegisterPhone] = useState("");
-  const [registerBirthDate, setRegisterBirthDate] = useState("");
+  const [registerBirthDay, setRegisterBirthDay] = useState("");
+  const [registerBirthMonth, setRegisterBirthMonth] = useState("");
+  const [registerBirthYear, setRegisterBirthYear] = useState("");
   const [registerAcceptTerms, setRegisterAcceptTerms] = useState(false);
   const [registerAcceptNewsletter, setRegisterAcceptNewsletter] =
     useState(false);
