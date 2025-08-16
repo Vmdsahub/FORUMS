@@ -1,6 +1,6 @@
 /**
  * Sistema de Semanas 2025-2030 - IA HUB Newsletter
- * 
+ *
  * Este sistema gera automaticamente todas as semanas dos anos 2025-2030
  * e determina qual semana deve ser exibida baseada na data atual.
  */
@@ -34,7 +34,8 @@ export function getISOWeekNumber(date: Date): { week: number; year: number } {
   if (target.getDay() !== 4) {
     target.setMonth(0, 1 + ((4 - target.getDay() + 7) % 7));
   }
-  const weekNumber = 1 + Math.ceil((firstThursday - target.valueOf()) / 604800000);
+  const weekNumber =
+    1 + Math.ceil((firstThursday - target.valueOf()) / 604800000);
   return { week: weekNumber, year: target.getFullYear() };
 }
 
@@ -95,7 +96,7 @@ export function generateAllWeeks(): WeeklyNewsletter[] {
     // Determinar quantas semanas tem o ano
     const lastDayOfYear = new Date(year, 11, 31);
     const lastWeekInfo = getISOWeekNumber(lastDayOfYear);
-    
+
     // Se a última semana pertence ao próximo ano, usar 52 semanas
     const totalWeeks = lastWeekInfo.year === year ? lastWeekInfo.week : 52;
 
@@ -137,19 +138,24 @@ export function getCurrentWeekIndex(weeks: WeeklyNewsletter[]): number {
     today: now.toLocaleDateString("pt-BR"),
     currentWeekInfo,
     totalWeeks: weeks.length,
-    firstWeek: weeks[0] ? `${weeks[0].week}/${weeks[0].year}` : 'nenhuma',
-    lastWeek: weeks[weeks.length-1] ? `${weeks[weeks.length-1].week}/${weeks[weeks.length-1].year}` : 'nenhuma'
+    firstWeek: weeks[0] ? `${weeks[0].week}/${weeks[0].year}` : "nenhuma",
+    lastWeek: weeks[weeks.length - 1]
+      ? `${weeks[weeks.length - 1].week}/${weeks[weeks.length - 1].year}`
+      : "nenhuma",
   });
 
   // Encontrar a semana correspondente na lista
   const weekIndex = weeks.findIndex(
-    (w) => w.week === currentWeekInfo.week && w.year === currentWeekInfo.year
+    (w) => w.week === currentWeekInfo.week && w.year === currentWeekInfo.year,
   );
 
   console.log("📍 Resultado da busca:", {
     weekIndex,
     found: weekIndex !== -1,
-    foundWeek: weekIndex !== -1 ? `${weeks[weekIndex].week}/${weeks[weekIndex].year}` : 'não encontrada'
+    foundWeek:
+      weekIndex !== -1
+        ? `${weeks[weekIndex].week}/${weeks[weekIndex].year}`
+        : "não encontrada",
   });
 
   // Se encontrou a semana atual, retorna o índice
@@ -158,7 +164,9 @@ export function getCurrentWeekIndex(weeks: WeeklyNewsletter[]): number {
   }
 
   // Se não encontrou (caso edge), retorna a primeira semana disponível
-  console.warn("⚠️ Semana atual não encontrada, usando primeira semana disponível");
+  console.warn(
+    "⚠️ Semana atual não encontrada, usando primeira semana disponível",
+  );
   return 0;
 }
 
@@ -187,17 +195,23 @@ export function testScenarios() {
   ];
 
   console.log("=== TESTE DE CENÁRIOS ===");
-  
+
   for (const scenario of scenarios) {
     const weekInfo = getWeekForDate(scenario.date);
     const startDate = getWeekStartDate(weekInfo.year, weekInfo.week);
     const endDate = getWeekEndDate(weekInfo.year, weekInfo.week);
-    
+
     console.log(`${scenario.description}:`);
     console.log(`  Semana: ${weekInfo.week} de ${weekInfo.year}`);
-    console.log(`  Período: ${formatDateBR(startDate)} - ${formatDateFullBR(endDate)}`);
-    console.log(`  Data de teste: ${scenario.date.toLocaleDateString("pt-BR")}`);
-    console.log(`  Data está no período? ${scenario.date >= startDate && scenario.date <= endDate ? 'SIM' : 'NÃO'}`);
+    console.log(
+      `  Período: ${formatDateBR(startDate)} - ${formatDateFullBR(endDate)}`,
+    );
+    console.log(
+      `  Data de teste: ${scenario.date.toLocaleDateString("pt-BR")}`,
+    );
+    console.log(
+      `  Data está no período? ${scenario.date >= startDate && scenario.date <= endDate ? "SIM" : "NÃO"}`,
+    );
     console.log("");
   }
 }
@@ -210,23 +224,31 @@ let _cachedWeeks: WeeklyNewsletter[] | null = null;
 export function getAllWeeks(): WeeklyNewsletter[] {
   if (!_cachedWeeks) {
     _cachedWeeks = generateAllWeeks();
-    console.log(`Sistema de semanas inicializado: ${_cachedWeeks.length} semanas geradas (2025-2030)`);
+    console.log(
+      `Sistema de semanas inicializado: ${_cachedWeeks.length} semanas geradas (2025-2030)`,
+    );
 
     // Debug específico para as semanas problemáticas
-    const weeks32to34 = _cachedWeeks.filter(w =>
-      w.year === 2025 && w.week >= 32 && w.week <= 34
+    const weeks32to34 = _cachedWeeks.filter(
+      (w) => w.year === 2025 && w.week >= 32 && w.week <= 34,
     );
-    console.log("🔍 Debug semanas 32-34 de 2025:", weeks32to34.map(w => ({
-      week: w.week,
-      year: w.year,
-      period: `${w.startDate} - ${w.endDate}`,
-      topics: w.topics?.length || 0
-    })));
+    console.log(
+      "🔍 Debug semanas 32-34 de 2025:",
+      weeks32to34.map((w) => ({
+        week: w.week,
+        year: w.year,
+        period: `${w.startDate} - ${w.endDate}`,
+        topics: w.topics?.length || 0,
+      })),
+    );
 
     // Executar testes em desenvolvimento
-    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    if (
+      typeof window !== "undefined" &&
+      process.env.NODE_ENV === "development"
+    ) {
       // Importar e executar testes após inicialização
-      import('./testWeekScenarios').then(({ runTestsIfDevelopment }) => {
+      import("./testWeekScenarios").then(({ runTestsIfDevelopment }) => {
         runTestsIfDevelopment();
       });
     }

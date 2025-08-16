@@ -17,18 +17,20 @@ export function useSimpleWeekNavigation({
 }: UseSimpleWeekNavigationProps) {
   // Obter todas as semanas disponíveis (2025-2030)
   const allWeeks = getAllWeeks();
-  
+
   // Estado para a semana atual sendo exibida
   const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
-  
+
   // Estado para semanas com conteúdo (merge com dados da API)
-  const [weeksWithContent, setWeeksWithContent] = useState<WeeklyNewsletter[]>([]);
+  const [weeksWithContent, setWeeksWithContent] = useState<WeeklyNewsletter[]>(
+    [],
+  );
 
   // Inicialização: determinar semana atual baseada na data real
   useEffect(() => {
     const realCurrentWeekIndex = getCurrentWeekIndex(allWeeks);
     setCurrentWeekIndex(realCurrentWeekIndex);
-    
+
     console.log("Sistema de semanas inicializado:", {
       totalWeeks: allWeeks.length,
       currentWeekIndex: realCurrentWeekIndex,
@@ -43,29 +45,28 @@ export function useSimpleWeekNavigation({
       articlesData,
       hasWeeklyNewsletters: !!articlesData?.weeklyNewsletters,
       weeklyNewslettersCount: articlesData?.weeklyNewsletters?.length || 0,
-      allWeeksCount: allWeeks.length
+      allWeeksCount: allWeeks.length,
     });
 
     const mergedWeeks = allWeeks.map((week) => {
       // Procurar se existe conteúdo para esta semana nos dados da API
       if (articlesData?.weeklyNewsletters) {
-        const apiWeek = articlesData.weeklyNewsletters.find(
-          (apiWeek: any) => {
-            const matches = apiWeek.week === week.week &&
-              // Para compatibilidade, assumir que API retorna dados do ano atual
-              (apiWeek.year === week.year || !apiWeek.year);
+        const apiWeek = articlesData.weeklyNewsletters.find((apiWeek: any) => {
+          const matches =
+            apiWeek.week === week.week &&
+            // Para compatibilidade, assumir que API retorna dados do ano atual
+            (apiWeek.year === week.year || !apiWeek.year);
 
-            if (matches) {
-              console.log("📅 Match encontrado:", {
-                systemWeek: `${week.week}/${week.year}`,
-                apiWeek: `${apiWeek.week}/${apiWeek.year || 'sem ano'}`,
-                topicsCount: apiWeek.topics?.length || 0
-              });
-            }
-
-            return matches;
+          if (matches) {
+            console.log("📅 Match encontrado:", {
+              systemWeek: `${week.week}/${week.year}`,
+              apiWeek: `${apiWeek.week}/${apiWeek.year || "sem ano"}`,
+              topicsCount: apiWeek.topics?.length || 0,
+            });
           }
-        );
+
+          return matches;
+        });
 
         if (apiWeek) {
           return {
@@ -79,8 +80,8 @@ export function useSimpleWeekNavigation({
     });
 
     console.log("✅ Merge concluído:", {
-      weeksWithContent: mergedWeeks.filter(w => w.topics?.length > 0).length,
-      totalWeeks: mergedWeeks.length
+      weeksWithContent: mergedWeeks.filter((w) => w.topics?.length > 0).length,
+      totalWeeks: mergedWeeks.length,
     });
 
     setWeeksWithContent(mergedWeeks);
@@ -90,7 +91,7 @@ export function useSimpleWeekNavigation({
   useEffect(() => {
     const checkWeekChange = () => {
       const realCurrentWeekIndex = getCurrentWeekIndex(allWeeks);
-      
+
       // Se mudou de semana e é domingo, atualizar automaticamente
       if (realCurrentWeekIndex !== currentWeekIndex && isSunday()) {
         console.log("Semana avançou automaticamente:", {
@@ -147,7 +148,7 @@ export function useSimpleWeekNavigation({
         }
       }
     },
-    [currentWeekIndex, weeksWithContent, isAdmin, allWeeks]
+    [currentWeekIndex, weeksWithContent, isAdmin, allWeeks],
   );
 
   // Verificar se pode navegar para trás
@@ -171,7 +172,7 @@ export function useSimpleWeekNavigation({
   // Verificar se pode navegar para frente
   const canNavigateNext = useCallback(() => {
     if (currentWeekIndex <= 0) return false;
-    
+
     if (isAdmin) {
       // Admin pode navegar livremente
       return true;
@@ -196,17 +197,17 @@ export function useSimpleWeekNavigation({
     currentNewsletter,
     currentWeekIndex,
     allWeeks: weeksWithContent,
-    
+
     // Funções de navegação
     navigateWeek,
     canNavigatePrev,
     canNavigateNext,
     goToCurrentWeek,
-    
+
     // Utilitários
     isCurrentWeek: currentWeekIndex === getCurrentWeekIndex(allWeeks),
     totalWeeks: weeksWithContent.length,
-    
+
     // Para debug
     debugInfo: {
       currentWeekIndex,

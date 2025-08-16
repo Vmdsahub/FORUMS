@@ -285,7 +285,7 @@ export default function Index(props: IndexProps) {
         console.log("🎯 Admin criando artigo na semana:", {
           week: currentNewsletter.week,
           year: currentNewsletter.year,
-          title: newNewsletter.title
+          title: newNewsletter.title,
         });
       }
 
@@ -531,8 +531,18 @@ export default function Index(props: IndexProps) {
                   </h2>
                   {currentNewsletter && (
                     <p className="text-lg text-gray-600 mt-2">
-                      Semana <span className={isCurrentWeek ? "text-green-600 font-semibold" : "text-yellow-700 font-semibold"}>{currentNewsletter.week}</span> de {currentNewsletter.year} - Atualizações
-                      todos os domingos
+                      Semana{" "}
+                      <span
+                        className={
+                          isCurrentWeek
+                            ? "text-green-600 font-semibold"
+                            : "text-yellow-700 font-semibold"
+                        }
+                      >
+                        {currentNewsletter.week}
+                      </span>{" "}
+                      de {currentNewsletter.year} - Atualizações todos os
+                      domingos
                     </p>
                   )}
                 </div>
@@ -697,7 +707,11 @@ export default function Index(props: IndexProps) {
                       </DialogTitle>
                       {isAdmin && currentNewsletter && (
                         <p className="text-sm text-blue-600 mt-2">
-                          📅 Será criado na <strong>Semana {currentNewsletter.week} de {currentNewsletter.year}</strong>
+                          📅 Será criado na{" "}
+                          <strong>
+                            Semana {currentNewsletter.week} de{" "}
+                            {currentNewsletter.year}
+                          </strong>
                         </p>
                       )}
                     </DialogHeader>

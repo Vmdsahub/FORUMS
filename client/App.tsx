@@ -198,18 +198,20 @@ function App() {
     debugInfo,
   } = useSimpleWeekNavigation({
     isAdmin,
-    articlesData: newsletterData
+    articlesData: newsletterData,
   });
 
   // Debug log para o novo sistema
   console.log("App debug (novo sistema):", {
     isAdmin,
     debugInfo,
-    currentNewsletter: currentNewsletter ? {
-      week: currentNewsletter.week,
-      year: currentNewsletter.year,
-      topicsCount: currentNewsletter.topics?.length || 0
-    } : null,
+    currentNewsletter: currentNewsletter
+      ? {
+          week: currentNewsletter.week,
+          year: currentNewsletter.year,
+          topicsCount: currentNewsletter.topics?.length || 0,
+        }
+      : null,
   });
 
   // Listen for global category stats refresh events
@@ -247,7 +249,11 @@ function App() {
         console.log("📰 Newsletter data loaded:", {
           hasWeeklyNewsletters: !!data.weeklyNewsletters,
           count: data.weeklyNewsletters?.length || 0,
-          weeks: data.weeklyNewsletters?.map((w: any) => `${w.week}/${w.year || 'sem ano'} (${w.topics?.length || 0} topics)`) || []
+          weeks:
+            data.weeklyNewsletters?.map(
+              (w: any) =>
+                `${w.week}/${w.year || "sem ano"} (${w.topics?.length || 0} topics)`,
+            ) || [],
         });
       } else {
         console.warn("Newsletter service unavailable, using empty data");

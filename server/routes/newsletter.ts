@@ -85,7 +85,7 @@ function getISOWeekNumber(date: Date) {
   const firstThursday = target.valueOf();
   target.setMonth(0, 1);
   if (target.getDay() !== 4) {
-    target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+    target.setMonth(0, 1 + ((4 - target.getDay() + 7) % 7));
   }
   return 1 + Math.ceil((firstThursday - target.valueOf()) / 604800000);
 }
@@ -145,7 +145,8 @@ export const handleCreateArticle: RequestHandler = (req, res) => {
         .json({ message: "Apenas administradores podem criar artigos" });
     }
 
-    const { title, content, readTime, targetWeek, targetYear } = createArticleSchema.parse(req.body);
+    const { title, content, readTime, targetWeek, targetYear } =
+      createArticleSchema.parse(req.body);
 
     // Se admin especificou semana/ano, usar esses. Senão, usar semana atual
     let weekInfo;
@@ -156,14 +157,14 @@ export const handleCreateArticle: RequestHandler = (req, res) => {
         targetWeek,
         targetYear,
         weekInfo,
-        today: new Date().toLocaleDateString("pt-BR")
+        today: new Date().toLocaleDateString("pt-BR"),
       });
     } else {
       weekInfo = getCurrentWeekInfo();
       console.log("📝 Criando artigo na semana atual:", {
         title,
         weekInfo,
-        today: new Date().toLocaleDateString("pt-BR")
+        today: new Date().toLocaleDateString("pt-BR"),
       });
     }
 
@@ -190,7 +191,7 @@ export const handleCreateArticle: RequestHandler = (req, res) => {
       id: articleId,
       week: article.week,
       year: article.year,
-      totalArticles: articles.size
+      totalArticles: articles.size,
     });
 
     res.status(201).json({
@@ -218,11 +219,14 @@ export const handleGetArticles: RequestHandler = (req, res) => {
     const allArticles = Array.from(articles.values());
     console.log("📰 Buscando artigos:", {
       totalArticles: allArticles.length,
-      articlesByWeek: allArticles.reduce((acc, art) => {
-        const key = `${art.year}-${art.week}`;
-        acc[key] = (acc[key] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>)
+      articlesByWeek: allArticles.reduce(
+        (acc, art) => {
+          const key = `${art.year}-${art.week}`;
+          acc[key] = (acc[key] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
     });
 
     // Group articles by week and year
