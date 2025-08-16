@@ -726,12 +726,12 @@ export default function Header({ activeSection }: HeaderProps) {
                         />
                       </div>
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label
                         htmlFor="register-email"
-                        className="text-gray-900 font-medium"
+                        className="text-gray-900 font-medium text-sm"
                       >
-                        Email
+                        Email *
                       </Label>
                       <Input
                         id="register-email"
@@ -739,7 +739,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         placeholder="seu@email.com"
                         value={registerEmail}
                         onChange={(e) => setRegisterEmail(e.target.value)}
-                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
+                        className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white h-9"
                         required
                       />
                     </div>
