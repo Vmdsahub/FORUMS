@@ -1016,10 +1016,8 @@ export default function Header({ activeSection }: HeaderProps) {
                           required
                           minLength={8}
                         />
-                        {registerConfirmPassword.trim() && (
-                          <p
-                            className={`text-xs mt-1 ${validationErrors.confirmPassword ? "text-red-600" : "text-green-600"}`}
-                          >
+                        {registerConfirmPassword.trim() && validationErrors.confirmPassword && (
+                          <p className="text-xs mt-1 text-red-600">
                             {fieldMessages.confirmPassword}
                           </p>
                         )}
