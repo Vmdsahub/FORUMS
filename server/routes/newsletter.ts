@@ -151,6 +151,7 @@ export const handleCreateArticle: RequestHandler = (req, res) => {
       authorName: req.user.name,
       createdAt: new Date().toISOString(),
       week: currentWeekInfo.week,
+      year: currentWeekInfo.year, // Adicionar ano
       startDate: currentWeekInfo.startDate,
       endDate: currentWeekInfo.endDate,
     };
