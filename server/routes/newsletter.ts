@@ -145,14 +145,27 @@ export const handleCreateArticle: RequestHandler = (req, res) => {
         .json({ message: "Apenas administradores podem criar artigos" });
     }
 
-    const { title, content, readTime } = createArticleSchema.parse(req.body);
+    const { title, content, readTime, targetWeek, targetYear } = createArticleSchema.parse(req.body);
 
-    const currentWeekInfo = getCurrentWeekInfo();
-    console.log("📝 Criando artigo:", {
-      title,
-      currentWeekInfo,
-      today: new Date().toLocaleDateString("pt-BR")
-    });
+    // Se admin especificou semana/ano, usar esses. Senão, usar semana atual
+    let weekInfo;
+    if (targetWeek && targetYear) {
+      weekInfo = getWeekInfo(targetWeek, targetYear);
+      console.log("📝 Criando artigo em semana específica:", {
+        title,
+        targetWeek,
+        targetYear,
+        weekInfo,
+        today: new Date().toLocaleDateString("pt-BR")
+      });
+    } else {
+      weekInfo = getCurrentWeekInfo();
+      console.log("📝 Criando artigo na semana atual:", {
+        title,
+        weekInfo,
+        today: new Date().toLocaleDateString("pt-BR")
+      });
+    }
 
     const articleId =
       Date.now().toString() + "_" + Math.random().toString(36).substring(2);
