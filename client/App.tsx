@@ -254,11 +254,11 @@ function App() {
         console.warn("Newsletter request timed out");
       } else {
         console.warn(
-          "Newsletter service unavailable, using fallback data:",
+          "Newsletter service unavailable, using empty data:",
           error.message,
         );
       }
-      setNewsletters(fallbackNewsletters); // Use local fallback data
+      setNewsletterData({ weeklyNewsletters: [] });
     } finally {
       setIsLoadingNewsletters(false);
     }
