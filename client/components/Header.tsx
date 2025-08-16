@@ -1159,7 +1159,7 @@ export default function Header({ activeSection }: HeaderProps) {
 
                     {/* Termos e Newsletter */}
                     <div className="space-y-3 pt-2">
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-3">
                         <Checkbox
                           id="register-terms"
                           checked={registerAcceptTerms}
@@ -1187,7 +1187,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         </label>
                       </div>
 
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-3">
                         <Checkbox
                           id="register-newsletter"
                           checked={registerAcceptNewsletter}
