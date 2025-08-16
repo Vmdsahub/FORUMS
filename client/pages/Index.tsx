@@ -91,6 +91,7 @@ export default function Index(props: IndexProps) {
     getSelectedCategoryData,
     refreshCategoryStats,
     onNewsletterRefresh,
+    newsletterData,
   } = props;
 
   // Use o novo sistema de semanas simplificado
@@ -103,7 +104,7 @@ export default function Index(props: IndexProps) {
     debugInfo,
   } = useSimpleWeekNavigation({
     isAdmin,
-    // A API data será carregada automaticamente via App.tsx
+    articlesData: newsletterData, // Usar os dados da API
   });
 
   const [realTopics, setRealTopics] = useState<Topic[]>([]);
