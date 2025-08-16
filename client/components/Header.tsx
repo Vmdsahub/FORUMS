@@ -697,6 +697,7 @@ export default function Header({ activeSection }: HeaderProps) {
                           setRegisterAcceptNewsletter(false);
                           setRegisterCaptcha("");
                           setRegisterCaptchaValid(false);
+                          setValidationErrors({});
                         }
                       } catch (formError) {
                         console.error(
