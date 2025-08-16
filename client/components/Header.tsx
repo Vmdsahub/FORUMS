@@ -220,7 +220,8 @@ export default function Header({ activeSection }: HeaderProps) {
     const isPasswordValid = hasMinLength && hasUppercase;
     const isPasswordInvalid = password.length > 0 && !isPasswordValid;
 
-    const doPasswordsMatch = confirmPassword.length > 0 && password !== confirmPassword;
+    const doPasswordsMatch =
+      confirmPassword.length > 0 && password !== confirmPassword;
 
     setValidationErrors((prev) => ({
       ...prev,
@@ -238,9 +239,7 @@ export default function Header({ activeSection }: HeaderProps) {
     setFieldMessages((prev) => ({
       ...prev,
       password: passwordMessage,
-      confirmPassword: doPasswordsMatch
-        ? "As senhas não coincidem"
-        : "",
+      confirmPassword: doPasswordsMatch ? "As senhas não coincidem" : "",
     }));
   };
 
@@ -928,18 +927,22 @@ export default function Header({ activeSection }: HeaderProps) {
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                           validationErrors.username
                             ? "border-red-500 text-red-600"
-                            : fieldMessages.username && registerUsername.trim() && !validationErrors.username
-                            ? "border-green-500"
-                            : "border-gray-300"
+                            : fieldMessages.username &&
+                                registerUsername.trim() &&
+                                !validationErrors.username
+                              ? "border-green-500"
+                              : "border-gray-300"
                         }`}
                         required
                         minLength={2}
                       />
-                      {fieldMessages.username && registerUsername.trim() && validationErrors.username && (
-                        <p className="text-xs mt-2 text-red-600">
-                          {fieldMessages.username}
-                        </p>
-                      )}
+                      {fieldMessages.username &&
+                        registerUsername.trim() &&
+                        validationErrors.username && (
+                          <p className="text-xs mt-2 text-red-600">
+                            {fieldMessages.username}
+                          </p>
+                        )}
                     </div>
 
                     {/* Email */}
@@ -963,17 +966,21 @@ export default function Header({ activeSection }: HeaderProps) {
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                           validationErrors.email
                             ? "border-red-500 text-red-600"
-                            : fieldMessages.email && registerEmail.trim() && !validationErrors.email
-                            ? "border-green-500"
-                            : "border-gray-300"
+                            : fieldMessages.email &&
+                                registerEmail.trim() &&
+                                !validationErrors.email
+                              ? "border-green-500"
+                              : "border-gray-300"
                         }`}
                         required
                       />
-                      {fieldMessages.email && registerEmail.trim() && validationErrors.email && (
-                        <p className="text-xs mt-2 text-red-600">
-                          {fieldMessages.email}
-                        </p>
-                      )}
+                      {fieldMessages.email &&
+                        registerEmail.trim() &&
+                        validationErrors.email && (
+                          <p className="text-xs mt-2 text-red-600">
+                            {fieldMessages.email}
+                          </p>
+                        )}
                     </div>
 
                     {/* Senhas */}
@@ -992,19 +999,21 @@ export default function Header({ activeSection }: HeaderProps) {
                           className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                             validationErrors.password
                               ? "border-red-500 text-red-600"
-                              : registerPassword.length >= 8 && /[A-Z]/.test(registerPassword)
-                              ? "border-green-500"
-                              : "border-gray-300"
+                              : registerPassword.length >= 8 &&
+                                  /[A-Z]/.test(registerPassword)
+                                ? "border-green-500"
+                                : "border-gray-300"
                           }`}
                           required
                           minLength={8}
                           pattern="(?=.*[A-Z]).*"
                         />
-                        {registerPassword.trim() && validationErrors.password && (
-                          <p className="text-xs mt-2 text-red-600">
-                            {fieldMessages.password}
-                          </p>
-                        )}
+                        {registerPassword.trim() &&
+                          validationErrors.password && (
+                            <p className="text-xs mt-2 text-red-600">
+                              {fieldMessages.password}
+                            </p>
+                          )}
                       </div>
                       <div>
                         <Input
@@ -1020,18 +1029,20 @@ export default function Header({ activeSection }: HeaderProps) {
                           className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                             validationErrors.confirmPassword
                               ? "border-red-500 text-red-600"
-                              : registerConfirmPassword.length > 0 && registerPassword === registerConfirmPassword
-                              ? "border-green-500"
-                              : "border-gray-300"
+                              : registerConfirmPassword.length > 0 &&
+                                  registerPassword === registerConfirmPassword
+                                ? "border-green-500"
+                                : "border-gray-300"
                           }`}
                           required
                           minLength={8}
                         />
-                        {registerConfirmPassword.trim() && validationErrors.confirmPassword && (
-                          <p className="text-xs mt-2 text-red-600">
-                            {fieldMessages.confirmPassword}
-                          </p>
-                        )}
+                        {registerConfirmPassword.trim() &&
+                          validationErrors.confirmPassword && (
+                            <p className="text-xs mt-2 text-red-600">
+                              {fieldMessages.confirmPassword}
+                            </p>
+                          )}
                       </div>
                     </div>
 
@@ -1065,18 +1076,22 @@ export default function Header({ activeSection }: HeaderProps) {
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
                           validationErrors.phone
                             ? "border-red-500 text-red-600"
-                            : fieldMessages.phone && registerPhone.trim() && !validationErrors.phone
-                            ? "border-green-500"
-                            : "border-gray-300"
+                            : fieldMessages.phone &&
+                                registerPhone.trim() &&
+                                !validationErrors.phone
+                              ? "border-green-500"
+                              : "border-gray-300"
                         }`}
                         required
                         maxLength={15}
                       />
-                      {fieldMessages.phone && registerPhone.trim() && validationErrors.phone && (
-                        <p className="text-xs mt-1 text-red-600">
-                          {fieldMessages.phone}
-                        </p>
-                      )}
+                      {fieldMessages.phone &&
+                        registerPhone.trim() &&
+                        validationErrors.phone && (
+                          <p className="text-xs mt-1 text-red-600">
+                            {fieldMessages.phone}
+                          </p>
+                        )}
                     </div>
 
                     {/* Data de Nascimento */}
@@ -1111,7 +1126,9 @@ export default function Header({ activeSection }: HeaderProps) {
                         <select
                           id="birth-month"
                           value={registerBirthMonth}
-                          onChange={(e) => setRegisterBirthMonth(e.target.value)}
+                          onChange={(e) =>
+                            setRegisterBirthMonth(e.target.value)
+                          }
                           className={`w-full h-11 px-3 border rounded-md bg-white text-sm focus:border-gray-500 focus:ring-gray-500 ${
                             validationErrors.birthDate
                               ? "border-red-500 text-red-600"
