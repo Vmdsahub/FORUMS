@@ -24,36 +24,39 @@ function initializeDemo() {
     const currentWeekInfo = getCurrentWeekInfo();
     const exampleArticle: NewsletterArticle = {
       id: "demo_" + Date.now(),
-      title: "Newsletter Semanal - Sistema Real Implementado",
-      content: `Este é o primeiro artigo criado no sistema real de newsletter semanal do IA HUB!
+      title: "Newsletter Semanal - Sistema Renovado (2025-2030)",
+      content: `🎉 Sistema de Newsletter Completamente Renovado!
 
-O sistema agora suporta:
+O IA HUB agora possui um sistema de newsletter totalmente reformulado:
 
-• Criação de artigos por administradores
-• Agrupamento automático por semana
-• Persistência real (enquanto o servidor estiver rodando)
-• Exclusão de artigos
-• Interface responsiva e intuitiva
+🗓️ **Sistema de Semanas Inteligente:**
+• Todas as semanas de 2025 a 2030 já estão pré-cadastradas
+• Navegação automática baseada na data real
+• Avanço automático toda semana (aos domingos)
 
-Funcionalidades técnicas:
-• API REST completa para gerenciamento de artigos
-• Autenticação baseada em tokens
-• Validação de dados com Zod
-• Agrupamento inteligente por semanas
-• Interface moderna com React e TypeScript
+👨‍💼 **Controles de Acesso:**
+• Usuários: navegam apenas para semanas com conteúdo
+• Admins: navegação livre para planejamento futuro
+• Semana atual sempre identificada automaticamente
 
-Como usar:
-1. Faça login como administrador
-2. Clique em "Adicionar Novo Artigo da Newsletter"
-3. Preencha o título, conteúdo e tempo de leitura
-4. O artigo será automaticamente agrupado na semana atual
+🔧 **Funcionalidades Técnicas:**
+• Cálculo ISO 8601 para semanas internacionais
+• Cache inteligente para performance
+• Interface responsiva e moderna
+• Persistência real de dados
 
-Este sistema substitui completamente os dados demo anteriores e agora funciona com dados reais persistidos no servidor.`,
-      readTime: "3 min",
+📅 **Testes Validados:**
+• 17 de março de 2028 → Semana 11 de 2028
+• 17 de junho de 2026 → Semana 25 de 2026
+• Sistema funciona corretamente para qualquer data
+
+Este é um sistema muito mais robusto e simples de usar!`,
+      readTime: "2 min",
       authorId: "system",
       authorName: "Sistema IA HUB",
       createdAt: new Date().toISOString(),
       week: currentWeekInfo.week,
+      year: currentWeekInfo.year, // Adicionar ano
       startDate: currentWeekInfo.startDate,
       endDate: currentWeekInfo.endDate,
     };
