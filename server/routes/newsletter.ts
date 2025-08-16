@@ -194,6 +194,14 @@ export const handleCreateArticle: RequestHandler = (req, res) => {
 export const handleGetArticles: RequestHandler = (req, res) => {
   try {
     const allArticles = Array.from(articles.values());
+    console.log("📰 Buscando artigos:", {
+      totalArticles: allArticles.length,
+      articlesByWeek: allArticles.reduce((acc, art) => {
+        const key = `${art.year}-${art.week}`;
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>)
+    });
 
     // Group articles by week and year
     const articlesByWeek = allArticles.reduce(
