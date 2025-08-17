@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import React, { useState, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -9,8 +9,8 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogCancel,
-  AlertDialogAction
-} from '@/components/ui/alert-dialog';
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog";
 
 interface SecureUploadWidgetProps {
   onSuccess: (fileInfo: UploadedFileInfo) => void;
@@ -42,18 +42,18 @@ interface SecurityWarning {
 export default function SecureUploadWidget({
   onSuccess,
   onError,
-  accept = '.jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.zip,.rar,.mp4,.mp3,.txt,.csv',
+  accept = ".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.zip,.rar,.mp4,.mp3,.txt,.csv",
   maxSize = 100 * 1024 * 1024, // 100MB
-  className = '',
-  buttonText = 'Upload Seguro',
-  icon
+  className = "",
+  buttonText = "Upload Seguro",
+  icon,
 }: SecureUploadWidgetProps) {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [securityWarning, setSecurityWarning] = useState<SecurityWarning>({
     show: false,
     reasons: [],
-    quarantined: false
+    quarantined: false,
   });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -61,12 +61,14 @@ export default function SecureUploadWidget({
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     // Reset file input
-    event.target.value = '';
+    event.target.value = "";
 
     // Basic client-side validation
     if (file.size > maxSize) {
@@ -81,7 +83,7 @@ export default function SecureUploadWidget({
 
     try {
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append("file", file);
 
       // Create XMLHttpRequest for progress tracking
       const xhr = new XMLHttpRequest();
@@ -103,25 +105,30 @@ export default function SecureUploadWidget({
               if (response.success) {
                 resolve(response.file);
               } else {
-                reject(new Error(response.error || 'Upload failed'));
+                reject(new Error(response.error || "Upload failed"));
               }
             } catch (error) {
-              reject(new Error('Invalid response format'));
+              reject(new Error("Invalid response format"));
             }
           } else {
             try {
               const errorResponse = JSON.parse(xhr.responseText);
-              
+
               // Handle security validation failures
               if (errorResponse.reasons && errorResponse.reasons.length > 0) {
                 setSecurityWarning({
                   show: true,
                   reasons: errorResponse.reasons,
-                  quarantined: errorResponse.quarantined || false
+                  quarantined: errorResponse.quarantined || false,
                 });
-                reject(new Error('Security validation failed'));
+                reject(new Error("Security validation failed"));
               } else {
-                reject(new Error(errorResponse.error || `Upload failed with status ${xhr.status}`));
+                reject(
+                  new Error(
+                    errorResponse.error ||
+                      `Upload failed with status ${xhr.status}`,
+                  ),
+                );
               }
             } catch {
               reject(new Error(`Upload failed with status ${xhr.status}`));
@@ -130,44 +137,45 @@ export default function SecureUploadWidget({
         };
 
         xhr.onerror = () => {
-          reject(new Error('Network error during upload'));
+          reject(new Error("Network error during upload"));
         };
 
         xhr.ontimeout = () => {
-          reject(new Error('Upload timeout'));
+          reject(new Error("Upload timeout"));
         };
       });
 
       // Configure request
-      xhr.open('POST', '/api/secure-upload');
+      xhr.open("POST", "/api/secure-upload");
       xhr.timeout = 5 * 60 * 1000; // 5 minutes timeout
-      
+
       // Add auth header if available
-      const authToken = localStorage.getItem('auth_token');
+      const authToken = localStorage.getItem("auth_token");
       if (authToken) {
-        xhr.setRequestHeader('Authorization', `Bearer ${authToken}`);
+        xhr.setRequestHeader("Authorization", `Bearer ${authToken}`);
       }
 
       // Start upload
       xhr.send(formData);
-      
+
       // Wait for completion
       const fileInfo = await uploadPromise;
-      
-      // Success
-      toast.success(`✅ Arquivo carregado com segurança: ${fileInfo.originalName}`);
-      onSuccess(fileInfo);
 
+      // Success
+      toast.success(
+        `✅ Arquivo carregado com segurança: ${fileInfo.originalName}`,
+      );
+      onSuccess(fileInfo);
     } catch (error) {
-      console.error('Secure upload error:', error);
-      
-      const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido no upload';
-      
+      console.error("Secure upload error:", error);
+
+      const errorMessage =
+        error instanceof Error ? error.message : "Erro desconhecido no upload";
+
       if (!securityWarning.show) {
         toast.error(`❌ Erro no upload: ${errorMessage}`);
         onError?.(errorMessage);
       }
-      
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
@@ -179,11 +187,11 @@ export default function SecureUploadWidget({
   };
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   return (
@@ -205,7 +213,12 @@ export default function SecureUploadWidget({
         ) : (
           <div className="flex items-center gap-1">
             {icon || (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
                 <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z" />
                 <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z" />
               </svg>
@@ -227,38 +240,52 @@ export default function SecureUploadWidget({
       {/* Upload progress indicator */}
       {isUploading && uploadProgress > 0 && (
         <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
-          <div 
-            className="bg-blue-600 h-1.5 rounded-full transition-all duration-300" 
+          <div
+            className="bg-blue-600 h-1.5 rounded-full transition-all duration-300"
             style={{ width: `${uploadProgress}%` }}
           ></div>
         </div>
       )}
 
       {/* Security Warning Dialog */}
-      <AlertDialog open={securityWarning.show} onOpenChange={closeSecurityWarning}>
+      <AlertDialog
+        open={securityWarning.show}
+        onOpenChange={closeSecurityWarning}
+      >
         <AlertDialogContent className="max-w-2xl">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-red-600">
               {securityWarning.quarantined ? (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                 </svg>
               ) : (
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" />
                 </svg>
               )}
-              {securityWarning.quarantined ? 'Arquivo em Quarentena' : 'Aviso de Segurança'}
+              {securityWarning.quarantined
+                ? "Arquivo em Quarentena"
+                : "Aviso de Segurança"}
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="space-y-3">
                 <p className="text-gray-700">
-                  {securityWarning.quarantined 
-                    ? 'O arquivo foi colocado em quarentena devido a problemas de segurança detectados:'
-                    : 'Foram detectados os seguintes problemas de segurança no arquivo:'
-                  }
+                  {securityWarning.quarantined
+                    ? "O arquivo foi colocado em quarentena devido a problemas de segurança detectados:"
+                    : "Foram detectados os seguintes problemas de segurança no arquivo:"}
                 </p>
-                
+
                 <div className="bg-red-50 border border-red-200 rounded-lg p-3">
                   <ul className="list-disc list-inside space-y-1 text-sm text-red-800">
                     {securityWarning.reasons.map((reason, index) => (
@@ -270,16 +297,18 @@ export default function SecureUploadWidget({
                 {securityWarning.quarantined && (
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
                     <p className="text-sm text-yellow-800">
-                      <strong>🔒 Ação de Segurança:</strong> O arquivo foi isolado automaticamente 
-                      e não será disponibilizado para download. Os administradores foram notificados.
+                      <strong>🔒 Ação de Segurança:</strong> O arquivo foi
+                      isolado automaticamente e não será disponibilizado para
+                      download. Os administradores foram notificados.
                     </p>
                   </div>
                 )}
 
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <p className="text-sm text-blue-800">
-                    <strong>💡 Dica:</strong> Certifique-se de que o arquivo é de uma fonte confiável 
-                    e não contém conteúdo malicioso antes de fazer upload.
+                    <strong>💡 Dica:</strong> Certifique-se de que o arquivo é
+                    de uma fonte confiável e não contém conteúdo malicioso antes
+                    de fazer upload.
                   </p>
                 </div>
               </div>
@@ -298,16 +327,16 @@ export default function SecureUploadWidget({
 
 // Export helper functions
 export const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return "0 Bytes";
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const sizes = ["Bytes", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 };
 
 export const isImageFile = (filename: string): boolean => {
-  const ext = filename.toLowerCase().split('.').pop();
-  return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].includes(ext || '');
+  const ext = filename.toLowerCase().split(".").pop();
+  return ["jpg", "jpeg", "png", "gif", "webp", "bmp"].includes(ext || "");
 };
 
 export type { UploadedFileInfo };

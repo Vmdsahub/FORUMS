@@ -9,6 +9,7 @@ Substituímos completamente o Uploadcare por um **sistema próprio ultra-seguro*
 ## 🛡️ **FUNCIONALIDADES DE SEGURANÇA IMPLEMENTADAS**
 
 ### 1. **Validação Avançada de Arquivos**
+
 - ✅ **Detecção de MIME type real** vs extensão declarada
 - ✅ **Escaneamento de padrões maliciosos** (scripts, executáveis, macros)
 - ✅ **Verificação de assinaturas** (magic bytes)
@@ -18,6 +19,7 @@ Substituímos completamente o Uploadcare por um **sistema próprio ultra-seguro*
 - ✅ **Verificação de tamanho** e limites
 
 ### 2. **Sistema de Quarentena Automática**
+
 - ✅ **Isolamento instantâneo** de arquivos suspeitos
 - ✅ **Metadados detalhados** de cada arquivo quarentenado
 - ✅ **Hash SHA-256** para identificação única
@@ -25,6 +27,7 @@ Substituímos completamente o Uploadcare por um **sistema próprio ultra-seguro*
 - ✅ **Interface administrativa** para gerenciar quarentena
 
 ### 3. **Monitoramento e Logs de Segurança**
+
 - ✅ **Sistema de logs estruturados** em JSON
 - ✅ **Classificação por severidade** (1-10)
 - ✅ **Alertas automáticos** por frequência de eventos
@@ -33,6 +36,7 @@ Substituímos completamente o Uploadcare por um **sistema próprio ultra-seguro*
 - ✅ **Exportação de relatórios** (JSON/CSV)
 
 ### 4. **APIs de Segurança Completas**
+
 - ✅ **Upload seguro** com validação multi-camada
 - ✅ **Servir arquivos** com headers de segurança
 - ✅ **Verificação de hash** para integridade
@@ -45,6 +49,7 @@ Substituímos completamente o Uploadcare por um **sistema próprio ultra-seguro*
 ## 🔧 **COMPONENTES IMPLEMENTADOS**
 
 ### **Backend (Server)**
+
 ```
 server/
 ├── security/
@@ -56,6 +61,7 @@ server/
 ```
 
 ### **Frontend (Client)**
+
 ```
 client/components/
 ├── SecureUploadWidget.tsx      # Widget de upload seguro
@@ -69,6 +75,7 @@ client/components/
 ## 🎯 **RECURSOS DE SEGURANÇA AVANÇADOS**
 
 ### **1. Detecção de Malware**
+
 ```typescript
 // Padrões detectados automaticamente:
 - Scripts embedded (JavaScript, VBScript)
@@ -81,6 +88,7 @@ client/components/
 ```
 
 ### **2. Validação Multi-Camada**
+
 ```typescript
 // Processo de validação:
 1. Verificação de extensão permitida
@@ -93,6 +101,7 @@ client/components/
 ```
 
 ### **3. Sistema de Alertas**
+
 ```typescript
 // Alertas automáticos quando:
 - Malware detectado (qualquer quantidade)
@@ -106,12 +115,14 @@ client/components/
 ## 📊 **MONITORAMENTO EM TEMPO REAL**
 
 ### **Dashboard de Segurança**
+
 - 📈 **Estatísticas visuais** de uploads e quarentena
 - 🔍 **Lista detalhada** de arquivos quarentenados
 - ⚙️ **Configurações** do sistema de validação
 - 📋 **Recomendações** de segurança
 
 ### **Monitor de Segurança**
+
 - 🔴 **Status de saúde** do sistema (Saudável/Atenção/Crítico)
 - 📊 **Métricas em tempo real** (últimas 24h)
 - 🚨 **Alertas recentes** com severidade
@@ -123,6 +134,7 @@ client/components/
 ## 🚀 **COMO USAR**
 
 ### **1. Upload Seguro no Editor**
+
 ```tsx
 // O editor agora usa nosso sistema próprio:
 <EnhancedRichTextEditor
@@ -133,14 +145,16 @@ client/components/
 ```
 
 ### **2. Upload Direto via Widget**
+
 ```tsx
 <SecureUploadWidget
-  onSuccess={(file) => console.log('Arquivo seguro:', file)}
-  onError={(error) => console.log('Bloqueado:', error)}
+  onSuccess={(file) => console.log("Arquivo seguro:", file)}
+  onError={(error) => console.log("Bloqueado:", error)}
 />
 ```
 
 ### **3. Monitoramento Administrativo**
+
 ```tsx
 // Para admins:
 <SecurityDashboard />  // Painel completo
@@ -152,6 +166,7 @@ client/components/
 ## 🔍 **LOGS DE SEGURANÇA**
 
 ### **Tipos de Eventos Monitorados**
+
 - `FILE_UPLOAD` - Tentativas de upload
 - `FILE_VALIDATION` - Resultados de validação
 - `FILE_QUARANTINE` - Arquivos isolados
@@ -160,6 +175,7 @@ client/components/
 - `ACCESS_ATTEMPT` - Tentativas de acesso a arquivos
 
 ### **Níveis de Severidade**
+
 - `1-3: INFO` - Operações normais
 - `4-6: WARNING` - Atenção necessária
 - `7-8: ERROR` - Problemas identificados
@@ -170,12 +186,14 @@ client/components/
 ## 📋 **APIs DISPONÍVEIS**
 
 ### **Upload e Arquivo**
+
 - `POST /api/secure-upload` - Upload com validação
 - `GET /api/secure-files/:filename` - Servir arquivo seguro
 - `GET /api/upload-stats` - Estatísticas de upload
 - `GET /api/verify-file/:hash` - Verificar integridade
 
 ### **Segurança e Monitoramento**
+
 - `GET /api/security/health` - Status de saúde
 - `GET /api/security/stats` - Estatísticas de segurança
 - `GET /api/security/logs` - Logs de segurança
@@ -183,6 +201,7 @@ client/components/
 - `GET /api/security/report` - Relatório completo
 
 ### **Administração**
+
 - `POST /api/quarantine-management` - Gerenciar quarentena
 
 ---
@@ -190,12 +209,14 @@ client/components/
 ## 🎨 **INTERFACE VISUAL**
 
 ### **Indicadores de Segurança**
+
 - 🔒 **Badge verde** em arquivos verificados
 - ⚠️ **Alertas visuais** para problemas de segurança
 - 📊 **Estatísticas em tempo real** no editor
 - 🚨 **Modais informativos** para arquivos bloqueados
 
 ### **Feedback ao Usuário**
+
 - ✅ **Toast de sucesso** para uploads seguros
 - ❌ **Avisos detalhados** para arquivos rejeitados
 - 📋 **Lista de problemas** encontrados
@@ -206,6 +227,7 @@ client/components/
 ## 🔐 **CONFIGURAÇÕES DE SEGURANÇA**
 
 ### **Tipos de Arquivo Permitidos**
+
 ```typescript
 Imagens: .jpg, .jpeg, .png, .gif, .webp
 Vídeos: .mp4, .webm, .mov
@@ -215,6 +237,7 @@ Arquivos: .zip, .rar
 ```
 
 ### **Limites de Segurança**
+
 ```typescript
 Tamanho máximo: 100MB por arquivo
 Verificação: MIME type + extensão + conteúdo
@@ -226,17 +249,17 @@ Logs: Retenção de 30 dias
 
 ## 🎯 **VANTAGENS vs UPLOADCARE**
 
-| Recurso | Uploadcare | Sistema Próprio ✅ |
-|---------|------------|-------------------|
-| **Controle Total** | ❌ Limitado | ✅ Completo |
-| **Validação Avançada** | ❌ Básica | ✅ Multi-camada |
-| **Detecção de Malware** | ❌ Não | ✅ Automática |
-| **Quarentena** | ❌ Não | ✅ Automática |
-| **Logs Detalhados** | ❌ Limitado | ✅ Completos |
-| **Monitoramento** | ❌ Externo | ✅ Integrado |
-| **Customização** | ❌ Limitada | ✅ Total |
-| **Custo** | 💰 Pago | ✅ Gratuito |
-| **Privacidade** | ❌ Externa | ✅ Própria |
+| Recurso                 | Uploadcare  | Sistema Próprio ✅ |
+| ----------------------- | ----------- | ------------------ |
+| **Controle Total**      | ❌ Limitado | ✅ Completo        |
+| **Validação Avançada**  | ❌ Básica   | ✅ Multi-camada    |
+| **Detecção de Malware** | ❌ Não      | ✅ Automática      |
+| **Quarentena**          | ❌ Não      | ✅ Automática      |
+| **Logs Detalhados**     | ❌ Limitado | ✅ Completos       |
+| **Monitoramento**       | ❌ Externo  | ✅ Integrado       |
+| **Customização**        | ❌ Limitada | ✅ Total           |
+| **Custo**               | 💰 Pago     | ✅ Gratuito        |
+| **Privacidade**         | ❌ Externa  | ✅ Própria         |
 
 ---
 

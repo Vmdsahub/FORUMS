@@ -2,9 +2,16 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import ImageModal from "@/components/ImageModal";
-import { SketchPicker } from 'react-color';
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import SecureUploadWidget, { UploadedFileInfo, isImageFile } from "@/components/SecureUploadWidget";
+import { SketchPicker } from "react-color";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import SecureUploadWidget, {
+  UploadedFileInfo,
+  isImageFile,
+} from "@/components/SecureUploadWidget";
 
 interface EnhancedRichTextEditorProps {
   value: string;
@@ -14,14 +21,17 @@ interface EnhancedRichTextEditorProps {
 
 // Simple code detection patterns
 const codePatterns = {
-  javascript: /(?:function\s+\w+|const\s+\w+\s*=|let\s+\w+\s*=|var\s+\w+\s*=|import\s+.*from|export\s+|console\.log)/,
-  typescript: /(?:interface\s+\w+|type\s+\w+\s*=|implements\s+\w+|extends\s+\w+|:\s*string|:\s*number|:\s*boolean)/,
+  javascript:
+    /(?:function\s+\w+|const\s+\w+\s*=|let\s+\w+\s*=|var\s+\w+\s*=|import\s+.*from|export\s+|console\.log)/,
+  typescript:
+    /(?:interface\s+\w+|type\s+\w+\s*=|implements\s+\w+|extends\s+\w+|:\s*string|:\s*number|:\s*boolean)/,
   python: /(?:def\s+\w+|class\s+\w+|import\s+\w+|from\s+\w+\s+import|print\()/,
   java: /(?:public\s+class|private\s+|protected\s+|static\s+|void\s+|String\s+|int\s+|System\.out\.)/,
   cpp: /(?:#include\s*<|using\s+namespace|std::|cout\s*<<|cin\s*>>|int\s+main\()/,
-  react: /(?:import\s+React|from\s+['"]react['"]|export\s+default\s+function|useState|useEffect|JSX\.Element)/,
+  react:
+    /(?:import\s+React|from\s+['"]react['"]|export\s+default\s+function|useState|useEffect|JSX\.Element)/,
   css: /(?:\w+\s*\{|\.[\w-]+\s*\{|#[\w-]+\s*\{|@media|display\s*:|color\s*:)/,
-  json: /^\s*[\{\[]/
+  json: /^\s*[\{\[]/,
 };
 
 export default function EnhancedRichTextEditor({
@@ -39,7 +49,7 @@ export default function EnhancedRichTextEditor({
     isVideo: boolean;
   } | null>(null);
   const [showColorPicker, setShowColorPicker] = useState(false);
-  const [currentColor, setCurrentColor] = useState('#000000');
+  const [currentColor, setCurrentColor] = useState("#000000");
 
   // Initialize secure upload system
   const [secureUploadStats, setSecureUploadStats] = useState<{
@@ -49,61 +59,123 @@ export default function EnhancedRichTextEditor({
 
   useEffect(() => {
     // Load upload statistics
-    fetch('/api/upload-stats')
-      .then(res => res.json())
-      .then(data => {
+    fetch("/api/upload-stats")
+      .then((res) => res.json())
+      .then((data) => {
         if (data.success) {
           setSecureUploadStats(data.stats);
         }
       })
-      .catch(err => console.warn('Could not load upload stats:', err));
+      .catch((err) => console.warn("Could not load upload stats:", err));
   }, []);
 
   // Simple code highlighting function
   const highlightCode = (code: string, language: string): string => {
     // Simple syntax highlighting without external library dependencies
     const keywords = {
-      javascript: ['function', 'const', 'let', 'var', 'import', 'export', 'from', 'return', 'if', 'else'],
-      typescript: ['interface', 'type', 'implements', 'extends', 'string', 'number', 'boolean'],
-      python: ['def', 'class', 'import', 'from', 'print', 'if', 'else', 'for', 'while'],
-      java: ['public', 'private', 'protected', 'static', 'void', 'String', 'int', 'class'],
-      cpp: ['#include', 'using', 'namespace', 'std', 'cout', 'cin', 'int', 'main'],
-      css: ['display', 'color', 'margin', 'padding', 'width', 'height', '@media'],
+      javascript: [
+        "function",
+        "const",
+        "let",
+        "var",
+        "import",
+        "export",
+        "from",
+        "return",
+        "if",
+        "else",
+      ],
+      typescript: [
+        "interface",
+        "type",
+        "implements",
+        "extends",
+        "string",
+        "number",
+        "boolean",
+      ],
+      python: [
+        "def",
+        "class",
+        "import",
+        "from",
+        "print",
+        "if",
+        "else",
+        "for",
+        "while",
+      ],
+      java: [
+        "public",
+        "private",
+        "protected",
+        "static",
+        "void",
+        "String",
+        "int",
+        "class",
+      ],
+      cpp: [
+        "#include",
+        "using",
+        "namespace",
+        "std",
+        "cout",
+        "cin",
+        "int",
+        "main",
+      ],
+      css: [
+        "display",
+        "color",
+        "margin",
+        "padding",
+        "width",
+        "height",
+        "@media",
+      ],
     };
 
     let highlighted = code;
     const languageKeywords = keywords[language as keyof typeof keywords] || [];
-    
-    languageKeywords.forEach(keyword => {
-      const regex = new RegExp(`\\b${keyword}\\b`, 'g');
-      highlighted = highlighted.replace(regex, `<span style="color: #569cd6;">${keyword}</span>`);
+
+    languageKeywords.forEach((keyword) => {
+      const regex = new RegExp(`\\b${keyword}\\b`, "g");
+      highlighted = highlighted.replace(
+        regex,
+        `<span style="color: #569cd6;">${keyword}</span>`,
+      );
     });
 
     // Highlight strings
-    highlighted = highlighted.replace(/(["'])((?:\\.|(?!\1)[^\\])*?)\1/g, 
-      '<span style="color: #ce9178;">$1$2$1</span>');
-    
+    highlighted = highlighted.replace(
+      /(["'])((?:\\.|(?!\1)[^\\])*?)\1/g,
+      '<span style="color: #ce9178;">$1$2$1</span>',
+    );
+
     // Highlight comments
-    highlighted = highlighted.replace(/(\/\/.*$|\/\*[\s\S]*?\*\/)/gm, 
-      '<span style="color: #6a9955;">$1</span>');
+    highlighted = highlighted.replace(
+      /(\/\/.*$|\/\*[\s\S]*?\*\/)/gm,
+      '<span style="color: #6a9955;">$1</span>',
+    );
 
     return highlighted;
   };
 
   // Detect and format code automatically
   const detectAndFormatCode = (text: string): string => {
-    const lines = text.split('\n');
+    const lines = text.split("\n");
     let result: string[] = [];
     let isInCodeBlock = false;
     let currentCode: string[] = [];
-    let detectedLanguage = '';
+    let detectedLanguage = "";
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
-      
+
       if (!isInCodeBlock) {
         // Check if line looks like code
-        let languageFound = '';
+        let languageFound = "";
         for (const [lang, pattern] of Object.entries(codePatterns)) {
           if (pattern.test(line)) {
             languageFound = lang;
@@ -120,39 +192,56 @@ export default function EnhancedRichTextEditor({
         }
       } else {
         currentCode.push(line);
-        
+
         // Check if we should end the code block
-        if (line === '' && (i === lines.length - 1 || 
-            !Object.values(codePatterns).some(pattern => 
-              pattern.test(lines[i + 1] || '')))) {
-          
+        if (
+          line === "" &&
+          (i === lines.length - 1 ||
+            !Object.values(codePatterns).some((pattern) =>
+              pattern.test(lines[i + 1] || ""),
+            ))
+        ) {
           // End code block
-          const codeContent = currentCode.slice(0, -1).join('\n'); // Remove empty line
+          const codeContent = currentCode.slice(0, -1).join("\n"); // Remove empty line
           const codeId = `code-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
           const highlightedCode = highlightCode(codeContent, detectedLanguage);
-          
-          result.push(createCodeBlock(highlightedCode, detectedLanguage, codeContent, codeId));
-          result.push(''); // Add back the empty line
-          
+
+          result.push(
+            createCodeBlock(
+              highlightedCode,
+              detectedLanguage,
+              codeContent,
+              codeId,
+            ),
+          );
+          result.push(""); // Add back the empty line
+
           isInCodeBlock = false;
           currentCode = [];
-          detectedLanguage = '';
+          detectedLanguage = "";
         }
       }
     }
 
     // Handle remaining code block at end
     if (isInCodeBlock && currentCode.length > 0) {
-      const codeContent = currentCode.join('\n');
+      const codeContent = currentCode.join("\n");
       const codeId = `code-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const highlightedCode = highlightCode(codeContent, detectedLanguage);
-      result.push(createCodeBlock(highlightedCode, detectedLanguage, codeContent, codeId));
+      result.push(
+        createCodeBlock(highlightedCode, detectedLanguage, codeContent, codeId),
+      );
     }
 
-    return result.join('\n');
+    return result.join("\n");
   };
 
-  const createCodeBlock = (highlightedCode: string, language: string, originalCode: string, codeId: string): string => {
+  const createCodeBlock = (
+    highlightedCode: string,
+    language: string,
+    originalCode: string,
+    codeId: string,
+  ): string => {
     return `
       <div class="code-block-container" style="margin: 16px 0; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: #1e1e1e; font-family: 'Fira Code', monospace;">
         <div class="code-header" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #2d2d2d; border-bottom: 1px solid #404040;">
@@ -175,22 +264,26 @@ export default function EnhancedRichTextEditor({
     (window as any).toggleCodeExpand = (codeId: string) => {
       const element = document.getElementById(codeId);
       if (element) {
-        const isExpanded = element.style.maxHeight === 'none' || element.style.maxHeight === '';
-        element.style.maxHeight = isExpanded ? '150px' : 'none';
+        const isExpanded =
+          element.style.maxHeight === "none" || element.style.maxHeight === "";
+        element.style.maxHeight = isExpanded ? "150px" : "none";
       }
     };
 
     (window as any).copyCodeToClipboard = (codeId: string) => {
       const element = document.getElementById(codeId);
       if (element) {
-        const originalCodeDiv = element.querySelector('.code-original');
+        const originalCodeDiv = element.querySelector(".code-original");
         if (originalCodeDiv) {
-          const code = originalCodeDiv.textContent || '';
-          navigator.clipboard.writeText(code).then(() => {
-            toast.success('Código copiado para a área de transferência!');
-          }).catch(() => {
-            toast.error('Erro ao copiar código');
-          });
+          const code = originalCodeDiv.textContent || "";
+          navigator.clipboard
+            .writeText(code)
+            .then(() => {
+              toast.success("Código copiado para a área de transferência!");
+            })
+            .catch(() => {
+              toast.error("Erro ao copiar código");
+            });
         }
       }
     };
@@ -254,9 +347,9 @@ export default function EnhancedRichTextEditor({
     if (editorRef.current) {
       const content = editorRef.current.innerHTML;
       // Process and detect code in the content
-      const textContent = editorRef.current.innerText || '';
+      const textContent = editorRef.current.innerText || "";
       const processedContent = detectAndFormatCode(textContent);
-      
+
       // Only update if content actually changed to prevent infinite loops
       if (processedContent !== content) {
         editorRef.current.innerHTML = processedContent;
@@ -298,20 +391,22 @@ export default function EnhancedRichTextEditor({
       insertFileLink(fileInfo.url, fileInfo.originalName, fileInfo.size);
     }
 
-    toast.success(`🔒 Arquivo verificado e carregado: ${fileInfo.originalName}`);
+    toast.success(
+      `🔒 Arquivo verificado e carregado: ${fileInfo.originalName}`,
+    );
 
     // Update stats
     if (secureUploadStats) {
       setSecureUploadStats({
         ...secureUploadStats,
-        safeFiles: secureUploadStats.safeFiles + 1
+        safeFiles: secureUploadStats.safeFiles + 1,
       });
     }
   };
 
   const handleSecureUploadError = (error: string) => {
-    console.error('Secure upload error:', error);
-    toast.error('❌ Falha na verificação de segurança. Tente outro arquivo.');
+    console.error("Secure upload error:", error);
+    toast.error("❌ Falha na verificação de segurança. Tente outro arquivo.");
   };
 
   const insertImageHtml = (src: string, alt: string) => {
@@ -325,18 +420,18 @@ export default function EnhancedRichTextEditor({
   };
 
   const insertFileLink = (url: string, name: string, size?: number) => {
-    const sizeText = size ? ` (${formatFileSize(size)})` : '';
-    const securityBadge = '🔒'; // Security verified badge
+    const sizeText = size ? ` (${formatFileSize(size)})` : "";
+    const securityBadge = "🔒"; // Security verified badge
     const fileLink = `<div style="margin: 16px 0; padding: 12px; border: 1px solid #10b981; border-radius: 8px; background: #ecfdf5;"><a href="${url}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 8px; color: #059669; text-decoration: none; font-weight: 500;"><span style="font-size: 16px;">${securityBadge}</span><span style="font-size: 20px;">📎</span><span>${name}${sizeText}</span><span style="margin-left: auto; font-size: 12px; color: #6b7280;">Arquivo verificado - Clique para baixar</span></a></div>`;
     execCommand("insertHTML", fileLink);
   };
 
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
   const handleUploadImage = async (file: File) => {
@@ -520,11 +615,16 @@ export default function EnhancedRichTextEditor({
               title="Cor do texto"
             >
               <div className="flex items-center gap-1">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <path d="M12 3c-1.1 0-2 .9-2 2v6l-4 4h12l-4-4V5c0-1.1-.9-2-2-2z" />
                 </svg>
-                <div 
-                  className="w-3 h-3 rounded border border-gray-300" 
+                <div
+                  className="w-3 h-3 rounded border border-gray-300"
                   style={{ backgroundColor: currentColor }}
                 />
               </div>
@@ -639,16 +739,26 @@ export default function EnhancedRichTextEditor({
       <div className="p-3 border-t border-gray-200 bg-gray-50">
         <div className="space-y-1">
           <p className="text-xs text-gray-500">
-            <strong>🚀 Recursos:</strong> <span className="text-blue-600">Código detectado automaticamente</span>,
-            <span className="text-purple-600"> seletor de cores</span>,
-            <span className="text-green-600"> upload ultra-seguro com validação</span>.
-            Suporte para imagens (até 10MB), vídeos (até 500MB) e documentos.
+            <strong>🚀 Recursos:</strong>{" "}
+            <span className="text-blue-600">
+              Código detectado automaticamente
+            </span>
+            ,<span className="text-purple-600"> seletor de cores</span>,
+            <span className="text-green-600">
+              {" "}
+              upload ultra-seguro com validação
+            </span>
+            . Suporte para imagens (até 10MB), vídeos (até 500MB) e documentos.
           </p>
           {secureUploadStats && (
             <p className="text-xs text-green-600">
-              🔒 Sistema de segurança: {secureUploadStats.safeFiles} arquivos verificados
+              🔒 Sistema de segurança: {secureUploadStats.safeFiles} arquivos
+              verificados
               {secureUploadStats.quarantined.total > 0 && (
-                <span className="text-orange-600"> | {secureUploadStats.quarantined.total} em quarentena</span>
+                <span className="text-orange-600">
+                  {" "}
+                  | {secureUploadStats.quarantined.total} em quarentena
+                </span>
               )}
             </p>
           )}

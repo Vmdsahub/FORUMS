@@ -3,15 +3,17 @@
 ## ✅ Funcionalidades Implementadas
 
 ### 1. 🔍 Reconhecimento Automático de Código
+
 - **Status**: ✅ Implementado
 - **Funcionalidade**: Detecta automaticamente código em linguagens como JavaScript, TypeScript, Python, Java, C++, React, CSS, JSON
-- **Recursos**: 
+- **Recursos**:
   - Janela visual com conteúdo limitado (150px altura)
   - Botão para expandir e ver código completo
   - Syntax highlighting básico
   - Detecção automática de linguagem
 
 ### 2. 📋 Botão de Cópia Rápida
+
 - **Status**: ✅ Implementado
 - **Funcionalidade**: Botão "📋" em cada bloco de código
 - **Recursos**:
@@ -20,7 +22,8 @@
   - Preserva formatação original
 
 ### 3. �� Seletor de Cor (Wheel Color Selector)
-- **Status**: ✅ Implementado  
+
+- **Status**: ✅ Implementado
 - **Funcionalidade**: Ferramenta em botão para alterar cor do texto
 - **Recursos**:
   - Usa react-color SketchPicker
@@ -28,6 +31,7 @@
   - Aplicação imediata da cor selecionada
 
 ### 4. 📤 Upload Seguro com Uploadcare
+
 - **Status**: ✅ Implementado
 - **Funcionalidade**: Botão para upload de arquivos via Uploadcare
 - **Recursos**:
@@ -38,6 +42,7 @@
   - Links de download para arquivos não-imagem
 
 ### 5. 📁 Sistema de Upload Tradicional Mantido
+
 - **Status**: ✅ Mantido
 - **Funcionalidade**: Upload direto de imagens/vídeos via servidor próprio
 - **Recursos**:
@@ -46,6 +51,7 @@
   - Preview e modal para visualização
 
 ### 6. 🔧 Outras Funcionalidades
+
 - **Status**: ✅ Implementado
 - **Recursos**:
   - Formatação rica (negrito, itálico, sublinhado, títulos, links)
@@ -57,6 +63,7 @@
 ## 🔐 Segurança
 
 ### Uploadcare
+
 - ✅ Chave pública exposta apenas no frontend
 - ✅ Chave privada protegida em variável de ambiente do servidor
 - ✅ Webhook endpoint para monitoramento de uploads
@@ -64,21 +71,25 @@
 - ✅ Verificação opcional de arquivos
 
 ### Rotas de API Adicionadas
+
 - `GET /api/uploadcare/config` - Configuração pública
 - `POST /api/uploadcare/webhook` - Webhook para eventos
 - `GET /api/uploadcare/verify/:uuid` - Verificação de arquivos
 
 ## 🎯 Como Testar
 
-1. **Detecção de Código**: 
+1. **Detecção de Código**:
+
    - Digite código JavaScript: `function test() { console.log('hello'); }`
    - Código deve aparecer em bloco dark com highlighting
 
 2. **Seletor de Cores**:
+
    - Clique no botão de cores na toolbar
    - Escolha uma cor e aplique ao texto selecionado
 
 3. **Upload Uploadcare**:
+
    - Clique no botão de documento na toolbar
    - Faça upload de um PDF ou arquivo
    - Verifique se aparece link de download

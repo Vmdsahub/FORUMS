@@ -185,7 +185,11 @@ export function createServer() {
   app.post("/api/user/themes/purchase", authenticateToken, purchaseTheme);
 
   // Secure upload routes (replaces Uploadcare)
-  app.post("/api/secure-upload", secureUploadMiddleware.single('file'), handleSecureUpload);
+  app.post(
+    "/api/secure-upload",
+    secureUploadMiddleware.single("file"),
+    handleSecureUpload,
+  );
   app.get("/api/secure-files/:filename", handleSecureFileServe);
   app.get("/api/upload-stats", handleUploadStats);
   app.get("/api/verify-file/:hash", handleFileVerification);
