@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import ImageModal from "@/components/ImageModal";
 import { SketchPicker } from 'react-color';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import SecureUploadWidget, { UploadedFileInfo, isImageFile } from "@/components/SecureUploadWidget";
 
 interface EnhancedRichTextEditorProps {
   value: string;
@@ -40,24 +41,22 @@ export default function EnhancedRichTextEditor({
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [currentColor, setCurrentColor] = useState('#000000');
 
-  // Initialize Uploadcare widget
+  // Initialize secure upload system
+  const [secureUploadStats, setSecureUploadStats] = useState<{
+    safeFiles: number;
+    quarantined: { total: number; recent: number };
+  } | null>(null);
+
   useEffect(() => {
-    const loadUploadcare = () => {
-      if (typeof window !== 'undefined' && !(window as any).uploadcare) {
-        const script = document.createElement('script');
-        script.src = 'https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js';
-        script.setAttribute('data-public-key', 'acdd15b9f97aec0bae14');
-        document.head.appendChild(script);
-
-        script.onload = () => {
-          if ((window as any).uploadcare) {
-            (window as any).uploadcare.start();
-          }
-        };
-      }
-    };
-
-    loadUploadcare();
+    // Load upload statistics
+    fetch('/api/upload-stats')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setSecureUploadStats(data.stats);
+        }
+      })
+      .catch(err => console.warn('Could not load upload stats:', err));
   }, []);
 
   // Simple code highlighting function
@@ -292,35 +291,27 @@ export default function EnhancedRichTextEditor({
     setShowColorPicker(false);
   };
 
-  const handleUploadcare = () => {
-    if ((window as any).uploadcare) {
-      const dialog = (window as any).uploadcare.openDialog(null, {
-        publicKey: 'acdd15b9f97aec0bae14',
-        multiple: false,
-        crop: false,
-        tabs: 'file url',
-        inputAcceptTypes: '.jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.zip,.rar,.mp4,.mp3,.txt,.csv',
-        imagesOnly: false,
-        systemDialog: true,
-      });
-
-      dialog.done((file: any) => {
-        file.promise().done((fileInfo: any) => {
-          const fileName = fileInfo.name || 'Arquivo';
-          const fileUrl = fileInfo.cdnUrl;
-          const isImage = fileInfo.isImage;
-          
-          if (isImage) {
-            insertImageHtml(fileUrl, fileName);
-          } else {
-            insertFileLink(fileUrl, fileName);
-          }
-          toast.success('Arquivo carregado com sucesso via Uploadcare!');
-        });
-      });
+  const handleSecureUploadSuccess = (fileInfo: UploadedFileInfo) => {
+    if (fileInfo.isImage) {
+      insertImageHtml(fileInfo.url, fileInfo.originalName);
     } else {
-      toast.error('Uploadcare não está disponível. Aguarde o carregamento...');
+      insertFileLink(fileInfo.url, fileInfo.originalName, fileInfo.size);
     }
+
+    toast.success(`🔒 Arquivo verificado e carregado: ${fileInfo.originalName}`);
+
+    // Update stats
+    if (secureUploadStats) {
+      setSecureUploadStats({
+        ...secureUploadStats,
+        safeFiles: secureUploadStats.safeFiles + 1
+      });
+    }
+  };
+
+  const handleSecureUploadError = (error: string) => {
+    console.error('Secure upload error:', error);
+    toast.error('❌ Falha na verificação de segurança. Tente outro arquivo.');
   };
 
   const insertImageHtml = (src: string, alt: string) => {
@@ -333,9 +324,19 @@ export default function EnhancedRichTextEditor({
     execCommand("insertHTML", video);
   };
 
-  const insertFileLink = (url: string, name: string) => {
-    const fileLink = `<div style="margin: 16px 0; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb;"><a href="${url}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 8px; color: #3b82f6; text-decoration: none; font-weight: 500;"><span style="font-size: 20px;">📎</span><span>${name}</span><span style="margin-left: auto; font-size: 12px; color: #6b7280;">Clique para baixar</span></a></div>`;
+  const insertFileLink = (url: string, name: string, size?: number) => {
+    const sizeText = size ? ` (${formatFileSize(size)})` : '';
+    const securityBadge = '🔒'; // Security verified badge
+    const fileLink = `<div style="margin: 16px 0; padding: 12px; border: 1px solid #10b981; border-radius: 8px; background: #ecfdf5;"><a href="${url}" target="_blank" rel="noopener noreferrer" style="display: flex; align-items: center; gap: 8px; color: #059669; text-decoration: none; font-weight: 500;"><span style="font-size: 16px;">${securityBadge}</span><span style="font-size: 20px;">📎</span><span>${name}${sizeText}</span><span style="margin-left: auto; font-size: 12px; color: #6b7280;">Arquivo verificado - Clique para baixar</span></a></div>`;
     execCommand("insertHTML", fileLink);
+  };
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   const handleUploadImage = async (file: File) => {
@@ -568,18 +569,17 @@ export default function EnhancedRichTextEditor({
           </svg>
         </Button>
 
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={handleUploadcare}
-          className="h-8 px-2 hover:bg-gray-100 bg-blue-50 border-blue-200 text-blue-700"
-          title="Upload seguro de arquivos (Uploadcare) - PDFs, documentos, etc."
-        >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z" />
-          </svg>
-        </Button>
+        <SecureUploadWidget
+          onSuccess={handleSecureUploadSuccess}
+          onError={handleSecureUploadError}
+          buttonText="🔒 Upload"
+          className="h-8"
+          icon={
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z" />
+            </svg>
+          }
+        />
 
         {isUploading && (
           <div className="flex items-center gap-2 ml-2">
@@ -637,12 +637,22 @@ export default function EnhancedRichTextEditor({
 
       {/* Help text */}
       <div className="p-3 border-t border-gray-200 bg-gray-50">
-        <p className="text-xs text-gray-500">
-          <strong>🚀 Novos recursos:</strong> <span className="text-blue-600">Código detectado automaticamente</span>, 
-          <span className="text-purple-600"> seletor de cores</span>, 
-          <span className="text-green-600"> upload seguro via Uploadcare</span>. 
-          Suporte para imagens (até 10MB), vídeos (até 500MB) e documentos.
-        </p>
+        <div className="space-y-1">
+          <p className="text-xs text-gray-500">
+            <strong>🚀 Recursos:</strong> <span className="text-blue-600">Código detectado automaticamente</span>,
+            <span className="text-purple-600"> seletor de cores</span>,
+            <span className="text-green-600"> upload ultra-seguro com validação</span>.
+            Suporte para imagens (até 10MB), vídeos (até 500MB) e documentos.
+          </p>
+          {secureUploadStats && (
+            <p className="text-xs text-green-600">
+              🔒 Sistema de segurança: {secureUploadStats.safeFiles} arquivos verificados
+              {secureUploadStats.quarantined.total > 0 && (
+                <span className="text-orange-600"> | {secureUploadStats.quarantined.total} em quarentena</span>
+              )}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Modal de imagem/vídeo */}
