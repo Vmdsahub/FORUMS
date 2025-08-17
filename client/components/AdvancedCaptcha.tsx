@@ -145,7 +145,7 @@ export default function AdvancedCaptcha({
       upperValue,
       captchaCode,
       valid,
-      match: upperValue === captchaCode
+      match: upperValue === captchaCode,
     });
     setIsValid(valid);
     onValidationChange(valid);

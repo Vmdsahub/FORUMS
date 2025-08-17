@@ -680,28 +680,31 @@ export default function Header({ activeSection }: HeaderProps) {
               </Dialog>
 
               {/* Register Dialog */}
-              <Dialog open={isRegisterOpen} onOpenChange={(open) => {
-                setIsRegisterOpen(open);
-                if (!open) {
-                  // Reset form when closing modal
-                  setRegisterFirstName("");
-                  setRegisterLastName("");
-                  setRegisterUsername("");
-                  setRegisterEmail("");
-                  setRegisterPassword("");
-                  setRegisterConfirmPassword("");
-                  setRegisterPhone("");
-                  setRegisterBirthDay("");
-                  setRegisterBirthMonth("");
-                  setRegisterBirthYear("");
-                  setRegisterAcceptTerms(false);
-                  setRegisterAcceptNewsletter(false);
-                  setRegisterCaptcha("");
-                  setRegisterCaptchaValid(false);
-                  setValidationErrors({});
-                  setFieldMessages({});
-                }
-              }}>
+              <Dialog
+                open={isRegisterOpen}
+                onOpenChange={(open) => {
+                  setIsRegisterOpen(open);
+                  if (!open) {
+                    // Reset form when closing modal
+                    setRegisterFirstName("");
+                    setRegisterLastName("");
+                    setRegisterUsername("");
+                    setRegisterEmail("");
+                    setRegisterPassword("");
+                    setRegisterConfirmPassword("");
+                    setRegisterPhone("");
+                    setRegisterBirthDay("");
+                    setRegisterBirthMonth("");
+                    setRegisterBirthYear("");
+                    setRegisterAcceptTerms(false);
+                    setRegisterAcceptNewsletter(false);
+                    setRegisterCaptcha("");
+                    setRegisterCaptchaValid(false);
+                    setValidationErrors({});
+                    setFieldMessages({});
+                  }
+                }}
+              >
                 <DialogTrigger asChild>
                   <Button
                     size="sm"
@@ -734,7 +737,9 @@ export default function Header({ activeSection }: HeaderProps) {
 
                         // Re-check username availability if we have a username
                         if (registerUsername.trim()) {
-                          const usernameResponse = await fetch(`/api/auth/check-username/${encodeURIComponent(registerUsername)}`);
+                          const usernameResponse = await fetch(
+                            `/api/auth/check-username/${encodeURIComponent(registerUsername)}`,
+                          );
                           const usernameData = await usernameResponse.json();
                           if (!usernameData.available) {
                             errors.username = true;
@@ -742,8 +747,13 @@ export default function Header({ activeSection }: HeaderProps) {
                         }
 
                         // Re-check email availability if we have an email
-                        if (registerEmail.trim() && registerEmail.includes("@")) {
-                          const emailResponse = await fetch(`/api/auth/check-email/${encodeURIComponent(registerEmail)}`);
+                        if (
+                          registerEmail.trim() &&
+                          registerEmail.includes("@")
+                        ) {
+                          const emailResponse = await fetch(
+                            `/api/auth/check-email/${encodeURIComponent(registerEmail)}`,
+                          );
                           const emailData = await emailResponse.json();
                           if (!emailData.available) {
                             errors.email = true;
@@ -752,7 +762,9 @@ export default function Header({ activeSection }: HeaderProps) {
 
                         // Re-check phone availability if we have a phone
                         if (registerPhone.trim()) {
-                          const phoneResponse = await fetch(`/api/auth/check-phone/${encodeURIComponent(registerPhone)}`);
+                          const phoneResponse = await fetch(
+                            `/api/auth/check-phone/${encodeURIComponent(registerPhone)}`,
+                          );
                           const phoneData = await phoneResponse.json();
                           if (!phoneData.available) {
                             errors.phone = true;
@@ -859,8 +871,8 @@ export default function Header({ activeSection }: HeaderProps) {
                             birthDay: registerBirthDay,
                             birthMonth: registerBirthMonth,
                             birthYear: registerBirthYear,
-                            captchaValid: registerCaptchaValid
-                          }
+                            captchaValid: registerCaptchaValid,
+                          },
                         });
 
                         if (nonCaptchaErrors.length > 0) {
@@ -998,11 +1010,13 @@ export default function Header({ activeSection }: HeaderProps) {
                         required
                         minLength={2}
                       />
-                      {fieldMessages.username && registerUsername.trim() && validationErrors.username && (
-                        <p className="text-xs mt-2 text-red-600">
-                          {fieldMessages.username}
-                        </p>
-                      )}
+                      {fieldMessages.username &&
+                        registerUsername.trim() &&
+                        validationErrors.username && (
+                          <p className="text-xs mt-2 text-red-600">
+                            {fieldMessages.username}
+                          </p>
+                        )}
                     </div>
 
                     {/* Email */}
@@ -1030,11 +1044,13 @@ export default function Header({ activeSection }: HeaderProps) {
                         }`}
                         required
                       />
-                      {fieldMessages.email && registerEmail.trim() && validationErrors.email && (
-                        <p className="text-xs mt-2 text-red-600">
-                          {fieldMessages.email}
-                        </p>
-                      )}
+                      {fieldMessages.email &&
+                        registerEmail.trim() &&
+                        validationErrors.email && (
+                          <p className="text-xs mt-2 text-red-600">
+                            {fieldMessages.email}
+                          </p>
+                        )}
                     </div>
 
                     {/* Senhas */}
@@ -1129,11 +1145,13 @@ export default function Header({ activeSection }: HeaderProps) {
                         required
                         maxLength={15}
                       />
-                      {fieldMessages.phone && registerPhone.trim() && validationErrors.phone && (
-                        <p className="text-xs mt-1 text-red-600">
-                          {fieldMessages.phone}
-                        </p>
-                      )}
+                      {fieldMessages.phone &&
+                        registerPhone.trim() &&
+                        validationErrors.phone && (
+                          <p className="text-xs mt-1 text-red-600">
+                            {fieldMessages.phone}
+                          </p>
+                        )}
                     </div>
 
                     {/* Data de Nascimento */}
