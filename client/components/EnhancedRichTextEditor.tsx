@@ -4,27 +4,6 @@ import { toast } from "sonner";
 import ImageModal from "@/components/ImageModal";
 import { SketchPicker } from 'react-color';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import Prism from "prismjs";
-
-// Import Prism languages and themes
-import "prismjs/themes/prism-tomorrow.css";
-import "prismjs/components/prism-javascript";
-import "prismjs/components/prism-typescript";
-import "prismjs/components/prism-jsx";
-import "prismjs/components/prism-tsx";
-import "prismjs/components/prism-python";
-import "prismjs/components/prism-java";
-import "prismjs/components/prism-cpp";
-import "prismjs/components/prism-c";
-import "prismjs/components/prism-csharp";
-import "prismjs/components/prism-php";
-import "prismjs/components/prism-ruby";
-import "prismjs/components/prism-go";
-import "prismjs/components/prism-rust";
-import "prismjs/components/prism-sql";
-import "prismjs/components/prism-bash";
-import "prismjs/components/prism-json";
-import "prismjs/components/prism-css";
 
 interface EnhancedRichTextEditorProps {
   value: string;
@@ -32,26 +11,16 @@ interface EnhancedRichTextEditorProps {
   placeholder?: string;
 }
 
-// Code detection patterns
+// Simple code detection patterns
 const codePatterns = {
-  javascript: /(?:function\s+\w+|const\s+\w+\s*=|let\s+\w+\s*=|var\s+\w+\s*=|import\s+.*from|export\s+|console\.log|document\.|window\.|\.addEventListener)/,
-  typescript: /(?:interface\s+\w+|type\s+\w+\s*=|implements\s+\w+|extends\s+\w+|:\s*string|:\s*number|:\s*boolean|<.*>)/,
-  python: /(?:def\s+\w+|class\s+\w+|import\s+\w+|from\s+\w+\s+import|print\(|if\s+__name__\s*==|\.py$)/,
+  javascript: /(?:function\s+\w+|const\s+\w+\s*=|let\s+\w+\s*=|var\s+\w+\s*=|import\s+.*from|export\s+|console\.log)/,
+  typescript: /(?:interface\s+\w+|type\s+\w+\s*=|implements\s+\w+|extends\s+\w+|:\s*string|:\s*number|:\s*boolean)/,
+  python: /(?:def\s+\w+|class\s+\w+|import\s+\w+|from\s+\w+\s+import|print\()/,
   java: /(?:public\s+class|private\s+|protected\s+|static\s+|void\s+|String\s+|int\s+|System\.out\.)/,
-  cpp: /(?:#include\s*<|using\s+namespace|std::|cout\s*<<|cin\s*>>|int\s+main\(|void\s+\w+\()/,
-  c: /(?:#include\s*<|printf\(|scanf\(|int\s+main\(|void\s+\w+\(|#define\s+)/,
-  csharp: /(?:using\s+System|namespace\s+\w+|public\s+class|private\s+|Console\.WriteLine|string\s+\w+)/,
-  php: /(?:<\?php|\$\w+\s*=|echo\s+|function\s+\w+|class\s+\w+|->|::)/,
-  ruby: /(?:def\s+\w+|class\s+\w+|puts\s+|require\s+|@\w+|\.each\s+do)/,
-  go: /(?:package\s+\w+|import\s+|func\s+\w+|var\s+\w+|fmt\.)/,
-  rust: /(?:fn\s+\w+|let\s+\w+|pub\s+|use\s+|struct\s+|enum\s+|println!)/,
-  sql: /(?:SELECT\s+|FROM\s+|WHERE\s+|INSERT\s+INTO|UPDATE\s+|DELETE\s+FROM|CREATE\s+TABLE)/i,
-  bash: /(?:#!\/bin\/|echo\s+|ls\s+|cd\s+|mkdir\s+|rm\s+|sudo\s+|chmod\s+)/,
-  json: /^\s*[\{\[]/,
-  css: /(?:\w+\s*\{|\.[\w-]+\s*\{|#[\w-]+\s*\{|@media|display\s*:|color\s*:|margin\s*:)/,
-  html: /(?:<html|<head|<body|<div|<span|<p|<!DOCTYPE)/i,
-  react: /(?:import\s+React|from\s+['"]react['"]|export\s+default\s+function|useState|useEffect|JSX\.Element|<\w+.*>)/,
-  vite: /(?:import\.meta|vite\.config|defineConfig|from\s+['"]vite['"])/
+  cpp: /(?:#include\s*<|using\s+namespace|std::|cout\s*<<|cin\s*>>|int\s+main\()/,
+  react: /(?:import\s+React|from\s+['"]react['"]|export\s+default\s+function|useState|useEffect|JSX\.Element)/,
+  css: /(?:\w+\s*\{|\.[\w-]+\s*\{|#[\w-]+\s*\{|@media|display\s*:|color\s*:)/,
+  json: /^\s*[\{\[]/
 };
 
 export default function EnhancedRichTextEditor({
@@ -62,7 +31,6 @@ export default function EnhancedRichTextEditor({
   const editorRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
-  const uploadcareInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [modalImage, setModalImage] = useState<{
     src: string;
@@ -72,116 +40,131 @@ export default function EnhancedRichTextEditor({
   const [showColorPicker, setShowColorPicker] = useState(false);
   const [currentColor, setCurrentColor] = useState('#000000');
 
-  // Initialize Uploadcare
+  // Initialize Uploadcare widget
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js';
-    script.setAttribute('data-public-key', 'acdd15b9f97aec0bae14');
-    document.head.appendChild(script);
+    const loadUploadcare = () => {
+      if (typeof window !== 'undefined' && !(window as any).uploadcare) {
+        const script = document.createElement('script');
+        script.src = 'https://ucarecdn.com/libs/widget/3.x/uploadcare.full.min.js';
+        script.setAttribute('data-public-key', 'acdd15b9f97aec0bae14');
+        document.head.appendChild(script);
 
-    script.onload = () => {
-      if ((window as any).uploadcare) {
-        (window as any).uploadcare.start();
+        script.onload = () => {
+          if ((window as any).uploadcare) {
+            (window as any).uploadcare.start();
+          }
+        };
       }
     };
 
-    return () => {
-      document.head.removeChild(script);
-    };
+    loadUploadcare();
   }, []);
 
-  // Detect and highlight code automatically
-  const detectAndHighlightCode = (text: string): string => {
+  // Simple code highlighting function
+  const highlightCode = (code: string, language: string): string => {
+    // Simple syntax highlighting without external library dependencies
+    const keywords = {
+      javascript: ['function', 'const', 'let', 'var', 'import', 'export', 'from', 'return', 'if', 'else'],
+      typescript: ['interface', 'type', 'implements', 'extends', 'string', 'number', 'boolean'],
+      python: ['def', 'class', 'import', 'from', 'print', 'if', 'else', 'for', 'while'],
+      java: ['public', 'private', 'protected', 'static', 'void', 'String', 'int', 'class'],
+      cpp: ['#include', 'using', 'namespace', 'std', 'cout', 'cin', 'int', 'main'],
+      css: ['display', 'color', 'margin', 'padding', 'width', 'height', '@media'],
+    };
+
+    let highlighted = code;
+    const languageKeywords = keywords[language as keyof typeof keywords] || [];
+    
+    languageKeywords.forEach(keyword => {
+      const regex = new RegExp(`\\b${keyword}\\b`, 'g');
+      highlighted = highlighted.replace(regex, `<span style="color: #569cd6;">${keyword}</span>`);
+    });
+
+    // Highlight strings
+    highlighted = highlighted.replace(/(["'])((?:\\.|(?!\1)[^\\])*?)\1/g, 
+      '<span style="color: #ce9178;">$1$2$1</span>');
+    
+    // Highlight comments
+    highlighted = highlighted.replace(/(\/\/.*$|\/\*[\s\S]*?\*\/)/gm, 
+      '<span style="color: #6a9955;">$1</span>');
+
+    return highlighted;
+  };
+
+  // Detect and format code automatically
+  const detectAndFormatCode = (text: string): string => {
     const lines = text.split('\n');
-    let processedLines: string[] = [];
+    let result: string[] = [];
     let isInCodeBlock = false;
-    let currentCodeBlock: string[] = [];
+    let currentCode: string[] = [];
     let detectedLanguage = '';
 
     for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
+      const line = lines[i].trim();
       
-      // Check if line looks like code
-      let languageDetected = '';
-      for (const [lang, pattern] of Object.entries(codePatterns)) {
-        if (pattern.test(line)) {
-          languageDetected = lang;
-          break;
+      if (!isInCodeBlock) {
+        // Check if line looks like code
+        let languageFound = '';
+        for (const [lang, pattern] of Object.entries(codePatterns)) {
+          if (pattern.test(line)) {
+            languageFound = lang;
+            break;
+          }
         }
-      }
 
-      if (languageDetected && !isInCodeBlock) {
-        // Start a code block
-        isInCodeBlock = true;
-        detectedLanguage = languageDetected;
-        currentCodeBlock = [line];
-      } else if (isInCodeBlock) {
-        currentCodeBlock.push(line);
-        
-        // Check if we should end the code block (empty line or different pattern)
-        if (line.trim() === '' && i < lines.length - 1) {
-          const nextLine = lines[i + 1];
-          let hasNextCodePattern = false;
-          for (const [lang, pattern] of Object.entries(codePatterns)) {
-            if (pattern.test(nextLine)) {
-              hasNextCodePattern = true;
-              break;
-            }
-          }
-          
-          if (!hasNextCodePattern) {
-            // End code block
-            const codeContent = currentCodeBlock.join('\n');
-            const highlightedCode = highlightCode(codeContent, detectedLanguage);
-            processedLines.push(createCodeBlock(highlightedCode, detectedLanguage, codeContent));
-            isInCodeBlock = false;
-            currentCodeBlock = [];
-            detectedLanguage = '';
-            processedLines.push(line); // Add the empty line
-          } else {
-            // Continue code block
-          }
+        if (languageFound) {
+          isInCodeBlock = true;
+          detectedLanguage = languageFound;
+          currentCode = [line];
+        } else {
+          result.push(lines[i]);
         }
       } else {
-        processedLines.push(line);
+        currentCode.push(line);
+        
+        // Check if we should end the code block
+        if (line === '' && (i === lines.length - 1 || 
+            !Object.values(codePatterns).some(pattern => 
+              pattern.test(lines[i + 1] || '')))) {
+          
+          // End code block
+          const codeContent = currentCode.slice(0, -1).join('\n'); // Remove empty line
+          const codeId = `code-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+          const highlightedCode = highlightCode(codeContent, detectedLanguage);
+          
+          result.push(createCodeBlock(highlightedCode, detectedLanguage, codeContent, codeId));
+          result.push(''); // Add back the empty line
+          
+          isInCodeBlock = false;
+          currentCode = [];
+          detectedLanguage = '';
+        }
       }
     }
 
     // Handle remaining code block at end
-    if (isInCodeBlock && currentCodeBlock.length > 0) {
-      const codeContent = currentCodeBlock.join('\n');
+    if (isInCodeBlock && currentCode.length > 0) {
+      const codeContent = currentCode.join('\n');
+      const codeId = `code-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const highlightedCode = highlightCode(codeContent, detectedLanguage);
-      processedLines.push(createCodeBlock(highlightedCode, detectedLanguage, codeContent));
+      result.push(createCodeBlock(highlightedCode, detectedLanguage, codeContent, codeId));
     }
 
-    return processedLines.join('\n');
+    return result.join('\n');
   };
 
-  const highlightCode = (code: string, language: string): string => {
-    try {
-      const grammar = Prism.languages[language];
-      if (grammar) {
-        return Prism.highlight(code, grammar, language);
-      }
-    } catch (error) {
-      console.warn('Error highlighting code:', error);
-    }
-    return code;
-  };
-
-  const createCodeBlock = (highlightedCode: string, language: string, originalCode: string): string => {
-    const codeId = `code-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const createCodeBlock = (highlightedCode: string, language: string, originalCode: string, codeId: string): string => {
     return `
-      <div class="code-block-container" style="margin: 16px 0; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: #1e1e1e;">
+      <div class="code-block-container" style="margin: 16px 0; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: #1e1e1e; font-family: 'Fira Code', monospace;">
         <div class="code-header" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: #2d2d2d; border-bottom: 1px solid #404040;">
-          <span style="color: #9ca3af; font-size: 12px; font-family: monospace;">${language.toUpperCase()}</span>
+          <span style="color: #9ca3af; font-size: 12px; font-weight: 500;">${language.toUpperCase()}</span>
           <div style="display: flex; gap: 8px;">
-            <button onclick="toggleCodeExpand('${codeId}')" style="background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 12px; padding: 2px 6px; border-radius: 4px; hover:background: #404040;" title="Expandir/Recolher">⟷</button>
-            <button onclick="copyCodeToClipboard('${codeId}')" style="background: none; border: none; color: #9ca3af; cursor: pointer; font-size: 12px; padding: 2px 6px; border-radius: 4px; hover:background: #404040;" title="Copiar código">📋</button>
+            <button onclick="toggleCodeExpand('${codeId}')" style="background: #404040; border: none; color: #9ca3af; cursor: pointer; font-size: 11px; padding: 4px 8px; border-radius: 4px; transition: background 0.2s;" title="Expandir/Recolher" onmouseover="this.style.background='#525252'" onmouseout="this.style.background='#404040'">⟷</button>
+            <button onclick="copyCodeToClipboard('${codeId}')" style="background: #404040; border: none; color: #9ca3af; cursor: pointer; font-size: 11px; padding: 4px 8px; border-radius: 4px; transition: background 0.2s;" title="Copiar código" onmouseover="this.style.background='#525252'" onmouseout="this.style.background='#404040'">📋</button>
           </div>
         </div>
-        <div id="${codeId}" class="code-content" style="max-height: 150px; overflow: hidden; position: relative;">
-          <pre style="margin: 0; padding: 12px; background: #1e1e1e; color: #f8f8f2; font-family: 'Fira Code', 'Monaco', 'Consolas', monospace; font-size: 14px; line-height: 1.4; overflow-x: auto;"><code class="language-${language}">${highlightedCode}</code></pre>
+        <div id="${codeId}" class="code-content" style="max-height: 150px; overflow: hidden; position: relative; transition: max-height 0.3s ease;">
+          <pre style="margin: 0; padding: 12px; background: #1e1e1e; color: #f8f8f2; font-family: 'Fira Code', monospace; font-size: 13px; line-height: 1.4; overflow-x: auto;">${highlightedCode}</pre>
           <div class="code-original" style="display: none;">${originalCode}</div>
         </div>
       </div>
@@ -271,8 +254,17 @@ export default function EnhancedRichTextEditor({
   const handleInput = () => {
     if (editorRef.current) {
       const content = editorRef.current.innerHTML;
-      const processedContent = detectAndHighlightCode(content);
-      onChange(processedContent);
+      // Process and detect code in the content
+      const textContent = editorRef.current.innerText || '';
+      const processedContent = detectAndFormatCode(textContent);
+      
+      // Only update if content actually changed to prevent infinite loops
+      if (processedContent !== content) {
+        editorRef.current.innerHTML = processedContent;
+        onChange(processedContent);
+      } else {
+        onChange(content);
+      }
     }
   };
 
@@ -307,7 +299,7 @@ export default function EnhancedRichTextEditor({
         multiple: false,
         crop: false,
         tabs: 'file url',
-        inputAcceptTypes: '.jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.zip,.rar,.mp4,.mp3',
+        inputAcceptTypes: '.jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.zip,.rar,.mp4,.mp3,.txt,.csv',
         imagesOnly: false,
         systemDialog: true,
       });
@@ -323,11 +315,11 @@ export default function EnhancedRichTextEditor({
           } else {
             insertFileLink(fileUrl, fileName);
           }
-          toast.success('Arquivo carregado com sucesso!');
+          toast.success('Arquivo carregado com sucesso via Uploadcare!');
         });
       });
     } else {
-      toast.error('Uploadcare não está disponível');
+      toast.error('Uploadcare não está disponível. Aguarde o carregamento...');
     }
   };
 
@@ -581,8 +573,8 @@ export default function EnhancedRichTextEditor({
           variant="outline"
           size="sm"
           onClick={handleUploadcare}
-          className="h-8 px-2 hover:bg-gray-100"
-          title="Upload de arquivos seguros (Uploadcare)"
+          className="h-8 px-2 hover:bg-gray-100 bg-blue-50 border-blue-200 text-blue-700"
+          title="Upload seguro de arquivos (Uploadcare) - PDFs, documentos, etc."
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
             <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.89 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z" />
@@ -625,9 +617,6 @@ export default function EnhancedRichTextEditor({
         .code-block-container {
           font-family: 'Fira Code', 'Monaco', 'Consolas', monospace !important;
         }
-        .code-block-container button:hover {
-          background: #404040 !important;
-        }
       `}</style>
 
       {/* Hidden file inputs */}
@@ -649,8 +638,9 @@ export default function EnhancedRichTextEditor({
       {/* Help text */}
       <div className="p-3 border-t border-gray-200 bg-gray-50">
         <p className="text-xs text-gray-500">
-          <strong>Recursos:</strong> Formatação rica, código detectado automaticamente, 
-          seletor de cores, upload seguro de arquivos via Uploadcare. 
+          <strong>🚀 Novos recursos:</strong> <span className="text-blue-600">Código detectado automaticamente</span>, 
+          <span className="text-purple-600"> seletor de cores</span>, 
+          <span className="text-green-600"> upload seguro via Uploadcare</span>. 
           Suporte para imagens (até 10MB), vídeos (até 500MB) e documentos.
         </p>
       </div>
