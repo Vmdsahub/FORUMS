@@ -680,7 +680,31 @@ export default function Header({ activeSection }: HeaderProps) {
               </Dialog>
 
               {/* Register Dialog */}
-              <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
+              <Dialog
+                open={isRegisterOpen}
+                onOpenChange={(open) => {
+                  setIsRegisterOpen(open);
+                  if (!open) {
+                    // Reset form when closing modal
+                    setRegisterFirstName("");
+                    setRegisterLastName("");
+                    setRegisterUsername("");
+                    setRegisterEmail("");
+                    setRegisterPassword("");
+                    setRegisterConfirmPassword("");
+                    setRegisterPhone("");
+                    setRegisterBirthDay("");
+                    setRegisterBirthMonth("");
+                    setRegisterBirthYear("");
+                    setRegisterAcceptTerms(false);
+                    setRegisterAcceptNewsletter(false);
+                    setRegisterCaptcha("");
+                    setRegisterCaptchaValid(false);
+                    setValidationErrors({});
+                    setFieldMessages({});
+                  }
+                }}
+              >
                 <DialogTrigger asChild>
                   <Button
                     size="sm"
@@ -708,9 +732,44 @@ export default function Header({ activeSection }: HeaderProps) {
                           return;
                         }
 
-                        // Reset validation errors
-                        setValidationErrors({});
+                        // Reset validation errors but check availability again for current values
                         const errors: { [key: string]: boolean } = {};
+
+                        // Re-check username availability if we have a username
+                        if (registerUsername.trim()) {
+                          const usernameResponse = await fetch(
+                            `/api/auth/check-username/${encodeURIComponent(registerUsername)}`,
+                          );
+                          const usernameData = await usernameResponse.json();
+                          if (!usernameData.available) {
+                            errors.username = true;
+                          }
+                        }
+
+                        // Re-check email availability if we have an email
+                        if (
+                          registerEmail.trim() &&
+                          registerEmail.includes("@")
+                        ) {
+                          const emailResponse = await fetch(
+                            `/api/auth/check-email/${encodeURIComponent(registerEmail)}`,
+                          );
+                          const emailData = await emailResponse.json();
+                          if (!emailData.available) {
+                            errors.email = true;
+                          }
+                        }
+
+                        // Re-check phone availability if we have a phone
+                        if (registerPhone.trim()) {
+                          const phoneResponse = await fetch(
+                            `/api/auth/check-phone/${encodeURIComponent(registerPhone)}`,
+                          );
+                          const phoneData = await phoneResponse.json();
+                          if (!phoneData.available) {
+                            errors.phone = true;
+                          }
+                        }
 
                         // Validações de campos obrigatórios
                         if (
@@ -797,6 +856,25 @@ export default function Header({ activeSection }: HeaderProps) {
                         const nonCaptchaErrors = Object.keys(errors).filter(
                           (key) => key !== "captcha",
                         );
+
+                        console.log("[FORM VALIDATION]", {
+                          errors,
+                          nonCaptchaErrors,
+                          formData: {
+                            firstName: registerFirstName,
+                            lastName: registerLastName,
+                            username: registerUsername,
+                            email: registerEmail,
+                            password: registerPassword,
+                            confirmPassword: registerConfirmPassword,
+                            phone: registerPhone,
+                            birthDay: registerBirthDay,
+                            birthMonth: registerBirthMonth,
+                            birthYear: registerBirthYear,
+                            captchaValid: registerCaptchaValid,
+                          },
+                        });
+
                         if (nonCaptchaErrors.length > 0) {
                           setValidationErrors(errors);
                           toast.error(
@@ -927,11 +1005,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                           validationErrors.username
                             ? "border-red-500 text-red-600"
-                            : fieldMessages.username &&
-                                registerUsername.trim() &&
-                                !validationErrors.username
-                              ? "border-green-500"
-                              : "border-gray-300"
+                            : "border-gray-300"
                         }`}
                         required
                         minLength={2}
@@ -966,11 +1040,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                           validationErrors.email
                             ? "border-red-500 text-red-600"
-                            : fieldMessages.email &&
-                                registerEmail.trim() &&
-                                !validationErrors.email
-                              ? "border-green-500"
-                              : "border-gray-300"
+                            : "border-gray-300"
                         }`}
                         required
                       />
@@ -999,10 +1069,7 @@ export default function Header({ activeSection }: HeaderProps) {
                           className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                             validationErrors.password
                               ? "border-red-500 text-red-600"
-                              : registerPassword.length >= 8 &&
-                                  /[A-Z]/.test(registerPassword)
-                                ? "border-green-500"
-                                : "border-gray-300"
+                              : "border-gray-300"
                           }`}
                           required
                           minLength={8}
@@ -1029,10 +1096,7 @@ export default function Header({ activeSection }: HeaderProps) {
                           className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                             validationErrors.confirmPassword
                               ? "border-red-500 text-red-600"
-                              : registerConfirmPassword.length > 0 &&
-                                  registerPassword === registerConfirmPassword
-                                ? "border-green-500"
-                                : "border-gray-300"
+                              : "border-gray-300"
                           }`}
                           required
                           minLength={8}
@@ -1050,7 +1114,7 @@ export default function Header({ activeSection }: HeaderProps) {
                       <Input
                         id="register-phone"
                         type="tel"
-                        placeholder="Telefone (11) 99999-9999"
+                        placeholder="(11) 99999-9999"
                         value={registerPhone}
                         onChange={(e) => {
                           const value = e.target.value.replace(/\D/g, "");
@@ -1076,11 +1140,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
                           validationErrors.phone
                             ? "border-red-500 text-red-600"
-                            : fieldMessages.phone &&
-                                registerPhone.trim() &&
-                                !validationErrors.phone
-                              ? "border-green-500"
-                              : "border-gray-300"
+                            : "border-gray-300"
                         }`}
                         required
                         maxLength={15}

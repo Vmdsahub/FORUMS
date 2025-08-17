@@ -140,6 +140,13 @@ export default function AdvancedCaptcha({
     const upperValue = value.toUpperCase();
     setUserAnswer(upperValue);
     const valid = upperValue === captchaCode;
+    console.log("[CAPTCHA DEBUG]", {
+      userInput: value,
+      upperValue,
+      captchaCode,
+      valid,
+      match: upperValue === captchaCode,
+    });
     setIsValid(valid);
     onValidationChange(valid);
     onCaptchaChange(upperValue);
@@ -194,7 +201,7 @@ export default function AdvancedCaptcha({
           placeholder="Digite o código mostrado acima"
           value={userAnswer}
           onChange={(e) => handleAnswerChange(e.target.value)}
-          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 uppercase h-9"
+          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 h-9"
           maxLength={6}
         />
       </div>
