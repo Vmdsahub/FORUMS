@@ -174,5 +174,10 @@ export function createServer() {
   app.get("/api/user/likes", authenticateToken, getUserLikes);
   app.post("/api/user/themes/purchase", authenticateToken, purchaseTheme);
 
+  // Uploadcare routes
+  app.get("/api/uploadcare/config", handleUploadcareConfig);
+  app.post("/api/uploadcare/webhook", handleUploadcareWebhook);
+  app.get("/api/uploadcare/verify/:uuid", handleUploadcareVerify);
+
   return app;
 }
