@@ -55,6 +55,11 @@ import {
   removeCategoryIcon,
 } from "./routes/category-icons";
 import { getUserThemes, getUserLikes, purchaseTheme } from "./routes/themes";
+import {
+  handleUploadcareWebhook,
+  handleUploadcareConfig,
+  handleUploadcareVerify,
+} from "./routes/uploadcare";
 
 export function createServer() {
   const app = express();
