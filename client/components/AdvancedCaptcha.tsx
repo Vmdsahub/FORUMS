@@ -140,6 +140,13 @@ export default function AdvancedCaptcha({
     const upperValue = value.toUpperCase();
     setUserAnswer(upperValue);
     const valid = upperValue === captchaCode;
+    console.log("[CAPTCHA DEBUG]", {
+      userInput: value,
+      upperValue,
+      captchaCode,
+      valid,
+      match: upperValue === captchaCode
+    });
     setIsValid(valid);
     onValidationChange(valid);
     onCaptchaChange(upperValue);
