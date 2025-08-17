@@ -1062,7 +1062,7 @@ export default function Header({ activeSection }: HeaderProps) {
                       <Input
                         id="register-phone"
                         type="tel"
-                        placeholder="Telefone (11) 99999-9999"
+                        placeholder="(11) 99999-9999"
                         value={registerPhone}
                         onChange={(e) => {
                           const value = e.target.value.replace(/\D/g, "");
