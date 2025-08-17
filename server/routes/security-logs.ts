@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { securityLogger } from "../security/logger";
+import { securityLogger, SecurityLogLevel, SecurityEventType } from "../security/logger";
 
 // Get security statistics
 export const handleSecurityStats: RequestHandler = (req, res) => {
@@ -102,9 +102,9 @@ export const handleSecurityHealth: RequestHandler = (req, res) => {
       issues: [] as string[],
       metrics: {
         totalEvents: stats.totalEvents,
-        criticalEvents: stats.eventsByLevel.get('CRITICAL') || 0,
-        quarantinedFiles: stats.eventsByType.get('FILE_QUARANTINE') || 0,
-        malwareDetected: stats.eventsByType.get('MALWARE_DETECTED') || 0
+        criticalEvents: stats.eventsByLevel.get(SecurityLogLevel.CRITICAL) || 0,
+        quarantinedFiles: stats.eventsByType.get(SecurityEventType.FILE_QUARANTINE) || 0,
+        malwareDetected: stats.eventsByType.get(SecurityEventType.MALWARE_DETECTED) || 0
       }
     };
     
@@ -162,7 +162,7 @@ export const handleSecurityReport: RequestHandler = (req, res) => {
         topThreats: stats.topThreats
       },
       criticalEvents: logs.filter(log => log.severity >= 8),
-      recentAlerts: logs.filter(log => log.level === 'CRITICAL').slice(0, 20)
+      recentAlerts: logs.filter(log => log.level === SecurityLogLevel.CRITICAL).slice(0, 20)
     };
     
     if (format === 'csv') {
