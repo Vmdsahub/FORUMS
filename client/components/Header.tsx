@@ -729,8 +729,35 @@ export default function Header({ activeSection }: HeaderProps) {
                           return;
                         }
 
-                        // Preserve existing validation errors (like username/email availability)
-                        const errors: { [key: string]: boolean } = { ...validationErrors };
+                        // Reset validation errors but check availability again for current values
+                        const errors: { [key: string]: boolean } = {};
+
+                        // Re-check username availability if we have a username
+                        if (registerUsername.trim()) {
+                          const usernameResponse = await fetch(`/api/auth/check-username/${encodeURIComponent(registerUsername)}`);
+                          const usernameData = await usernameResponse.json();
+                          if (!usernameData.available) {
+                            errors.username = true;
+                          }
+                        }
+
+                        // Re-check email availability if we have an email
+                        if (registerEmail.trim() && registerEmail.includes("@")) {
+                          const emailResponse = await fetch(`/api/auth/check-email/${encodeURIComponent(registerEmail)}`);
+                          const emailData = await emailResponse.json();
+                          if (!emailData.available) {
+                            errors.email = true;
+                          }
+                        }
+
+                        // Re-check phone availability if we have a phone
+                        if (registerPhone.trim()) {
+                          const phoneResponse = await fetch(`/api/auth/check-phone/${encodeURIComponent(registerPhone)}`);
+                          const phoneData = await phoneResponse.json();
+                          if (!phoneData.available) {
+                            errors.phone = true;
+                          }
+                        }
 
                         // Validações de campos obrigatórios
                         if (
