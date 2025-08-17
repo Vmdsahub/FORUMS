@@ -680,7 +680,28 @@ export default function Header({ activeSection }: HeaderProps) {
               </Dialog>
 
               {/* Register Dialog */}
-              <Dialog open={isRegisterOpen} onOpenChange={setIsRegisterOpen}>
+              <Dialog open={isRegisterOpen} onOpenChange={(open) => {
+                setIsRegisterOpen(open);
+                if (!open) {
+                  // Reset form when closing modal
+                  setRegisterFirstName("");
+                  setRegisterLastName("");
+                  setRegisterUsername("");
+                  setRegisterEmail("");
+                  setRegisterPassword("");
+                  setRegisterConfirmPassword("");
+                  setRegisterPhone("");
+                  setRegisterBirthDay("");
+                  setRegisterBirthMonth("");
+                  setRegisterBirthYear("");
+                  setRegisterAcceptTerms(false);
+                  setRegisterAcceptNewsletter(false);
+                  setRegisterCaptcha("");
+                  setRegisterCaptchaValid(false);
+                  setValidationErrors({});
+                  setFieldMessages({});
+                }
+              }}>
                 <DialogTrigger asChild>
                   <Button
                     size="sm"
