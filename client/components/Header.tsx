@@ -947,15 +947,13 @@ export default function Header({ activeSection }: HeaderProps) {
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                           validationErrors.username
                             ? "border-red-500 text-red-600"
-                            : registerUsername.trim() && fieldMessages.username && !validationErrors.username
-                              ? "border-green-500"
-                              : "border-gray-300"
+                            : "border-gray-300"
                         }`}
                         required
                         minLength={2}
                       />
-                      {fieldMessages.username && registerUsername.trim() && (
-                        <p className={`text-xs mt-2 ${validationErrors.username ? 'text-red-600' : 'text-green-600'}`}>
+                      {fieldMessages.username && registerUsername.trim() && validationErrors.username && (
+                        <p className="text-xs mt-2 text-red-600">
                           {fieldMessages.username}
                         </p>
                       )}
@@ -982,14 +980,12 @@ export default function Header({ activeSection }: HeaderProps) {
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                           validationErrors.email
                             ? "border-red-500 text-red-600"
-                            : registerEmail.trim() && fieldMessages.email && !validationErrors.email
-                              ? "border-green-500"
-                              : "border-gray-300"
+                            : "border-gray-300"
                         }`}
                         required
                       />
-                      {fieldMessages.email && registerEmail.trim() && (
-                        <p className={`text-xs mt-2 ${validationErrors.email ? 'text-red-600' : 'text-green-600'}`}>
+                      {fieldMessages.email && registerEmail.trim() && validationErrors.email && (
+                        <p className="text-xs mt-2 text-red-600">
                           {fieldMessages.email}
                         </p>
                       )}
@@ -1011,10 +1007,7 @@ export default function Header({ activeSection }: HeaderProps) {
                           className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                             validationErrors.password
                               ? "border-red-500 text-red-600"
-                              : registerPassword.length >= 8 &&
-                                  /[A-Z]/.test(registerPassword)
-                                ? "border-green-500"
-                                : "border-gray-300"
+                              : "border-gray-300"
                           }`}
                           required
                           minLength={8}
@@ -1041,10 +1034,7 @@ export default function Header({ activeSection }: HeaderProps) {
                           className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-11 text-sm ${
                             validationErrors.confirmPassword
                               ? "border-red-500 text-red-600"
-                              : registerConfirmPassword.length > 0 &&
-                                  registerPassword === registerConfirmPassword
-                                ? "border-green-500"
-                                : "border-gray-300"
+                              : "border-gray-300"
                           }`}
                           required
                           minLength={8}
@@ -1088,15 +1078,13 @@ export default function Header({ activeSection }: HeaderProps) {
                         className={`focus:border-gray-500 focus:ring-gray-500 bg-white h-9 ${
                           validationErrors.phone
                             ? "border-red-500 text-red-600"
-                            : registerPhone.trim() && fieldMessages.phone && !validationErrors.phone
-                              ? "border-green-500"
-                              : "border-gray-300"
+                            : "border-gray-300"
                         }`}
                         required
                         maxLength={15}
                       />
-                      {fieldMessages.phone && registerPhone.trim() && (
-                        <p className={`text-xs mt-1 ${validationErrors.phone ? 'text-red-600' : 'text-green-600'}`}>
+                      {fieldMessages.phone && registerPhone.trim() && validationErrors.phone && (
+                        <p className="text-xs mt-1 text-red-600">
                           {fieldMessages.phone}
                         </p>
                       )}
