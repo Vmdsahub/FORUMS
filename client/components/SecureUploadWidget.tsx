@@ -1,16 +1,16 @@
 import React, { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { 
-  AlertDialog, 
-  AlertDialogContent, 
-  AlertDialogHeader, 
-  AlertDialogTitle, 
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogCancel,
   AlertDialogAction
-} from '@/components/ui/dialog';
+} from '@/components/ui/alert-dialog';
 
 interface SecureUploadWidgetProps {
   onSuccess: (fileInfo: UploadedFileInfo) => void;
