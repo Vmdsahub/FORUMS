@@ -844,6 +844,25 @@ export default function Header({ activeSection }: HeaderProps) {
                         const nonCaptchaErrors = Object.keys(errors).filter(
                           (key) => key !== "captcha",
                         );
+
+                        console.log("[FORM VALIDATION]", {
+                          errors,
+                          nonCaptchaErrors,
+                          formData: {
+                            firstName: registerFirstName,
+                            lastName: registerLastName,
+                            username: registerUsername,
+                            email: registerEmail,
+                            password: registerPassword,
+                            confirmPassword: registerConfirmPassword,
+                            phone: registerPhone,
+                            birthDay: registerBirthDay,
+                            birthMonth: registerBirthMonth,
+                            birthYear: registerBirthYear,
+                            captchaValid: registerCaptchaValid
+                          }
+                        });
+
                         if (nonCaptchaErrors.length > 0) {
                           setValidationErrors(errors);
                           toast.error(
