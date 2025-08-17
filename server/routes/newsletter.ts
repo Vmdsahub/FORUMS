@@ -78,16 +78,24 @@ const createArticleSchema = z.object({
 });
 
 // Get ISO week number (standard international week numbering)
-function getISOWeekNumber(date: Date) {
+function getISOWeekNumber(date: Date): { week: number; year: number } {
   const target = new Date(date.valueOf());
   const dayNumber = (date.getDay() + 6) % 7;
   target.setDate(target.getDate() - dayNumber + 3);
   const firstThursday = target.valueOf();
-  target.setMonth(0, 1);
-  if (target.getDay() !== 4) {
-    target.setMonth(0, 1 + ((4 - target.getDay() + 7) % 7));
+
+  // Get year for this week (could be different from calendar year)
+  const year = target.getFullYear();
+
+  // Get first Thursday of the year
+  const yearStart = new Date(year, 0, 1);
+  if (yearStart.getDay() !== 4) {
+    yearStart.setMonth(0, 1 + ((4 - yearStart.getDay() + 7) % 7));
   }
-  return 1 + Math.ceil((firstThursday - target.valueOf()) / 604800000);
+
+  const week = 1 + Math.ceil((firstThursday - yearStart.valueOf()) / 604800000);
+
+  return { week, year };
 }
 
 // Helper function to get current week info using ISO 8601 week standard

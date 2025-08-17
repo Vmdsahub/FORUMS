@@ -109,6 +109,22 @@ function getMostRecentActivity(topic: Topic): number {
   return mostRecentTime;
 }
 
+// Function to calculate user badges based on points
+function calculateUserBadges(
+  points: number,
+): Array<{ id: string; name: string }> {
+  const badges = [];
+
+  if (points >= 1) badges.push({ id: "iniciante", name: "Iniciante" });
+  if (points >= 10) badges.push({ id: "ativo", name: "Ativo" });
+  if (points >= 50) badges.push({ id: "experiente", name: "Experiente" });
+  if (points >= 100) badges.push({ id: "veterano", name: "Veterano" });
+  if (points >= 250) badges.push({ id: "expert", name: "Expert" });
+  if (points >= 500) badges.push({ id: "mestre", name: "Mestre" });
+
+  return badges;
+}
+
 function addPoints(userId: string, points: number) {
   const stats = getUserStats(userId);
   stats.points += points;

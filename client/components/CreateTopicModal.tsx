@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import { Topic } from "@shared/forum";
-import RichTextEditor from "@/components/RichTextEditor";
+import EnhancedRichTextEditor from "@/components/EnhancedRichTextEditor";
 
 interface ForumCategory {
   id: string;
@@ -282,10 +282,10 @@ export default function CreateTopicModal({
 
           <div className="space-y-2">
             <Label className="text-gray-900 font-medium">Conteúdo</Label>
-            <RichTextEditor
+            <EnhancedRichTextEditor
               value={formData.content}
               onChange={(value) => handleInputChange("content", value)}
-              placeholder="Descreva seu tópico em detalhes... Use as ferramentas acima para formatar o texto, adicionar imagens e vídeos."
+              placeholder="Descreva seu tópico em detalhes... Use as ferramentas acima para formatar o texto, adicionar código, escolher cores e fazer upload de arquivos."
             />
             <p className="text-xs text-gray-500">
               {formData.content.length} caracteres

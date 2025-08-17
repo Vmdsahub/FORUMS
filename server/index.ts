@@ -55,6 +55,21 @@ import {
   removeCategoryIcon,
 } from "./routes/category-icons";
 import { getUserThemes, getUserLikes, purchaseTheme } from "./routes/themes";
+import {
+  secureUploadMiddleware,
+  handleSecureUpload,
+  handleSecureFileServe,
+  handleUploadStats,
+  handleFileVerification,
+  handleQuarantineManagement,
+} from "./routes/secure-upload";
+import {
+  handleSecurityStats,
+  handleSecurityLogs,
+  handleSecurityAlerts,
+  handleSecurityHealth,
+  handleSecurityReport,
+} from "./routes/security-logs";
 
 export function createServer() {
   const app = express();
@@ -168,6 +183,24 @@ export function createServer() {
   app.get("/api/user/themes", authenticateToken, getUserThemes);
   app.get("/api/user/likes", authenticateToken, getUserLikes);
   app.post("/api/user/themes/purchase", authenticateToken, purchaseTheme);
+
+  // Secure upload routes (replaces Uploadcare)
+  app.post(
+    "/api/secure-upload",
+    secureUploadMiddleware.single("file"),
+    handleSecureUpload,
+  );
+  app.get("/api/secure-files/:filename", handleSecureFileServe);
+  app.get("/api/upload-stats", handleUploadStats);
+  app.get("/api/verify-file/:hash", handleFileVerification);
+  app.post("/api/quarantine-management", handleQuarantineManagement);
+
+  // Security logs and monitoring routes
+  app.get("/api/security/stats", handleSecurityStats);
+  app.get("/api/security/logs", handleSecurityLogs);
+  app.get("/api/security/alerts", handleSecurityAlerts);
+  app.get("/api/security/health", handleSecurityHealth);
+  app.get("/api/security/report", handleSecurityReport);
 
   return app;
 }
