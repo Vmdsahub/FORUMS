@@ -63,6 +63,13 @@ import {
   handleFileVerification,
   handleQuarantineManagement,
 } from "./routes/secure-upload";
+import {
+  handleSecurityStats,
+  handleSecurityLogs,
+  handleSecurityAlerts,
+  handleSecurityHealth,
+  handleSecurityReport,
+} from "./routes/security-logs";
 
 export function createServer() {
   const app = express();
@@ -183,6 +190,13 @@ export function createServer() {
   app.get("/api/upload-stats", handleUploadStats);
   app.get("/api/verify-file/:hash", handleFileVerification);
   app.post("/api/quarantine-management", handleQuarantineManagement);
+
+  // Security logs and monitoring routes
+  app.get("/api/security/stats", handleSecurityStats);
+  app.get("/api/security/logs", handleSecurityLogs);
+  app.get("/api/security/alerts", handleSecurityAlerts);
+  app.get("/api/security/health", handleSecurityHealth);
+  app.get("/api/security/report", handleSecurityReport);
 
   return app;
 }
