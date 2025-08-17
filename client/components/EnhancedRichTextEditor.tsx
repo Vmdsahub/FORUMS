@@ -47,7 +47,7 @@ const codePatterns = {
   go: /(?:package\s+\w+|import\s+|func\s+\w+|var\s+\w+|fmt\.)/,
   rust: /(?:fn\s+\w+|let\s+\w+|pub\s+|use\s+|struct\s+|enum\s+|println!)/,
   sql: /(?:SELECT\s+|FROM\s+|WHERE\s+|INSERT\s+INTO|UPDATE\s+|DELETE\s+FROM|CREATE\s+TABLE)/i,
-  bash: /(?:#!/bin/|echo\s+|ls\s+|cd\s+|mkdir\s+|rm\s+|sudo\s+|chmod\s+)/,
+  bash: /(?:#!\/bin\/|echo\s+|ls\s+|cd\s+|mkdir\s+|rm\s+|sudo\s+|chmod\s+)/,
   json: /^\s*[\{\[]/,
   css: /(?:\w+\s*\{|\.[\w-]+\s*\{|#[\w-]+\s*\{|@media|display\s*:|color\s*:|margin\s*:)/,
   html: /(?:<html|<head|<body|<div|<span|<p|<!DOCTYPE)/i,
