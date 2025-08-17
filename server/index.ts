@@ -56,10 +56,13 @@ import {
 } from "./routes/category-icons";
 import { getUserThemes, getUserLikes, purchaseTheme } from "./routes/themes";
 import {
-  handleUploadcareWebhook,
-  handleUploadcareConfig,
-  handleUploadcareVerify,
-} from "./routes/uploadcare";
+  secureUploadMiddleware,
+  handleSecureUpload,
+  handleSecureFileServe,
+  handleUploadStats,
+  handleFileVerification,
+  handleQuarantineManagement,
+} from "./routes/secure-upload";
 
 export function createServer() {
   const app = express();
@@ -174,10 +177,12 @@ export function createServer() {
   app.get("/api/user/likes", authenticateToken, getUserLikes);
   app.post("/api/user/themes/purchase", authenticateToken, purchaseTheme);
 
-  // Uploadcare routes
-  app.get("/api/uploadcare/config", handleUploadcareConfig);
-  app.post("/api/uploadcare/webhook", handleUploadcareWebhook);
-  app.get("/api/uploadcare/verify/:uuid", handleUploadcareVerify);
+  // Secure upload routes (replaces Uploadcare)
+  app.post("/api/secure-upload", secureUploadMiddleware.single('file'), handleSecureUpload);
+  app.get("/api/secure-files/:filename", handleSecureFileServe);
+  app.get("/api/upload-stats", handleUploadStats);
+  app.get("/api/verify-file/:hash", handleFileVerification);
+  app.post("/api/quarantine-management", handleQuarantineManagement);
 
   return app;
 }
