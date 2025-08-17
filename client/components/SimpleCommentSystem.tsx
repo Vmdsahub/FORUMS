@@ -5,7 +5,7 @@ import { useNotifications } from "@/contexts/NotificationContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import UserHoverCard from "@/components/UserHoverCard";
-import EnhancedRichTextEditor from "@/components/EnhancedRichTextEditor";
+import EnhancedEnhancedRichTextEditor from "@/components/EnhancedEnhancedRichTextEditor";
 import ReportModal from "@/components/ReportModal";
 
 interface Comment {
@@ -448,10 +448,10 @@ export default function SimpleCommentSystem({
           )}
 
           <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <RichTextEditor
+            <EnhancedRichTextEditor
               value={newComment}
               onChange={setNewComment}
-              placeholder="Escreva seu coment��rio... Você pode inserir imagens, vídeos e usar formatação rica!"
+              placeholder="Escreva seu comentário... Código será detectado automaticamente! Use as ferramentas para cores, upload de arquivos e mais."
             />
             <div className="flex items-center justify-between mt-3">
               <span className="text-xs text-gray-500">
