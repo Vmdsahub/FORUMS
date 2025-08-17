@@ -5,7 +5,7 @@ import { useNotifications } from "@/contexts/NotificationContext";
 import { toast } from "sonner";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
 import UserHoverCard from "@/components/UserHoverCard";
-import EnhancedEnhancedRichTextEditor from "@/components/EnhancedEnhancedRichTextEditor";
+import EnhancedRichTextEditor from "@/components/EnhancedRichTextEditor";
 import ReportModal from "@/components/ReportModal";
 
 interface Comment {
