@@ -30,8 +30,17 @@ export interface SecurityLogEntry {
     fileName?: string;
     fileHash?: string;
     fileSize?: number;
+    mimeType?: string;
     reasons?: string[];
     action?: string;
+    alertType?: string;
+    eventType?: string;
+    count?: number;
+    threshold?: number;
+    timeWindow?: string;
+    malwareType?: string;
+    resource?: string;
+    success?: boolean;
     metadata?: Record<string, any>;
   };
   severity: number; // 1-10 scale
