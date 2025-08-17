@@ -3,6 +3,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { AdvancedFileValidator, SECURITY_CONFIG } from "../security/fileValidator";
+import { securityLogger, SecurityLogLevel, SecurityEventType } from "../security/logger";
 import { v4 as uuidv4 } from "uuid";
 
 // Initialize the file validator
@@ -48,19 +49,39 @@ export const secureUploadMiddleware = multer({
 
 // Secure file upload endpoint
 export const handleSecureUpload: RequestHandler = async (req, res) => {
+  const userId = (req as any).user?.id || 'anonymous';
+  const userAgent = req.headers['user-agent'] || 'unknown';
+  const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
+
   try {
     if (!req.file) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'No file provided' 
+      securityLogger.logSuspiciousActivity(
+        'Upload attempt without file',
+        { endpoint: '/api/secure-upload' },
+        userId,
+        clientIp
+      );
+
+      return res.status(400).json({
+        success: false,
+        error: 'No file provided'
       });
     }
+
+    // Log file upload attempt
+    securityLogger.logFileUpload(
+      userId,
+      req.file.originalname,
+      req.file.size,
+      clientIp,
+      userAgent
+    );
 
     console.log(`[SECURE UPLOAD] Processing file: ${req.file.originalname}, size: ${req.file.size}`);
 
     // Validate the uploaded file
     const validationResult = await fileValidator.validateFile(
-      req.file.path, 
+      req.file.path,
       req.file.originalname
     );
 
@@ -71,11 +92,46 @@ export const handleSecureUpload: RequestHandler = async (req, res) => {
       }
     };
 
+    // Log validation result
+    securityLogger.logFileValidation(
+      req.file.originalname,
+      validationResult.hash,
+      validationResult.isValid,
+      validationResult.reasons
+    );
+
     if (!validationResult.isValid) {
       cleanupTempFile();
-      
+
+      // Log quarantine if applicable
+      if (validationResult.quarantined) {
+        securityLogger.logFileQuarantine(
+          req.file.originalname,
+          validationResult.hash,
+          validationResult.reasons,
+          userId
+        );
+      }
+
+      // Check for potential malware indicators
+      const malwareIndicators = validationResult.reasons.filter(reason =>
+        reason.toLowerCase().includes('executable') ||
+        reason.toLowerCase().includes('script') ||
+        reason.toLowerCase().includes('macro') ||
+        reason.toLowerCase().includes('malicious')
+      );
+
+      if (malwareIndicators.length > 0) {
+        securityLogger.logMalwareDetected(
+          req.file.originalname,
+          validationResult.hash,
+          malwareIndicators.join(', '),
+          userId
+        );
+      }
+
       console.log(`[SECURITY] File rejected: ${req.file.originalname}, reasons: ${validationResult.reasons.join(', ')}`);
-      
+
       return res.status(400).json({
         success: false,
         error: 'File failed security validation',
@@ -101,6 +157,22 @@ export const handleSecureUpload: RequestHandler = async (req, res) => {
     // Log successful upload
     console.log(`[SECURE UPLOAD] File saved: ${safeFileName}, hash: ${validationResult.hash}`);
 
+    securityLogger.log(
+      SecurityLogLevel.INFO,
+      SecurityEventType.FILE_UPLOAD,
+      `File successfully uploaded and validated: ${req.file.originalname}`,
+      {
+        userId,
+        fileName: req.file.originalname,
+        fileHash: validationResult.hash,
+        fileSize: validationResult.size,
+        mimeType: validationResult.detectedMimeType || req.file.mimetype,
+        ip: clientIp,
+        action: 'APPROVED'
+      },
+      2
+    );
+
     // Save file metadata
     const metadata = {
       originalName: req.file.originalname,
@@ -109,7 +181,9 @@ export const handleSecureUpload: RequestHandler = async (req, res) => {
       size: validationResult.size,
       mimeType: validationResult.detectedMimeType || req.file.mimetype,
       uploadTime: new Date().toISOString(),
-      uploadedBy: (req as any).user?.id || 'anonymous',
+      uploadedBy: userId,
+      uploadIp: clientIp,
+      userAgent,
       validationResult
     };
 
@@ -148,11 +222,25 @@ export const handleSecureUpload: RequestHandler = async (req, res) => {
 
 // Secure file serving endpoint
 export const handleSecureFileServe: RequestHandler = (req, res) => {
+  const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
+  const userAgent = req.headers['user-agent'] || 'unknown';
+
   try {
     const { filename } = req.params;
-    
+
     // Validate filename to prevent directory traversal
     if (!filename || filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+      securityLogger.logSuspiciousActivity(
+        'Directory traversal attempt in file access',
+        {
+          filename,
+          endpoint: '/api/secure-files',
+          attemptedPath: filename
+        },
+        undefined,
+        clientIp
+      );
+
       return res.status(400).json({ error: 'Invalid filename' });
     }
 
@@ -161,6 +249,14 @@ export const handleSecureFileServe: RequestHandler = (req, res) => {
 
     // Check if file exists
     if (!fs.existsSync(filePath)) {
+      securityLogger.logAccessAttempt(
+        `secure-file:${filename}`,
+        false,
+        undefined,
+        clientIp,
+        userAgent
+      );
+
       return res.status(404).json({ error: 'File not found' });
     }
 
@@ -190,6 +286,14 @@ export const handleSecureFileServe: RequestHandler = (req, res) => {
     fileStream.pipe(res);
 
     console.log(`[SECURE SERVE] File served: ${filename}`);
+
+    securityLogger.logAccessAttempt(
+      `secure-file:${filename}`,
+      true,
+      undefined,
+      clientIp,
+      userAgent
+    );
 
   } catch (error) {
     console.error('[SECURE SERVE] Error:', error);
