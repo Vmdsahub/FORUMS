@@ -194,7 +194,7 @@ export default function AdvancedCaptcha({
           placeholder="Digite o código mostrado acima"
           value={userAnswer}
           onChange={(e) => handleAnswerChange(e.target.value)}
-          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 uppercase h-9"
+          className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 h-9"
           maxLength={6}
         />
       </div>
