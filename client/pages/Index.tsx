@@ -579,7 +579,7 @@ export default function Index(props: IndexProps) {
                   title={
                     user?.name === "Vitoca"
                       ? "Avançar para semanas mais recentes (Admin)"
-                      : "Não disponível para usuários"
+                      : "Avançar de volta até a semana atual"
                   }
                 >
                   <svg
