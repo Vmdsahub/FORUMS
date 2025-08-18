@@ -417,8 +417,11 @@ export const SECURITY_CONFIG: SecurityConfig = {
     "image/webp",
     "video/mp4",
     "video/webm",
+    "video/quicktime", // .mov files
+    "video/x-msvideo", // .avi files
     "audio/mpeg",
     "audio/wav",
+    "audio/mp4", // .m4a files
     "application/pdf",
     "application/msword",
     "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -436,6 +439,8 @@ export const SECURITY_CONFIG: SecurityConfig = {
     ".mp4",
     ".webm",
     ".mov",
+    ".avi",
+    ".m4a",
     ".mp3",
     ".wav",
     ".pdf",
