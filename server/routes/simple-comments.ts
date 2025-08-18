@@ -445,7 +445,7 @@ export function initializeDemo() {
       content: "Ótimo comparativo! Muito útil para escolher.",
       author: "João",
       authorId: "demo_user_123",
-      authorAvatar: "JO",
+      authorAvatar: "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F477cc7711bf64b4d94e766b55d18ca30?format=webp&width=800",
       topicId: "1",
       parentId: null,
       createdAt: new Date(Date.now() - 7200000).toISOString(),
