@@ -49,6 +49,11 @@ function getUserInitials(name: string): string {
     .toUpperCase();
 }
 
+function getUserAvatar(user: any): string {
+  // Se o usuário tem avatar, usa a URL completa, senão usa as iniciais
+  return user.avatar || getUserInitials(user.name);
+}
+
 // Função RECURSIVA para construir árvore de comentários com profundidade ilimitada
 function buildCommentTree(topicId: string, userId?: string): SimpleComment[] {
   const commentIds = topicComments.get(topicId) || [];
