@@ -1,22 +1,30 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   WeeklyNewsletter,
   getAllWeeks,
   getCurrentWeekIndex,
-  isSunday,
+  clearWeeksCache,
 } from "@/utils/weekSystem";
 
 interface UseSimpleWeekNavigationProps {
   isAdmin?: boolean;
+  isVitoca?: boolean; // Identifica se é o admin Vitoca especificamente
   articlesData?: any; // Dados de artigos vindos da API
 }
 
 export function useSimpleWeekNavigation({
   isAdmin = false,
+  isVitoca = false,
   articlesData,
 }: UseSimpleWeekNavigationProps) {
-  // Obter todas as semanas disponíveis (2025-2030)
-  const allWeeks = getAllWeeks();
+  // Obter todas as semanas disponíveis (2025-2030) - memoizado para evitar recálculo
+  const allWeeks = useMemo(() => {
+    // Limpar cache apenas uma vez se for desenvolvimento
+    if (process.env.NODE_ENV === "development") {
+      clearWeeksCache();
+    }
+    return getAllWeeks();
+  }, []); // Sem dependências para garantir que seja calculado apenas uma vez
 
   // Estado para a semana atual sendo exibida
   const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
@@ -31,17 +39,18 @@ export function useSimpleWeekNavigation({
     const realCurrentWeekIndex = getCurrentWeekIndex(allWeeks);
     setCurrentWeekIndex(realCurrentWeekIndex);
 
-    console.log("Sistema de semanas inicializado:", {
+    console.log("✅ Sistema de navegação de semanas inicializado:", {
       totalWeeks: allWeeks.length,
       currentWeekIndex: realCurrentWeekIndex,
       currentWeek: allWeeks[realCurrentWeekIndex],
       isAdmin,
+      date: new Date().toLocaleDateString("pt-BR"),
     });
-  }, [allWeeks, isAdmin]);
+  }, [allWeeks.length, isAdmin]); // Usando length em vez do array completo
 
   // Merge dos dados da API com as semanas geradas
   useEffect(() => {
-    console.log("🔄 Fazendo merge de dados:", {
+    console.log("🔄 Fazendo merge de dados da newsletter:", {
       articlesData,
       hasWeeklyNewsletters: !!articlesData?.weeklyNewsletters,
       weeklyNewslettersCount: articlesData?.weeklyNewsletters?.length || 0,
@@ -54,11 +63,10 @@ export function useSimpleWeekNavigation({
         const apiWeek = articlesData.weeklyNewsletters.find((apiWeek: any) => {
           const matches =
             apiWeek.week === week.week &&
-            // Para compatibilidade, assumir que API retorna dados do ano atual
             (apiWeek.year === week.year || !apiWeek.year);
 
           if (matches) {
-            console.log("📅 Match encontrado:", {
+            console.log("📅 Conteúdo encontrado para semana:", {
               systemWeek: `${week.week}/${week.year}`,
               apiWeek: `${apiWeek.week}/${apiWeek.year || "sem ano"}`,
               topicsCount: apiWeek.topics?.length || 0,
@@ -85,112 +93,146 @@ export function useSimpleWeekNavigation({
     });
 
     setWeeksWithContent(mergedWeeks);
-  }, [allWeeks, articlesData]);
+  }, [allWeeks.length, articlesData]); // Usando length em vez do array completo
 
-  // Verificação automática de mudança de semana (a cada hora)
-  useEffect(() => {
-    const checkWeekChange = () => {
-      const realCurrentWeekIndex = getCurrentWeekIndex(allWeeks);
-
-      // Se mudou de semana e é domingo, atualizar automaticamente
-      if (realCurrentWeekIndex !== currentWeekIndex && isSunday()) {
-        console.log("Semana avançou automaticamente:", {
-          from: currentWeekIndex,
-          to: realCurrentWeekIndex,
-          isSunday: isSunday(),
-        });
-        setCurrentWeekIndex(realCurrentWeekIndex);
-      }
-    };
-
-    // Verificar imediatamente
-    checkWeekChange();
-
-    // Verificar a cada hora
-    const interval = setInterval(checkWeekChange, 60 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [allWeeks, currentWeekIndex]);
-
-  // Função de navegação
+  // Função de navegação com regras específicas
   const navigateWeek = useCallback(
     (direction: "prev" | "next") => {
+      console.log("🧭 Navegando:", {
+        direction,
+        currentIndex: currentWeekIndex,
+        isAdmin,
+        isVitoca,
+        totalWeeks: weeksWithContent.length,
+      });
+
       if (direction === "prev") {
         // Ir para semanas mais antigas (índice maior)
-        if (isAdmin) {
-          // Admin pode navegar para qualquer semana
-          if (currentWeekIndex < weeksWithContent.length - 1) {
-            setCurrentWeekIndex(currentWeekIndex + 1);
+        const nextIndex = currentWeekIndex + 1;
+
+        if (nextIndex < weeksWithContent.length) {
+          // Admin Vitoca pode navegar livremente
+          if (isVitoca) {
+            console.log("⬅️ Admin Vitoca navegando para semana anterior:", {
+              from: `${weeksWithContent[currentWeekIndex]?.week}/${weeksWithContent[currentWeekIndex]?.year}`,
+              to: `${weeksWithContent[nextIndex]?.week}/${weeksWithContent[nextIndex]?.year}`,
+            });
+            setCurrentWeekIndex(nextIndex);
+          } else {
+            // Usuário comum só pode voltar se a semana anterior tiver notícias
+            const targetWeek = weeksWithContent[nextIndex];
+            if (targetWeek?.topics?.length > 0) {
+              console.log(
+                "⬅️ Usuário navegando para semana anterior com conteúdo:",
+                {
+                  from: `${weeksWithContent[currentWeekIndex]?.week}/${weeksWithContent[currentWeekIndex]?.year}`,
+                  to: `${targetWeek.week}/${targetWeek.year}`,
+                  topicsCount: targetWeek.topics.length,
+                },
+              );
+              setCurrentWeekIndex(nextIndex);
+            } else {
+              console.log(
+                "⚠️ Usuário não pode navegar - semana anterior sem conteúdo",
+              );
+            }
           }
         } else {
-          // Usuário só pode ir para semanas que tenham conteúdo
-          let nextIndex = currentWeekIndex + 1;
-          while (nextIndex < weeksWithContent.length) {
-            if (weeksWithContent[nextIndex]?.topics?.length > 0) {
-              setCurrentWeekIndex(nextIndex);
-              break;
-            }
-            nextIndex++;
-          }
+          console.log("⚠️ Não é possível navegar mais para trás");
         }
       } else {
         // Ir para semanas mais recentes (índice menor)
-        if (currentWeekIndex > 0) {
-          if (isAdmin) {
-            // Admin pode navegar livremente
-            setCurrentWeekIndex(currentWeekIndex - 1);
+        const nextIndex = currentWeekIndex - 1;
+
+        if (nextIndex >= 0) {
+          // Admin Vitoca pode navegar livremente
+          if (isVitoca) {
+            console.log("➡️ Admin Vitoca navegando para semana seguinte:", {
+              from: `${weeksWithContent[currentWeekIndex]?.week}/${weeksWithContent[currentWeekIndex]?.year}`,
+              to: `${weeksWithContent[nextIndex]?.week}/${weeksWithContent[nextIndex]?.year}`,
+            });
+            setCurrentWeekIndex(nextIndex);
           } else {
-            // Usuário não pode ir para semanas futuras além da atual
-            const realCurrentWeekIndex = getCurrentWeekIndex(allWeeks);
-            if (currentWeekIndex - 1 >= realCurrentWeekIndex) {
-              setCurrentWeekIndex(currentWeekIndex - 1);
+            // Usuário comum pode avançar até a semana atual (não além)
+            const realCurrentWeekIndex = getCurrentWeekIndex(weeksWithContent);
+            if (nextIndex >= realCurrentWeekIndex) {
+              console.log(
+                "➡️ Usuário navegando de volta para semana mais recente:",
+                {
+                  from: `${weeksWithContent[currentWeekIndex]?.week}/${weeksWithContent[currentWeekIndex]?.year}`,
+                  to: `${weeksWithContent[nextIndex]?.week}/${weeksWithContent[nextIndex]?.year}`,
+                  realCurrentWeekIndex,
+                  nextIndex,
+                },
+              );
+              setCurrentWeekIndex(nextIndex);
+            } else {
+              console.log("⚠️ Usuário não pode avançar além da semana atual");
             }
           }
+        } else {
+          console.log("⚠️ Não é possível navegar mais para frente");
         }
       }
     },
-    [currentWeekIndex, weeksWithContent, isAdmin, allWeeks],
+    [currentWeekIndex, weeksWithContent, isVitoca],
   );
 
-  // Verificar se pode navegar para trás
+  // Verificar se pode navegar para trás (semanas mais antigas)
   const canNavigatePrev = useCallback(() => {
-    if (isAdmin) {
-      // Admin pode navegar para qualquer semana anterior
-      return currentWeekIndex < weeksWithContent.length - 1;
-    } else {
-      // Usuário só pode ir para semanas com conteúdo
-      let nextIndex = currentWeekIndex + 1;
-      while (nextIndex < weeksWithContent.length) {
-        if (weeksWithContent[nextIndex]?.topics?.length > 0) {
-          return true;
-        }
-        nextIndex++;
-      }
-      return false;
-    }
-  }, [currentWeekIndex, weeksWithContent, isAdmin]);
+    const nextIndex = currentWeekIndex + 1;
 
-  // Verificar se pode navegar para frente
+    // Admin Vitoca pode navegar livremente
+    if (isVitoca) {
+      return nextIndex < weeksWithContent.length;
+    }
+
+    // Usuário comum só pode voltar se a próxima semana (mais antiga) tiver conteúdo
+    if (nextIndex < weeksWithContent.length) {
+      const targetWeek = weeksWithContent[nextIndex];
+      return targetWeek?.topics?.length > 0;
+    }
+
+    return false;
+  }, [currentWeekIndex, weeksWithContent, isVitoca]);
+
+  // Verificar se pode navegar para frente (semanas mais recentes)
   const canNavigateNext = useCallback(() => {
-    if (currentWeekIndex <= 0) return false;
+    const nextIndex = currentWeekIndex - 1;
 
-    if (isAdmin) {
-      // Admin pode navegar livremente
-      return true;
-    } else {
-      // Usuário não pode ir além da semana atual real
-      const realCurrentWeekIndex = getCurrentWeekIndex(allWeeks);
-      return currentWeekIndex - 1 >= realCurrentWeekIndex;
+    // Admin Vitoca pode navegar livremente
+    if (isVitoca) {
+      return nextIndex >= 0;
     }
-  }, [currentWeekIndex, isAdmin, allWeeks]);
+
+    // Usuário comum pode avançar até a semana atual (não além)
+    if (nextIndex >= 0) {
+      const realCurrentWeekIndex = getCurrentWeekIndex(weeksWithContent);
+      return nextIndex >= realCurrentWeekIndex;
+    }
+
+    return false;
+  }, [currentWeekIndex, isVitoca, weeksWithContent]);
 
   // Obter dados da semana atual
   const currentNewsletter = weeksWithContent[currentWeekIndex] || null;
 
-  // Função para navegar diretamente para a semana atual
+  // Função para navegar diretamente para a semana atual real
   const goToCurrentWeek = useCallback(() => {
     const realCurrentWeekIndex = getCurrentWeekIndex(allWeeks);
+    console.log("🎯 Navegando para semana atual:", {
+      from: currentWeekIndex,
+      to: realCurrentWeekIndex,
+    });
     setCurrentWeekIndex(realCurrentWeekIndex);
-  }, [allWeeks]);
+  }, [allWeeks, currentWeekIndex]);
+
+  // Verificar se está na semana atual real - memoizado para evitar recálculo
+  const realCurrentWeekIndex = useMemo(
+    () => getCurrentWeekIndex(allWeeks),
+    [allWeeks],
+  );
+  const isCurrentWeek = currentWeekIndex === realCurrentWeekIndex;
 
   return {
     // Dados principais
@@ -204,17 +246,23 @@ export function useSimpleWeekNavigation({
     canNavigateNext,
     goToCurrentWeek,
 
-    // Utilitários
-    isCurrentWeek: currentWeekIndex === getCurrentWeekIndex(allWeeks),
+    // Status
+    isCurrentWeek,
     totalWeeks: weeksWithContent.length,
 
     // Para debug
     debugInfo: {
       currentWeekIndex,
-      realCurrentWeekIndex: getCurrentWeekIndex(allWeeks),
+      realCurrentWeekIndex,
       isAdmin,
+      isVitoca,
       hasContent: currentNewsletter?.topics?.length > 0,
-      isSunday: isSunday(),
+      currentWeekDisplay: currentNewsletter
+        ? `${currentNewsletter.week}/${currentNewsletter.year}`
+        : "nenhuma",
+      canNavPrev: canNavigatePrev(),
+      canNavNext: canNavigateNext(),
+      navigationRules: isVitoca ? "Admin Vitoca - livre" : "Usuário - restrito",
     },
   };
 }

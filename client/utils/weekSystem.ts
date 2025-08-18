@@ -1,8 +1,8 @@
 /**
  * Sistema de Semanas 2025-2030 - IA HUB Newsletter
  *
- * Este sistema gera automaticamente todas as semanas dos anos 2025-2030
- * e determina qual semana deve ser exibida baseada na data atual.
+ * Sistema corrigido onde as semanas começam no DOMINGO e terminam no SÁBADO
+ * conforme solicitado. Inclui navegação simplificada e cálculo correto da semana atual.
  */
 
 export interface NewsletterTopic {
@@ -23,44 +23,101 @@ export interface WeeklyNewsletter {
 }
 
 /**
- * Calcula o número da semana ISO 8601 para uma data específica
+ * Calcula o número da semana baseado em semanas que começam no DOMINGO
+ * Semana 1 = primeira semana com pelo menos 4 dias no ano
  */
-export function getISOWeekNumber(date: Date): { week: number; year: number } {
-  const target = new Date(date.valueOf());
-  const dayNumber = (date.getDay() + 6) % 7;
-  target.setDate(target.getDate() - dayNumber + 3);
-  const firstThursday = target.valueOf();
-  target.setMonth(0, 1);
-  if (target.getDay() !== 4) {
-    target.setMonth(0, 1 + ((4 - target.getDay() + 7) % 7));
+export function getWeekNumber(date: Date): { week: number; year: number } {
+  const year = date.getFullYear();
+
+  // 1º de janeiro do ano
+  const jan1 = new Date(year, 0, 1);
+  const jan1Day = jan1.getDay(); // 0 = domingo, 1 = segunda, etc.
+
+  // Encontrar o primeiro domingo do ano
+  let firstSunday = new Date(jan1);
+  if (jan1Day === 0) {
+    // 1º de janeiro é domingo - primeira semana começa no próprio dia
+    firstSunday = jan1;
+  } else {
+    // Ir para o próximo domingo
+    firstSunday.setDate(jan1.getDate() + (7 - jan1Day));
   }
-  const weekNumber =
-    1 + Math.ceil((firstThursday - target.valueOf()) / 604800000);
-  return { week: weekNumber, year: target.getFullYear() };
+
+  // Se o primeiro domingo está depois do dia 4, a primeira semana começa no domingo anterior (do ano anterior)
+  if (firstSunday.getDate() > 4) {
+    firstSunday.setDate(firstSunday.getDate() - 7);
+  }
+
+  // Calcular diferença em milissegundos
+  const diffTime = date.getTime() - firstSunday.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+  // Se a data é antes da primeira semana do ano
+  if (diffDays < 0) {
+    // Pertence ao ano anterior - calcular recursivamente sem chamar getLastWeekOfYear
+    const prevYear = year - 1;
+    const dec31PrevYear = new Date(prevYear, 11, 31);
+    return getWeekNumber(dec31PrevYear);
+  }
+
+  const weekNumber = Math.floor(diffDays / 7) + 1;
+
+  // Verificar se a semana passa de 52/53 sem usar função recursiva
+  const dec31 = new Date(year, 11, 31);
+  const dec31Day = dec31.getDay();
+
+  // Um ano tem 53 semanas se 1º de janeiro ou 31 de dezembro cai no domingo
+  // ou se é ano bissexto e 1º de janeiro cai no sábado
+  const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+  const has53Weeks =
+    jan1Day === 0 || dec31Day === 0 || (isLeapYear && jan1Day === 6);
+  const maxWeeks = has53Weeks ? 53 : 52;
+
+  // Se passou das semanas do ano atual
+  if (weekNumber > maxWeeks) {
+    return { week: 1, year: year + 1 };
+  }
+
+  return { week: weekNumber, year: year };
 }
 
 /**
- * Obtém a data de início da semana (segunda-feira) para uma semana específica
+ * Obtém a data de início da semana (domingo) para uma semana específica
  */
 export function getWeekStartDate(year: number, week: number): Date {
-  const simple = new Date(year, 0, 1 + (week - 1) * 7);
-  const dow = simple.getDay();
-  const ISOweekStart = simple;
-  if (dow <= 4) {
-    ISOweekStart.setDate(simple.getDate() - simple.getDay() + 1);
+  // 1º de janeiro do ano
+  const jan1 = new Date(year, 0, 1);
+  const jan1Day = jan1.getDay(); // 0 = domingo, 1 = segunda, etc.
+
+  // Encontrar o primeiro domingo do ano
+  let firstSunday = new Date(jan1);
+  if (jan1Day === 0) {
+    // 1º de janeiro é domingo
+    firstSunday = jan1;
   } else {
-    ISOweekStart.setDate(simple.getDate() + 8 - simple.getDay());
+    // Ir para o próximo domingo
+    firstSunday.setDate(jan1.getDate() + (7 - jan1Day));
   }
-  return ISOweekStart;
+
+  // Se o primeiro domingo está depois do dia 4, a primeira semana começa no domingo anterior
+  if (firstSunday.getDate() > 4) {
+    firstSunday.setDate(firstSunday.getDate() - 7);
+  }
+
+  // Calcular a data da semana desejada
+  const weekStart = new Date(firstSunday);
+  weekStart.setDate(firstSunday.getDate() + (week - 1) * 7);
+
+  return weekStart;
 }
 
 /**
- * Obtém a data de fim da semana (domingo) para uma semana específica
+ * Obtém a data de fim da semana (sábado) para uma semana específica
  */
 export function getWeekEndDate(year: number, week: number): Date {
   const startDate = getWeekStartDate(year, week);
   const endDate = new Date(startDate);
-  endDate.setDate(startDate.getDate() + 6);
+  endDate.setDate(startDate.getDate() + 6); // Domingo + 6 dias = Sábado
   return endDate;
 }
 
@@ -86,6 +143,27 @@ export function formatDateFullBR(date: Date): string {
 }
 
 /**
+ * Retorna o número da última semana do ano (sem recursão)
+ */
+function getLastWeekOfYear(year: number): number {
+  // 1º de janeiro do ano
+  const jan1 = new Date(year, 0, 1);
+  const jan1Day = jan1.getDay();
+
+  // 31 de dezembro do ano
+  const dec31 = new Date(year, 11, 31);
+  const dec31Day = dec31.getDay();
+
+  // Um ano tem 53 semanas se 1º de janeiro ou 31 de dezembro cai no domingo
+  // ou se é ano bissexto e 1º de janeiro cai no sábado
+  const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+  const has53Weeks =
+    jan1Day === 0 || dec31Day === 0 || (isLeapYear && jan1Day === 6);
+
+  return has53Weeks ? 53 : 52;
+}
+
+/**
  * Gera todas as semanas para os anos 2025-2030
  */
 export function generateAllWeeks(): WeeklyNewsletter[] {
@@ -93,20 +171,15 @@ export function generateAllWeeks(): WeeklyNewsletter[] {
   const years = [2025, 2026, 2027, 2028, 2029, 2030];
 
   for (const year of years) {
-    // Determinar quantas semanas tem o ano
-    const lastDayOfYear = new Date(year, 11, 31);
-    const lastWeekInfo = getISOWeekNumber(lastDayOfYear);
+    const maxWeeks = getLastWeekOfYear(year);
 
-    // Se a última semana pertence ao próximo ano, usar 52 semanas
-    const totalWeeks = lastWeekInfo.year === year ? lastWeekInfo.week : 52;
-
-    for (let week = 1; week <= totalWeeks; week++) {
+    for (let week = 1; week <= maxWeeks; week++) {
       const startDate = getWeekStartDate(year, week);
       const endDate = getWeekEndDate(year, week);
 
       // Verificar se a semana realmente pertence ao ano atual
-      const weekInfo = getISOWeekNumber(startDate);
-      if (weekInfo.year !== year) continue;
+      const weekCheck = getWeekNumber(startDate);
+      if (weekCheck.year !== year || weekCheck.week !== week) continue;
 
       weeks.push({
         week,
@@ -132,10 +205,19 @@ export function generateAllWeeks(): WeeklyNewsletter[] {
  */
 export function getCurrentWeekIndex(weeks: WeeklyNewsletter[]): number {
   const now = new Date();
-  const currentWeekInfo = getISOWeekNumber(now);
+  const currentWeekInfo = getWeekNumber(now);
 
   console.log("🗓️ Procurando semana atual:", {
     today: now.toLocaleDateString("pt-BR"),
+    dayOfWeek: [
+      "Domingo",
+      "Segunda",
+      "Terça",
+      "Quarta",
+      "Quinta",
+      "Sexta",
+      "Sábado",
+    ][now.getDay()],
     currentWeekInfo,
     totalWeeks: weeks.length,
     firstWeek: weeks[0] ? `${weeks[0].week}/${weeks[0].year}` : "nenhuma",
@@ -163,7 +245,7 @@ export function getCurrentWeekIndex(weeks: WeeklyNewsletter[]): number {
     return weekIndex;
   }
 
-  // Se não encontrou (caso edge), retorna a primeira semana disponível
+  // Se não encontrou, retorna a primeira semana disponível
   console.warn(
     "⚠️ Semana atual não encontrada, usando primeira semana disponível",
   );
@@ -182,7 +264,7 @@ export function isSunday(): boolean {
  * Usado para testes e validações
  */
 export function getWeekForDate(date: Date): { week: number; year: number } {
-  return getISOWeekNumber(date);
+  return getWeekNumber(date);
 }
 
 /**
@@ -190,11 +272,31 @@ export function getWeekForDate(date: Date): { week: number; year: number } {
  */
 export function testScenarios() {
   const scenarios = [
-    { date: new Date(2028, 2, 17), description: "17 de março de 2028" }, // mês 2 = março (0-indexed)
-    { date: new Date(2026, 5, 17), description: "17 de junho de 2026" }, // mês 5 = junho (0-indexed)
+    {
+      date: new Date(2025, 0, 5),
+      description: "5 de janeiro de 2025 (Domingo)",
+    }, // Primeiro domingo de 2025
+    {
+      date: new Date(2025, 0, 11),
+      description: "11 de janeiro de 2025 (Sábado)",
+    }, // Primeiro sábado
+    {
+      date: new Date(2025, 7, 17),
+      description: "17 de agosto de 2025 (Domingo)",
+    }, // Domingo no meio do ano
+    {
+      date: new Date(2024, 8, 28),
+      description: "28 de setembro de 2024 (Sábado)",
+    }, // Teste específico
+    {
+      date: new Date(2025, 8, 28),
+      description: "28 de setembro de 2025 (Domingo)",
+    }, // Teste específico
+    { date: new Date(), description: "Hoje" }, // Data atual
   ];
 
   console.log("=== TESTE DE CENÁRIOS ===");
+  console.log("Sistema de semanas: Domingo a Sábado");
 
   for (const scenario of scenarios) {
     const weekInfo = getWeekForDate(scenario.date);
@@ -208,6 +310,9 @@ export function testScenarios() {
     );
     console.log(
       `  Data de teste: ${scenario.date.toLocaleDateString("pt-BR")}`,
+    );
+    console.log(
+      `  Dia da semana: ${["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"][scenario.date.getDay()]}`,
     );
     console.log(
       `  Data está no período? ${scenario.date >= startDate && scenario.date <= endDate ? "SIM" : "NÃO"}`,
@@ -224,22 +329,18 @@ let _cachedWeeks: WeeklyNewsletter[] | null = null;
 export function getAllWeeks(): WeeklyNewsletter[] {
   if (!_cachedWeeks) {
     _cachedWeeks = generateAllWeeks();
+
+    const now = new Date();
+    const currentWeekInfo = getWeekNumber(now);
+
     console.log(
       `Sistema de semanas inicializado: ${_cachedWeeks.length} semanas geradas (2025-2030)`,
     );
-
-    // Debug específico para as semanas problemáticas
-    const weeks32to34 = _cachedWeeks.filter(
-      (w) => w.year === 2025 && w.week >= 32 && w.week <= 34,
+    console.log(
+      `📅 Hoje é: ${now.toLocaleDateString("pt-BR")} (${["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"][now.getDay()]})`,
     );
     console.log(
-      "🔍 Debug semanas 32-34 de 2025:",
-      weeks32to34.map((w) => ({
-        week: w.week,
-        year: w.year,
-        period: `${w.startDate} - ${w.endDate}`,
-        topics: w.topics?.length || 0,
-      })),
+      `🎯 Semana atual deveria ser: ${currentWeekInfo.week}/${currentWeekInfo.year}`,
     );
 
     // Executar testes em desenvolvimento
@@ -247,10 +348,12 @@ export function getAllWeeks(): WeeklyNewsletter[] {
       typeof window !== "undefined" &&
       process.env.NODE_ENV === "development"
     ) {
-      // Importar e executar testes após inicialização
-      import("./testWeekScenarios").then(({ runTestsIfDevelopment }) => {
-        runTestsIfDevelopment();
-      });
+      testScenarios();
+
+      // Teste específico para 28/09
+      console.log("\n=== RESPOSTA PARA A PERGUNTA ESPECÍFICA ===");
+      testSpecificDate("28/09/2024");
+      testSpecificDate("28/09/2025");
     }
   }
   return _cachedWeeks;
@@ -261,4 +364,48 @@ export function getAllWeeks(): WeeklyNewsletter[] {
  */
 export function clearWeeksCache(): void {
   _cachedWeeks = null;
+}
+
+/**
+ * Função específica para testar 28 de setembro
+ */
+export function testSpecificDate(dateString: string) {
+  // Assumindo formato DD/MM/YYYY ou DD/MM (assumindo 2024/2025)
+  const [day, month, year] = dateString.split("/").map(Number);
+  const testYear = year || new Date().getFullYear();
+
+  // Note: mês em JavaScript é 0-indexed (setembro = 8)
+  const testDate = new Date(testYear, month - 1, day);
+
+  const weekInfo = getWeekForDate(testDate);
+  const startDate = getWeekStartDate(weekInfo.year, weekInfo.week);
+  const endDate = getWeekEndDate(weekInfo.year, weekInfo.week);
+
+  console.log("=== TESTE ESPECÍFICO ===");
+  console.log(
+    `Data testada: ${testDate.toLocaleDateString("pt-BR")} (${["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"][testDate.getDay()]})`,
+  );
+  console.log(`Semana calculada: ${weekInfo.week} de ${weekInfo.year}`);
+  console.log(
+    `Período da semana: ${formatDateBR(startDate)} - ${formatDateFullBR(endDate)}`,
+  );
+  console.log(
+    `Esta seria a semana exibida em VERDE na página inicial se fosse ${dateString}`,
+  );
+
+  return {
+    date: testDate,
+    week: weekInfo.week,
+    year: weekInfo.year,
+    period: `${formatDateBR(startDate)} - ${formatDateFullBR(endDate)}`,
+    dayOfWeek: [
+      "Domingo",
+      "Segunda",
+      "Terça",
+      "Quarta",
+      "Quinta",
+      "Sexta",
+      "Sábado",
+    ][testDate.getDay()],
+  };
 }
