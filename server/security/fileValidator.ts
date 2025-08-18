@@ -224,9 +224,14 @@ export class AdvancedFileValidator {
       issues.push("Potentially dangerous file extension");
     }
 
-    // Double extension check
-    if (filename.split(".").length > 2) {
-      issues.push("Multiple file extensions detected (potential masquerading)");
+    // Double extension check (more intelligent)
+    const parts = filename.split(".");
+    if (parts.length > 2) {
+      // Check if it's a legitimate pattern
+      const isLegitimate = this.isLegitimateMultipleExtension(filename);
+      if (!isLegitimate) {
+        issues.push("Multiple file extensions detected (potential masquerading)");
+      }
     }
 
     // Scan content for malicious patterns (skip some patterns for media files)
