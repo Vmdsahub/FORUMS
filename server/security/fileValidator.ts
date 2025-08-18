@@ -469,8 +469,14 @@ export const SECURITY_CONFIG: SecurityConfig = {
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
     "text/plain",
     "text/csv",
+    // ZIP files - multiple MIME types
     "application/zip",
+    "application/x-zip",
+    "application/x-zip-compressed",
+    "application/octet-stream", // Generic binary (used by some browsers for ZIP)
+    // RAR and 7Z
     "application/x-rar-compressed",
+    "application/vnd.rar", // Modern RAR MIME type
     "application/x-7z-compressed",
   ],
   allowedExtensions: [
