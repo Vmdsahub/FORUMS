@@ -216,6 +216,7 @@ export const handleLogin: RequestHandler = (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role || "user",
+        avatar: user.avatar,
       },
       token,
     };
@@ -311,6 +312,7 @@ export const handleRegister: RequestHandler = (req, res) => {
         name: newUser.name,
         email: newUser.email,
         role: newUser.role,
+        avatar: newUser.avatar,
       },
       token,
     };
