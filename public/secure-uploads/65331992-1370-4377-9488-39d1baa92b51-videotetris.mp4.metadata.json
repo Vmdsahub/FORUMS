@@ -1,0 +1,20 @@
+{
+  "originalName": "videotetris.mp4",
+  "safeFileName": "65331992-1370-4377-9488-39d1baa92b51-videotetris.mp4",
+  "hash": "804c738ddf0a8b20578611b6bffc4a358a80474a30abe138185cd92897979673",
+  "size": 3034636,
+  "mimeType": "video/mp4",
+  "uploadTime": "2025-08-18T14:55:14.359Z",
+  "uploadedBy": "anonymous",
+  "uploadIp": "::ffff:127.0.0.1",
+  "userAgent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
+  "validationResult": {
+    "isValid": true,
+    "reasons": [],
+    "sanitizedName": "videotetris.mp4",
+    "hash": "804c738ddf0a8b20578611b6bffc4a358a80474a30abe138185cd92897979673",
+    "size": 3034636,
+    "quarantined": false,
+    "detectedMimeType": "video/mp4"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "originalPath": "/app/code/temp-uploads/7c9c0805-5df1-430a-80ac-3d32555d1368-Image_fx(4).jpg",
+  "quarantineTime": "2025-08-18T14:55:22.248Z",
+  "hash": "edf60c807283ba2659114545dda185cd4e256abad8f3cc737e922d2e7fc8070f",
+  "reasons": [
+    "MIME type mismatch: expected image/jpeg, got image/png",
+    "Suspicious content pattern detected: on\\w+\\s*=..."
+  ],
+  "status": "quarantined"
+}
