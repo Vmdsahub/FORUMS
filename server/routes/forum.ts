@@ -276,7 +276,7 @@ function initializeDemoData() {
         "Pessoal, fiz alguns testes comparativos entre o Midjourney v6 e o DALL-E 3 para entender qual produz melhores resultados.\n\nPrincipais diferenças que notei:\n\n**Midjourney v6:**\n- Melhor para arte conceitual e estilos artísticos\n- Interface no Discord pode ser confusa\n- Resultados mais consistentes em prompts complexos\n\n**DALL-E 3:**\n- Melhor integração com ChatGPT\n- Mais preciso para descrições textuais\n- Interface web mais intuitiva\n\nO que vocês acham? Qual preferem usar?",
       author: "VisualAI",
       authorId: "user_visual_ai",
-      authorAvatar: "VA",
+      authorAvatar: "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F3a88d03f86164e47b982a4e1e72380a2?format=webp&width=800",
       category: "imagem",
       replies: 4,
       views: 1823,
