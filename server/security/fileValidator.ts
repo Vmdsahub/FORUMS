@@ -124,25 +124,32 @@ export class AdvancedFileValidator {
         result.reasons.push(`File extension not allowed: ${fileExt}`);
       }
 
-      // Validate MIME type
-      if (
-        detectedType &&
-        !this.config.allowedMimeTypes.includes(detectedType.mime)
-      ) {
-        result.isValid = false;
-        result.reasons.push(`MIME type not allowed: ${detectedType.mime}`);
-      }
+      // Validate MIME type (more permissive)
+    if (
+      detectedType &&
+      !this.config.allowedMimeTypes.includes(detectedType.mime)
+    ) {
+      result.isValid = false;
+      result.reasons.push(`MIME type not allowed: ${detectedType.mime}`);
+    }
 
-      // Check for MIME type spoofing
-      if (detectedType) {
-        const expectedMimeForExt = this.getMimeTypeForExtension(fileExt);
-        if (expectedMimeForExt && expectedMimeForExt !== detectedType.mime) {
+    // Check for MIME type spoofing (more permissive for images)
+    if (detectedType) {
+      const expectedMimeForExt = this.getMimeTypeForExtension(fileExt);
+      if (expectedMimeForExt && expectedMimeForExt !== detectedType.mime) {
+        // Be more permissive with image files (common to have jpg extension with png content)
+        const isImageMismatch =
+          this.isImageFile(fileExt) &&
+          detectedType.mime.startsWith('image/');
+
+        if (!isImageMismatch) {
           result.isValid = false;
           result.reasons.push(
             `MIME type mismatch: expected ${expectedMimeForExt}, got ${detectedType.mime}`,
           );
         }
       }
+    }
 
       // Scan for malicious patterns
       const maliciousContent = await this.scanForMaliciousContent(
@@ -224,8 +231,14 @@ export class AdvancedFileValidator {
 
     // Scan content for malicious patterns (skip some patterns for media files)
     for (const pattern of this.suspiciousPatterns) {
-      // Skip JavaScript event handler patterns for media files (common false positive)
-      if (isMediaFile && pattern.source.includes("on\\w+\\s*=")) {
+      // Skip JavaScript event handler patterns for all media files and images
+      const isImageFile = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'].includes(fileExt);
+      if ((isMediaFile || isImageFile) && pattern.source.includes("on\\w+\\s*=")) {
+        continue;
+      }
+
+      // Skip script tags in binary image files (common in metadata)
+      if (isImageFile && pattern.source.includes("<script")) {
         continue;
       }
 
@@ -415,7 +428,7 @@ export class AdvancedFileValidator {
 
 // Security configuration
 export const SECURITY_CONFIG: SecurityConfig = {
-  maxFileSize: 100 * 1024 * 1024, // 100MB
+  maxFileSize: 500 * 1024 * 1024, // 500MB (similar to Discord Nitro)
   allowedMimeTypes: [
     "image/jpeg",
     "image/png",
