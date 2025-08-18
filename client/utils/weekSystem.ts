@@ -305,6 +305,11 @@ export function getAllWeeks(): WeeklyNewsletter[] {
     // Executar testes em desenvolvimento
     if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
       testScenarios();
+
+      // Teste específico para 28/09
+      console.log("\n=== RESPOSTA PARA A PERGUNTA ESPECÍFICA ===");
+      testSpecificDate("28/09/2024");
+      testSpecificDate("28/09/2025");
     }
   }
   return _cachedWeeks;
