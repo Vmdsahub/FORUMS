@@ -1,0 +1,20 @@
+{
+  "originalName": "PET6.zip",
+  "safeFileName": "cc718558-2fe6-454f-bad5-71881d1c35ae-PET6.zip",
+  "hash": "260a24babc106f7082cead9cd6cb3a0bdaa3d4b4fc5463c01fcb00a421c9dc14",
+  "size": 37170579,
+  "mimeType": "application/zip",
+  "uploadTime": "2025-08-18T18:12:11.889Z",
+  "uploadedBy": "anonymous",
+  "uploadIp": "::ffff:127.0.0.1",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+  "validationResult": {
+    "isValid": true,
+    "reasons": [],
+    "sanitizedName": "PET6.zip",
+    "hash": "260a24babc106f7082cead9cd6cb3a0bdaa3d4b4fc5463c01fcb00a421c9dc14",
+    "size": 37170579,
+    "quarantined": false,
+    "detectedMimeType": "application/zip"
+  }
+}

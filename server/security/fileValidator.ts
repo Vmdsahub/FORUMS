@@ -4,7 +4,10 @@ import sharp from "sharp";
 import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
-import { AdvancedSecurityAnalyzer, AdvancedAnalysisResult } from "./advancedAnalysis";
+import {
+  AdvancedSecurityAnalyzer,
+  AdvancedAnalysisResult,
+} from "./advancedAnalysis";
 
 export interface FileValidationResult {
   isValid: boolean;
@@ -128,42 +131,42 @@ export class AdvancedFileValidator {
       }
 
       // Validate MIME type (more permissive)
-    if (
-      detectedType &&
-      !this.config.allowedMimeTypes.includes(detectedType.mime)
-    ) {
-      result.isValid = false;
-      result.reasons.push(`MIME type not allowed: ${detectedType.mime}`);
-    }
+      if (
+        detectedType &&
+        !this.config.allowedMimeTypes.includes(detectedType.mime)
+      ) {
+        result.isValid = false;
+        result.reasons.push(`MIME type not allowed: ${detectedType.mime}`);
+      }
 
-    // Check for MIME type spoofing (more permissive for images and archives)
-    if (detectedType) {
-      const expectedMimeForExt = this.getMimeTypeForExtension(fileExt);
-      if (expectedMimeForExt && expectedMimeForExt !== detectedType.mime) {
-        // Be more permissive with image files (common to have jpg extension with png content)
-        const isImageMismatch =
-          this.isImageFile(fileExt) &&
-          detectedType.mime.startsWith('image/');
+      // Check for MIME type spoofing (more permissive for images and archives)
+      if (detectedType) {
+        const expectedMimeForExt = this.getMimeTypeForExtension(fileExt);
+        if (expectedMimeForExt && expectedMimeForExt !== detectedType.mime) {
+          // Be more permissive with image files (common to have jpg extension with png content)
+          const isImageMismatch =
+            this.isImageFile(fileExt) && detectedType.mime.startsWith("image/");
 
-        // Be more permissive with ZIP files (many different MIME types)
-        const isZipMismatch =
-          fileExt === '.zip' &&
-          (detectedType.mime.includes('zip') || detectedType.mime === 'application/octet-stream');
+          // Be more permissive with ZIP files (many different MIME types)
+          const isZipMismatch =
+            fileExt === ".zip" &&
+            (detectedType.mime.includes("zip") ||
+              detectedType.mime === "application/octet-stream");
 
-        if (!isImageMismatch && !isZipMismatch) {
-          result.isValid = false;
-          result.reasons.push(
-            `MIME type mismatch: expected ${expectedMimeForExt}, got ${detectedType.mime}`,
-          );
+          if (!isImageMismatch && !isZipMismatch) {
+            result.isValid = false;
+            result.reasons.push(
+              `MIME type mismatch: expected ${expectedMimeForExt}, got ${detectedType.mime}`,
+            );
+          }
         }
       }
-    }
 
       // Advanced security analysis (ClamAV-style)
       const advancedAnalysis = await this.advancedAnalyzer.analyzeFile(
         filePath,
         originalName,
-        detectedType?.mime || 'unknown'
+        detectedType?.mime || "unknown",
       );
 
       if (!advancedAnalysis.isClean) {
@@ -172,17 +175,27 @@ export class AdvancedFileValidator {
         result.quarantined = true;
 
         console.log(`[ADVANCED ANALYSIS] File flagged: ${originalName}`);
-        console.log(`[ADVANCED ANALYSIS] Analysis types: ${advancedAnalysis.analysisType.join(', ')}`);
-        console.log(`[ADVANCED ANALYSIS] Confidence: ${advancedAnalysis.confidence}%`);
-        console.log(`[ADVANCED ANALYSIS] Threats: ${advancedAnalysis.threats.join(', ')}`);
+        console.log(
+          `[ADVANCED ANALYSIS] Analysis types: ${advancedAnalysis.analysisType.join(", ")}`,
+        );
+        console.log(
+          `[ADVANCED ANALYSIS] Confidence: ${advancedAnalysis.confidence}%`,
+        );
+        console.log(
+          `[ADVANCED ANALYSIS] Threats: ${advancedAnalysis.threats.join(", ")}`,
+        );
       } else if (advancedAnalysis.confidence < 80) {
-        console.log(`[ADVANCED ANALYSIS] File passed but with low confidence: ${advancedAnalysis.confidence}%`);
+        console.log(
+          `[ADVANCED ANALYSIS] File passed but with low confidence: ${advancedAnalysis.confidence}%`,
+        );
         console.log(`[ADVANCED ANALYSIS] File: ${originalName}`);
       }
 
       // Basic file type validation (advanced analysis handles the rest)
       console.log(`[FILE VALIDATION] Basic checks passed for: ${originalName}`);
-      console.log(`[FILE VALIDATION] Detected MIME: ${detectedType?.mime || 'unknown'}, Size: ${result.size} bytes`);
+      console.log(
+        `[FILE VALIDATION] Detected MIME: ${detectedType?.mime || "unknown"}, Size: ${result.size} bytes`,
+      );
 
       // Move to quarantine if suspicious
       if (result.quarantined || !result.isValid) {
@@ -213,8 +226,10 @@ export class AdvancedFileValidator {
     const issues: string[] = [];
 
     // Only check for obvious executable masquerading
-    if (/\.(exe|scr|bat|cmd|com|pif|vbs)$/i.test(filename) &&
-        !filename.match(/\.(zip|rar|7z)$/i)) {
+    if (
+      /\.(exe|scr|bat|cmd|com|pif|vbs)$/i.test(filename) &&
+      !filename.match(/\.(zip|rar|7z)$/i)
+    ) {
       issues.push("Executable file not allowed");
     }
 
@@ -262,9 +277,16 @@ export class AdvancedFileValidator {
   }
 
   private isImageFile(extension: string): boolean {
-    return [".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".tiff", ".svg"].includes(
-      extension.toLowerCase(),
-    );
+    return [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".gif",
+      ".webp",
+      ".bmp",
+      ".tiff",
+      ".svg",
+    ].includes(extension.toLowerCase());
   }
 
   private isArchiveFile(extension: string): boolean {
@@ -300,13 +322,32 @@ export class AdvancedFileValidator {
     // Special case: if the filename has many parts but ends with a safe extension
     // and doesn't contain dangerous patterns, it's probably legitimate
     const lastExtension = parts[parts.length - 1].toLowerCase();
-    const safeExtensions = ['.zip', '.rar', '.7z', '.txt', '.json', '.js', '.css', '.html', '.md'];
+    const safeExtensions = [
+      ".zip",
+      ".rar",
+      ".7z",
+      ".txt",
+      ".json",
+      ".js",
+      ".css",
+      ".html",
+      ".md",
+    ];
 
-    if (safeExtensions.includes('.' + lastExtension)) {
+    if (safeExtensions.includes("." + lastExtension)) {
       // Check if any part contains dangerous extensions
-      const dangerousExtensions = ['exe', 'bat', 'cmd', 'scr', 'pif', 'com', 'vbs', 'jar'];
-      const hasDangerousExtension = parts.some(part =>
-        dangerousExtensions.includes(part.toLowerCase())
+      const dangerousExtensions = [
+        "exe",
+        "bat",
+        "cmd",
+        "scr",
+        "pif",
+        "com",
+        "vbs",
+        "jar",
+      ];
+      const hasDangerousExtension = parts.some((part) =>
+        dangerousExtensions.includes(part.toLowerCase()),
       );
 
       if (!hasDangerousExtension) {
@@ -381,9 +422,12 @@ export class AdvancedFileValidator {
       // Documents
       ".pdf": "application/pdf",
       ".doc": "application/msword",
-      ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-      ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      ".docx":
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ".pptx":
+        "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      ".xlsx":
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       ".txt": "text/plain",
       ".csv": "text/csv",
       ".js": "text/javascript",

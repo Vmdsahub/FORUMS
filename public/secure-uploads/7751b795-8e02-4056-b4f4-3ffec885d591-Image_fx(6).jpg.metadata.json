@@ -1,0 +1,20 @@
+{
+  "originalName": "Image_fx(6).jpg",
+  "safeFileName": "7751b795-8e02-4056-b4f4-3ffec885d591-Image_fx(6).jpg",
+  "hash": "aad69322e9496489dd12f97ff93bc1c6e37d24346208330abb463aff9348fb7b",
+  "size": 1497442,
+  "mimeType": "image/png",
+  "uploadTime": "2025-08-18T18:11:36.145Z",
+  "uploadedBy": "anonymous",
+  "uploadIp": "::ffff:127.0.0.1",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+  "validationResult": {
+    "isValid": true,
+    "reasons": [],
+    "sanitizedName": "Image_fx(6).jpg",
+    "hash": "aad69322e9496489dd12f97ff93bc1c6e37d24346208330abb463aff9348fb7b",
+    "size": 1497442,
+    "quarantined": false,
+    "detectedMimeType": "image/png"
+  }
+}
