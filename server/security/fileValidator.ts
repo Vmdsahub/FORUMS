@@ -4,6 +4,7 @@ import sharp from "sharp";
 import * as fs from "fs";
 import * as path from "path";
 import * as crypto from "crypto";
+import { AdvancedSecurityAnalyzer, AdvancedAnalysisResult } from "./advancedAnalysis";
 
 export interface FileValidationResult {
   isValid: boolean;
