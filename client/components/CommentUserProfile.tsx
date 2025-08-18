@@ -20,9 +20,17 @@ export default function CommentUserProfile({
     <div className="flex flex-col items-center gap-1">
       {/* Avatar */}
       <div
-        className={`${avatarSize} rounded-full bg-black text-white flex items-center justify-center ${textSize} font-semibold flex-shrink-0 hover:bg-gray-800 transition-colors cursor-pointer`}
+        className={`${avatarSize} rounded-full bg-black text-white flex items-center justify-center ${textSize} font-semibold flex-shrink-0 hover:bg-gray-800 transition-colors cursor-pointer overflow-hidden`}
       >
-        {userAvatar}
+        {userAvatar.startsWith('http') ? (
+          <img
+            src={userAvatar}
+            alt={userName}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          userAvatar
+        )}
       </div>
 
       {/* Nome do usuário */}
