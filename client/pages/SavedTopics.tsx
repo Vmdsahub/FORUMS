@@ -128,7 +128,7 @@ export default function SavedTopics() {
               Nenhum tópico salvo
             </h2>
             <p className="text-gray-600 mb-6">
-              Quando você salvar tópicos no fórum, eles aparecerão aqui para
+              Quando você salvar t��picos no fórum, eles aparecerão aqui para
               consulta futura.
             </p>
             <Link
@@ -172,15 +172,12 @@ export default function SavedTopics() {
                     <div className="col-span-6">
                       <div className="flex items-start gap-4">
                         <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0 overflow-hidden">
-                          {topic.authorAvatar.startsWith('http') ? (
-                            <img
-                              src={topic.authorAvatar}
-                              alt={topic.author}
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            topic.authorAvatar
-                          )}
+                          {topic.title
+                            .split(" ")
+                            .map((word) => word[0])
+                            .join("")
+                            .toUpperCase()
+                            .slice(0, 2)}
                         </div>
                         <div className="flex-1 min-w-0">
                           <Link
