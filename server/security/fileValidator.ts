@@ -206,6 +206,12 @@ export class AdvancedFileValidator {
       Math.min(buffer.length, 10000),
     ); // First 10KB as text
 
+    // Get file extension for context-aware scanning
+    const fileExt = path.extname(filename).toLowerCase();
+    const isVideoFile = [".mp4", ".webm", ".mov", ".avi", ".mkv"].includes(fileExt);
+    const isAudioFile = [".mp3", ".wav", ".ogg", ".m4a"].includes(fileExt);
+    const isMediaFile = isVideoFile || isAudioFile;
+
     // Check suspicious filename patterns
     if (/\.(exe|scr|bat|cmd|com|pif|vbs|js|jar|app)$/i.test(filename)) {
       issues.push("Potentially dangerous file extension");
@@ -216,8 +222,13 @@ export class AdvancedFileValidator {
       issues.push("Multiple file extensions detected (potential masquerading)");
     }
 
-    // Scan content for malicious patterns
+    // Scan content for malicious patterns (skip some patterns for media files)
     for (const pattern of this.suspiciousPatterns) {
+      // Skip JavaScript event handler patterns for media files (common false positive)
+      if (isMediaFile && pattern.source.includes("on\\w+\\s*=")) {
+        continue;
+      }
+
       if (pattern.test(content) || pattern.test(textContent)) {
         issues.push(
           `Suspicious content pattern detected: ${pattern.source.substring(0, 50)}...`,
