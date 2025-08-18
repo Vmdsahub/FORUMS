@@ -465,7 +465,7 @@ export function initializeDemo() {
       content: "Obrigado pelos comentários! Ajuda muito o feedback.",
       author: "Admin",
       authorId: "admin_vitoca_456",
-      authorAvatar: "AD",
+      authorAvatar: "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F554fd210b6d1444b8def1042ce46dfda?format=webp&width=800",
       topicId: "1",
       parentId: "demo2",
       createdAt: new Date(Date.now() - 6000000).toISOString(),
