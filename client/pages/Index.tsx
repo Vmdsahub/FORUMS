@@ -511,7 +511,11 @@ export default function Index(props: IndexProps) {
                       ? "text-gray-300 cursor-not-allowed"
                       : "text-gray-600 hover:text-black hover:bg-gray-100"
                   }`}
-                  title="Voltar para semanas anteriores"
+                  title={
+                    user?.name === "Vitoca"
+                      ? "Voltar para semanas anteriores (Admin)"
+                      : "Voltar para semanas anteriores (só se houver notícias)"
+                  }
                 >
                   <svg
                     width="20"
