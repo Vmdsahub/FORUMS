@@ -14,6 +14,24 @@ function hashPassword(password: string): string {
   return Buffer.from(password).toString("base64");
 }
 
+// Avatar padrão - fotos de perfil aleatórias
+const DEFAULT_AVATARS = [
+  "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F477cc7711bf64b4d94e766b55d18ca30?format=webp&width=800",
+  "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F3a88d03f86164e47b982a4e1e72380a2?format=webp&width=800",
+  "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F6dcd5f5eb7214b0f8018d668c517123d?format=webp&width=800",
+  "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F1b6ba24486b4431bab6f7012645c0a61?format=webp&width=800",
+  "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F40c3e177f2e64d8ca305e2adfcc1a693?format=webp&width=800",
+  "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F554fd210b6d1444b8def1042ce46dfda?format=webp&width=800",
+  "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F12ef023c28914c699497d5e169a631c3?format=webp&width=800",
+  "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F8b93635144674ca9ad3fa486245b728d?format=webp&width=800"
+];
+
+// Função para selecionar avatar aleatório
+function getRandomAvatar(): string {
+  const randomIndex = Math.floor(Math.random() * DEFAULT_AVATARS.length);
+  return DEFAULT_AVATARS[randomIndex];
+}
+
 // Simple in-memory storage for demo purposes
 // In production, use a proper database
 const users: Map<
@@ -28,6 +46,7 @@ const users: Map<
     phone?: string;
     birthDate?: string;
     acceptNewsletter?: boolean;
+    avatar?: string;
   }
 > = new Map();
 const tokens: Map<string, string> = new Map(); // token -> userId
