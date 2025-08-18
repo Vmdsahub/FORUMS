@@ -95,8 +95,16 @@ function CommentItem({
           size="sm"
         >
           <div className="flex flex-col items-center gap-1">
-            <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold hover:bg-gray-800 transition-colors cursor-pointer">
-              {comment.authorAvatar}
+            <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold hover:bg-gray-800 transition-colors cursor-pointer overflow-hidden">
+              {comment.authorAvatar.startsWith('http') ? (
+                <img
+                  src={comment.authorAvatar}
+                  alt={comment.author}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                comment.authorAvatar
+              )}
             </div>
             <span className="text-sm font-medium text-gray-900 hover:text-black cursor-pointer transition-colors text-center">
               {comment.author}
