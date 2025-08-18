@@ -576,7 +576,11 @@ export default function Index(props: IndexProps) {
                       ? "text-gray-300 cursor-not-allowed"
                       : "text-gray-600 hover:text-black hover:bg-gray-100"
                   }`}
-                  title="Avançar para semanas mais recentes"
+                  title={
+                    user?.name === "Vitoca"
+                      ? "Avançar para semanas mais recentes (Admin)"
+                      : "Não disponível para usuários"
+                  }
                 >
                   <svg
                     width="20"
