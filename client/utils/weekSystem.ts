@@ -27,80 +27,78 @@ export interface WeeklyNewsletter {
  * Semana 1 = primeira semana com pelo menos 4 dias no ano
  */
 export function getWeekNumber(date: Date): { week: number; year: number } {
-  const target = new Date(date.getFullYear(), 0, 1); // 1º de janeiro
-  const targetDay = target.getDay(); // 0 = domingo, 1 = segunda, etc.
+  const year = date.getFullYear();
+  
+  // 1º de janeiro do ano
+  const jan1 = new Date(year, 0, 1);
+  const jan1Day = jan1.getDay(); // 0 = domingo, 1 = segunda, etc.
   
   // Encontrar o primeiro domingo do ano
-  let firstSunday = new Date(target);
-  if (targetDay === 0) {
-    // 1º de janeiro é domingo
-    firstSunday = target;
+  let firstSunday = new Date(jan1);
+  if (jan1Day === 0) {
+    // 1º de janeiro é domingo - primeira semana começa no próprio dia
+    firstSunday = jan1;
   } else {
     // Ir para o próximo domingo
-    firstSunday.setDate(target.getDate() + (7 - targetDay));
+    firstSunday.setDate(jan1.getDate() + (7 - jan1Day));
   }
   
-  // Se o primeiro domingo está depois do dia 4, a semana 1 começa no domingo anterior
+  // Se o primeiro domingo está depois do dia 4, a primeira semana começa no domingo anterior (do ano anterior)
   if (firstSunday.getDate() > 4) {
     firstSunday.setDate(firstSunday.getDate() - 7);
   }
   
-  // Calcular diferença em dias
+  // Calcular diferença em milissegundos
   const diffTime = date.getTime() - firstSunday.getTime();
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   
   // Se a data é antes da primeira semana do ano
   if (diffDays < 0) {
-    // Pertence ao ano anterior
-    const prevYear = date.getFullYear() - 1;
-    const lastWeekPrevYear = getLastWeekOfYear(prevYear);
-    return { week: lastWeekPrevYear, year: prevYear };
+    // Pertence ao ano anterior - calcular recursivamente sem chamar getLastWeekOfYear
+    const prevYear = year - 1;
+    const dec31PrevYear = new Date(prevYear, 11, 31);
+    return getWeekNumber(dec31PrevYear);
   }
   
   const weekNumber = Math.floor(diffDays / 7) + 1;
-  const maxWeeks = getLastWeekOfYear(date.getFullYear());
+  
+  // Verificar se a semana passa de 52/53 sem usar função recursiva
+  const dec31 = new Date(year, 11, 31);
+  const dec31Day = dec31.getDay();
+  
+  // Um ano tem 53 semanas se 1º de janeiro ou 31 de dezembro cai no domingo
+  // ou se é ano bissexto e 1º de janeiro cai no sábado
+  const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+  const has53Weeks = jan1Day === 0 || dec31Day === 0 || (isLeapYear && jan1Day === 6);
+  const maxWeeks = has53Weeks ? 53 : 52;
   
   // Se passou das semanas do ano atual
   if (weekNumber > maxWeeks) {
-    return { week: 1, year: date.getFullYear() + 1 };
+    return { week: 1, year: year + 1 };
   }
   
-  return { week: weekNumber, year: date.getFullYear() };
-}
-
-/**
- * Retorna o número da última semana do ano
- */
-function getLastWeekOfYear(year: number): number {
-  const dec31 = new Date(year, 11, 31);
-  const weekInfo = getWeekNumber(dec31);
-  
-  if (weekInfo.year === year) {
-    return weekInfo.week;
-  } else {
-    // 31 de dezembro pertence ao próximo ano, então este ano tem 52 semanas
-    return 52;
-  }
+  return { week: weekNumber, year: year };
 }
 
 /**
  * Obtém a data de início da semana (domingo) para uma semana específica
  */
 export function getWeekStartDate(year: number, week: number): Date {
-  const target = new Date(year, 0, 1); // 1º de janeiro
-  const targetDay = target.getDay(); // 0 = domingo, 1 = segunda, etc.
+  // 1º de janeiro do ano
+  const jan1 = new Date(year, 0, 1);
+  const jan1Day = jan1.getDay(); // 0 = domingo, 1 = segunda, etc.
   
   // Encontrar o primeiro domingo do ano
-  let firstSunday = new Date(target);
-  if (targetDay === 0) {
+  let firstSunday = new Date(jan1);
+  if (jan1Day === 0) {
     // 1º de janeiro é domingo
-    firstSunday = target;
+    firstSunday = jan1;
   } else {
     // Ir para o próximo domingo
-    firstSunday.setDate(target.getDate() + (7 - targetDay));
+    firstSunday.setDate(jan1.getDate() + (7 - jan1Day));
   }
   
-  // Se o primeiro domingo está depois do dia 4, a semana 1 começa no domingo anterior
+  // Se o primeiro domingo está depois do dia 4, a primeira semana começa no domingo anterior
   if (firstSunday.getDate() > 4) {
     firstSunday.setDate(firstSunday.getDate() - 7);
   }
@@ -144,6 +142,26 @@ export function formatDateFullBR(date: Date): string {
 }
 
 /**
+ * Retorna o número da última semana do ano (sem recursão)
+ */
+function getLastWeekOfYear(year: number): number {
+  // 1º de janeiro do ano
+  const jan1 = new Date(year, 0, 1);
+  const jan1Day = jan1.getDay();
+  
+  // 31 de dezembro do ano
+  const dec31 = new Date(year, 11, 31);
+  const dec31Day = dec31.getDay();
+  
+  // Um ano tem 53 semanas se 1º de janeiro ou 31 de dezembro cai no domingo
+  // ou se é ano bissexto e 1º de janeiro cai no sábado
+  const isLeapYear = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+  const has53Weeks = jan1Day === 0 || dec31Day === 0 || (isLeapYear && jan1Day === 6);
+  
+  return has53Weeks ? 53 : 52;
+}
+
+/**
  * Gera todas as semanas para os anos 2025-2030
  */
 export function generateAllWeeks(): WeeklyNewsletter[] {
@@ -159,7 +177,7 @@ export function generateAllWeeks(): WeeklyNewsletter[] {
       
       // Verificar se a semana realmente pertence ao ano atual
       const weekCheck = getWeekNumber(startDate);
-      if (weekCheck.year !== year) continue;
+      if (weekCheck.year !== year || weekCheck.week !== week) continue;
 
       weeks.push({
         week,
