@@ -295,6 +295,15 @@ export default function Account() {
         />
       );
     }
+    if (user.avatar && user.avatar.startsWith('http')) {
+      return (
+        <img
+          src={user.avatar}
+          alt={user.name}
+          className="w-full h-full object-cover rounded-full"
+        />
+      );
+    }
     return user.name
       .split(" ")
       .map((n) => n[0])
