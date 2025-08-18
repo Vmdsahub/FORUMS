@@ -15,6 +15,11 @@ export function useSimpleWeekNavigation({
   isAdmin = false,
   articlesData,
 }: UseSimpleWeekNavigationProps) {
+  // Limpar cache para forçar recálculo (apenas em desenvolvimento)
+  if (process.env.NODE_ENV === "development") {
+    clearWeeksCache();
+  }
+
   // Obter todas as semanas disponíveis (2025-2030)
   const allWeeks = getAllWeeks();
 
