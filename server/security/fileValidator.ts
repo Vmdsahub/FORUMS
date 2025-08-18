@@ -133,7 +133,7 @@ export class AdvancedFileValidator {
       result.reasons.push(`MIME type not allowed: ${detectedType.mime}`);
     }
 
-    // Check for MIME type spoofing (more permissive for images)
+    // Check for MIME type spoofing (more permissive for images and archives)
     if (detectedType) {
       const expectedMimeForExt = this.getMimeTypeForExtension(fileExt);
       if (expectedMimeForExt && expectedMimeForExt !== detectedType.mime) {
@@ -142,7 +142,12 @@ export class AdvancedFileValidator {
           this.isImageFile(fileExt) &&
           detectedType.mime.startsWith('image/');
 
-        if (!isImageMismatch) {
+        // Be more permissive with ZIP files (many different MIME types)
+        const isZipMismatch =
+          fileExt === '.zip' &&
+          (detectedType.mime.includes('zip') || detectedType.mime === 'application/octet-stream');
+
+        if (!isImageMismatch && !isZipMismatch) {
           result.isValid = false;
           result.reasons.push(
             `MIME type mismatch: expected ${expectedMimeForExt}, got ${detectedType.mime}`,
