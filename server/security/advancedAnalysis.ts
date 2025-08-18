@@ -290,4 +290,32 @@ export class AdvancedSecurityAnalyzer {
     
     return entropy;
   }
+
+  private isPossiblePEExecutable(buffer: Buffer, mzIndex: number): boolean {
+    // A real PE executable has specific structure after "MZ"
+    if (mzIndex + 60 >= buffer.length) return false;
+
+    try {
+      // Check for PE signature at the offset specified in the DOS header
+      const peOffset = buffer.readUInt32LE(mzIndex + 60);
+
+      // PE offset should be reasonable
+      if (peOffset >= buffer.length - 4 || peOffset < 64) return false;
+
+      // Check for "PE\0\0" signature
+      const peSignature = buffer.subarray(peOffset, peOffset + 4);
+      if (peSignature.toString() === 'PE\0\0') {
+        // Additional validation: check for DOS stub message
+        const dosStubCheck = buffer.subarray(mzIndex + 2, mzIndex + 60);
+        if (dosStubCheck.includes(Buffer.from('This program cannot be run in DOS mode'))) {
+          return true;
+        }
+      }
+    } catch (error) {
+      // If we can't read the structure properly, it's probably not a PE file
+      return false;
+    }
+
+    return false;
+  }
 }
