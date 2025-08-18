@@ -378,26 +378,42 @@ export class AdvancedFileValidator {
 
   private getMimeTypeForExtension(ext: string): string | null {
     const mimeTypes: { [key: string]: string } = {
+      // Images
       ".jpg": "image/jpeg",
       ".jpeg": "image/jpeg",
       ".png": "image/png",
       ".gif": "image/gif",
       ".webp": "image/webp",
-      ".pdf": "application/pdf",
-      ".doc": "application/msword",
-      ".docx":
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      ".zip": "application/zip",
-      ".rar": "application/x-rar-compressed",
+      ".bmp": "image/bmp",
+      ".tiff": "image/tiff",
+      ".svg": "image/svg+xml",
+
+      // Videos
       ".mp4": "video/mp4",
       ".webm": "video/webm",
       ".mov": "video/quicktime",
       ".avi": "video/x-msvideo",
+      ".wmv": "video/x-ms-wmv",
+
+      // Audio
       ".mp3": "audio/mpeg",
       ".wav": "audio/wav",
       ".m4a": "audio/mp4",
+      ".ogg": "audio/ogg",
+
+      // Documents
+      ".pdf": "application/pdf",
+      ".doc": "application/msword",
+      ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      ".pptx": "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       ".txt": "text/plain",
       ".csv": "text/csv",
+
+      // Archives
+      ".zip": "application/zip",
+      ".rar": "application/x-rar-compressed",
+      ".7z": "application/x-7z-compressed",
     };
 
     return mimeTypes[ext.toLowerCase()] || null;
