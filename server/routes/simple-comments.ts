@@ -173,7 +173,7 @@ export const createComment: RequestHandler = (req, res) => {
       content: data.content,
       author: req.user.name,
       authorId: req.user.id,
-      authorAvatar: getUserInitials(req.user.name),
+      authorAvatar: getUserAvatar(req.user),
       topicId,
       parentId: data.parentId || null,
       createdAt: new Date().toISOString(),
