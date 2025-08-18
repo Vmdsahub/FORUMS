@@ -27,9 +27,11 @@ export interface SecurityConfig {
 export class AdvancedFileValidator {
   private config: SecurityConfig;
   private suspiciousPatterns: RegExp[];
+  private advancedAnalyzer: AdvancedSecurityAnalyzer;
 
   constructor(config: SecurityConfig) {
     this.config = config;
+    this.advancedAnalyzer = new AdvancedSecurityAnalyzer();
     this.suspiciousPatterns = [
       // Script injection patterns
       /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
