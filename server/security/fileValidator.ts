@@ -323,14 +323,15 @@ export class AdvancedFileValidator {
     // Basic zip bomb detection by checking for high compression ratios
     // This is a simplified check - in production you'd want more sophisticated detection
 
-    if (buffer.length < 1000 && buffer.includes(Buffer.from("PK"))) {
-      // Very small ZIP file might be a zip bomb
+    if (buffer.length < 500 && buffer.includes(Buffer.from("PK"))) {
+      // Very small ZIP file might be a zip bomb (reduced threshold for legitimate small projects)
       reasons.push("Potentially suspicious archive (very small file size)");
     }
 
-    // Check for suspicious file names in ZIP header
+    // Check for suspicious file names in ZIP header (more specific)
     const content = buffer.toString("binary");
-    if (/\.exe|\.scr|\.bat|\.cmd/gi.test(content)) {
+    // Only flag dangerous executables, not common development files
+    if (/\.(exe|scr|bat|cmd|com|pif|vbs)[\x00-\x20]/gi.test(content)) {
       reasons.push("Archive contains potentially dangerous executables");
     }
 
