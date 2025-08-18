@@ -548,9 +548,9 @@ export class AdvancedFileValidator {
   }
 }
 
-// Security configuration
+// Security configuration - More permissive with advanced analysis
 export const SECURITY_CONFIG: SecurityConfig = {
-  maxFileSize: 500 * 1024 * 1024, // 500MB (similar to Discord Nitro)
+  maxFileSize: 1024 * 1024 * 1024, // 1GB (similar to Reddit)
   allowedMimeTypes: [
     "image/jpeg",
     "image/png",
