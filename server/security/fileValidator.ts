@@ -381,6 +381,50 @@ export class AdvancedFileValidator {
     );
   }
 
+  private isLegitimateMultipleExtension(filename: string): boolean {
+    const parts = filename.split(".");
+
+    // Allow common legitimate patterns
+    const legitimatePatterns = [
+      // Version numbers (e.g., project.v1.0.zip, app.2.1.exe)
+      /\.\d+(\.\d+)*\./,
+      // Common double extensions that are safe
+      /\.(min|prod|dev|test|backup|temp|old|new)\./i,
+      // Timestamps (e.g., backup.2024.01.15.zip)
+      /\.\d{4}(\.\d{2}){2}\./,
+      // Node.js patterns (e.g., config.local.js, webpack.prod.js)
+      /\.(local|prod|dev|test|staging)\./i,
+      // Common file patterns from development
+      /\.(component|service|module|controller|model)\./i,
+    ];
+
+    // Check against legitimate patterns
+    for (const pattern of legitimatePatterns) {
+      if (pattern.test(filename)) {
+        return true;
+      }
+    }
+
+    // Special case: if the filename has many parts but ends with a safe extension
+    // and doesn't contain dangerous patterns, it's probably legitimate
+    const lastExtension = parts[parts.length - 1].toLowerCase();
+    const safeExtensions = ['.zip', '.rar', '.7z', '.txt', '.json', '.js', '.css', '.html', '.md'];
+
+    if (safeExtensions.includes('.' + lastExtension)) {
+      // Check if any part contains dangerous extensions
+      const dangerousExtensions = ['exe', 'bat', 'cmd', 'scr', 'pif', 'com', 'vbs', 'jar'];
+      const hasDangerousExtension = parts.some(part =>
+        dangerousExtensions.includes(part.toLowerCase())
+      );
+
+      if (!hasDangerousExtension) {
+        return true; // Legitimate multi-part filename
+      }
+    }
+
+    return false;
+  }
+
   private getMimeTypeForExtension(ext: string): string | null {
     const mimeTypes: { [key: string]: string } = {
       // Images
