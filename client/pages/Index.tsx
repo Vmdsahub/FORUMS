@@ -548,16 +548,7 @@ export default function Index(props: IndexProps) {
                       >
                         {currentNewsletter.week}
                       </span>{" "}
-                      de {currentNewsletter.year}{" "}
-                      {isCurrentWeek ? (
-                        <span className="text-green-600 text-sm font-medium">
-                          (Semana Atual)
-                        </span>
-                      ) : (
-                        <span className="text-gray-500 text-sm">
-                          (Semana Anterior)
-                        </span>
-                      )}
+                      de {currentNewsletter.year}
                       <br />
                       <span className="text-sm text-gray-500">
                         Atualizações todos os domingos
