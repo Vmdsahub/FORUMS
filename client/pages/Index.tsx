@@ -503,17 +503,13 @@ export default function Index(props: IndexProps) {
                     });
                     navigateWeek("prev");
                   }}
-                  disabled={isAdmin ? false : !canNavigatePrev()}
+                  disabled={!canNavigatePrev()}
                   className={`p-2 rounded-full transition-all duration-200 ${
-                    (isAdmin ? false : !canNavigatePrev())
+                    !canNavigatePrev()
                       ? "text-gray-300 cursor-not-allowed"
                       : "text-gray-600 hover:text-black hover:bg-gray-100"
                   }`}
-                  title={
-                    isAdmin
-                      ? "Navegar para semana anterior (Admin)"
-                      : "Voltar para semanas com conteúdo"
-                  }
+                  title="Voltar para semanas anteriores"
                 >
                   <svg
                     width="20"
@@ -536,13 +532,26 @@ export default function Index(props: IndexProps) {
                         className={
                           isCurrentWeek
                             ? "text-green-600 font-semibold"
-                            : "text-yellow-700 font-semibold"
+                            : "text-gray-700 font-semibold"
                         }
+                        title={isCurrentWeek ? "Esta é a semana atual" : "Semana histórica"}
                       >
                         {currentNewsletter.week}
                       </span>{" "}
-                      de {currentNewsletter.year} - Atualizações todos os
-                      domingos
+                      de {currentNewsletter.year}{" "}
+                      {isCurrentWeek ? (
+                        <span className="text-green-600 text-sm font-medium">
+                          (Semana Atual)
+                        </span>
+                      ) : (
+                        <span className="text-gray-500 text-sm">
+                          (Semana Anterior)
+                        </span>
+                      )}
+                      <br />
+                      <span className="text-sm text-gray-500">
+                        Atualizações todos os domingos
+                      </span>
                     </p>
                   )}
                 </div>
@@ -555,13 +564,13 @@ export default function Index(props: IndexProps) {
                     });
                     navigateWeek("next");
                   }}
-                  disabled={isAdmin ? false : !canNavigateNext()}
+                  disabled={!canNavigateNext()}
                   className={`p-2 rounded-full transition-all duration-200 ${
-                    (isAdmin ? false : !canNavigateNext())
+                    !canNavigateNext()
                       ? "text-gray-300 cursor-not-allowed"
                       : "text-gray-600 hover:text-black hover:bg-gray-100"
                   }`}
-                  title="Navegar para semana mais recente"
+                  title="Avançar para semanas mais recentes"
                 >
                   <svg
                     width="20"
