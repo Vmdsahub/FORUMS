@@ -263,6 +263,8 @@ export function testScenarios() {
     { date: new Date(2025, 0, 5), description: "5 de janeiro de 2025 (Domingo)" }, // Primeiro domingo de 2025
     { date: new Date(2025, 0, 11), description: "11 de janeiro de 2025 (Sábado)" }, // Primeiro sábado
     { date: new Date(2025, 7, 17), description: "17 de agosto de 2025 (Domingo)" }, // Domingo no meio do ano
+    { date: new Date(2024, 8, 28), description: "28 de setembro de 2024 (Sábado)" }, // Teste específico
+    { date: new Date(2025, 8, 28), description: "28 de setembro de 2025 (Domingo)" }, // Teste específico
     { date: new Date(), description: "Hoje" }, // Data atual
   ];
 
