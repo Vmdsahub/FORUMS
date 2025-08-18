@@ -365,7 +365,7 @@ export class AdvancedFileValidator {
   }
 
   private isImageFile(extension: string): boolean {
-    return [".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".svg"].includes(
+    return [".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".tiff", ".svg"].includes(
       extension.toLowerCase(),
     );
   }
