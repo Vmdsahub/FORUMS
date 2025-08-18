@@ -559,9 +559,6 @@ export default function Header({ activeSection }: HeaderProps) {
                         <div className="font-semibold text-black">
                           {user.name}
                         </div>
-                        <div className="text-sm text-gray-600">
-                          {user.email}
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -903,7 +900,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         if (errors.captcha) {
                           setValidationErrors(errors);
                           toast.error(
-                            "Por favor, complete a verificação de segurança",
+                            "Por favor, complete a verificação de seguran��a",
                           );
                           return;
                         }
