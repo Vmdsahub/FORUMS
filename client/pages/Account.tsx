@@ -295,7 +295,7 @@ export default function Account() {
         />
       );
     }
-    if (user.avatar && user.avatar.startsWith('http')) {
+    if (user.avatar && user.avatar.startsWith("http")) {
       return (
         <img
           src={user.avatar}

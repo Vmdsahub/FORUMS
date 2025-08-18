@@ -587,7 +587,6 @@ export default function Index(props: IndexProps) {
                 Seleção de notícias sobre as principais tecnologias e
                 ferramentas de Inteligência Artificial
               </p>
-
             </div>
 
             {currentNewsletter?.topics &&
