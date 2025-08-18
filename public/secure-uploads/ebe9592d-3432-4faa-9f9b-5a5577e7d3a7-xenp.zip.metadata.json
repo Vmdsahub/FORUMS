@@ -1,0 +1,20 @@
+{
+  "originalName": "xenp.zip",
+  "safeFileName": "ebe9592d-3432-4faa-9f9b-5a5577e7d3a7-xenp.zip",
+  "hash": "2770490846d0127ffc6f977a8b983db00079208a2d09e286250db5ab8fcf0244",
+  "size": 122192,
+  "mimeType": "application/zip",
+  "uploadTime": "2025-08-18T15:22:22.834Z",
+  "uploadedBy": "anonymous",
+  "uploadIp": "::ffff:127.0.0.1",
+  "userAgent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
+  "validationResult": {
+    "isValid": true,
+    "reasons": [],
+    "sanitizedName": "xenp.zip",
+    "hash": "2770490846d0127ffc6f977a8b983db00079208a2d09e286250db5ab8fcf0244",
+    "size": 122192,
+    "quarantined": false,
+    "detectedMimeType": "application/zip"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "originalPath": "/app/code/temp-uploads/ca2dee69-1e7a-40f1-86e2-70956b5028f2-PET6.zip",
+  "quarantineTime": "2025-08-18T17:51:57.296Z",
+  "hash": "260a24babc106f7082cead9cd6cb3a0bdaa3d4b4fc5463c01fcb00a421c9dc14",
+  "reasons": [
+    "Archive contains potentially dangerous executables"
+  ],
+  "status": "quarantined"
+}
