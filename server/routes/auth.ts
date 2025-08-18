@@ -294,6 +294,7 @@ export const handleRegister: RequestHandler = (req, res) => {
       role: "user" as const,
       emailConfirmed: true, // For demo purposes, auto-confirm email
       acceptNewsletter: acceptNewsletter || false,
+      avatar: getRandomAvatar(), // Atribui avatar aleatório
     };
 
     users.set(userId, newUser);
