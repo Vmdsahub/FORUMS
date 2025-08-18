@@ -159,15 +159,25 @@ export class AdvancedFileValidator {
       }
     }
 
-      // Scan for malicious patterns
-      const maliciousContent = await this.scanForMaliciousContent(
-        buffer,
+      // Advanced security analysis (ClamAV-style)
+      const advancedAnalysis = await this.advancedAnalyzer.analyzeFile(
+        filePath,
         originalName,
+        detectedType?.mime || 'unknown'
       );
-      if (maliciousContent.length > 0) {
+
+      if (!advancedAnalysis.isClean) {
         result.isValid = false;
-        result.reasons.push(...maliciousContent);
+        result.reasons.push(...advancedAnalysis.threats);
         result.quarantined = true;
+
+        console.log(`[ADVANCED ANALYSIS] File flagged: ${originalName}`);
+        console.log(`[ADVANCED ANALYSIS] Analysis types: ${advancedAnalysis.analysisType.join(', ')}`);
+        console.log(`[ADVANCED ANALYSIS] Confidence: ${advancedAnalysis.confidence}%`);
+        console.log(`[ADVANCED ANALYSIS] Threats: ${advancedAnalysis.threats.join(', ')}`);
+      } else if (advancedAnalysis.confidence < 80) {
+        console.log(`[ADVANCED ANALYSIS] File passed but with low confidence: ${advancedAnalysis.confidence}%`);
+        console.log(`[ADVANCED ANALYSIS] File: ${originalName}`);
       }
 
       // Additional security checks for images
