@@ -239,16 +239,24 @@ export class AdvancedFileValidator {
       }
     }
 
-    // Scan content for malicious patterns (skip some patterns for media files)
+    // Scan content for malicious patterns (skip some patterns for media files and archives)
     for (const pattern of this.suspiciousPatterns) {
       // Skip JavaScript event handler patterns for all media files and images
       const isImageFile = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'].includes(fileExt);
-      if ((isMediaFile || isImageFile) && pattern.source.includes("on\\w+\\s*=")) {
+      const isArchiveFile = ['.zip', '.rar', '.7z'].includes(fileExt);
+
+      // Skip JavaScript patterns for media files, images, and development archives
+      if ((isMediaFile || isImageFile || isArchiveFile) && pattern.source.includes("on\\w+\\s*=")) {
         continue;
       }
 
-      // Skip script tags in binary image files (common in metadata)
-      if (isImageFile && pattern.source.includes("<script")) {
+      // Skip script tags in binary files (common in metadata and legitimate web projects)
+      if ((isImageFile || isArchiveFile) && pattern.source.includes("<script")) {
+        continue;
+      }
+
+      // Skip JavaScript URL patterns in development archives (common in legitimate web projects)
+      if (isArchiveFile && pattern.source.includes("javascript:")) {
         continue;
       }
 
