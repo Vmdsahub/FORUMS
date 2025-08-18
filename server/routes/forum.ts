@@ -678,7 +678,7 @@ export const handleCreateComment: RequestHandler = (req, res) => {
       content: data.content,
       author: req.user.name,
       authorId: req.user.id,
-      authorAvatar: getUserInitials(req.user.name),
+      authorAvatar: getUserAvatar(req.user),
       date,
       time,
       likes: 0,
