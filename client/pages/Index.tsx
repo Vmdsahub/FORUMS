@@ -105,6 +105,7 @@ export default function Index(props: IndexProps) {
     debugInfo,
   } = useSimpleWeekNavigation({
     isAdmin,
+    isVitoca: user?.name === "Vitoca", // Identificar se é o admin Vitoca
     articlesData: newsletterData, // Usar os dados da API
   });
 
