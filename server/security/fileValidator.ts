@@ -369,6 +369,7 @@ export class AdvancedFileValidator {
       ".jpeg": "image/jpeg",
       ".png": "image/png",
       ".gif": "image/gif",
+      ".webp": "image/webp",
       ".pdf": "application/pdf",
       ".doc": "application/msword",
       ".docx":
@@ -376,7 +377,12 @@ export class AdvancedFileValidator {
       ".zip": "application/zip",
       ".rar": "application/x-rar-compressed",
       ".mp4": "video/mp4",
+      ".webm": "video/webm",
+      ".mov": "video/quicktime",
+      ".avi": "video/x-msvideo",
       ".mp3": "audio/mpeg",
+      ".wav": "audio/wav",
+      ".m4a": "audio/mp4",
       ".txt": "text/plain",
       ".csv": "text/csv",
     };
