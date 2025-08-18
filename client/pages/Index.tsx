@@ -540,7 +540,11 @@ export default function Index(props: IndexProps) {
                             ? "text-green-600 font-semibold"
                             : "text-gray-700 font-semibold"
                         }
-                        title={isCurrentWeek ? "Esta é a semana atual" : "Semana histórica"}
+                        title={
+                          isCurrentWeek
+                            ? "Esta é a semana atual"
+                            : "Semana histórica"
+                        }
                       >
                         {currentNewsletter.week}
                       </span>{" "}

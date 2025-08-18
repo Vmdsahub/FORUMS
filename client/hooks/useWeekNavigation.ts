@@ -3,5 +3,7 @@
 // Este arquivo foi substituído por um sistema mais simples e funcional
 
 export function useWeekNavigation() {
-  throw new Error("useWeekNavigation foi removido. Use useSimpleWeekNavigation em vez disso.");
+  throw new Error(
+    "useWeekNavigation foi removido. Use useSimpleWeekNavigation em vez disso.",
+  );
 }

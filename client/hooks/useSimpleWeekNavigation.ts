@@ -30,7 +30,9 @@ export function useSimpleWeekNavigation({
   const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
 
   // Estado para semanas com conteúdo (merge com dados da API)
-  const [weeksWithContent, setWeeksWithContent] = useState<WeeklyNewsletter[]>([]);
+  const [weeksWithContent, setWeeksWithContent] = useState<WeeklyNewsletter[]>(
+    [],
+  );
 
   // Inicialização: determinar semana atual baseada na data real
   useEffect(() => {
@@ -120,14 +122,19 @@ export function useSimpleWeekNavigation({
             // Usuário comum só pode voltar se a semana anterior tiver notícias
             const targetWeek = weeksWithContent[nextIndex];
             if (targetWeek?.topics?.length > 0) {
-              console.log("⬅️ Usuário navegando para semana anterior com conteúdo:", {
-                from: `${weeksWithContent[currentWeekIndex]?.week}/${weeksWithContent[currentWeekIndex]?.year}`,
-                to: `${targetWeek.week}/${targetWeek.year}`,
-                topicsCount: targetWeek.topics.length,
-              });
+              console.log(
+                "⬅️ Usuário navegando para semana anterior com conteúdo:",
+                {
+                  from: `${weeksWithContent[currentWeekIndex]?.week}/${weeksWithContent[currentWeekIndex]?.year}`,
+                  to: `${targetWeek.week}/${targetWeek.year}`,
+                  topicsCount: targetWeek.topics.length,
+                },
+              );
               setCurrentWeekIndex(nextIndex);
             } else {
-              console.log("⚠️ Usuário não pode navegar - semana anterior sem conteúdo");
+              console.log(
+                "⚠️ Usuário não pode navegar - semana anterior sem conteúdo",
+              );
             }
           }
         } else {
@@ -149,12 +156,15 @@ export function useSimpleWeekNavigation({
             // Usuário comum pode avançar até a semana atual (não além)
             const realCurrentWeekIndex = getCurrentWeekIndex(weeksWithContent);
             if (nextIndex >= realCurrentWeekIndex) {
-              console.log("➡️ Usuário navegando de volta para semana mais recente:", {
-                from: `${weeksWithContent[currentWeekIndex]?.week}/${weeksWithContent[currentWeekIndex]?.year}`,
-                to: `${weeksWithContent[nextIndex]?.week}/${weeksWithContent[nextIndex]?.year}`,
-                realCurrentWeekIndex,
-                nextIndex,
-              });
+              console.log(
+                "➡️ Usuário navegando de volta para semana mais recente:",
+                {
+                  from: `${weeksWithContent[currentWeekIndex]?.week}/${weeksWithContent[currentWeekIndex]?.year}`,
+                  to: `${weeksWithContent[nextIndex]?.week}/${weeksWithContent[nextIndex]?.year}`,
+                  realCurrentWeekIndex,
+                  nextIndex,
+                },
+              );
               setCurrentWeekIndex(nextIndex);
             } else {
               console.log("⚠️ Usuário não pode avançar além da semana atual");
@@ -165,7 +175,7 @@ export function useSimpleWeekNavigation({
         }
       }
     },
-    [currentWeekIndex, weeksWithContent, isVitoca]
+    [currentWeekIndex, weeksWithContent, isVitoca],
   );
 
   // Verificar se pode navegar para trás (semanas mais antigas)
@@ -218,7 +228,10 @@ export function useSimpleWeekNavigation({
   }, [allWeeks, currentWeekIndex]);
 
   // Verificar se está na semana atual real - memoizado para evitar recálculo
-  const realCurrentWeekIndex = useMemo(() => getCurrentWeekIndex(allWeeks), [allWeeks]);
+  const realCurrentWeekIndex = useMemo(
+    () => getCurrentWeekIndex(allWeeks),
+    [allWeeks],
+  );
   const isCurrentWeek = currentWeekIndex === realCurrentWeekIndex;
 
   return {
@@ -244,7 +257,9 @@ export function useSimpleWeekNavigation({
       isAdmin,
       isVitoca,
       hasContent: currentNewsletter?.topics?.length > 0,
-      currentWeekDisplay: currentNewsletter ? `${currentNewsletter.week}/${currentNewsletter.year}` : "nenhuma",
+      currentWeekDisplay: currentNewsletter
+        ? `${currentNewsletter.week}/${currentNewsletter.year}`
+        : "nenhuma",
       canNavPrev: canNavigatePrev(),
       canNavNext: canNavigateNext(),
       navigationRules: isVitoca ? "Admin Vitoca - livre" : "Usuário - restrito",
