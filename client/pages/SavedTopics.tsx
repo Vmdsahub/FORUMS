@@ -171,8 +171,16 @@ export default function SavedTopics() {
                   <div className="grid grid-cols-12 gap-4 items-center">
                     <div className="col-span-6">
                       <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0">
-                          {topic.authorAvatar}
+                        <div className="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold flex-shrink-0 overflow-hidden">
+                          {topic.authorAvatar.startsWith('http') ? (
+                            <img
+                              src={topic.authorAvatar}
+                              alt={topic.author}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            topic.authorAvatar
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <Link
