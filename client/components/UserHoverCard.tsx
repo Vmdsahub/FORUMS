@@ -169,8 +169,16 @@ export default function UserHoverCard({
             <>
               {/* Header com avatar, nome e likes */}
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center text-lg font-semibold">
-                  {userAvatar}
+                <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center text-lg font-semibold overflow-hidden">
+                  {userAvatar.startsWith('http') ? (
+                    <img
+                      src={userAvatar}
+                      alt={userName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    userAvatar
+                  )}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-1">
