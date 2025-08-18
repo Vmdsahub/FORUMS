@@ -222,63 +222,7 @@ export class AdvancedFileValidator {
     return issues;
   }
 
-  private async validateImageSecurity(
-    filePath: string,
-  ): Promise<{ isValid: boolean; reasons: string[] }> {
-    const reasons: string[] = [];
-
-    try {
-      // Use Sharp to validate and sanitize image
-      const metadata = await sharp(filePath).metadata();
-
-      // Check for reasonable image dimensions
-      if (metadata.width && metadata.width > 50000) {
-        reasons.push("Image width too large (potential zip bomb)");
-      }
-      if (metadata.height && metadata.height > 50000) {
-        reasons.push("Image height too large (potential zip bomb)");
-      }
-
-      // Check for embedded data in images
-      const buffer = fs.readFileSync(filePath);
-      const textContent = buffer.toString("utf-8");
-
-      if (/<script/gi.test(textContent)) {
-        reasons.push("Script content found in image file");
-      }
-
-      if (/javascript:/gi.test(textContent)) {
-        reasons.push("JavaScript URL found in image file");
-      }
-    } catch (error) {
-      reasons.push("Image validation failed - possibly corrupted or malicious");
-    }
-
-    return { isValid: reasons.length === 0, reasons };
-  }
-
-  private async validateArchiveSecurity(
-    buffer: Buffer,
-  ): Promise<{ isValid: boolean; reasons: string[] }> {
-    const reasons: string[] = [];
-
-    // Basic zip bomb detection by checking for high compression ratios
-    // This is a simplified check - in production you'd want more sophisticated detection
-
-    if (buffer.length < 500 && buffer.includes(Buffer.from("PK"))) {
-      // Very small ZIP file might be a zip bomb (reduced threshold for legitimate small projects)
-      reasons.push("Potentially suspicious archive (very small file size)");
-    }
-
-    // Check for suspicious file names in ZIP header (more specific)
-    const content = buffer.toString("binary");
-    // Only flag dangerous executables, not common development files
-    if (/\.(exe|scr|bat|cmd|com|pif|vbs)[\x00-\x20]/gi.test(content)) {
-      reasons.push("Archive contains potentially dangerous executables");
-    }
-
-    return { isValid: reasons.length === 0, reasons };
-  }
+  // Legacy methods removed - now handled by advanced analysis
 
   private async quarantineFile(
     filePath: string,
