@@ -49,6 +49,11 @@ function getUserInitials(name: string): string {
     .toUpperCase();
 }
 
+function getUserAvatar(user: any): string {
+  // Se o usuário tem avatar, usa a URL completa, senão usa as iniciais
+  return user.avatar || getUserInitials(user.name);
+}
+
 // Função RECURSIVA para construir árvore de comentários com profundidade ilimitada
 function buildCommentTree(topicId: string, userId?: string): SimpleComment[] {
   const commentIds = topicComments.get(topicId) || [];
@@ -168,7 +173,7 @@ export const createComment: RequestHandler = (req, res) => {
       content: data.content,
       author: req.user.name,
       authorId: req.user.id,
-      authorAvatar: getUserInitials(req.user.name),
+      authorAvatar: getUserAvatar(req.user),
       topicId,
       parentId: data.parentId || null,
       createdAt: new Date().toISOString(),
@@ -440,7 +445,8 @@ export function initializeDemo() {
       content: "Ótimo comparativo! Muito útil para escolher.",
       author: "João",
       authorId: "demo_user_123",
-      authorAvatar: "JO",
+      authorAvatar:
+        "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F477cc7711bf64b4d94e766b55d18ca30?format=webp&width=800",
       topicId: "1",
       parentId: null,
       createdAt: new Date(Date.now() - 7200000).toISOString(),
@@ -450,7 +456,8 @@ export function initializeDemo() {
       content: "Concordo! O Midjourney realmente se destaca em arte.",
       author: "Carlos",
       authorId: "user_carlos",
-      authorAvatar: "CA",
+      authorAvatar:
+        "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F6dcd5f5eb7214b0f8018d668c517123d?format=webp&width=800",
       topicId: "1",
       parentId: "demo1",
       createdAt: new Date(Date.now() - 6600000).toISOString(),
@@ -460,7 +467,8 @@ export function initializeDemo() {
       content: "Obrigado pelos comentários! Ajuda muito o feedback.",
       author: "Admin",
       authorId: "admin_vitoca_456",
-      authorAvatar: "AD",
+      authorAvatar:
+        "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F554fd210b6d1444b8def1042ce46dfda?format=webp&width=800",
       topicId: "1",
       parentId: "demo2",
       createdAt: new Date(Date.now() - 6000000).toISOString(),
@@ -470,7 +478,8 @@ export function initializeDemo() {
       content: "Posso adicionar uma resposta aqui no nível 4?",
       author: "João",
       authorId: "demo_user_123",
-      authorAvatar: "JO",
+      authorAvatar:
+        "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F477cc7711bf64b4d94e766b55d18ca30?format=webp&width=800",
       topicId: "1",
       parentId: "demo3",
       createdAt: new Date(Date.now() - 5400000).toISOString(),
@@ -480,7 +489,8 @@ export function initializeDemo() {
       content: "E eu no nível 5! Testando profundidade.",
       author: "Eduardo",
       authorId: "user_eduardo",
-      authorAvatar: "ED",
+      authorAvatar:
+        "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F8b93635144674ca9ad3fa486245b728d?format=webp&width=800",
       topicId: "1",
       parentId: "demo4",
       createdAt: new Date(Date.now() - 4800000).toISOString(),

@@ -540,24 +540,11 @@ export default function Index(props: IndexProps) {
                             ? "text-green-600 font-semibold"
                             : "text-gray-700 font-semibold"
                         }
-                        title={
-                          isCurrentWeek
-                            ? "Esta é a semana atual"
-                            : "Semana histórica"
-                        }
+                        title=""
                       >
                         {currentNewsletter.week}
                       </span>{" "}
-                      de {currentNewsletter.year}{" "}
-                      {isCurrentWeek ? (
-                        <span className="text-green-600 text-sm font-medium">
-                          (Semana Atual)
-                        </span>
-                      ) : (
-                        <span className="text-gray-500 text-sm">
-                          (Semana Anterior)
-                        </span>
-                      )}
+                      de {currentNewsletter.year}
                       <br />
                       <span className="text-sm text-gray-500">
                         Atualizações todos os domingos
@@ -600,18 +587,6 @@ export default function Index(props: IndexProps) {
                 Seleção de notícias sobre as principais tecnologias e
                 ferramentas de Inteligência Artificial
               </p>
-
-              {/* Botão para voltar à semana atual */}
-              {!isCurrentWeek && (
-                <div className="mt-4">
-                  <button
-                    onClick={goToCurrentWeek}
-                    className="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors duration-200 text-sm font-medium"
-                  >
-                    📅 Ir para Semana Atual
-                  </button>
-                </div>
-              )}
             </div>
 
             {currentNewsletter?.topics &&
@@ -767,7 +742,7 @@ export default function Index(props: IndexProps) {
                               title: e.target.value,
                             })
                           }
-                          placeholder="Ex: GPT-4 vs Claude: Análise Comparativa"
+                          placeholder="Ex: GPT-4 vs Claude: An��lise Comparativa"
                           className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
                         />
                       </div>
@@ -1336,11 +1311,16 @@ export default function Index(props: IndexProps) {
                               topic.topicAvatarUrl.trim() !== "" ? (
                                 <img
                                   src={topic.topicAvatarUrl}
-                                  alt={topic.author}
+                                  alt={topic.title}
                                   className="w-full h-full object-cover"
                                 />
                               ) : (
-                                topic.authorAvatar
+                                topic.title
+                                  .split(" ")
+                                  .map((word) => word[0])
+                                  .join("")
+                                  .toUpperCase()
+                                  .slice(0, 2)
                               )}
                             </div>
                             <div className="flex-1 min-w-0">

@@ -265,7 +265,15 @@ export default function TopicView() {
               >
                 <div className="flex items-center gap-2 cursor-pointer">
                   <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold hover:bg-gray-800 transition-colors overflow-hidden">
-                    {topic.authorAvatar}
+                    {topic.authorAvatar.startsWith("http") ? (
+                      <img
+                        src={topic.authorAvatar}
+                        alt={topic.author}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      topic.authorAvatar
+                    )}
                   </div>
                   <span className="text-sm text-gray-500">
                     por{" "}

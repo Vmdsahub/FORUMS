@@ -456,7 +456,7 @@ export default function Header({ activeSection }: HeaderProps) {
                                         className="w-full h-full object-contain"
                                       />
                                     ) : (
-                                      <div className="text-yellow-500">🏆</div>
+                                      <div className="text-yellow-500">���</div>
                                     )}
                                   </div>
                                 )}
@@ -511,11 +511,19 @@ export default function Header({ activeSection }: HeaderProps) {
             <Popover>
               <PopoverTrigger asChild>
                 <button className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-black/5 transition-colors duration-200">
-                  <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold">
-                    {user.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
+                  <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold overflow-hidden">
+                    {user.avatar && user.avatar.startsWith("http") ? (
+                      <img
+                        src={user.avatar}
+                        alt={user.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      user.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                    )}
                   </div>
                   <span className="font-medium text-black">{user.name}</span>
                   <svg
@@ -531,24 +539,6 @@ export default function Header({ activeSection }: HeaderProps) {
               </PopoverTrigger>
               <PopoverContent className="w-64 p-0" align="end">
                 <div className="bg-white border border-gray-200 rounded-lg shadow-lg">
-                  <div className="p-4 border-b border-gray-100">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center font-semibold">
-                        {user.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </div>
-                      <div>
-                        <div className="font-semibold text-black">
-                          {user.name}
-                        </div>
-                        <div className="text-sm text-gray-600">
-                          {user.email}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                   <div className="p-2">
                     <button
                       onClick={handleAccountClick}
@@ -887,7 +877,7 @@ export default function Header({ activeSection }: HeaderProps) {
                         if (errors.captcha) {
                           setValidationErrors(errors);
                           toast.error(
-                            "Por favor, complete a verificação de segurança",
+                            "Por favor, complete a verificação de seguran��a",
                           );
                           return;
                         }

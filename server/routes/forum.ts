@@ -59,6 +59,11 @@ function getUserInitials(name: string): string {
     .toUpperCase();
 }
 
+function getUserAvatar(user: any): string {
+  // Se o usuário tem avatar, usa a URL completa, senão usa as iniciais
+  return user.avatar || getUserInitials(user.name);
+}
+
 // Funções para gerenciar pontos e badges
 function getUserStats(userId: string) {
   if (!userStats.has(userId)) {
@@ -271,7 +276,8 @@ function initializeDemoData() {
         "Pessoal, fiz alguns testes comparativos entre o Midjourney v6 e o DALL-E 3 para entender qual produz melhores resultados.\n\nPrincipais diferenças que notei:\n\n**Midjourney v6:**\n- Melhor para arte conceitual e estilos artísticos\n- Interface no Discord pode ser confusa\n- Resultados mais consistentes em prompts complexos\n\n**DALL-E 3:**\n- Melhor integração com ChatGPT\n- Mais preciso para descrições textuais\n- Interface web mais intuitiva\n\nO que vocês acham? Qual preferem usar?",
       author: "VisualAI",
       authorId: "user_visual_ai",
-      authorAvatar: "VA",
+      authorAvatar:
+        "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F3a88d03f86164e47b982a4e1e72380a2?format=webp&width=800",
       category: "imagem",
       replies: 4,
       views: 1823,
@@ -291,7 +297,8 @@ function initializeDemoData() {
         "O Stable Diffusion XL trouxe várias melhorias significativas:\n\n1. **Resolução nativa 1024x1024**: Muito melhor que os 512x512 do modelo original\n2. **Modelo de refino**: Permite melhorar os detalhes das imagens geradas\n3. **Melhor compreensão de texto**: Prompts mais complexos funcionam melhor\n4. **Controle de aspectos**: Diferentes proporções funcionam melhor\n\nTestei bastante e os resultados são impressionantes. Algu��m mais teve experiências similares?",
       author: "ImageGen",
       authorId: "user_image_gen",
-      authorAvatar: "IG",
+      authorAvatar:
+        "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F1b6ba24486b4431bab6f7012645c0a61?format=webp&width=800",
       category: "imagem",
       replies: 2,
       views: 945,
@@ -311,7 +318,8 @@ function initializeDemoData() {
         "Pessoal, estou tentando rodar o Stable Diffusion localmente mas sempre recebo erro de VRAM insuficiente. Minha GPU tem 8GB mas mesmo assim não consegui gerar imagens em alta resolução.\n\nJá tentei:\n- Reduzir o batch size\n- Usar o parâmetro --lowvram\n- Gerar em resolução menor\n\nAlguém tem mais dicas? É normal precisar de mais de 8GB para funcionar bem?",
       author: "TechNewbie",
       authorId: "user_tech_newbie",
-      authorAvatar: "TN",
+      authorAvatar:
+        "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F40c3e177f2e64d8ca305e2adfcc1a693?format=webp&width=800",
       category: "duvidas-erros",
       replies: 7,
       views: 156,
@@ -337,7 +345,8 @@ function initializeDemoData() {
         "Excelente comparativo! Eu uso mais o Midjourney para conceitos artísticos.",
       author: "CreativeAI",
       authorId: "user_creative_ai",
-      authorAvatar: "CA",
+      authorAvatar:
+        "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F12ef023c28914c699497d5e169a631c3?format=webp&width=800",
       date: "09/08/2025",
       time: "09:30",
       likes: 8,
@@ -350,7 +359,8 @@ function initializeDemoData() {
         "Concordo completamente! O Midjourney tem uma vantagem clara em arte conceitual.",
       author: "DigitalArtist",
       authorId: "user_digital_artist",
-      authorAvatar: "DA",
+      authorAvatar:
+        "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F8b93635144674ca9ad3fa486245b728d?format=webp&width=800",
       date: "09/08/2025",
       time: "10:15",
       likes: 3,
@@ -363,7 +373,8 @@ function initializeDemoData() {
       content: "Mas o DALL-E 3 é melhor para textos em imagens, não acham?",
       author: "TextMaster",
       authorId: "user_text_master",
-      authorAvatar: "TM",
+      authorAvatar:
+        "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F6dcd5f5eb7214b0f8018d668c517123d?format=webp&width=800",
       date: "09/08/2025",
       time: "11:00",
       likes: 5,
@@ -377,7 +388,8 @@ function initializeDemoData() {
         "Concordo! O SDXL é um salto gigante. A qualidade das imagens é impressionante.",
       author: "AIArtist",
       authorId: "user_ai_artist",
-      authorAvatar: "AA",
+      authorAvatar:
+        "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F477cc7711bf64b4d94e766b55d18ca30?format=webp&width=800",
       date: "09/08/2025",
       time: "08:30",
       likes: 5,
@@ -389,7 +401,8 @@ function initializeDemoData() {
       content: "E a diferença na resolução �� not��vel!",
       author: "TechEnthusiast",
       authorId: "user_tech_enthusiast",
-      authorAvatar: "TE",
+      authorAvatar:
+        "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F554fd210b6d1444b8def1042ce46dfda?format=webp&width=800",
       date: "09/08/2025",
       time: "09:45",
       likes: 2,
@@ -401,7 +414,8 @@ function initializeDemoData() {
       content: "Verdade! E agora com o modelo de refino fica ainda melhor.",
       author: "DevPro",
       authorId: "user_dev_pro",
-      authorAvatar: "DP",
+      authorAvatar:
+        "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F1b6ba24486b4431bab6f7012645c0a61?format=webp&width=800",
       date: "09/08/2025",
       time: "12:30",
       likes: 1,
@@ -608,7 +622,7 @@ export const handleCreateTopic: RequestHandler = (req, res) => {
       content: data.content,
       author: req.user.name,
       authorId: req.user.id,
-      authorAvatar: getUserInitials(req.user.name),
+      authorAvatar: getUserAvatar(req.user),
       topicAvatarUrl: data.avatarUrl || undefined,
       category: data.category,
       replies: 0,
@@ -673,7 +687,7 @@ export const handleCreateComment: RequestHandler = (req, res) => {
       content: data.content,
       author: req.user.name,
       authorId: req.user.id,
-      authorAvatar: getUserInitials(req.user.name),
+      authorAvatar: getUserAvatar(req.user),
       date,
       time,
       likes: 0,
