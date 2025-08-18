@@ -9,6 +9,7 @@ export interface User {
   badges?: string[]; // IDs dos badges conquistados
   emailConfirmed?: boolean;
   acceptNewsletter?: boolean;
+  avatar?: string; // URL da foto de perfil
 }
 
 export interface LoginRequest {
