@@ -459,8 +459,8 @@ export class AdvancedFileValidator {
       ".txt": "text/plain",
       ".csv": "text/csv",
 
-      // Archives
-      ".zip": "application/zip",
+      // Archives (flexible MIME type checking for ZIP)
+      ".zip": "application/zip", // Primary, but will accept variants
       ".rar": "application/x-rar-compressed",
       ".7z": "application/x-7z-compressed",
     };
