@@ -96,18 +96,24 @@ export class AdvancedSecurityAnalyzer {
     result.analysisType.push("steganography");
     
     try {
-      // Check for suspicious data appended to image files
+      // Check for suspicious data appended to image files (more specific)
       const metadata = await sharp(filePath).metadata();
-      
-      if (metadata.size && buffer.length > metadata.size * 1.5) {
-        // File is significantly larger than expected for image data
-        const suspiciousData = buffer.subarray(Math.floor(buffer.length * 0.8));
+
+      if (metadata.size && buffer.length > metadata.size * 2.5) {
+        // File is significantly larger than expected for image data (increased threshold)
+        const suspiciousData = buffer.subarray(Math.floor(buffer.length * 0.9));
         const suspiciousText = suspiciousData.toString('utf-8');
-        
-        // Look for signs of hidden executable code
-        if (/MZ|ELF|PK/.test(suspiciousText) || suspiciousText.includes('eval(') || suspiciousText.includes('exec(')) {
+
+        // Look for clear signs of hidden executable code (more specific)
+        const hasExecutableSignatures = /^MZ.*This program cannot be run in DOS mode|^\x7fELF/.test(suspiciousText);
+        const hasScriptPayload = suspiciousText.includes('eval(') && suspiciousText.includes('base64_decode');
+
+        if (hasExecutableSignatures || hasScriptPayload) {
           result.threats.push("Steganography detected: Suspicious data appended to image");
           result.isClean = false;
+        } else if (buffer.length > metadata.size * 3) {
+          // Very large difference - just reduce confidence, don't block
+          result.confidence -= 20;
         }
       }
       
