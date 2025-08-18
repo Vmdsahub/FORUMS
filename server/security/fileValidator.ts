@@ -249,17 +249,22 @@ export class AdvancedFileValidator {
       const isArchiveFile = ['.zip', '.rar', '.7z'].includes(fileExt);
 
       // Skip JavaScript patterns for media files, images, and development archives
-      if ((isMediaFile || isImageFile || isArchiveFile) && pattern.source.includes("on\\w+\\s*=")) {
+      if ((isMediaFile || isImageFile || isArchiveFile || isDevelopmentProject) && pattern.source.includes("on\\w+\\s*=")) {
         continue;
       }
 
       // Skip script tags in binary files (common in metadata and legitimate web projects)
-      if ((isImageFile || isArchiveFile) && pattern.source.includes("<script")) {
+      if ((isImageFile || isArchiveFile || isDevelopmentProject) && pattern.source.includes("<script")) {
         continue;
       }
 
       // Skip JavaScript URL patterns in development archives (common in legitimate web projects)
-      if (isArchiveFile && pattern.source.includes("javascript:")) {
+      if ((isArchiveFile || isDevelopmentProject) && pattern.source.includes("javascript:")) {
+        continue;
+      }
+
+      // Skip VBS script patterns in development projects (common in package.json scripts)
+      if (isDevelopmentProject && pattern.source.includes("vbscript:")) {
         continue;
       }
 
