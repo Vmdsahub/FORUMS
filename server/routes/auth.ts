@@ -60,6 +60,7 @@ users.set(demoUserId, {
   password: hashPassword("123456"), // password: 123456
   role: "user",
   emailConfirmed: true, // Demo user has confirmed email
+  avatar: DEFAULT_AVATARS[0], // Primeiro avatar para o usuário demo
 });
 
 // Add admin user Vitoca
@@ -71,6 +72,7 @@ users.set(adminUserId, {
   password: hashPassword("admin123"), // password: admin123
   role: "admin",
   emailConfirmed: true, // Admin has confirmed email
+  avatar: DEFAULT_AVATARS[4], // Quinto avatar para o admin
 });
 
 // Validation schemas
