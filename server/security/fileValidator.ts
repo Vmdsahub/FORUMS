@@ -204,94 +204,21 @@ export class AdvancedFileValidator {
     return crypto.createHash("sha256").update(buffer).digest("hex");
   }
 
+  // Legacy method - now handled by advanced analysis
   private async scanForMaliciousContent(
     buffer: Buffer,
     filename: string,
   ): Promise<string[]> {
+    // Basic checks only - advanced analysis handles the rest
     const issues: string[] = [];
-    const content = buffer.toString("binary");
-    const textContent = buffer.toString(
-      "utf-8",
-      0,
-      Math.min(buffer.length, 10000),
-    ); // First 10KB as text
 
-    // Get file extension for context-aware scanning
-    const fileExt = path.extname(filename).toLowerCase();
-    const isVideoFile = [".mp4", ".webm", ".mov", ".avi", ".mkv"].includes(fileExt);
-    const isAudioFile = [".mp3", ".wav", ".ogg", ".m4a"].includes(fileExt);
-    const isMediaFile = isVideoFile || isAudioFile;
-
-    // Detect if this looks like a development project archive
-    const isDevelopmentProject = this.isDevelopmentProject(filename, textContent);
-
-    // Check suspicious filename patterns
-    if (/\.(exe|scr|bat|cmd|com|pif|vbs|js|jar|app)$/i.test(filename)) {
-      issues.push("Potentially dangerous file extension");
+    // Only check for obvious executable masquerading
+    if (/\.(exe|scr|bat|cmd|com|pif|vbs)$/i.test(filename) &&
+        !filename.match(/\.(zip|rar|7z)$/i)) {
+      issues.push("Executable file not allowed");
     }
 
-    // Double extension check (more intelligent)
-    const parts = filename.split(".");
-    if (parts.length > 2) {
-      // Check if it's a legitimate pattern
-      const isLegitimate = this.isLegitimateMultipleExtension(filename);
-      if (!isLegitimate) {
-        issues.push("Multiple file extensions detected (potential masquerading)");
-      }
-    }
-
-    // Scan content for malicious patterns (skip some patterns for media files and archives)
-    for (const pattern of this.suspiciousPatterns) {
-      // Skip JavaScript event handler patterns for all media files and images
-      const isImageFile = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'].includes(fileExt);
-      const isArchiveFile = ['.zip', '.rar', '.7z'].includes(fileExt);
-
-      // Skip JavaScript patterns for media files, images, and development archives
-      if ((isMediaFile || isImageFile || isArchiveFile || isDevelopmentProject) && pattern.source.includes("on\\w+\\s*=")) {
-        continue;
-      }
-
-      // Skip script tags in binary files (common in metadata and legitimate web projects)
-      if ((isImageFile || isArchiveFile || isDevelopmentProject) && pattern.source.includes("<script")) {
-        continue;
-      }
-
-      // Skip JavaScript URL patterns in development archives (common in legitimate web projects)
-      if ((isArchiveFile || isDevelopmentProject) && pattern.source.includes("javascript:")) {
-        continue;
-      }
-
-      // Skip VBS script patterns in development projects (common in package.json scripts)
-      if (isDevelopmentProject && pattern.source.includes("vbscript:")) {
-        continue;
-      }
-
-      if (pattern.test(content) || pattern.test(textContent)) {
-        issues.push(
-          `Suspicious content pattern detected: ${pattern.source.substring(0, 50)}...`,
-        );
-      }
-    }
-
-    // Check for embedded executables
-    if (
-      content.includes("MZ") &&
-      content.includes("This program cannot be run in DOS mode")
-    ) {
-      issues.push("Contains embedded Windows executable");
-    }
-
-    // Check for script tags in non-HTML files (but allow in development archives)
-    const isArchiveFile = ['.zip', '.rar', '.7z'].includes(fileExt);
-    if (!filename.match(/\.(html|htm|zip|rar|7z)$/i) && !isArchiveFile && /<script/gi.test(textContent)) {
-      issues.push("Script tags found in non-HTML file");
-    }
-
-    // Check for macro indicators (but be more specific)
-    if (/Microsoft Office.*Macro|VBA.*Project/gi.test(textContent) && !isArchiveFile) {
-      issues.push("Contains Office macros (potential security risk)");
-    }
-
+    console.log(`[LEGACY SCAN] Minimal scan completed for: ${filename}`);
     return issues;
   }
 
