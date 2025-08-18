@@ -316,3 +316,33 @@ export function getAllWeeks(): WeeklyNewsletter[] {
 export function clearWeeksCache(): void {
   _cachedWeeks = null;
 }
+
+/**
+ * Função específica para testar 28 de setembro
+ */
+export function testSpecificDate(dateString: string) {
+  // Assumindo formato DD/MM/YYYY ou DD/MM (assumindo 2024/2025)
+  const [day, month, year] = dateString.split('/').map(Number);
+  const testYear = year || new Date().getFullYear();
+
+  // Note: mês em JavaScript é 0-indexed (setembro = 8)
+  const testDate = new Date(testYear, month - 1, day);
+
+  const weekInfo = getWeekForDate(testDate);
+  const startDate = getWeekStartDate(weekInfo.year, weekInfo.week);
+  const endDate = getWeekEndDate(weekInfo.year, weekInfo.week);
+
+  console.log("=== TESTE ESPECÍFICO ===");
+  console.log(`Data testada: ${testDate.toLocaleDateString("pt-BR")} (${["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"][testDate.getDay()]})`);
+  console.log(`Semana calculada: ${weekInfo.week} de ${weekInfo.year}`);
+  console.log(`Período da semana: ${formatDateBR(startDate)} - ${formatDateFullBR(endDate)}`);
+  console.log(`Esta seria a semana exibida em VERDE na página inicial se fosse ${dateString}`);
+
+  return {
+    date: testDate,
+    week: weekInfo.week,
+    year: weekInfo.year,
+    period: `${formatDateBR(startDate)} - ${formatDateFullBR(endDate)}`,
+    dayOfWeek: ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"][testDate.getDay()]
+  };
+}
