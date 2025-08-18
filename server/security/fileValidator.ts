@@ -224,6 +224,9 @@ export class AdvancedFileValidator {
     const isAudioFile = [".mp3", ".wav", ".ogg", ".m4a"].includes(fileExt);
     const isMediaFile = isVideoFile || isAudioFile;
 
+    // Detect if this looks like a development project archive
+    const isDevelopmentProject = this.isDevelopmentProject(filename, textContent);
+
     // Check suspicious filename patterns
     if (/\.(exe|scr|bat|cmd|com|pif|vbs|js|jar|app)$/i.test(filename)) {
       issues.push("Potentially dangerous file extension");
