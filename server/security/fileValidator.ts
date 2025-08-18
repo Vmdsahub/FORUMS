@@ -443,6 +443,42 @@ export class AdvancedFileValidator {
     return false;
   }
 
+  private isDevelopmentProject(filename: string, content: string): boolean {
+    // Check filename patterns that suggest development projects
+    const devProjectPatterns = [
+      /\b(app|project|webapp|website|client|frontend|backend|api)\b/i,
+      /\b(react|vue|angular|node|express|next|nuxt)\b/i,
+      /\b(src|components|pages|routes|controllers|models)\b/i,
+    ];
+
+    // Check content patterns that suggest legitimate web development
+    const devContentPatterns = [
+      /package\.json/i,
+      /node_modules/i,
+      /src\/components/i,
+      /import.*from/i,
+      /export.*default/i,
+      /\.jsx?|\.tsx?|\.vue|\.css|\.scss/i,
+      /webpack|vite|rollup|babel/i,
+    ];
+
+    // Check filename
+    for (const pattern of devProjectPatterns) {
+      if (pattern.test(filename)) {
+        return true;
+      }
+    }
+
+    // Check content
+    for (const pattern of devContentPatterns) {
+      if (pattern.test(content)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   private getMimeTypeForExtension(ext: string): string | null {
     const mimeTypes: { [key: string]: string } = {
       // Images
