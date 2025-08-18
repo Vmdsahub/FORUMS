@@ -767,7 +767,7 @@ export default function Index(props: IndexProps) {
                               title: e.target.value,
                             })
                           }
-                          placeholder="Ex: GPT-4 vs Claude: Análise Comparativa"
+                          placeholder="Ex: GPT-4 vs Claude: An��lise Comparativa"
                           className="border-gray-300 focus:border-gray-500 focus:ring-gray-500 bg-white"
                         />
                       </div>
@@ -1336,17 +1336,16 @@ export default function Index(props: IndexProps) {
                               topic.topicAvatarUrl.trim() !== "" ? (
                                 <img
                                   src={topic.topicAvatarUrl}
-                                  alt={topic.author}
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : topic.authorAvatar.startsWith('http') ? (
-                                <img
-                                  src={topic.authorAvatar}
-                                  alt={topic.author}
+                                  alt={topic.title}
                                   className="w-full h-full object-cover"
                                 />
                               ) : (
-                                topic.authorAvatar
+                                topic.title
+                                  .split(" ")
+                                  .map((word) => word[0])
+                                  .join("")
+                                  .toUpperCase()
+                                  .slice(0, 2)
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
