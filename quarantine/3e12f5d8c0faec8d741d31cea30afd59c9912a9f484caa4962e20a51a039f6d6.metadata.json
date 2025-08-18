@@ -1,0 +1,9 @@
+{
+  "originalPath": "/app/code/temp-uploads/7d345eca-9e23-4563-b86d-44e86b0cc7a9-social_u6948252644_httpss.mj.run_3cGqk8WqY4_tetris_pieces_floating_-_cc1a06ba-9446-4d4f-9c51-1d6a23a20f3b_3.mp4",
+  "quarantineTime": "2025-08-18T14:59:55.550Z",
+  "hash": "3e12f5d8c0faec8d741d31cea30afd59c9912a9f484caa4962e20a51a039f6d6",
+  "reasons": [
+    "Multiple file extensions detected (potential masquerading)"
+  ],
+  "status": "quarantined"
+}

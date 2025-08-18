@@ -1,0 +1,19 @@
+{
+  "originalName": "oie.txt",
+  "safeFileName": "aab27ff0-c76e-4d2a-bc3b-d9d4840e9437-oie.txt",
+  "hash": "83f720439fec373a817eac1f5ecb45737022dc1b6527f8091721a8209db97905",
+  "size": 3,
+  "mimeType": "text/plain",
+  "uploadTime": "2025-08-18T15:01:59.779Z",
+  "uploadedBy": "anonymous",
+  "uploadIp": "::ffff:127.0.0.1",
+  "userAgent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
+  "validationResult": {
+    "isValid": true,
+    "reasons": [],
+    "sanitizedName": "oie.txt",
+    "hash": "83f720439fec373a817eac1f5ecb45737022dc1b6527f8091721a8209db97905",
+    "size": 3,
+    "quarantined": false
+  }
+}

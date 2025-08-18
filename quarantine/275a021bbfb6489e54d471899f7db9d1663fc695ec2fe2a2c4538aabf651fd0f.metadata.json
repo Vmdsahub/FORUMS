@@ -1,0 +1,9 @@
+{
+  "originalPath": "/app/code/temp-uploads/8c94eb2b-6e31-49de-a01f-f22e64aa4ba0-test.TXT.txt",
+  "quarantineTime": "2025-08-18T15:01:31.779Z",
+  "hash": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
+  "reasons": [
+    "Multiple file extensions detected (potential masquerading)"
+  ],
+  "status": "quarantined"
+}

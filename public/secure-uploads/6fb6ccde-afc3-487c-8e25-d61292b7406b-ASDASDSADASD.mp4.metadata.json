@@ -1,0 +1,20 @@
+{
+  "originalName": "ASDASDSADASD.mp4",
+  "safeFileName": "6fb6ccde-afc3-487c-8e25-d61292b7406b-ASDASDSADASD.mp4",
+  "hash": "804c738ddf0a8b20578611b6bffc4a358a80474a30abe138185cd92897979673",
+  "size": 3034636,
+  "mimeType": "video/mp4",
+  "uploadTime": "2025-08-18T15:00:44.138Z",
+  "uploadedBy": "anonymous",
+  "uploadIp": "::ffff:127.0.0.1",
+  "userAgent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
+  "validationResult": {
+    "isValid": true,
+    "reasons": [],
+    "sanitizedName": "ASDASDSADASD.mp4",
+    "hash": "804c738ddf0a8b20578611b6bffc4a358a80474a30abe138185cd92897979673",
+    "size": 3034636,
+    "quarantined": false,
+    "detectedMimeType": "video/mp4"
+  }
+}
