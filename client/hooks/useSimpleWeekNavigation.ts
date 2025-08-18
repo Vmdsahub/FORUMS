@@ -3,7 +3,6 @@ import {
   WeeklyNewsletter,
   getAllWeeks,
   getCurrentWeekIndex,
-  isSunday,
 } from "@/utils/weekSystem";
 
 interface UseSimpleWeekNavigationProps {
@@ -22,26 +21,25 @@ export function useSimpleWeekNavigation({
   const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
 
   // Estado para semanas com conteúdo (merge com dados da API)
-  const [weeksWithContent, setWeeksWithContent] = useState<WeeklyNewsletter[]>(
-    [],
-  );
+  const [weeksWithContent, setWeeksWithContent] = useState<WeeklyNewsletter[]>([]);
 
   // Inicialização: determinar semana atual baseada na data real
   useEffect(() => {
     const realCurrentWeekIndex = getCurrentWeekIndex(allWeeks);
     setCurrentWeekIndex(realCurrentWeekIndex);
 
-    console.log("Sistema de semanas inicializado:", {
+    console.log("✅ Sistema de navegação de semanas inicializado:", {
       totalWeeks: allWeeks.length,
       currentWeekIndex: realCurrentWeekIndex,
       currentWeek: allWeeks[realCurrentWeekIndex],
       isAdmin,
+      date: new Date().toLocaleDateString("pt-BR"),
     });
   }, [allWeeks, isAdmin]);
 
   // Merge dos dados da API com as semanas geradas
   useEffect(() => {
-    console.log("🔄 Fazendo merge de dados:", {
+    console.log("🔄 Fazendo merge de dados da newsletter:", {
       articlesData,
       hasWeeklyNewsletters: !!articlesData?.weeklyNewsletters,
       weeklyNewslettersCount: articlesData?.weeklyNewsletters?.length || 0,
@@ -54,11 +52,10 @@ export function useSimpleWeekNavigation({
         const apiWeek = articlesData.weeklyNewsletters.find((apiWeek: any) => {
           const matches =
             apiWeek.week === week.week &&
-            // Para compatibilidade, assumir que API retorna dados do ano atual
             (apiWeek.year === week.year || !apiWeek.year);
 
           if (matches) {
-            console.log("📅 Match encontrado:", {
+            console.log("📅 Conteúdo encontrado para semana:", {
               systemWeek: `${week.week}/${week.year}`,
               apiWeek: `${apiWeek.week}/${apiWeek.year || "sem ano"}`,
               topicsCount: apiWeek.topics?.length || 0,
@@ -87,110 +84,71 @@ export function useSimpleWeekNavigation({
     setWeeksWithContent(mergedWeeks);
   }, [allWeeks, articlesData]);
 
-  // Verificação automática de mudança de semana (a cada hora)
-  useEffect(() => {
-    const checkWeekChange = () => {
-      const realCurrentWeekIndex = getCurrentWeekIndex(allWeeks);
-
-      // Se mudou de semana e é domingo, atualizar automaticamente
-      if (realCurrentWeekIndex !== currentWeekIndex && isSunday()) {
-        console.log("Semana avançou automaticamente:", {
-          from: currentWeekIndex,
-          to: realCurrentWeekIndex,
-          isSunday: isSunday(),
-        });
-        setCurrentWeekIndex(realCurrentWeekIndex);
-      }
-    };
-
-    // Verificar imediatamente
-    checkWeekChange();
-
-    // Verificar a cada hora
-    const interval = setInterval(checkWeekChange, 60 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [allWeeks, currentWeekIndex]);
-
-  // Função de navegação
+  // Função de navegação simplificada
   const navigateWeek = useCallback(
     (direction: "prev" | "next") => {
+      console.log("🧭 Navegando:", {
+        direction,
+        currentIndex: currentWeekIndex,
+        isAdmin,
+        totalWeeks: weeksWithContent.length,
+      });
+
       if (direction === "prev") {
         // Ir para semanas mais antigas (índice maior)
-        if (isAdmin) {
-          // Admin pode navegar para qualquer semana
-          if (currentWeekIndex < weeksWithContent.length - 1) {
-            setCurrentWeekIndex(currentWeekIndex + 1);
-          }
+        const nextIndex = currentWeekIndex + 1;
+        if (nextIndex < weeksWithContent.length) {
+          console.log("⬅️ Navegando para semana anterior:", {
+            from: `${weeksWithContent[currentWeekIndex]?.week}/${weeksWithContent[currentWeekIndex]?.year}`,
+            to: `${weeksWithContent[nextIndex]?.week}/${weeksWithContent[nextIndex]?.year}`,
+          });
+          setCurrentWeekIndex(nextIndex);
         } else {
-          // Usuário só pode ir para semanas que tenham conteúdo
-          let nextIndex = currentWeekIndex + 1;
-          while (nextIndex < weeksWithContent.length) {
-            if (weeksWithContent[nextIndex]?.topics?.length > 0) {
-              setCurrentWeekIndex(nextIndex);
-              break;
-            }
-            nextIndex++;
-          }
+          console.log("⚠️ Não é possível navegar mais para trás");
         }
       } else {
         // Ir para semanas mais recentes (índice menor)
-        if (currentWeekIndex > 0) {
-          if (isAdmin) {
-            // Admin pode navegar livremente
-            setCurrentWeekIndex(currentWeekIndex - 1);
-          } else {
-            // Usuário não pode ir para semanas futuras além da atual
-            const realCurrentWeekIndex = getCurrentWeekIndex(allWeeks);
-            if (currentWeekIndex - 1 >= realCurrentWeekIndex) {
-              setCurrentWeekIndex(currentWeekIndex - 1);
-            }
-          }
+        const nextIndex = currentWeekIndex - 1;
+        if (nextIndex >= 0) {
+          console.log("➡️ Navegando para semana seguinte:", {
+            from: `${weeksWithContent[currentWeekIndex]?.week}/${weeksWithContent[currentWeekIndex]?.year}`,
+            to: `${weeksWithContent[nextIndex]?.week}/${weeksWithContent[nextIndex]?.year}`,
+          });
+          setCurrentWeekIndex(nextIndex);
+        } else {
+          console.log("⚠️ Não é possível navegar mais para frente");
         }
       }
     },
-    [currentWeekIndex, weeksWithContent, isAdmin, allWeeks],
+    [currentWeekIndex, weeksWithContent]
   );
 
-  // Verificar se pode navegar para trás
+  // Verificar se pode navegar para trás (semanas mais antigas)
   const canNavigatePrev = useCallback(() => {
-    if (isAdmin) {
-      // Admin pode navegar para qualquer semana anterior
-      return currentWeekIndex < weeksWithContent.length - 1;
-    } else {
-      // Usuário só pode ir para semanas com conteúdo
-      let nextIndex = currentWeekIndex + 1;
-      while (nextIndex < weeksWithContent.length) {
-        if (weeksWithContent[nextIndex]?.topics?.length > 0) {
-          return true;
-        }
-        nextIndex++;
-      }
-      return false;
-    }
-  }, [currentWeekIndex, weeksWithContent, isAdmin]);
+    return currentWeekIndex < weeksWithContent.length - 1;
+  }, [currentWeekIndex, weeksWithContent]);
 
-  // Verificar se pode navegar para frente
+  // Verificar se pode navegar para frente (semanas mais recentes)
   const canNavigateNext = useCallback(() => {
-    if (currentWeekIndex <= 0) return false;
-
-    if (isAdmin) {
-      // Admin pode navegar livremente
-      return true;
-    } else {
-      // Usuário não pode ir além da semana atual real
-      const realCurrentWeekIndex = getCurrentWeekIndex(allWeeks);
-      return currentWeekIndex - 1 >= realCurrentWeekIndex;
-    }
-  }, [currentWeekIndex, isAdmin, allWeeks]);
+    return currentWeekIndex > 0;
+  }, [currentWeekIndex]);
 
   // Obter dados da semana atual
   const currentNewsletter = weeksWithContent[currentWeekIndex] || null;
 
-  // Função para navegar diretamente para a semana atual
+  // Função para navegar diretamente para a semana atual real
   const goToCurrentWeek = useCallback(() => {
     const realCurrentWeekIndex = getCurrentWeekIndex(allWeeks);
+    console.log("🎯 Navegando para semana atual:", {
+      from: currentWeekIndex,
+      to: realCurrentWeekIndex,
+    });
     setCurrentWeekIndex(realCurrentWeekIndex);
-  }, [allWeeks]);
+  }, [allWeeks, currentWeekIndex]);
+
+  // Verificar se está na semana atual real
+  const realCurrentWeekIndex = getCurrentWeekIndex(allWeeks);
+  const isCurrentWeek = currentWeekIndex === realCurrentWeekIndex;
 
   return {
     // Dados principais
@@ -204,17 +162,19 @@ export function useSimpleWeekNavigation({
     canNavigateNext,
     goToCurrentWeek,
 
-    // Utilitários
-    isCurrentWeek: currentWeekIndex === getCurrentWeekIndex(allWeeks),
+    // Status
+    isCurrentWeek,
     totalWeeks: weeksWithContent.length,
 
     // Para debug
     debugInfo: {
       currentWeekIndex,
-      realCurrentWeekIndex: getCurrentWeekIndex(allWeeks),
+      realCurrentWeekIndex,
       isAdmin,
       hasContent: currentNewsletter?.topics?.length > 0,
-      isSunday: isSunday(),
+      currentWeekDisplay: currentNewsletter ? `${currentNewsletter.week}/${currentNewsletter.year}` : "nenhuma",
+      canNavPrev: canNavigatePrev(),
+      canNavNext: canNavigateNext(),
     },
   };
 }
