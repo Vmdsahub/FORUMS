@@ -1339,6 +1339,12 @@ export default function Index(props: IndexProps) {
                                   alt={topic.author}
                                   className="w-full h-full object-cover"
                                 />
+                              ) : topic.authorAvatar.startsWith('http') ? (
+                                <img
+                                  src={topic.authorAvatar}
+                                  alt={topic.author}
+                                  className="w-full h-full object-cover"
+                                />
                               ) : (
                                 topic.authorAvatar
                               )}
