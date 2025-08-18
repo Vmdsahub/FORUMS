@@ -575,6 +575,12 @@ export const SECURITY_CONFIG: SecurityConfig = {
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
     "text/plain",
     "text/csv",
+    "text/javascript",
+    "text/css",
+    "text/html",
+    "application/json",
+    "application/xml",
+    "text/xml",
     // ZIP files - multiple MIME types
     "application/zip",
     "application/x-zip",
@@ -584,6 +590,9 @@ export const SECURITY_CONFIG: SecurityConfig = {
     "application/x-rar-compressed",
     "application/vnd.rar", // Modern RAR MIME type
     "application/x-7z-compressed",
+    // Development files
+    "application/gzip",
+    "application/x-tar",
   ],
   allowedExtensions: [
     ".jpg",
