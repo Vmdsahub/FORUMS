@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   WeeklyNewsletter,
   getAllWeeks,
@@ -15,13 +15,14 @@ export function useSimpleWeekNavigation({
   isAdmin = false,
   articlesData,
 }: UseSimpleWeekNavigationProps) {
-  // Limpar cache para forçar recálculo (apenas em desenvolvimento)
-  if (process.env.NODE_ENV === "development") {
-    clearWeeksCache();
-  }
-
-  // Obter todas as semanas disponíveis (2025-2030)
-  const allWeeks = getAllWeeks();
+  // Obter todas as semanas disponíveis (2025-2030) - memoizado para evitar recálculo
+  const allWeeks = useMemo(() => {
+    // Limpar cache apenas uma vez se for desenvolvimento
+    if (process.env.NODE_ENV === "development") {
+      clearWeeksCache();
+    }
+    return getAllWeeks();
+  }, []); // Sem dependências para garantir que seja calculado apenas uma vez
 
   // Estado para a semana atual sendo exibida
   const [currentWeekIndex, setCurrentWeekIndex] = useState(0);
@@ -41,7 +42,7 @@ export function useSimpleWeekNavigation({
       isAdmin,
       date: new Date().toLocaleDateString("pt-BR"),
     });
-  }, [allWeeks, isAdmin]);
+  }, [allWeeks.length, isAdmin]); // Usando length em vez do array completo
 
   // Merge dos dados da API com as semanas geradas
   useEffect(() => {
@@ -88,7 +89,7 @@ export function useSimpleWeekNavigation({
     });
 
     setWeeksWithContent(mergedWeeks);
-  }, [allWeeks, articlesData]);
+  }, [allWeeks.length, articlesData]); // Usando length em vez do array completo
 
   // Função de navegação simplificada
   const navigateWeek = useCallback(
@@ -132,7 +133,7 @@ export function useSimpleWeekNavigation({
   // Verificar se pode navegar para trás (semanas mais antigas)
   const canNavigatePrev = useCallback(() => {
     return currentWeekIndex < weeksWithContent.length - 1;
-  }, [currentWeekIndex, weeksWithContent]);
+  }, [currentWeekIndex, weeksWithContent.length]);
 
   // Verificar se pode navegar para frente (semanas mais recentes)
   const canNavigateNext = useCallback(() => {
@@ -152,8 +153,8 @@ export function useSimpleWeekNavigation({
     setCurrentWeekIndex(realCurrentWeekIndex);
   }, [allWeeks, currentWeekIndex]);
 
-  // Verificar se está na semana atual real
-  const realCurrentWeekIndex = getCurrentWeekIndex(allWeeks);
+  // Verificar se está na semana atual real - memoizado para evitar recálculo
+  const realCurrentWeekIndex = useMemo(() => getCurrentWeekIndex(allWeeks), [allWeeks]);
   const isCurrentWeek = currentWeekIndex === realCurrentWeekIndex;
 
   return {
