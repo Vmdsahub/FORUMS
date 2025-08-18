@@ -394,7 +394,7 @@ export const deleteComment: RequestHandler = (req, res) => {
     const comment = comments.get(commentId);
 
     if (!comment) {
-      return res.status(404).json({ message: "Coment��rio não encontrado" });
+      return res.status(404).json({ message: "Coment���rio não encontrado" });
     }
 
     // Verificar permissões
@@ -475,7 +475,7 @@ export function initializeDemo() {
       content: "Posso adicionar uma resposta aqui no nível 4?",
       author: "João",
       authorId: "demo_user_123",
-      authorAvatar: "JO",
+      authorAvatar: "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F477cc7711bf64b4d94e766b55d18ca30?format=webp&width=800",
       topicId: "1",
       parentId: "demo3",
       createdAt: new Date(Date.now() - 5400000).toISOString(),
