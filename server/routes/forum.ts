@@ -59,6 +59,11 @@ function getUserInitials(name: string): string {
     .toUpperCase();
 }
 
+function getUserAvatar(user: any): string {
+  // Se o usuário tem avatar, usa a URL completa, senão usa as iniciais
+  return user.avatar || getUserInitials(user.name);
+}
+
 // Funções para gerenciar pontos e badges
 function getUserStats(userId: string) {
   if (!userStats.has(userId)) {
