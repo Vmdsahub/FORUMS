@@ -3,6 +3,7 @@ import {
   WeeklyNewsletter,
   getAllWeeks,
   getCurrentWeekIndex,
+  clearWeeksCache,
 } from "@/utils/weekSystem";
 
 interface UseSimpleWeekNavigationProps {
