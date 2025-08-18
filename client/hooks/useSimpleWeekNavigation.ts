@@ -188,14 +188,21 @@ export function useSimpleWeekNavigation({
 
   // Verificar se pode navegar para frente (semanas mais recentes)
   const canNavigateNext = useCallback(() => {
+    const nextIndex = currentWeekIndex - 1;
+
     // Admin Vitoca pode navegar livremente
     if (isVitoca) {
-      return currentWeekIndex > 0;
+      return nextIndex >= 0;
     }
 
-    // Usuário comum NÃO pode avançar
+    // Usuário comum pode avançar até a semana atual (não além)
+    if (nextIndex >= 0) {
+      const realCurrentWeekIndex = getCurrentWeekIndex(weeksWithContent);
+      return nextIndex >= realCurrentWeekIndex;
+    }
+
     return false;
-  }, [currentWeekIndex, isVitoca]);
+  }, [currentWeekIndex, isVitoca, weeksWithContent]);
 
   // Obter dados da semana atual
   const currentNewsletter = weeksWithContent[currentWeekIndex] || null;
