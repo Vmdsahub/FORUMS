@@ -117,18 +117,32 @@ export class AdvancedSecurityAnalyzer {
         }
       }
       
-      // Check for suspicious metadata in image
+      // Check for suspicious metadata in image (more lenient)
       if (metadata.exif) {
         const exifString = JSON.stringify(metadata.exif);
-        if (exifString.length > 10000) {
+
+        // Increased threshold for EXIF size (cameras can have large EXIF data)
+        if (exifString.length > 50000) {
           result.threats.push("Suspicious EXIF data size - possible hidden payload");
           result.isClean = false;
+        } else if (exifString.length > 20000) {
+          result.confidence -= 10; // Just reduce confidence, don't block
         }
-        
-        // Check for executable patterns in EXIF
-        if (/javascript:|vbscript:|data:text\/html/gi.test(exifString)) {
-          result.threats.push("Malicious script found in image metadata");
-          result.isClean = false;
+
+        // Check for clearly malicious patterns in EXIF (more specific)
+        const maliciousPatterns = [
+          /javascript:\s*eval\(/gi,
+          /vbscript:\s*execute\(/gi,
+          /data:text\/html.*<script/gi,
+          /<script.*eval\(/gi
+        ];
+
+        for (const pattern of maliciousPatterns) {
+          if (pattern.test(exifString)) {
+            result.threats.push("Malicious script found in image metadata");
+            result.isClean = false;
+            break;
+          }
         }
       }
       
