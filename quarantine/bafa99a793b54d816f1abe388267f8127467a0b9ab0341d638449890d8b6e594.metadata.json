@@ -1,0 +1,9 @@
+{
+  "originalPath": "/app/code/temp-uploads/8d06ba6e-8947-4076-a035-79cb6a7b7b66-aaaaaaaaaa.png",
+  "quarantineTime": "2025-08-18T18:02:07.071Z",
+  "hash": "bafa99a793b54d816f1abe388267f8127467a0b9ab0341d638449890d8b6e594",
+  "reasons": [
+    "Hidden PE executable detected in file"
+  ],
+  "status": "quarantined"
+}

@@ -1,9 +1,9 @@
 {
-  "originalPath": "/app/code/temp-uploads/4a20968e-1877-4528-ac0a-1afd4a552f3d-TEETE.EXE.txt",
-  "quarantineTime": "2025-08-18T15:23:03.194Z",
+  "originalPath": "/app/code/temp-uploads/aee3dee4-18a8-45a7-a5fa-3e8d8a3414bb-texe.jpg.txt",
+  "quarantineTime": "2025-08-18T18:02:22.153Z",
   "hash": "275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f",
   "reasons": [
-    "Multiple file extensions detected (potential masquerading)"
+    "Known malware detected: EICAR Test"
   ],
   "status": "quarantined"
 }

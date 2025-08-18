@@ -1,9 +1,9 @@
 {
-  "originalPath": "/app/code/temp-uploads/d51b584e-2ce1-42f6-a516-ad6647de934c-videotetris.mp4",
-  "quarantineTime": "2025-08-18T14:48:46.289Z",
+  "originalPath": "/app/code/temp-uploads/2f3acb76-5658-419d-8eb0-f3682daa81f2-videotetris.mp4",
+  "quarantineTime": "2025-08-18T18:03:01.277Z",
   "hash": "804c738ddf0a8b20578611b6bffc4a358a80474a30abe138185cd92897979673",
   "reasons": [
-    "Suspicious content pattern detected: on\\w+\\s*=..."
+    "Hidden PE executable detected in file"
   ],
   "status": "quarantined"
 }
