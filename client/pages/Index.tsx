@@ -100,6 +100,7 @@ export default function Index(props: IndexProps) {
     navigateWeek,
     canNavigatePrev,
     canNavigateNext,
+    goToCurrentWeek,
     isCurrentWeek,
     debugInfo,
   } = useSimpleWeekNavigation({
