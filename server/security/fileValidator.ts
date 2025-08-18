@@ -515,11 +515,20 @@ export class AdvancedFileValidator {
       ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       ".txt": "text/plain",
       ".csv": "text/csv",
+      ".js": "text/javascript",
+      ".css": "text/css",
+      ".html": "text/html",
+      ".htm": "text/html",
+      ".json": "application/json",
+      ".xml": "application/xml",
+      ".md": "text/plain",
 
       // Archives (flexible MIME type checking for ZIP)
       ".zip": "application/zip", // Primary, but will accept variants
       ".rar": "application/x-rar-compressed",
       ".7z": "application/x-7z-compressed",
+      ".tar": "application/x-tar",
+      ".gz": "application/gzip",
     };
 
     return mimeTypes[ext.toLowerCase()] || null;
