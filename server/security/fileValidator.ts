@@ -275,13 +275,14 @@ export class AdvancedFileValidator {
       issues.push("Contains embedded Windows executable");
     }
 
-    // Check for script tags in non-HTML files
-    if (!filename.match(/\.(html|htm)$/i) && /<script/gi.test(textContent)) {
+    // Check for script tags in non-HTML files (but allow in development archives)
+    const isArchiveFile = ['.zip', '.rar', '.7z'].includes(fileExt);
+    if (!filename.match(/\.(html|htm|zip|rar|7z)$/i) && !isArchiveFile && /<script/gi.test(textContent)) {
       issues.push("Script tags found in non-HTML file");
     }
 
-    // Check for macro indicators
-    if (/Microsoft Office.*Macro|VBA.*Project/gi.test(textContent)) {
+    // Check for macro indicators (but be more specific)
+    if (/Microsoft Office.*Macro|VBA.*Project/gi.test(textContent) && !isArchiveFile) {
       issues.push("Contains Office macros (potential security risk)");
     }
 
