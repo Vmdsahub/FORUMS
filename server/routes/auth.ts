@@ -131,6 +131,7 @@ export const authenticateToken: RequestHandler = (req, res, next) => {
     name: user.name,
     email: user.email,
     role: user.role || "user",
+    avatar: user.avatar,
   };
 
   next();
@@ -167,6 +168,7 @@ export const optionalAuthenticateToken: RequestHandler = (req, res, next) => {
     name: user.name,
     email: user.email,
     role: user.role || "user",
+    avatar: user.avatar,
   };
   next();
 };
