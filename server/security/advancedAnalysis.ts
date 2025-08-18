@@ -209,12 +209,18 @@ export class AdvancedSecurityAnalyzer {
       }
     }
     
-    // Check for PE executable hidden in other formats
-    if (!mimeType.includes('application/') && buffer.indexOf('MZ') !== -1) {
+    // Check for PE executable hidden in other formats (more specific)
+    if (!mimeType.includes('application/') && !mimeType.startsWith('image/') &&
+        !mimeType.startsWith('video/') && !mimeType.startsWith('audio/')) {
+
       const mzIndex = buffer.indexOf('MZ');
-      if (mzIndex > 0 && mzIndex < buffer.length - 1000) {
-        result.threats.push("Hidden PE executable detected in file");
-        result.isClean = false;
+      if (mzIndex !== -1) {
+        // Check if this looks like an actual PE header, not just random "MZ"
+        const isPossiblePE = this.isPossiblePEExecutable(buffer, mzIndex);
+        if (isPossiblePE) {
+          result.threats.push("Hidden PE executable detected in file");
+          result.isClean = false;
+        }
       }
     }
   }
