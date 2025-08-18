@@ -455,7 +455,7 @@ export function initializeDemo() {
       content: "Concordo! O Midjourney realmente se destaca em arte.",
       author: "Carlos",
       authorId: "user_carlos",
-      authorAvatar: "CA",
+      authorAvatar: "https://cdn.builder.io/api/v1/image/assets%2F4339d2c6c4aa4bf4b61f03263843eb86%2F6dcd5f5eb7214b0f8018d668c517123d?format=webp&width=800",
       topicId: "1",
       parentId: "demo1",
       createdAt: new Date(Date.now() - 6600000).toISOString(),
