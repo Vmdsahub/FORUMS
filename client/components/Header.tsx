@@ -510,22 +510,7 @@ export default function Header({ activeSection }: HeaderProps) {
           {user ? (
             <Popover>
               <PopoverTrigger asChild>
-                <button className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-black/5 transition-colors duration-200">
-                  <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center text-sm font-semibold overflow-hidden">
-                    {user.avatar && user.avatar.startsWith('http') ? (
-                      <img
-                        src={user.avatar}
-                        alt={user.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      user.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")
-                    )}
-                  </div>
-                  <span className="font-medium text-black">{user.name}</span>
+                <button className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-black/5 transition-colors duration-200">
                   <svg
                     width="16"
                     height="16"
