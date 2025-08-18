@@ -146,8 +146,19 @@ export function useSimpleWeekNavigation({
             });
             setCurrentWeekIndex(nextIndex);
           } else {
-            // Usuário comum NÃO pode avançar
-            console.log("⚠️ Usuário não pode avançar - funcionalidade restrita");
+            // Usuário comum pode avançar até a semana atual (não além)
+            const realCurrentWeekIndex = getCurrentWeekIndex(weeksWithContent);
+            if (nextIndex >= realCurrentWeekIndex) {
+              console.log("➡️ Usuário navegando de volta para semana mais recente:", {
+                from: `${weeksWithContent[currentWeekIndex]?.week}/${weeksWithContent[currentWeekIndex]?.year}`,
+                to: `${weeksWithContent[nextIndex]?.week}/${weeksWithContent[nextIndex]?.year}`,
+                realCurrentWeekIndex,
+                nextIndex,
+              });
+              setCurrentWeekIndex(nextIndex);
+            } else {
+              console.log("⚠️ Usuário não pode avançar além da semana atual");
+            }
           }
         } else {
           console.log("⚠️ Não é possível navegar mais para frente");
