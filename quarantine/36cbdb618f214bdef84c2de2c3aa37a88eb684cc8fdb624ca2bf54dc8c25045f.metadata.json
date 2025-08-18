@@ -1,0 +1,9 @@
+{
+  "originalPath": "/app/code/temp-uploads/b3ac5029-6e3a-4133-8ec2-8fc065852acd-Testepets (4).zip",
+  "quarantineTime": "2025-08-18T15:06:58.185Z",
+  "hash": "36cbdb618f214bdef84c2de2c3aa37a88eb684cc8fdb624ca2bf54dc8c25045f",
+  "reasons": [
+    "Suspicious content pattern detected: on\\w+\\s*=..."
+  ],
+  "status": "quarantined"
+}
